@@ -48,7 +48,7 @@ export const useLogin = () => {
 
   useEffect(() => {
     if (isSuccess && data) {
-      router.replace("/users");
+      router.replace("/dashboard");
     }
   }, [data, isSuccess]);
 
