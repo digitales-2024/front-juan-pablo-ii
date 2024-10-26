@@ -25,26 +25,29 @@ export const LogoutDialog = () => {
   return (
     <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
       <DialogTrigger asChild>
-        <Button className="bg-red-600 hover:bg-red-700">
+        {/* Botón principal con colores del logo */}
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
           <LogOut className="mr-2 h-4 w-4" /> Cerrar Sesión
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-gray-800 text-white">
+      {/* Contenido del diálogo con el esquema de colores actualizado */}
+      <DialogContent className="bg-white text-blue-900 border-blue-600">
         <DialogHeader>
-          <DialogTitle>Confirmar Cierre de Sesión</DialogTitle>
+          <DialogTitle className="text-blue-800">Confirmar Cierre de Sesión</DialogTitle>
         </DialogHeader>
         <p>¿Estás seguro de que quieres cerrar sesión?</p>
         <div className="flex justify-end space-x-2 mt-4">
+          {/* Botones del diálogo con esquema de colores azul y blanco */}
           <Button
             onClick={() => setShowLogoutDialog(false)}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-white text-blue-600 border border-blue-600 hover:bg-blue-100"
             variant="outline"
           >
             No
           </Button>
           <Button
             onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-blue-600 hover:bg-blue-700 text-white"
           >
             Sí
           </Button>

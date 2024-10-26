@@ -30,7 +30,7 @@ export const CreateUserDialog = () => {
             <PlusIcon className="mr-2 h-4 w-4" /> Crear Usuario
           </Button>
         </DialogTrigger>
-        <DialogContent className="bg-gray-800 text-white">
+        <DialogContent className=" text-black">
           <DialogHeader>
             <DialogTitle>Crear Nuevo Usuario</DialogTitle>
           </DialogHeader>
