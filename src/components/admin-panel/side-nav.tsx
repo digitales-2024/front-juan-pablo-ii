@@ -1,10 +1,10 @@
-'use client';
+"use client"; // Ensure client-side rendering
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from '@iconify/react';
-import logoJuanPablo from "@/assets/icons/logo-juanpablo.png";
+import logoJuanPablo from "@/app/favicon.ico";
 import { SIDENAV_ITEMS } from '@/utils/constants';
 import { SideNavItem } from '@/types';
 import { LogoutDialog } from '../user/LogoutDialog';
@@ -19,12 +19,12 @@ const SideNav = () => {
           className="flex items-center justify-center md:justify-start md:px-6 border-b border-zinc-200 h-16 w-full"
         >
           <Image
-              src={logoJuanPablo}
-              alt="Logo Juan Pablo"
-              width={120}
-              height={80}
-              priority
-            />
+            src={logoJuanPablo}
+            alt="Logo Juan Pablo"
+            width={100}
+            height={80}
+            priority
+          />
         </Link>
 
         <nav className="flex-grow flex flex-col justify-between py-6">

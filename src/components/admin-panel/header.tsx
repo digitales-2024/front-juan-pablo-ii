@@ -1,11 +1,11 @@
-'use client';
+"use client"; // Ensure client-side rendering
 
 import React from 'react';
 import Link from 'next/link';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import useScroll from '@/hooks/use-scroll';
 import { cn } from '@/lib/utils';
-import logoJuanPablo from "@/assets/icons/logo-juanpablo.png";
+import logoJuanPablo from "@/app/favicon.ico";
 import Image from 'next/image'
 import UserAvatarWithSettings from '../user/UserAvatarWithSettings';
 
@@ -32,8 +32,8 @@ const Header = () => {
             <Image
               src={logoJuanPablo}
               alt="Logo Juan Pablo"
-              width={80}
-              height={60}
+              width={40}
+              height={20}
               priority
             />
           </Link>

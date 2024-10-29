@@ -1,8 +1,8 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useUsers } from "@/hooks/use-users";
-import { CreateUsersSchema, usersSchema } from "@/schemas";
+import { useRol } from "@/hooks/use-rol";
+import { createRolesSchema, CreateRolesSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -30,44 +30,40 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
-import { CreateUsersForm } from "./CreateUsersForm";
+import { CreateRolesForm } from "./CreateRolesForm";
 
 const dataForm = {
-  button: "Crear usuario",
-  title: "Crear usuarios",
-  description:
-    "Complete los detalles a continuación para crear nuevos usuarios y enviar las credenciales",
+  button: "Crear rol",
+  title: "Crear Rol",
+  description: "Complete los detalles a continuación para crear un nuevo rol",
 };
 
-export function CreateUsersDialog() {
+export function CreateRolesDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onCreateUser, isSuccessCreateUser } = useUsers();
+  const { onCreateRole, isSuccessCreateRole } = useRol();
 
-  const form = useForm<CreateUsersSchema>({
-    resolver: zodResolver(usersSchema),
+  const form = useForm<CreateRolesSchema>({
+    resolver: zodResolver(createRolesSchema),
     defaultValues: {
       name: "",
-      email: "",
-      phone: "",
-      password: "",
-      roles: [],
+      description: "",
+      rolPermissions: [],
     },
   });
-
-  const onSubmit = async (input: CreateUsersSchema) => {
+  const onSubmit = async (input: CreateRolesSchema) => {
     startCreateTransition(async () => {
-      await onCreateUser(input);
+      await onCreateRole(input);
     });
   };
   useEffect(() => {
-    if (isSuccessCreateUser) {
+    if (isSuccessCreateRole) {
       form.reset();
       setOpen(false);
     }
-  }, [isSuccessCreateUser, form]);
+  }, [isSuccessCreateRole, form]);
 
   const handleClose = () => {
     form.reset();
@@ -82,12 +78,12 @@ export function CreateUsersDialog() {
             {dataForm.button}
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[40vw]">
           <DialogHeader>
             <DialogTitle>{dataForm.title}</DialogTitle>
             <DialogDescription>{dataForm.description}</DialogDescription>
           </DialogHeader>
-          <CreateUsersForm form={form} onSubmit={onSubmit}>
+          <CreateRolesForm form={form} onSubmit={onSubmit}>
             <DialogFooter className="gap-2 sm:space-x-0">
               <Button disabled={isCreatePending} className="w-full">
                 {isCreatePending && (
@@ -109,7 +105,7 @@ export function CreateUsersDialog() {
                 </Button>
               </DialogClose>
             </DialogFooter>
-          </CreateUsersForm>
+          </CreateRolesForm>
         </DialogContent>
       </Dialog>
     );
@@ -128,7 +124,7 @@ export function CreateUsersDialog() {
           <DrawerTitle>{dataForm.title}</DrawerTitle>
           <DrawerDescription>{dataForm.description}</DrawerDescription>
         </DrawerHeader>
-        <CreateUsersForm form={form} onSubmit={onSubmit}>
+        <CreateRolesForm form={form} onSubmit={onSubmit}>
           <DrawerFooter className="gap-2 sm:space-x-0">
             <Button disabled={isCreatePending}>
               {isCreatePending && (
@@ -137,13 +133,13 @@ export function CreateUsersDialog() {
                   aria-hidden="true"
                 />
               )}
-              Registrar y enviar correo
+              Registrar
             </Button>
             <DrawerClose asChild>
               <Button variant="outline">Cancelar</Button>
             </DrawerClose>
           </DrawerFooter>
-        </CreateUsersForm>
+        </CreateRolesForm>
       </DrawerContent>
     </Drawer>
   );
