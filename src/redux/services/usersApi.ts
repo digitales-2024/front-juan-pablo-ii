@@ -1,13 +1,10 @@
 
-import { CreateUsersSchema, UpdateUsersSchema } from "@/schemas/users/createUserSchema";
+import { CreateUsersSchema, UpdateUsersSchema } from "@/schemas/users/createUsersSchema";
 import { SendNewPasswordSchema } from "@/schemas/users/sendNewPasswordSchema";
 import { User } from "@/types";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi} from "@reduxjs/toolkit/query/react";
 
-const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
-  credentials: "include",
-});
+import baseQueryWithReauth from "../baseQuery";
 
 interface UserUpdate {
   data: User;
@@ -17,7 +14,7 @@ interface UserUpdate {
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
-  baseQuery: baseQuery,
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["Users"],
   endpoints: (build) => ({
     // Crear un nuevo usuario
@@ -107,6 +104,16 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+
+    //Reactivar a un usuario
+    reactivateUser: build.mutation<User, string>({
+      query: (id) => ({
+          url: `users/reactivate/${id}`,
+          method: "PATCH",
+          credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+  }),
   }),
 });
 
@@ -119,4 +126,5 @@ export const {
   useDeleteUsersMutation,
   useReactivateUsersMutation,
   useSendNewPasswordMutation,
+  useReactivateUserMutation,
 } = usersApi;
