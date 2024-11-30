@@ -73,6 +73,7 @@ export const useProfile = () => {
 
                         const message = translateError(error as string);
                         reject(new Error(message));
+                        return;
                     }
                     resolve(result);
                     signOut();

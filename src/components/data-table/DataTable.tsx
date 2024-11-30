@@ -98,7 +98,6 @@ export function DataTable<TData, TValue>({
             position: isPinned ? "sticky" : "relative",
             width: column.getSize(),
             zIndex: isPinned ? 1 : 0,
-            backgroundColor: "white",
         };
     };
 
@@ -114,7 +113,7 @@ export function DataTable<TData, TValue>({
             />
             <div className="overflow-hidden rounded-md border">
                 <Table>
-                    <TableHeader className="bg-slate-50">
+                    <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
@@ -157,7 +156,6 @@ export function DataTable<TData, TValue>({
                                         return (
                                             <TableCell
                                                 key={cell.id}
-                                                className="text-slate-600"
                                                 style={{
                                                     ...getCommonPinningStyles(
                                                         column,

@@ -1,49 +1,50 @@
+import { Providers } from "@/redux/providers";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
-import { Providers } from "@/redux/providers";
 import { Toaster } from "sonner";
 
+import "./globals.css";
+
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+    src: "./fonts/GeistVF.woff",
+    variable: "--font-geist-sans",
+    weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+    src: "./fonts/GeistMonoVF.woff",
+    variable: "--font-geist-mono",
+    weight: "100 900",
 });
 
 export const metadata: Metadata = {
-  title: "Clinica Juan Pablo II",
-  description: "ERP de la clinica Juan Pablo II",
+    title: "Juan Pablo II",
+    description: "Aplicación Juan.P. II",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Toaster
+    return (
+        <html lang="es" className="dark">
+            <body
+                className={`relative ${geistSans.variable} ${geistMono.variable} border-border bg-background text-foreground`}
+            >
+                <Toaster
                     richColors
                     position="top-center"
                     toastOptions={{
                         style: {
-                            background: "#fff",
-                            borderBlockColor: "#e2e8f0",
+                            backgroundColor: "var(--background)", // Asegura que el fondo no sea transparente
+                            color: "var(--foreground)",
+                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                         },
                     }}
                     closeButton
                 />
-       <Providers>{children}</Providers>
-        
-      </body>
-    </html>
-  );
+                <Providers>{children}</Providers>
+            </body>
+        </html>
+    );
 }

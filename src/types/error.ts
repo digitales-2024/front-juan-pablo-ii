@@ -2,9 +2,9 @@ export type CustomErrorData = {
     error: string;
     message: string;
     statusCode: number;
-    };
-    export type ErrorFormData = {
+};
+export type ErrorFormData = {
     error: string;
     message: string[];
     statusCode: number;
-    };
+};

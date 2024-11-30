@@ -10,11 +10,12 @@ export const usersSchema = z.object({
         .min(1, { message: "El correo electrónico es obligatorio" }),
     phone: z.string().optional(),
     password: z
-    .string()
-    .min(6, { message: "Debes generar una contraseña" })
-    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/, {
-        message: "La contraseña debe tener al menos una mayúscula, una minúscula y un número",
-    }),
+        .string()
+        .min(6, { message: "Debes generar una contraseña" })
+        .regex(/(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+            message:
+                "La contraseña debe tener al menos una mayúscula, una minúscula y un número",
+        }),
     roles: z.array(z.string()).min(1, { message: "Debes seleccionar un rol" }),
 });
 

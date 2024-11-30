@@ -1,22 +1,45 @@
 "use client";
 
-import SideNav from "@/components/admin-panel/side-nav";
-import MarginWidthWrapper from "@/components/admin-panel/margin-width-wrapper";
-import Header from "../admin-panel/header";
-import HeaderMobile from "@/components/admin-panel/header-mobile";
-import PageWrapper from "@/components/admin-panel/page-wrapper";
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
+import { useStore } from "@/hooks/use-store";
 
-export default function AdminPanelLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex">
-      <SideNav />
-      <main className="flex-1">
-        <MarginWidthWrapper>
-          <Header />
-          <HeaderMobile />
-          <PageWrapper>{children}</PageWrapper>
-        </MarginWidthWrapper>
-      </main>
-    </div>
-  );
+import { cn } from "@/lib/utils";
+
+import Footer from "../admin-panel/Footer";
+import { Navbar } from "../admin-panel/Navbar";
+import Sidebar from "../admin-panel/Sidebar";
+
+export default function AdminPanelLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    const sidebar = useStore(useSidebarToggle, (state) => state);
+
+    if (!sidebar) return null;
+
+    return (
+        <>
+            <Sidebar />
+            <main
+                className={cn(
+                    "min-h-[calc(100vh_-_57px)] bg-background transition-[margin-left] duration-300 ease-in-out",
+                    sidebar?.isOpen === false ? "lg:ml-[90px]" : "lg:ml-72",
+                )}
+            >
+                <Navbar />
+                <div className="container px-4 pb-8 pt-8 sm:px-8">
+                    {children}
+                </div>
+            </main>
+            <footer
+                className={cn(
+                    "transition-[margin-left] duration-300 ease-in-out",
+                    sidebar?.isOpen === false ? "lg:ml-[90px]" : "lg:ml-72",
+                )}
+            >
+                <Footer />
+            </footer>
+        </>
+    );
 }

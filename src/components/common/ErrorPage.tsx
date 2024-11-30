@@ -18,7 +18,7 @@ export const ErrorPage = () => {
         <div className="flex items-center justify-center">
             <Card className="w-full max-w-[350px] border-none text-center">
                 <CardHeader>
-                    <CardTitle className="flex items-center justify-center space-x-2 text-slate-600">
+                    <CardTitle className="flex items-center justify-center space-x-2">
                         <AlertOctagon
                             className="h-6 w-6 text-destructive"
                             aria-hidden="true"

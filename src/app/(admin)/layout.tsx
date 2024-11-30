@@ -1,6 +1,5 @@
 import { Shell } from "@/components/common/Shell";
 import AdminPanelLayout from "@/components/layouts/AdminPanelLayout";
-import { Card } from "@/components/ui/card";
 
 export default function AdminLayout({
     children,
@@ -9,9 +8,7 @@ export default function AdminLayout({
 }) {
     return (
         <AdminPanelLayout>
-            <Card className="border-none">
-                <Shell>{children}</Shell>
-            </Card>
+            <Shell className="rounded-3xl border">{children}</Shell>
         </AdminPanelLayout>
     );
 }
