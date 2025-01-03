@@ -1,7 +1,7 @@
-import Link from "next/link";
+import { LogoJuanPablo } from "@/assets/icons/LogoTrazo";
 import ImageLogin from "@/assets/images/logo.webp";
 import Image from "next/image";
-import { LogoJuanPablo } from "@/assets/icons/LogoTrazo";
+import Link from "next/link";
 interface SidebarHeaderProps {
     isOpen: boolean;
 }
