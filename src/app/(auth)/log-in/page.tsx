@@ -1,10 +1,10 @@
 "use client";
 
+import ImagePlaceholder from "@/assets/images/imageLogin.jpg";
+import ImageLogin from "@/assets/images/logoLogin.webp";
 import Image from "next/image";
 
-import ImagePlaceholder from "@/assets/images/imageLogin.jpg";
 import { FormLogin } from "@/components/log-in/FormLogin";
-import ImageLogin from "@/assets/images/logoLogin.webp";
 
 export default function LogIn() {
     return (
