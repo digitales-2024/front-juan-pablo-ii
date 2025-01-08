@@ -67,6 +67,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
+          build-args: |
+      ${{ vars.SERVICE_TYPE == 'front' && format('NEXT_PUBLIC_BACKEND_URL={0}', vars.NEXT_PUBLIC_BACKEND_URL) || '' }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:latest-${{ env.ENV_TAG }}
