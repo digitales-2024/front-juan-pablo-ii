@@ -22,6 +22,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           platforms: linux/amd64
+          driver-opts: |
+            image=moby/buildkit:latest
 
       - name: Validate environment variables
         run: |
@@ -59,25 +61,25 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          logout: true
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           build-args: |
             NEXT_PUBLIC_BACKEND_URL=${{ vars.SERVICE_TYPE == 'front' && vars.NEXT_PUBLIC_BACKEND_URL || '' }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:latest-${{ env.ENV_TAG }}
-            ${{ github.ref == 'refs/heads/main' && format('{0}/{1}:latest', secrets.DOCKERHUB_USERNAME, env.REPO_NAME) || '' }}
-            ${{ contains(github.ref, 'refs/tags/') && format('{0}/{1}:{2}', secrets.DOCKERHUB_USERNAME, env.REPO_NAME, github.ref_name) || '' }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:latest-${{ env.ENV_TAG }}
           cache-to: type=inline
           provenance: false
           sbom: false
+          outputs: type=registry,push=true
 
   deploy:
     needs: build-and-push
