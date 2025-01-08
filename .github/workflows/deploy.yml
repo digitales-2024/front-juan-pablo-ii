@@ -22,8 +22,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           platforms: linux/amd64
-          driver-opts: |
-            image=moby/buildkit:latest
 
       - name: Validate environment variables
         run: |
@@ -63,6 +61,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           logout: true
 
+      - name: Clean Docker cache
+        run: |
+          docker builder prune -af
+          docker image prune -af
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -75,11 +78,9 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:latest-${{ env.ENV_TAG }}
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:latest-${{ env.ENV_TAG }}
-          cache-to: type=inline
+          no-cache: true
           provenance: false
           sbom: false
-          outputs: type=registry,push=true
 
   deploy:
     needs: build-and-push
