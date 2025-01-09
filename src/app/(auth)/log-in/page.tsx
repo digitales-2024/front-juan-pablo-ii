@@ -6,9 +6,9 @@ import { FormLogin } from "./_components/FormLogin";
 
 export default function LogIn() {
     return (
-        <div className="relative flex h-screen w-full">
+        <div className="relative grid grid-cols-2 h-screen w-full">
             {/* Lado Izquierdo con Imagen de Fondo */}
-            <div className="relative flex w-1/2 items-center justify-center">
+            <div className="relative flex items-center justify-center">
                 <Image
                     src={ImagePlaceholder}
                     alt="Imagen de fondo"
@@ -22,7 +22,7 @@ export default function LogIn() {
             </div>
 
             {/* Lado Derecho con Formulario */}
-            <div className="flex w-1/2 flex-col items-center justify-start">
+            <div className="flex flex-col items-center justify-start">
                 <div className="flex flex-col items-center">
                     {/* Imagen del Logo de la Clínica */}
                     <Image

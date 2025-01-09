@@ -18,11 +18,10 @@ import ThemeToggle from "@/components/themeToggle";
 import { Input } from "@/components/ui/input";
 import { loginAction } from "../actions";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { toast } from "sonner";
 
 export const FormLogin = () => {
   const router = useRouter();
-  const [error, setError] = useState<string>("");
 
   const {
     register,
@@ -39,7 +38,7 @@ export const FormLogin = () => {
     if (result.success && result.redirect) {
       router.push(result.redirect);
     } else {
-      setError(result.message || "Error al iniciar sesión");
+      toast(result.message || "Error al iniciar sesión");
     }
   }
 
@@ -113,18 +112,14 @@ export const FormLogin = () => {
             )}
           </div>
 
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-
           {/* Botón de Enviar */}
           <button
             type="submit"
             className="mt-6 flex w-full items-center justify-center rounded-md px-4 py-3 text-white hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
             style={{ backgroundColor: mainColor }}
-          ></button>
+          >
+            Iniciar Sesión
+          </button>
         </form>
       </CardContent>
     </Card>
