@@ -249,19 +249,19 @@ export function getMenuList(pathname: string): Group[] {
             groupLabel: "Catalogo",
             menus: [
                 {
-                    href: "/users",
+                    href: "/catalog",
                     label: "Catalogo",
                     active: pathname.includes("/users"),
                     icon: Container,
                     submenus: [
                         {
-                            href: "/users",
+                            href: "/catalog/products",
                             label: "Productos",
-                            active: pathname === "/users",
+                            active: pathname === "/products",
                             icon: Package,
                         },
                         {
-                            href: "/users/roles",
+                            href: "/catalog/services",
                             label: "Servicios",
                             active: pathname.includes("/roles"),
                             icon: ListTodo,
