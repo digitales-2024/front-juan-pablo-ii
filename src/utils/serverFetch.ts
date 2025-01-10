@@ -33,7 +33,7 @@ export async function serverFetch<Success>(
     options: FetchOptions = {},
 ): Promise<Result<Success, Response | Error>> {
     const { ...fetchOptions } = options;
-    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}${path}`;
+    const url = `${process.env.BACKEND_URL}${path}`;
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
     const refreshToken = cookieStore.get("refresh_token")?.value;
@@ -59,7 +59,7 @@ export async function serverFetch<Success>(
             let refreshResponse: Response;
             try {
                 refreshResponse = await fetch(
-                    process.env.NEXT_PUBLIC_BACKEND_URL + "/auth/refresh-token",
+                    process.env.BACKEND_URL + "/auth/refresh-token",
                     {
                         method: "POST",
                         headers: {
@@ -90,7 +90,7 @@ export async function serverFetch<Success>(
                 // Logout and redirect
                 try {
                     await serverFetch(
-                        process.env.NEXT_PUBLIC_BACKEND_URL + "/auth/logout",
+                        process.env.BACKEND_URL + "/auth/logout",
                         {
                             method: "POST",
                         },
