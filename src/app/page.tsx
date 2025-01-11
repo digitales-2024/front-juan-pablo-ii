@@ -1,3 +1,9 @@
+import LayoutAdmin from "./(admin)/layout";
+
 export default function Home() {
-	return <div>home</div>;
+	return (
+		<LayoutAdmin>
+			<div>hola</div>
+		</LayoutAdmin>
+	);
 }
