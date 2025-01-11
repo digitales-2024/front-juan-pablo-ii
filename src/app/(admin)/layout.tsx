@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { ProfileDropdown } from "@/components/layout/ProfileDropdown";
 import { Search } from "@/components/layout/Search";
 import { AppSidebar } from "@/components/layout/Sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
 export default function LayoutAdmin({
@@ -10,10 +11,9 @@ export default function LayoutAdmin({
 	children: React.ReactNode;
 }>) {
 	return (
-		<>
+		<SidebarProvider defaultOpen={true}>
 			<AppSidebar />
 			<div
-				id="content"
 				className={cn(
 					"max-w-full w-full ml-auto",
 					"peer-data-[state=collapsed]:w-[calc(100%-var(--sidebar-width-icon)-1rem)]",
@@ -32,6 +32,6 @@ export default function LayoutAdmin({
 				</Header>
 				{children}
 			</div>
-		</>
+		</SidebarProvider>
 	);
 }
