@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import "./globals.css";
+import localFont from "next/font/local";
+import { SearchProvider } from "@/context/search-context";
 
-const geistSans = Geist({
+const geistSans = localFont({
+	src: "./fonts/GeistVF.woff",
 	variable: "--font-geist-sans",
-	subsets: ["latin"],
+	weight: "100 900",
+});
+const geistMono = localFont({
+	src: "./fonts/GeistMonoVF.woff",
+	variable: "--font-geist-mono",
+	weight: "100 900",
 });
 
 export const metadata: Metadata = {
@@ -18,9 +25,11 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<body className={`${geistSans.variable}  antialiased`}>
-				{children}
+		<html lang="es" suppressHydrationWarning>
+			<body
+				className={`${geistSans.variable} ${geistMono.variable}  antialiased `}
+			>
+				<SearchProvider>{children}</SearchProvider>
 			</body>
 		</html>
 	);
