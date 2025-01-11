@@ -1,13 +1,15 @@
 'use server';
+// src/app/(auth)/actions.ts
 
-import { cookies } from "next/headers";
-import { LoginResponse, LoginCredentials } from './types';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { LoginCredentials, AuthResponse } from './types';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export async function loginAction(
   credentials: LoginCredentials
-): Promise<LoginResponse> {
+): Promise<AuthResponse> {
   const cookieStore = await cookies();
   
   try {
@@ -19,14 +21,17 @@ export async function loginAction(
       body: JSON.stringify(credentials),
       credentials: "include",
     });
-    const data = await response.json();
-    console.log('Response body:', data);
+
     if (!response.ok) {
       return {
         success: false,
         message: "Credenciales inválidas",
       };
     }
+
+    const data = await response.json();
+    console.log(data);
+    
 
     // Procesar cookies de la respuesta
     const responseCookies = response.headers.getSetCookie();
@@ -43,10 +48,10 @@ export async function loginAction(
 
     return {
       success: true,
-      redirect: "/",
+      redirect: "/dashboard",
     };
   } catch (error) {
-    console.error(error);
+    console.error('Error en login:', error);
     return {
       success: false,
       message: "Error en el servidor",
@@ -54,24 +59,10 @@ export async function loginAction(
   }
 }
 
-export async function getAuthHeaders() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token");
-  const refreshToken = cookieStore.get("refresh_token");
-  
-  return {
-    Authorization: `Bearer ${accessToken?.value}`,
-    Cookie: `access_token=${accessToken?.value}; refresh_token=${refreshToken?.value}`,
-  };
-}
-
-export async function logoutAction(): Promise<LoginResponse> {
-  const cookieStore = await cookies();
-  
+export async function logoutAction(): Promise<AuthResponse> {
   try {
     const response = await fetch(`${API_URL}/auth/logout`, {
       method: "POST",
-      headers: await getAuthHeaders(),
       credentials: "include",
     });
 
@@ -80,18 +71,81 @@ export async function logoutAction(): Promise<LoginResponse> {
     }
 
     // Limpiar cookies
+    const cookieStore = await cookies();
     cookieStore.delete("access_token");
     cookieStore.delete("refresh_token");
+    cookieStore.delete("logged_in");
 
     return {
       success: true,
       redirect: "/sign-in",
     };
   } catch (error) {
-    console.error(error);
+    console.error('Error en logout:', error);
     return {
       success: false,
       message: "Error al cerrar sesión",
     };
+  }
+}
+
+// export async function updatePasswordAction(
+//   updatePasswordDto: UpdatePasswordCredentials
+// ): Promise<AuthResponse> {
+//   try {
+//     const response = await fetch(`${API_URL}/auth/update-password`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(updatePasswordDto),
+//       credentials: "include",
+//     });
+
+//     if (!response.ok) {
+//       const error = await response.json();
+//       return {
+//         success: false,
+//         message: error.message || "Error al actualizar contraseña",
+//       };
+//     }
+
+//     return {
+//       success: true,
+//       message: "Contraseña actualizada exitosamente",
+//       redirect: "/dashboard",
+//     };
+//   } catch (error) {
+//     console.error('Error actualizando contraseña:', error);
+//     return {
+//       success: false,
+//       message: "Error en el servidor",
+//     };
+//   }
+// }
+
+export async function requireAuth() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token");
+
+  if (!accessToken) {
+    redirect("/sign-in");
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/auth/verify`, {
+      headers: {
+        Cookie: `access_token=${accessToken.value}`,
+      },
+    });
+
+    if (!response.ok) {
+      redirect("/sign-in");
+    }
+
+    return await response.json();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    redirect("/sign-in");
   }
 }
