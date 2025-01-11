@@ -1,3 +1,4 @@
+import ProductList from "./_components/ProductList";
 import { getAllProducts } from "./actions";
 
 export default async function Page() {
@@ -9,6 +10,7 @@ export default async function Page() {
     return (
         <div>
 			{JSON.stringify(products)}
+            <ProductList products={products}/>
         </div>
     );
 }
