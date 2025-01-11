@@ -48,7 +48,7 @@ export async function loginAction(
 
     return {
       success: true,
-      redirect: "/dashboard",
+      redirect: "/",
     };
   } catch (error) {
     console.error('Error en login:', error);

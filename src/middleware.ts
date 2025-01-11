@@ -33,7 +33,7 @@ export async function middleware(request: NextRequest) {
 
   // Si tiene tokens y está intentando acceder a una ruta pública, redirigir al dashboard
   if ((accessToken || refreshToken) && isPublicRoute(pathname)) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   // Permitir el acceso a rutas públicas sin verificar tokens (solo para usuarios no autenticados)
