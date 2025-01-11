@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
 
   try {
     // Verificar con el backend
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/verify`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/verify`, {
       method: 'HEAD',
       headers: {
         Cookie: request.headers.get("cookie") || "",
