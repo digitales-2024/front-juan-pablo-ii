@@ -1,79 +1,42 @@
 // src/middleware.ts
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-// Rutas públicas que no requieren autenticación
-const PUBLIC_ROUTES = [
-  "/sign-in",
-  "/sign-up",
-  "/forgot-password",
-  "/reset-password",
-];
+// Definir rutas de forma más organizada
+const PUBLIC_ROUTES = ["/sign-in", "/sign-up", "/forgot-password"];
+const AUTH_ROUTES = ["/", "/dashboard", "/profile", "/settings"];
+const DEFAULT_REDIRECT = "/";
 
-// Rutas API públicas
-const PUBLIC_API_ROUTES = [
-  "/api/auth/login",
-  "/api/auth/register",
-  "/api/auth/forgot-password",
-];
-
-function isPublicRoute(path: string): boolean {
-  return (
-    PUBLIC_ROUTES.includes(path) ||
-    PUBLIC_API_ROUTES.some(route => path.startsWith(route)) ||
-    path.startsWith("/_next") ||
-    path.includes("favicon")
-  );
-}
-
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const accessToken = request.cookies.get("access_token");
-  const refreshToken = request.cookies.get("refresh_token");
+  const accessToken = request.cookies.get("access_token")?.value;
+  const refreshToken = request.cookies.get("refresh_token")?.value;
+  const isAuthenticated = !!(accessToken || refreshToken);
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+  const isAuthRoute = AUTH_ROUTES.includes(pathname);
 
-  // Si tiene tokens y está intentando acceder a una ruta pública, redirigir al dashboard
-  if ((accessToken || refreshToken) && isPublicRoute(pathname)) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // Caso 1: Usuario autenticado intentando acceder a rutas públicas
+  if (isAuthenticated && isPublicRoute) {
+    return NextResponse.redirect(new URL(DEFAULT_REDIRECT, request.url));
   }
 
-  // Permitir el acceso a rutas públicas sin verificar tokens (solo para usuarios no autenticados)
-  if (isPublicRoute(pathname)) {
-    return NextResponse.next();
+  // Caso 2: Usuario no autenticado intentando acceder a rutas protegidas
+  if (!isAuthenticated && isAuthRoute) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
-  // Redirigir a la página de inicio de sesión si no hay tokens
-  if (!accessToken && !refreshToken) {
-    const loginUrl = new URL("/sign-in", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  try {
-    // Verificar con el backend
-    const response = await fetch(`${process.env.BACKEND_URL}/auth/verify`, {
-      method: 'HEAD',
-      headers: {
-        Cookie: request.headers.get("cookie") || "",
-      },
-    });
-
-    if (!response.ok) {
-      const loginUrl = new URL("/sign-in", request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Si está autenticado y en una ruta pública, redirigir al inicio
-    if (isPublicRoute(pathname) && response.ok && !accessToken && !refreshToken) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    console.error('Error en middleware:', error);
-    const loginUrl = new URL("/sign-in", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
+  // Caso 3: Permitir el acceso normal en todos los demás casos
+  return NextResponse.next();
 }
 
+// Configuración estática del matcher
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    '/',
+    '/sign-in',
+    '/sign-up',
+    '/forgot-password',
+    '/dashboard',
+    '/profile',
+    '/settings'
+  ]
 };
