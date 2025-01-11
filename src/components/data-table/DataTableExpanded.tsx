@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/table";
 
 import { Empty } from "../common/Empty";
-import { DataTableFloatingBar } from "./advanced/DataTableFloatingBar";
+
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableToolbar } from "./DataTableToolbar";
 
@@ -51,7 +51,7 @@ export function DataTableExpanded<TData, TValue>({
     getSubRows,
     renderExpandedRow,
     onClickRow,
-    customExcelExport,
+
 }: DataTableExpandedProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = useState({});
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -214,12 +214,6 @@ export function DataTableExpanded<TData, TValue>({
                 </Table>
             </div>
             <DataTablePagination table={table} />
-            {table.getFilteredSelectedRowModel().rows.length > 0 && (
-                <DataTableFloatingBar
-                    table={table}
-                    customExcelExport={customExcelExport}
-                />
-            )}
         </div>
     );
 }
