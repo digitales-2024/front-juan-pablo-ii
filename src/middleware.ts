@@ -1,81 +1,49 @@
 // src/middleware.ts
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-// Rutas públicas que no requieren autenticación
+// Define tus rutas públicas
 const PUBLIC_ROUTES = [
-  "/sign-in",
-  "/sign-up",
-  "/forgot-password",
-  "/reset-password",
+  '/sign-in',
+  '/sign-up',
+  '/forgot-password'
 ];
 
-// Rutas API públicas
-const PUBLIC_API_ROUTES = [
-  "/api/auth/login",
-  "/api/auth/register",
-  "/api/auth/forgot-password",
-];
-
-function isPublicRoute(path: string): boolean {
-  return (
-    PUBLIC_ROUTES.includes(path) ||
-    PUBLIC_API_ROUTES.some(route => path.startsWith(route)) ||
-    path.startsWith("/_next") ||
-    path.includes("favicon")
-  );
-}
-
-export async function middleware(request: NextRequest) {
+// Middleware function
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Permitir el acceso a rutas públicas sin verificar tokens
-  if (isPublicRoute(pathname)) {
-    return NextResponse.next();
+  // Verifica si la ruta actual es pública
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+
+  // Verifica autenticación
+  const accessToken = request.cookies.get("access_token")?.value;
+  const refreshToken = request.cookies.get("refresh_token")?.value;
+  const isAuthenticated = !!(accessToken || refreshToken);
+
+  // Si la ruta es pública y el usuario está autenticado, redirige al dashboard
+  if (isPublicRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
-  // Verificar tokens
-  const accessToken = request.cookies.get("access_token");
-  const refreshToken = request.cookies.get("refresh_token");
-
-  // Redirigir a la página de inicio de sesión si no hay tokens
-  if (!accessToken && !refreshToken) {
-    console.log('estoy en el 1');
-    const loginUrl = new URL("/sign-in", request.url);
-    // loginUrl.searchParams.set("from", pathname);
-    return NextResponse.redirect(loginUrl);
+  // Si la ruta NO es pública y el usuario NO está autenticado, redirige al login
+  if (!isPublicRoute && !isAuthenticated) {
+    return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
-  try {
-    // Verificar con el backend
-    const response = await fetch(`${process.env.BACKEND_URL}/auth/verify`, {
-      method: 'HEAD',
-      headers: {
-        Cookie: request.headers.get("cookie") || "",
-      },
-    });
-
-    if (!response.ok) {
-      console.log('estoy en el 2');
-      const loginUrl = new URL("/sign-in", request.url);
-      // loginUrl.searchParams.set("from", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Si está autenticado y en una ruta pública, redirigir al inicio
-    if (isPublicRoute(pathname) && response.ok && !accessToken && !refreshToken) {
-      console.log('estoy en el 3');
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    console.error('Error en middleware:', error);
-    const loginUrl = new URL("/sign-in", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
+  return NextResponse.next();
 }
 
+// Configuración estática del matcher
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    /*
+     * Coincide con todas las rutas excepto:
+     * 1. /api (rutas API)
+     * 2. /_next (archivos estáticos de Next.js)
+     * 3. /_static (si tienes una carpeta static)
+     * 4. /_vercel (archivos internos de Vercel)
+     * 5. /favicon.ico, /sitemap.xml, etc.
+     */
+    '/((?!api|_next|_static|_vercel|favicon.ico|sitemap.xml).*)',
+  ]
 };

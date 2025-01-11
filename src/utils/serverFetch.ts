@@ -99,7 +99,7 @@ export async function serverFetch<Success>(
                     // @ts-expect-error allowing null
                     return [null, e as Error];
                 } finally {
-                    redirect("/log-in");
+                    redirect("/sign-in");
                 }
             }
         }
