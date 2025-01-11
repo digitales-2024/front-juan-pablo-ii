@@ -26,15 +26,11 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="es" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable}  antialiased `}
 			>
-				<SearchProvider>
-					<SidebarProvider defaultOpen={true}>
-						{children}
-					</SidebarProvider>
-				</SearchProvider>
+				<SearchProvider>{children}</SearchProvider>
 			</body>
 		</html>
 	);
