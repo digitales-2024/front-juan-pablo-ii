@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { LoginCredentials, AuthResponse } from './types';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_URL = process.env.BACKEND_URL;
 
 export async function loginAction(
   credentials: LoginCredentials
