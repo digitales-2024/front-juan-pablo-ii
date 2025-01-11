@@ -28,21 +28,22 @@ function isPublicRoute(path: string): boolean {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const accessToken = request.cookies.get("access_token");
+  const refreshToken = request.cookies.get("refresh_token");
 
-  // Permitir el acceso a rutas públicas sin verificar tokens
+  // Si tiene tokens y está intentando acceder a una ruta pública, redirigir al dashboard
+  if ((accessToken || refreshToken) && isPublicRoute(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // Permitir el acceso a rutas públicas sin verificar tokens (solo para usuarios no autenticados)
   if (isPublicRoute(pathname)) {
     return NextResponse.next();
   }
 
-  // Verificar tokens
-  const accessToken = request.cookies.get("access_token");
-  const refreshToken = request.cookies.get("refresh_token");
-
   // Redirigir a la página de inicio de sesión si no hay tokens
   if (!accessToken && !refreshToken) {
-    console.log('estoy en el 1');
     const loginUrl = new URL("/sign-in", request.url);
-    // loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -56,15 +57,12 @@ export async function middleware(request: NextRequest) {
     });
 
     if (!response.ok) {
-      console.log('estoy en el 2');
       const loginUrl = new URL("/sign-in", request.url);
-      // loginUrl.searchParams.set("from", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
     // Si está autenticado y en una ruta pública, redirigir al inicio
     if (isPublicRoute(pathname) && response.ok && !accessToken && !refreshToken) {
-      console.log('estoy en el 3');
       return NextResponse.redirect(new URL("/", request.url));
     }
 
