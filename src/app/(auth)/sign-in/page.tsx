@@ -27,9 +27,9 @@ export default function SignIn2() {
           <blockquote className="space-y-2">
             <p className="text-lg">
               &ldquo;Esta plataforma me ha ayudado a gestionar de manera más eficiente todos 
-              los procesos administrativos del colegio.&rdquo;
+              los procesos administrativos de mi empresa.&rdquo;
             </p>
-            <footer className="text-sm">Sofia Martínez</footer>
+            <footer className="text-sm">Chupetin Trujillo</footer>
           </blockquote>
         </div>
       </div>
