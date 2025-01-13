@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 export default function NotFound() {
 	const navigate = useRouter();
-	const history = window.history;
+	const history = typeof window !== "undefined" ? window.history : null;
 	return (
 		<div className="h-svh">
 			<div className="m-auto flex h-full w-full flex-col items-center justify-center gap-2">
@@ -14,7 +14,7 @@ export default function NotFound() {
 					no existe o podría haber sido eliminado.
 				</p>
 				<div className="mt-6 flex gap-4">
-					<Button variant="outline" onClick={() => history.go(-1)}>
+					<Button variant="outline" onClick={() => history?.go(-1)}>
 						Volver
 					</Button>
 					<Button onClick={() => navigate.push("/")}>
