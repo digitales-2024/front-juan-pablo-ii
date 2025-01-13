@@ -2597,6 +2597,28 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        RolResponseDto: {
+            id: string;
+            "Nombre del rol": string;
+            "Descripci\u00F3n del rol"?: string;
+        };
+        UserProfileResponseDto: {
+            name: string;
+            email: string;
+            phone?: string;
+            id: string;
+            isSuperAdmin: boolean;
+            /**
+             * @description Roles del usuario
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "name": "admin"
+             *       }
+             *     ]
+             */
+            roles: components["schemas"]["RolResponseDto"][];
+        };
         UpdatePasswordDto: {
             password: string;
             newPassword: string;
@@ -2619,6 +2641,38 @@ export interface components {
         };
         DeleteUsersDto: {
             ids: string[];
+        };
+        UserResponseDto: {
+            name: string;
+            email: string;
+            phone?: string;
+            id: string;
+            isSuperAdmin: boolean;
+            /**
+             * @description Roles del usuario
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "name": "admin"
+             *       }
+             *     ]
+             */
+            roles: components["schemas"]["RolResponseDto"][];
+            /**
+             * @description El usuario está activa
+             * @example true
+             */
+            isActive: boolean;
+            /**
+             * @description El usuario debe cambiar la contraseña
+             * @example true
+             */
+            mustChangePassword: boolean;
+            /**
+             * @description Última vez que el usuario hizo login
+             * @example true
+             */
+            lastLogin: boolean;
         };
         SendEmailDto: {
             email: string;
@@ -5309,7 +5363,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserProfileResponseDto"];
+                };
             };
             /** @description Bad request */
             400: {
@@ -5377,7 +5433,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"][];
+                };
             };
             /** @description Bad request */
             400: {
