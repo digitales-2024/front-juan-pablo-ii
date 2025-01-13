@@ -65,7 +65,7 @@ export async function logoutAction(): Promise<AuthResponse> {
       method: "POST",
       credentials: "include",
     });
-
+    
     if (!response.ok) {
       throw new Error("Error al cerrar sesión");
     }

@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,8 +14,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
+import { logoutAction } from "@/app/(auth)/actions";
 
 export function ProfileDropdown() {
+	const handleLogout = async () => {
+		const response = await logoutAction();
+		if (response.success && response.redirect) {
+			window.location.href = response.redirect;
+		}
+	};
+
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
@@ -50,8 +60,8 @@ export function ProfileDropdown() {
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem>
-					Cerrar Sessión
+				<DropdownMenuItem onClick={handleLogout}>
+					Cerrar Sesión
 					<DropdownMenuShortcut>
 						<LogOut size={16} />
 					</DropdownMenuShortcut>
