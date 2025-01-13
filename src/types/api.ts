@@ -2597,6 +2597,14 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        UserProfileResponseDto: {
+            name: string;
+            email: string;
+            phone?: string;
+            roles: string[];
+            id: string;
+            isSuperAdmin: boolean;
+        };
         UpdatePasswordDto: {
             password: string;
             newPassword: string;
@@ -5309,7 +5317,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserProfileResponseDto"];
+                };
             };
             /** @description Bad request */
             400: {
