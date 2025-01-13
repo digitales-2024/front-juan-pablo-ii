@@ -1,36 +1,36 @@
 "use client";
 import { DataTable } from "@/components/data-table/DataTable";
 import { useEffect, useMemo } from "react";
-import { Product } from "../types";
-import { productColumns } from "./ProductTableColumns";
-import { ProductTableToolbarActions } from "./ProductTableToolbarActions";
+import { Category } from "../types";
+import { categoryColumns } from "./CategoryTableColumns";
+import { CategoryTableToolbarActions } from "./CategoryTableToolbarActions";
 import { Profile } from "@/app/(account)/type";
 import { useProfileStore } from "@/app/hooks/use-profile";
 
-interface ProductTableProps {
-	data: Product[];
-	profile: Profile;
+interface CategoryTableProps {
+    data: Category[];
+    profile: Profile;
 }
 
-const ProductTable: React.FC<ProductTableProps> = ({ data, profile }) => {
-	const columns = useMemo(
-		() => productColumns(profile.isSuperAdmin),
-		[profile]
-	);
-	const { setProfile } = useProfileStore();
+const CategoryTable: React.FC<CategoryTableProps> = ({ data, profile }) => {
+    const columns = useMemo(
+        () => categoryColumns(profile.isSuperAdmin),
+        [profile]
+    );
+    const { setProfile } = useProfileStore();
 
-	useEffect(() => {
-		setProfile(profile);
-	}, [profile]);
+    useEffect(() => {
+        setProfile(profile);
+    }, [profile]);
 
-	return (
-		<DataTable
-			data={data}
-			columns={columns}
-			toolbarActions={<ProductTableToolbarActions />}
-			placeholder="Buscar producto..."
-		/>
-	);
+    return (
+        <DataTable
+            data={data}
+            columns={columns}
+            toolbarActions={<CategoryTableToolbarActions />}
+            placeholder="Buscar categoría..."
+        />
+    );
 };
 
-export default ProductTable;
+export default CategoryTable;
