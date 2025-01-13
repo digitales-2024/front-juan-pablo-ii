@@ -1,4 +1,9 @@
-export type User = {
+import { components } from "@/types/api";
+
+
+export type Role = components["schemas"]["CreateRolDto"];
+
+export type UserProfile = {
     id: string;
     name: string;
     email: string;
@@ -9,7 +14,5 @@ export type User = {
     lastLogin: string;
     roles: Role[];
 };
-export type Role = {
-    id: string;
-    name: string;
-};
+
+export type User = components["schemas"]["CreateUserDto"];
