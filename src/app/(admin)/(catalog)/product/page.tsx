@@ -1,16 +1,28 @@
-import ProductList from "./_components/ProductList";
 import { getAllProducts } from "./actions";
+import ProductTable from "./_components/ProductTable";
+import { Shell } from "@/components/common/Shell";
+import { HeaderPage } from "@/components/common/HeaderPage";
+import { Product } from "./types";
 
 export default async function Page() {
+    let products: Product[] = [];
 
-	const products = await getAllProducts();
-
-	console.log(products)
+    try {
+        products = await getAllProducts();
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        // Puedes mostrar un mensaje de error en la UI si lo deseas
+    }
 
     return (
         <div>
-			{JSON.stringify(products)}
-            <ProductList products={products}/>
+            <Shell className="gap-6">
+                <HeaderPage
+                    title="Productos"
+                    description="Lista de productos registrados en el sistema."
+                />
+                <ProductTable data={products} />
+            </Shell>
         </div>
     );
 }
