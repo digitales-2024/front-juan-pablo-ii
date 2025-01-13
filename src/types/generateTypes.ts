@@ -1,7 +1,9 @@
 import { execSync } from "child_process";
 import * as path from "path";
 
-const SWAGGER_URL = "http://localhost:5000/api-json"; // Ajusta esto a la URL de tu backend
+const URL_BACKEND = new URL(process.env.BACKEND_URL || "http://localhost:5000")
+	.origin;
+const SWAGGER_URL = URL_BACKEND + "/api-json";
 const OUTPUT_PATH = path.join(process.cwd(), "src/types/api.ts");
 
 async function generateTypes() {
