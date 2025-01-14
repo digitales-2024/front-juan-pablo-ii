@@ -3,6 +3,7 @@ import "./globals.css";
 import localFont from "next/font/local";
 import { SearchProvider } from "@/context/search-context";
 import { ToastProvider } from "@/components/Toast-provider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 const geistSans = localFont({
 	src: "./fonts/GeistVF.woff",
@@ -30,8 +31,10 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable}  antialiased `}
 			>
-				<SearchProvider>{children}</SearchProvider>
-				<ToastProvider />
+				<AuthProvider>
+					<SearchProvider>{children}</SearchProvider>
+					<ToastProvider />
+				</AuthProvider>
 			</body>
 		</html>
 	);
