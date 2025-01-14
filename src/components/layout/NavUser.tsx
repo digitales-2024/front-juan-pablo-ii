@@ -17,24 +17,26 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { logoutAction } from "@/app/(auth)/actions";
+import { useAuth } from "@/lib/store/auth";
 
-export function NavUser({
-	user,
-}: {
-	user: {
-		name: string;
-		email: string;
-		avatar?: string;
-	};
-}) {
+export function NavUser() {
+	const { user, isLoading, logout } = useAuth();
 	const { isMobile } = useSidebar();
 
 	const handleLogout = async () => {
-		const response = await logoutAction();
-		if (response.success && response.redirect) {
-			window.location.href = response.redirect;
-		}
+		await logoutAction();
+		logout();
 	};
+
+	if (isLoading) {
+		return (
+			<div className="animate-pulse">
+				<div className="h-8 w-8 rounded-full bg-gray-200" />
+			</div>
+		);
+	}
+
+	if (!user) return null;
 
 	return ( 
 		<SidebarMenu>
@@ -47,11 +49,10 @@ export function NavUser({
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
 								<AvatarImage
-									src={user.avatar}
 									alt={user.name}
 								/>
 								<AvatarFallback className="rounded-lg">
-									SN
+									{user.name?.substring(0, 2).toUpperCase() || "UN"}
 								</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
@@ -75,11 +76,10 @@ export function NavUser({
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
 									<AvatarImage
-										src={user.avatar}
 										alt={user.name}
 									/>
 									<AvatarFallback className="rounded-lg">
-										SN
+										{user.name?.substring(0, 2).toUpperCase() || "UN"}
 									</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
@@ -95,13 +95,13 @@ export function NavUser({
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem asChild>
-								<Link href="/settings/account">
+								<Link href="/account">
 									<BadgeCheck />
 									Mi cuenta
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link href="/settings/notifications">
+								<Link href="/account/notifications">
 									<Bell />
 									Notificaciones
 								</Link>
