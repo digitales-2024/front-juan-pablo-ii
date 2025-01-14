@@ -1,8 +1,8 @@
 
 import { Separator } from '@/components/ui/separator'
 import { Main } from '@/components/layout/Main'
-import SidebarNav from './_components/SidebarNav'
 import { KeyRound, UserRound } from 'lucide-react';
+import SidebarNav from './_components/SidebarNav';
 
 export default function Layout({
 	children,
@@ -35,13 +35,13 @@ export default function Layout({
 
 const sidebarNavItems = [
   {
-    title: 'Profile',
+    title: 'Cuenta',
     icon: <UserRound size={18} />,
-    href: '/settings',
+    href: '/account',
   },
   {
-    title: 'Account',
+    title: 'Permisos',
     icon: <KeyRound size={18} />,
-    href: '/settings/account',
+    href: '/account/permissions',
   },
 ]
