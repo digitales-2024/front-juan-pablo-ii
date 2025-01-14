@@ -9,7 +9,7 @@ export const productSchema = z.object({
 	description: z.string().optional(),
 });
 
-export type Product = z.infer<typeof productSchema> & { id: string };
+export type Product = z.infer<typeof productSchema> & { id: string } & { isActive: boolean };
 export type CreateProductInput = z.infer<typeof productSchema>;
 export type UpdateProductInput = Partial<CreateProductInput>;
 
