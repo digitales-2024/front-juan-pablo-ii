@@ -2598,9 +2598,12 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         RolResponseDto: {
+            /** @description ID del rol */
             id: string;
-            "Nombre del rol": string;
-            "Descripci\u00F3n del rol"?: string;
+            /** @description Nombre del rol */
+            name: string;
+            /** @description Descripción del rol */
+            description?: string;
         };
         UserProfileResponseDto: {
             name: string;
