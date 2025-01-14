@@ -1,60 +1,44 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
+import { useAuth } from '@/lib/store/auth'
+import { useEffect } from 'react'
+import { Profile } from '@/app/(auth)/types'
+import { ProfilePersonalData } from './ProfilePersonalData'
+import { ProfileAccountStatus } from './ProfileAccountStatus'
+import { ProfileRolesPermissions } from './ProfileRolesPermissions'
 
-import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+interface FormProfileProps {
+  profile: Profile
+}
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
+export default function FormProfile({ profile: serverProfile }: FormProfileProps) {
+  const { user, setUser } = useAuth()
+  
+  useEffect(() => {
+    if (!user && serverProfile) {
+      setUser(serverProfile);
+    }
+  }, [serverProfile, setUser, user]);
 
-export default function Page() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-    },
-  })
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-  }
+  const profile = user || serverProfile
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 p-5">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium">Información del Perfil</h3>
+        <p className="text-sm text-muted-foreground">
+          Aquí puedes ver y actualizar tu información de perfil
+        </p>
+      </div>
+      
+      <div className="grid gap-6">
+        <ProfilePersonalData profile={profile} />
+        {/* <ProfileAccountStatus profile={profile} /> */}
+        {/* <ProfileRolesPermissions profile={profile} /> */}
+
+       
+      </div>
+    </div>
   )
 }
+
