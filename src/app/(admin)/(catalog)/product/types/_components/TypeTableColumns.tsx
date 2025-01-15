@@ -1,6 +1,6 @@
 "use client";
 
-import { Category } from "../types";
+import { TypeProduct } from "../types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import { useState } from "react";
@@ -20,12 +20,12 @@ import { cn } from "@/lib/utils";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
-import { DeleteCategoryDialog } from "./DeleteTypeDialog";
-import { ReactivateCategoryDialog } from "./ReactivateTypeDialog";
-import { UpdateCategorySheet } from "./UpdateCategorySheet";
+import { DeleteTypeDialog } from "./DeleteTypeDialog";
+import { ReactivateTypeDialog } from "./ReactivateTypeDialog";
+import { UpdateTypeSheet } from "./UpdateCategorySheet";
 
-export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] => {
-    const columns: ColumnDef<Category>[] = [
+export const typeColumns = (isSuperAdmin: boolean): ColumnDef<TypeProduct>[] => {
+    const columns: ColumnDef<TypeProduct>[] = [
         {
             id: "select",
             size: 10,
@@ -145,24 +145,24 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
                 return (
                     <div>
                         <div>
-                            <UpdateCategorySheet
+                            <UpdateTypeSheet
                                 open={showEditDialog}
                                 onOpenChange={setShowEditDialog}
-                                category={row?.original}
+                                typeProduct={row?.original}
                             />
-                            <DeleteCategoryDialog
+                            <DeleteTypeDialog
                                 open={showDeleteDialog}
                                 onOpenChange={setShowDeleteDialog}
-                                categories={[row?.original]}
+                                types={[row?.original]}
                                 showTrigger={false}
                                 onSuccess={() => {
                                     row.toggleSelected(false);
                                 }}
                             />
-                            <ReactivateCategoryDialog
+                            <ReactivateTypeDialog
                                 open={showReactivateDialog}
                                 onOpenChange={setShowReactivateDialog}
-                                categories={[row?.original]}
+                                types={[row?.original]}
                                 showTrigger={false}
                                 onSuccess={() => {
                                     row.toggleSelected(false);
