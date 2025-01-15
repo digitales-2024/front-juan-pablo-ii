@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	Select,
 	SelectContent,
@@ -25,7 +27,10 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Bot } from "lucide-react";
-import { generatePassword } from "../actions";
+import { useEffect, useState, useTransition } from "react";
+import { getRoles } from "../../roles/actionst";
+import { RoleResponseDto } from "../../roles/types";
+import { generatePassword } from "../utils";
 
 interface CreateUsersFormProps
 	extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -39,14 +44,18 @@ export default function CreateUserForm({
 	form,
 	onSubmit,
 }: CreateUsersFormProps) {
-	/**
-	 * Generate a random password using the `generatePassword` function from the
-	 * `../actions` module and set it as the value of the `password` field in the
-	 * form.
-	 */
 	const handleGeneratePassword = () => {
 		form.setValue("password", generatePassword());
 	};
+
+	const [isPending, startTransition] = useTransition();
+	const [roles, setRoles] = useState<RoleResponseDto[]>([]);
+	useEffect(() => {
+		startTransition(async () => {
+			const roles = await getRoles();
+			setRoles(roles);
+		});
+	}, []);
 
 	return (
 		<Form {...form}>
@@ -146,6 +155,7 @@ export default function CreateUserForm({
 										field.onChange([value])
 									}
 									defaultValue={field.value[0] || ""}
+									disabled={isPending}
 								>
 									<FormControl>
 										<SelectTrigger className="capitalize">
@@ -154,7 +164,7 @@ export default function CreateUserForm({
 									</FormControl>
 									<SelectContent>
 										<SelectGroup>
-											{/* {dataRoles?.map((rol) => (
+											{roles?.map((rol) => (
 												<SelectItem
 													key={rol.id}
 													value={rol.id}
@@ -162,7 +172,7 @@ export default function CreateUserForm({
 												>
 													{rol.name}
 												</SelectItem>
-											))} */}
+											))}
 										</SelectGroup>
 									</SelectContent>
 								</Select>

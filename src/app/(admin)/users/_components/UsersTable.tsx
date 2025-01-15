@@ -13,7 +13,7 @@ export function UsersTable({ data }: TData) {
 
 	return (
 		<DataTable
-			data={data}
+			data={data || []}
 			columns={columns}
 			toolbarActions={<UsersTableToolbarActions />}
 		/>

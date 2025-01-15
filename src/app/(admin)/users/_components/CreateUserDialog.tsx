@@ -1,6 +1,16 @@
+"use client";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserCreateDto, userCreateSchema } from "../types";
+import { createUser } from "../actions";
+import { toast } from "sonner";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Plus, RefreshCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import CreateUserForm from "./CreateUserForm";
 import {
 	Dialog,
-	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
@@ -10,7 +20,6 @@ import {
 } from "@/components/ui/dialog";
 import {
 	Drawer,
-	DrawerClose,
 	DrawerContent,
 	DrawerDescription,
 	DrawerFooter,
@@ -18,22 +27,17 @@ import {
 	DrawerTitle,
 	DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { UserCreateDto, userCreateSchema } from "../types";
-import { Button } from "@/components/ui/button";
-import { Plus, RefreshCcw } from "lucide-react";
-import CreateUserForm from "./CreateUserForm";
-import { createUser } from "../actions";
 
-const dataForm = {
+const CREATE_USER_MESSAGES = {
 	button: "Crear usuario",
 	title: "Registrar nuevo usuario",
 	description:
 		"Rellena los campos para crear un nuevo usuario y enviar sus credenciales por correo",
-};
+	success: "Usuario creado exitosamente",
+	submitButton: "Registrar y enviar correo",
+	cancel: "Cancelar",
+} as const;
+
 export default function CreateUserDialog() {
 	const [open, setOpen] = useState(false);
 	const [isCreatePending, startCreateTransition] = useTransition();
@@ -50,92 +54,88 @@ export default function CreateUserDialog() {
 		},
 	});
 
-	const onSubmit = async (input: UserCreateDto) => {
+	const handleSubmit = (input: UserCreateDto) => {
 		startCreateTransition(async () => {
 			await createUser(input);
+
+			toast.success(CREATE_USER_MESSAGES.success);
+			setOpen(false);
+			form.reset();
 		});
 	};
 
 	const handleClose = () => {
 		form.reset();
+		setOpen(false);
 	};
 
-	if (isDesktop)
+	const DialogFooterContent = () => (
+		<div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse">
+			<Button type="submit" disabled={isCreatePending} className="w-full">
+				{isCreatePending && (
+					<RefreshCcw
+						className="mr-2 size-4 animate-spin"
+						aria-hidden="true"
+					/>
+				)}
+				{CREATE_USER_MESSAGES.submitButton}
+			</Button>
+			<Button
+				type="button"
+				variant="outline"
+				className="w-full"
+				onClick={handleClose}
+			>
+				{CREATE_USER_MESSAGES.cancel}
+			</Button>
+		</div>
+	);
+
+	const TriggerButton = () => (
+		<Button onClick={() => setOpen(true)} variant="outline" size="sm">
+			<Plus className="size-4" aria-hidden="true" />
+			{CREATE_USER_MESSAGES.button}
+		</Button>
+	);
+
+	if (isDesktop) {
 		return (
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<Button variant="outline" size="sm">
-						<Plus className="mr-2 size-4" aria-hidden="true" />
-						{dataForm.button}
-					</Button>
+					<TriggerButton />
 				</DialogTrigger>
-				<DialogContent>
+				<DialogContent tabIndex={undefined}>
 					<DialogHeader>
-						<DialogTitle>{dataForm.title}</DialogTitle>
+						<DialogTitle>{CREATE_USER_MESSAGES.title}</DialogTitle>
 						<DialogDescription>
-							{dataForm.description}
+							{CREATE_USER_MESSAGES.description}
 						</DialogDescription>
 					</DialogHeader>
-					<CreateUserForm form={form} onSubmit={onSubmit}>
-						<DialogFooter className="gap-2 sm:space-x-0 flex sm:flex-row-reverse">
-							<Button
-								disabled={isCreatePending}
-								className="w-full"
-							>
-								{isCreatePending && (
-									<RefreshCcw
-										className="mr-2 size-4 animate-spin"
-										aria-hidden="true"
-									/>
-								)}
-								Registrar y enviar correo
-							</Button>
-							<DialogClose asChild>
-								<Button
-									onClick={handleClose}
-									type="button"
-									variant="outline"
-									className="w-full"
-								>
-									Cancelar
-								</Button>
-							</DialogClose>
+					<CreateUserForm form={form} onSubmit={handleSubmit}>
+						<DialogFooter>
+							<DialogFooterContent />
 						</DialogFooter>
 					</CreateUserForm>
 				</DialogContent>
 			</Dialog>
 		);
+	}
 
 	return (
 		<Drawer open={open} onOpenChange={setOpen}>
 			<DrawerTrigger asChild>
-				<Button variant="outline" size="sm">
-					<Plus className="mr-2 size-4" aria-hidden="true" />
-					{dataForm.button}
-				</Button>
+				<TriggerButton />
 			</DrawerTrigger>
-
 			<DrawerContent>
 				<DrawerHeader>
-					<DrawerTitle>{dataForm.title}</DrawerTitle>
+					<DrawerTitle>{CREATE_USER_MESSAGES.title}</DrawerTitle>
 					<DrawerDescription>
-						{dataForm.description}
+						{CREATE_USER_MESSAGES.description}
 					</DrawerDescription>
 				</DrawerHeader>
-				<CreateUserForm form={form} onSubmit={onSubmit}>
-					<DrawerFooter className="gap-2 sm:space-x-0 flex flex-row-reverse">
-						<Button disabled={isCreatePending}>
-							{isCreatePending && (
-								<RefreshCcw
-									className="mr-2 size-4 animate-spin"
-									aria-hidden="true"
-								/>
-							)}
-							Registrar y enviar correo
-						</Button>
-						<DrawerClose asChild>
-							<Button variant="outline">Cancelar</Button>
-						</DrawerClose>
+				<CreateUserForm form={form} onSubmit={handleSubmit}>
+					<DrawerFooter>
+						<DialogFooterContent />
 					</DrawerFooter>
 				</CreateUserForm>
 			</DrawerContent>
