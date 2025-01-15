@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RefreshCcw } from "lucide-react";
 
-import { updateCategory } from "../actions";
-import { Category, UpdateCategoryInput, CategorySchema } from "../types";
+import { updateTypeProduct } from "../actions";
+import { TypeProduct, UpdateTypeProductInput, TypeProductSchema } from "../types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,45 +32,45 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const infoSheet = {
-    title: "Actualizar categoría",
-    description: "Actualiza la información de la categoría y guarda los cambios",
+    title: "Actualizar tipo de producto",
+    description: "Actualiza la información del tipo de producto y guarda los cambios",
 };
 
-interface UpdateCategorySheetProps
+interface UpdateTypeSheetProps
     extends Omit<
         React.ComponentPropsWithRef<typeof Sheet>,
         "open" | "onOpenChange"
     > {
-    category: Category;
+    typeProduct: TypeProduct;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export function UpdateCategorySheet({
-    category,
+export function UpdateTypeSheet({
+    typeProduct,
     open,
     onOpenChange,
-}: UpdateCategorySheetProps) {
-    const form = useForm<UpdateCategoryInput>({
-        resolver: zodResolver(CategorySchema),
+}: UpdateTypeSheetProps) {
+    const form = useForm<UpdateTypeProductInput>({
+        resolver: zodResolver(TypeProductSchema),
         defaultValues: {
-            name: category.name ?? "",
-            description: category.description ?? "",
+            name: typeProduct.name ?? "",
+            description: typeProduct.description ?? "",
         },
     });
 
     useEffect(() => {
         if (open) {
             form.reset({
-                name: category.name ?? "",
-                description: category.description ?? "",
+                name: typeProduct.name ?? "",
+                description: typeProduct.description ?? "",
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open, category]);
+    }, [open, typeProduct]);
 
-    const onSubmit = async (input: UpdateCategoryInput) => {
-        await updateCategory(category.id, input);
+    const onSubmit = async (input: UpdateTypeProductInput) => {
+        await updateTypeProduct(typeProduct.id, input);
         onOpenChange(false);
     };
 
@@ -87,7 +87,7 @@ export function UpdateCategorySheet({
                             className="bg-emerald-100 capitalize text-emerald-700"
                             variant="secondary"
                         >
-                            {category.name}
+                            {typeProduct.name}
                         </Badge>
                     </SheetTitle>
                     <SheetDescription>{infoSheet.description}</SheetDescription>
@@ -105,11 +105,11 @@ export function UpdateCategorySheet({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Nombre de la Categoría
+                                            Nombre del Tipo de Producto
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ingrese el nombre de la categoría"
+                                                placeholder="Ingrese el nombre del tipo de producto"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -127,7 +127,7 @@ export function UpdateCategorySheet({
                                         <FormLabel>Descripción</FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="Ingrese la descripción de la categoría"
+                                                placeholder="Ingrese la descripción del tipo de producto"
                                                 {...field}
                                             />
                                         </FormControl>
