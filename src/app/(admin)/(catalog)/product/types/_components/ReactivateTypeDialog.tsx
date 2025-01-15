@@ -1,8 +1,8 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { reactivateManyCategories } from "../actions";
-import { Category } from "../types";
+import { reactivateManyTypeProducts } from "../actions";
+import { TypeProduct } from "../types";
 import { type Row } from "@tanstack/react-table";
 import { RefreshCcw, RefreshCcwDot } from "lucide-react";
 import { ComponentPropsWithoutRef, useTransition } from "react";
@@ -30,25 +30,25 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer";
 
-interface ReactivateCategoryDialogProps
+interface ReactivateTypeDialogProps
     extends ComponentPropsWithoutRef<typeof AlertDialog> {
-    categories: Row<Category>["original"][];
+    types: Row<TypeProduct>["original"][];
     showTrigger?: boolean;
     onSuccess?: () => void;
 }
 
-export const ReactivateCategoryDialog = ({
-    categories,
+export const ReactivateTypeDialog = ({
+    types,
     showTrigger = true,
     onSuccess,
     ...props
-}: ReactivateCategoryDialogProps) => {
+}: ReactivateTypeDialogProps) => {
     const [isReactivatePending, startReactivateTransition] = useTransition();
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
-    const onReactivateCategoriesHandler = async () => {
+    const onReactivateTypesHandler = async () => {
         startReactivateTransition(async () => {
-            await reactivateManyCategories(categories.map((category) => category.id));
+            await reactivateManyTypeProducts(types.map((type) => type.id));
             props.onOpenChange?.(false);
             onSuccess?.();
         });
@@ -64,7 +64,7 @@ export const ReactivateCategoryDialog = ({
                                 className="mr-2 size-4"
                                 aria-hidden="true"
                             />
-                            Reactivar ({categories.length})
+                            Reactivar ({types.length})
                         </Button>
                     </AlertDialogTrigger>
                 ) : null}
@@ -77,9 +77,9 @@ export const ReactivateCategoryDialog = ({
                             Esta acción reactivará a{" "}
                             <span className="font-medium">
                                 {" "}
-                                {categories.length}
+                                {types.length}
                             </span>
-                            {categories.length === 1 ? " categoría" : " categorías"}
+                            {types.length === 1 ? " tipo de producto" : " tipos de productos"}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -88,7 +88,7 @@ export const ReactivateCategoryDialog = ({
                         </AlertDialogCancel>
                         <AlertDialogAction
                             aria-label="Reactivate selected rows"
-                            onClick={onReactivateCategoriesHandler}
+                            onClick={onReactivateTypesHandler}
                             disabled={isReactivatePending}
                         >
                             {isReactivatePending && (
@@ -114,7 +114,7 @@ export const ReactivateCategoryDialog = ({
                             className="mr-2 size-4"
                             aria-hidden="true"
                         />
-                        Reactivar ({categories.length})
+                        Reactivar ({types.length})
                     </Button>
                 </DrawerTrigger>
             ) : null}
@@ -123,14 +123,14 @@ export const ReactivateCategoryDialog = ({
                     <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
                     <DrawerDescription>
                         Esta acción reactivará a
-                        <span className="font-medium">{categories.length}</span>
-                        {categories.length === 1 ? " categoría" : " categorías"}
+                        <span className="font-medium">{types.length}</span>
+                        {types.length === 1 ? " tipo de producto" : " tipos de productos"}
                     </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter className="gap-2 sm:space-x-0">
                     <Button
                         aria-label="Reactivate selected rows"
-                        onClick={onReactivateCategoriesHandler}
+                        onClick={onReactivateTypesHandler}
                         disabled={isReactivatePending}
                     >
                         {isReactivatePending && (
