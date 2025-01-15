@@ -14,7 +14,7 @@ type GetAccountInput = z.infer<typeof GetAccountSchema>;
 
 const handler = async (data: GetAccountInput) => {
   try {
-    await sleep(500);
+    // await sleep(500);
     const { data: account } = await serverApi.get<Account>(`/users/${data.userId}`);
     return { data: account };
   } catch (error) {

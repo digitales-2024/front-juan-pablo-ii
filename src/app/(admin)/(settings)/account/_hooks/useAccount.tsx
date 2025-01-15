@@ -18,6 +18,6 @@ export const useAccount = (userId: string) => {
 
       return response.data!;
     },
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 60,
   });
 };
