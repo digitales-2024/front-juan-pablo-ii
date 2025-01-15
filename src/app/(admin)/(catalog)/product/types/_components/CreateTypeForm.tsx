@@ -1,7 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { CreateCategoryInput } from "../types";
+import { CreateTypeProductInput } from "../types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -14,18 +14,18 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-interface CreateCategoryFormProps
+interface CreateTypeFormProps
     extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
     children: React.ReactNode;
-    form: UseFormReturn<CreateCategoryInput>;
-    onSubmit: (data: CreateCategoryInput) => void;
+    form: UseFormReturn<CreateTypeProductInput>;
+    onSubmit: (data: CreateTypeProductInput) => void;
 }
 
-export const CreateCategoryForm = ({
+export const CreateTypeForm = ({
     children,
     form,
     onSubmit,
-}: CreateCategoryFormProps) => {
+}: CreateTypeFormProps) => {
     return (
         <Form {...form}>
             <form
@@ -40,12 +40,12 @@ export const CreateCategoryForm = ({
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel htmlFor="name">
-                                    Nombre de la Categoría
+                                    Nombre del Tipo de Producto
                                 </FormLabel>
                                 <FormControl>
                                     <Input
                                         id="name"
-                                        placeholder="Ingrese el nombre de la categoría"
+                                        placeholder="Ingrese el nombre del tipo de producto"
                                         {...field}
                                     />
                                 </FormControl>
@@ -60,12 +60,12 @@ export const CreateCategoryForm = ({
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel htmlFor="description">
-                                    Descripción de la Categoría
+                                    Descripción del Tipo de Producto
                                 </FormLabel>
                                 <FormControl>
                                     <Textarea
                                         id="description"
-                                        placeholder="Ingrese la descripción de la categoría"
+                                        placeholder="Ingrese la descripción del tipo de producto"
                                         {...field}
                                     />
                                 </FormControl>
