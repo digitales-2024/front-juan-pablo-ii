@@ -1,20 +1,20 @@
 "use client";
 import { DataTable } from "@/components/data-table/DataTable";
 import { useEffect, useMemo } from "react";
-import { Category } from "../types";
-import { categoryColumns } from "./TypeTableColumns";
-import { CategoryTableToolbarActions } from "./TypeTableToolbarActions";
+import { TypeProduct } from "../types";
+import { typeColumns } from "./TypeTableColumns";
+import { TypeTableToolbarActions } from "./TypeTableToolbarActions";
 import { Profile } from "@/app/(account)/type";
 import { useProfileStore } from "@/app/hooks/use-profile";
 
-interface CategoryTableProps {
-    data: Category[];
+interface TypeTableProps {
+    data: TypeProduct[];
     profile: Profile;
 }
 
-const CategoryTable: React.FC<CategoryTableProps> = ({ data, profile }) => {
+const TypeTable: React.FC<TypeTableProps> = ({ data, profile }) => {
     const columns = useMemo(
-        () => categoryColumns(profile.isSuperAdmin),
+        () => typeColumns(profile.isSuperAdmin),
         [profile]
     );
     const { setProfile } = useProfileStore();
@@ -27,10 +27,10 @@ const CategoryTable: React.FC<CategoryTableProps> = ({ data, profile }) => {
         <DataTable
             data={data}
             columns={columns}
-            toolbarActions={<CategoryTableToolbarActions />}
-            placeholder="Buscar categoría..."
+            toolbarActions={<TypeTableToolbarActions />}
+            placeholder="Buscar tipo de producto..."
         />
     );
 };
 
-export default CategoryTable;
+export default TypeTable;
