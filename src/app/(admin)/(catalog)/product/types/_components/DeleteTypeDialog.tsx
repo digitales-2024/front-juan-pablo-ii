@@ -1,8 +1,8 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { deleteManyCategories } from "../actions";
-import { Category } from "../types";
+import { deleteManyTypeProducts } from "../actions";
+import { TypeProduct } from "../types";
 import { type Row } from "@tanstack/react-table";
 import { RefreshCcw, Trash } from "lucide-react";
 import { ComponentPropsWithoutRef, useTransition } from "react";
@@ -31,25 +31,25 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-interface DeleteCategoryDialogProps
+interface DeleteTypeDialogProps
     extends ComponentPropsWithoutRef<typeof AlertDialog> {
-    categories: Row<Category>["original"][];
+    types: Row<TypeProduct>["original"][];
     showTrigger?: boolean;
     onSuccess?: () => void;
 }
 
-export function DeleteCategoryDialog({
-    categories,
+export function DeleteTypeDialog({
+    types,
     showTrigger = true,
     onSuccess,
     ...props
-}: DeleteCategoryDialogProps) {
+}: DeleteTypeDialogProps) {
     const [isDeletePending, startDeleteTransition] = useTransition();
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
-    const onDeleteCategoriesHandler = async () => {
+    const onDeleteTypesHandler = async () => {
         startDeleteTransition(async () => {
-            await deleteManyCategories(categories.map((category) => category.id));
+            await deleteManyTypeProducts(types.map((type) => type.id));
             props.onOpenChange?.(false);
             onSuccess?.();
         });
@@ -62,7 +62,7 @@ export function DeleteCategoryDialog({
                     <AlertDialogTrigger asChild>
                         <Button variant="outline" size="sm">
                             <Trash className="mr-2 size-4" aria-hidden="true" />
-                            Eliminar ({categories.length})
+                            Eliminar ({types.length})
                         </Button>
                     </AlertDialogTrigger>
                 ) : null}
@@ -75,9 +75,9 @@ export function DeleteCategoryDialog({
                             Esta acción eliminará a
                             <span className="font-medium">
                                 {" "}
-                                {categories.length}
+                                {types.length}
                             </span>
-                            {categories.length === 1 ? " categoría" : " categorías"}
+                            {types.length === 1 ? " tipo de producto" : " tipos de productos"}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -86,7 +86,7 @@ export function DeleteCategoryDialog({
                         </AlertDialogCancel>
                         <AlertDialogAction
                             aria-label="Delete selected rows"
-                            onClick={onDeleteCategoriesHandler}
+                            onClick={onDeleteTypesHandler}
                             disabled={isDeletePending}
                         >
                             {isDeletePending && (
@@ -109,7 +109,7 @@ export function DeleteCategoryDialog({
                 <DrawerTrigger asChild>
                     <Button variant="outline" size="sm">
                         <Trash className="mr-2 size-4" aria-hidden="true" />
-                        Eliminar ({categories.length})
+                        Eliminar ({types.length})
                     </Button>
                 </DrawerTrigger>
             ) : null}
@@ -118,14 +118,14 @@ export function DeleteCategoryDialog({
                     <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
                     <DrawerDescription>
                         Esta acción eliminará a
-                        <span className="font-medium">{categories.length}</span>
-                        {categories.length === 1 ? " categoría" : " categorías"}
+                        <span className="font-medium">{types.length}</span>
+                        {types.length === 1 ? " tipo de producto" : " tipos de productos"}
                     </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter className="gap-2 sm:space-x-0">
                     <Button
                         aria-label="Delete selected rows"
-                        onClick={onDeleteCategoriesHandler}
+                        onClick={onDeleteTypesHandler}
                         disabled={isDeletePending}
                     >
                         {isDeletePending && (
