@@ -2,46 +2,46 @@ import { components } from "@/types/api";
 import { z } from "zod";
 
 /**
- * Esquema de validación para la creación y actualización de categorías de productos
+ * Esquema de validación para la creación y actualización de tipos de productos
  */
-export const CategorySchema = z.object({
-	name: z.string().min(1, { message: "El nombre es requerido" }),
-	description: z.string().optional(),
+export const TypeProductSchema = z.object({
+    name: z.string().min(1, { message: "El nombre es requerido" }),
+    description: z.string().optional(),
 });
 
 /**
- * DTO para la creación de una categoría de productos.
+ * DTO para la creación de un tipo de producto.
  *
  * El DTO tiene las propiedades:
  * - id: string
  * - name: string, required, min 1 character
  * - description: string, optional
  */
-export type CreateCategoryDto = components["schemas"]["TypeProduct"];
+export type CreateTypeProductDto = components["schemas"]["TypeProduct"];
 
 /**
- * Esquema de validación para la creación y actualización de categorías de productos.
+ * Esquema de validación para la creación y actualización de tipos de productos.
  *
  * El esquema tiene dos propiedades:
  * - name: string, required, min 1 character
  * - description: string, optional
  */
-export type Category = z.infer<typeof CategorySchema> & { id: string } & { isActive: boolean };
+export type TypeProduct = z.infer<typeof TypeProductSchema> & { id: string } & { isActive: boolean };
+
 /**
- * Input para crear una categoría de productos.
+ * Input para crear un tipo de producto.
  *
  * La interfaz tiene dos propiedades:
  * - name: string, required, min 1 character
  * - description: string, optional
  */
-export type CreateCategoryInput = z.infer<typeof CategorySchema>;
+export type CreateTypeProductInput = z.infer<typeof TypeProductSchema>;
+
 /**
- * Input para actualizar una categoría de productos.
+ * Input para actualizar un tipo de producto.
  *
  * La interfaz tiene dos propiedades:
  * - name: string, optional
  * - description: string, optional
  */
-export type UpdateCategoryInput = Partial<CreateCategoryInput>;
-
-
+export type UpdateTypeProductInput = Partial<CreateTypeProductInput>;
