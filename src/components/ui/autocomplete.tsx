@@ -49,7 +49,6 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(
             disabled,
             isLoading = false,
             className,
-            sizeInput = "md", // Valor por defecto
         },
         ref,
     ) => {
@@ -137,7 +136,6 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(
                     placeholder={placeholder}
                     disabled={disabled}
                     className={className}
-                    {...(sizeInput && { sizeInput })}
                 />
                 <div
                     className={cn(
