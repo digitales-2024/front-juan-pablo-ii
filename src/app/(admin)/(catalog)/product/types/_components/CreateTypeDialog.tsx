@@ -1,8 +1,8 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { createCategory } from "../actions";
-import { CategorySchema, CreateCategoryInput } from "../types";
+import { createTypeProduct } from "../actions";
+import { TypeProductSchema, CreateTypeProductInput } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw, SquarePlus } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -31,38 +31,38 @@ import {
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { CreateCategoryForm } from "./CreateTypeForm";
+import { CreateTypeForm } from "./CreateTypeForm";
 
 const dataForm = {
-    button: "Crear categoría",
-    title: "Crear categoría",
+    button: "Crear tipo de producto",
+    title: "Crear tipo de producto",
     description:
-        "Complete los detalles a continuación para crear una nueva categoría.",
+        "Complete los detalles a continuación para crear un nuevo tipo de producto.",
 };
 
-interface CreateCategoryDialogProps {
+interface CreateTypeDialogProps {
     diferentPage?: boolean;
 }
 
-export function CreateCategoryDialog({
+export function CreateTypeDialog({
     diferentPage,
-}: CreateCategoryDialogProps) {
+}: CreateTypeDialogProps) {
     const [open, setOpen] = useState(false);
     const [isCreatePending, startCreateTransition] = useTransition();
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
-    const form = useForm<CreateCategoryInput>({
-        resolver: zodResolver(CategorySchema),
+    const form = useForm<CreateTypeProductInput>({
+        resolver: zodResolver(TypeProductSchema),
         defaultValues: {
             name: "",
             description: "",
         },
     });
 
-    const onSubmit = async (input: CreateCategoryInput) => {
+    const onSubmit = async (input: CreateTypeProductInput) => {
         try {
             startCreateTransition(() => {
-                createCategory(input);
+                createTypeProduct(input);
             });
         } catch (error) {
             throw error;
@@ -104,7 +104,7 @@ export function CreateCategoryDialog({
                         </DialogDescription>
                     </DialogHeader>
                     <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
-                        <CreateCategoryForm form={form} onSubmit={onSubmit}>
+                        <CreateTypeForm form={form} onSubmit={onSubmit}>
                             <DialogFooter>
                                 <div className="flex w-full flex-row-reverse gap-2">
                                     <Button
@@ -132,7 +132,7 @@ export function CreateCategoryDialog({
                                     </DialogClose>
                                 </div>
                             </DialogFooter>
-                        </CreateCategoryForm>
+                        </CreateTypeForm>
                     </ScrollArea>
                 </DialogContent>
             </Dialog>
@@ -155,7 +155,7 @@ export function CreateCategoryDialog({
                     </DrawerDescription>
                 </DrawerHeader>
                 <ScrollArea className="mt-4 max-h-full w-full gap-4 pr-4">
-                    <CreateCategoryForm form={form} onSubmit={onSubmit}>
+                    <CreateTypeForm form={form} onSubmit={onSubmit}>
                         <DrawerFooter className="gap-2 sm:space-x-0">
                             <Button disabled={isCreatePending}>
                                 {isCreatePending && (
@@ -170,7 +170,7 @@ export function CreateCategoryDialog({
                                 <Button variant="outline">Cancelar</Button>
                             </DrawerClose>
                         </DrawerFooter>
-                    </CreateCategoryForm>
+                    </CreateTypeForm>
                 </ScrollArea>
             </DrawerContent>
         </Drawer>
