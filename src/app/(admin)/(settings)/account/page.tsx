@@ -1,13 +1,10 @@
-import React from 'react'
-import FormProfile from './_components/FormProfile'
-import { getProfile } from './actions';
+'use server'
+import FormAccount from './_components/FormAccount'
 
-export default async function AccountPage() {
-  const profile = await getProfile();
-  
+export default async function Account2Page() {
   return (
-    <div>
-      <FormProfile profile={profile} />
+    <div className="container mx-auto py-6">
+      <FormAccount />
     </div>
   )
 }

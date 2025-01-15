@@ -1,3 +1,5 @@
+'use client'
+
 import { Profile } from '@/app/(auth)/types'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
