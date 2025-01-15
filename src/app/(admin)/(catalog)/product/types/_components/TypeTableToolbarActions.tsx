@@ -1,35 +1,35 @@
 "use client";
 
-import { Category } from "../types";
+import { TypeProduct } from "../types";
 import { type Table } from "@tanstack/react-table";
 
-import { CreateCategoryDialog } from "./CreateTypeDialog";
-import { DeleteCategoryDialog } from "./DeleteTypeDialog";
-import { ReactivateCategoryDialog } from "./ReactivateTypeDialog";
+import { CreateTypeDialog } from "./CreateTypeDialog";
+import { DeleteTypeDialog } from "./DeleteTypeDialog";
+import { ReactivateTypeDialog } from "./ReactivateTypeDialog";
 import { useProfileStore } from "@/app/hooks/use-profile";
 
-export interface CategoryTableToolbarActionsProps {
-    table?: Table<Category>;
+export interface TypeTableToolbarActionsProps {
+    table?: Table<TypeProduct>;
     exportFile?: boolean;
 }
 
-export function CategoryTableToolbarActions({
+export function TypeTableToolbarActions({
     table,
-}: CategoryTableToolbarActionsProps) {
+}: TypeTableToolbarActionsProps) {
     const { profile } = useProfileStore();
     return (
         <div className="flex w-fit flex-wrap items-center gap-2">
             {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
                 <>
-                    <DeleteCategoryDialog
-                        categories={table
+                    <DeleteTypeDialog
+                        types={table
                             .getFilteredSelectedRowModel()
                             .rows.map((row) => row.original)}
                         onSuccess={() => table.toggleAllRowsSelected(false)}
                     />
                     {profile?.isSuperAdmin && (
-                        <ReactivateCategoryDialog
-                            categories={table
+                        <ReactivateTypeDialog
+                            types={table
                                 .getFilteredSelectedRowModel()
                                 .rows.map((row) => row.original)}
                             onSuccess={() => table.toggleAllRowsSelected(false)}
@@ -37,7 +37,7 @@ export function CategoryTableToolbarActions({
                     )}
                 </>
             ) : null}
-            <CreateCategoryDialog />
+            <CreateTypeDialog />
         </div>
     );
 }
