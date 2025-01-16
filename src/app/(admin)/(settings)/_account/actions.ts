@@ -1,5 +1,5 @@
+import { Profile } from "@/app/(auth)/types";
 import { serverFetch } from "@/utils/serverFetch";
-import { Profile } from "./type";
 
 export async function getProfile() {
 	const [response, error] = await serverFetch("/profile");
