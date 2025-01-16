@@ -28,7 +28,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Bot } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
-import { getRoles } from "../../roles/actionst";
 import { RoleResponseDto } from "../../roles/types";
 import { generatePassword } from "../utils";
 
@@ -52,8 +51,8 @@ export default function CreateUserForm({
 	const [roles, setRoles] = useState<RoleResponseDto[]>([]);
 	useEffect(() => {
 		startTransition(async () => {
-			const roles = await getRoles();
-			setRoles(roles);
+			// const roles = await getRoles();
+			// setRoles(roles);
 		});
 	}, []);
 
