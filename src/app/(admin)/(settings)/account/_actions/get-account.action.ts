@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { createSafeAction } from '@/utils/createSafeAction';
-import { serverApi } from '@/api/server.api';
+import { serverFetch } from '@/utils/serverFetch';
 import { Account } from '../_interfaces/account.interface';
 import { sleep } from '@/utils/sleep';
 
@@ -14,8 +14,12 @@ type GetAccountInput = z.infer<typeof GetAccountSchema>;
 
 const handler = async (data: GetAccountInput) => {
   try {
-    // await sleep(500);
-    const { data: account } = await serverApi.get<Account>(`/users/${data.userId}`);
+    const [account, error] = await serverFetch<Account>(`/users/${data.userId}`);
+    
+    if (error) {
+      return { error: error.message };
+    }
+
     return { data: account };
   } catch (error) {
     return { error: 'Error al obtener la cuenta del usuario' };
