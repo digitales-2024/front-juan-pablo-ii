@@ -25,12 +25,11 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { Bot } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
-import { RoleResponseDto } from "../../roles/types";
 import { generatePassword } from "../utils";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { Button } from "@/components/ui/button";
+import { Bot } from "lucide-react";
+import { useRoles } from "../../roles/_hooks/useRoles";
 
 interface CreateUsersFormProps
 	extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -48,14 +47,9 @@ export default function CreateUserForm({
 		form.setValue("password", generatePassword());
 	};
 
-	const [isPending, startTransition] = useTransition();
-	const [roles, setRoles] = useState<RoleResponseDto[]>([]);
-	useEffect(() => {
-		startTransition(async () => {
-			// const roles = await getRoles();
-			// setRoles(roles);
-		});
-	}, []);
+	const { data, isLoading } = useRoles();
+
+	const roles = data && !("error" in data) ? data : [];
 
 	return (
 		<Form {...form}>
@@ -159,7 +153,7 @@ export default function CreateUserForm({
 										field.onChange([value])
 									}
 									defaultValue={field.value[0] || ""}
-									disabled={isPending}
+									disabled={isLoading}
 								>
 									<FormControl>
 										<SelectTrigger className="capitalize">
