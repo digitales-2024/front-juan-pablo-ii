@@ -324,6 +324,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AuthController_verify"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head: operations["AuthController_verifyQuick"];
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/modules": {
         parameters: {
             query?: never;
@@ -2597,6 +2613,23 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        UserProfileResponseDto: {
+            name: string;
+            email: string;
+            phone?: string;
+            /**
+             * @description Array de objetos Role
+             * @example [
+             *       {
+             *         "id": "1",
+             *         "name": "admin"
+             *       }
+             *     ]
+             */
+            roles: Record<string, never>[];
+            id: string;
+            isSuperAdmin: boolean;
+        };
         UpdatePasswordDto: {
             password: string;
             newPassword: string;
@@ -2607,7 +2640,16 @@ export interface components {
             email: string;
             password: string;
             phone?: string;
-            roles: string[];
+            /**
+             * @description Array de objetos Role
+             * @example [
+             *       {
+             *         "id": "1",
+             *         "name": "admin"
+             *       }
+             *     ]
+             */
+            roles: Record<string, never>[];
         };
         UpdateUserDto: {
             /** @description User name */
@@ -5309,7 +5351,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserProfileResponseDto"];
+                };
             };
             /** @description Bad request */
             400: {
@@ -6229,6 +6273,56 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Refresh token */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_verify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Verify token */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_verifyQuick: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Quick token verification */
             201: {
                 headers: {
                     [name: string]: unknown;

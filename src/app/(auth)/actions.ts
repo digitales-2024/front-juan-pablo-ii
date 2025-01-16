@@ -6,6 +6,8 @@ import { redirect } from 'next/navigation';
 import { LoginCredentials, AuthResponse } from './types';
 
 const API_URL = process.env.BACKEND_URL;
+const ACCESS_TOKEN = 'access_token';
+const REFRESH_TOKEN = 'refresh_token';
 
 export async function loginAction(
   credentials: LoginCredentials
@@ -30,25 +32,58 @@ export async function loginAction(
     }
 
     const data = await response.json();
-    console.log(data);
-    
+    console.log('Respuesta del login:', data);
 
-    // Procesar cookies de la respuesta
+    // Extraer tokens de las cookies de respuesta
     const responseCookies = response.headers.getSetCookie();
+    const tokens = {
+      accessToken: '',
+      refreshToken: ''
+    };
+
     responseCookies.forEach((cookie) => {
       const [cookieString] = cookie.split(";");
       const [cookieName, cookieValue] = cookieString.split("=");
-      cookieStore.set(cookieName, cookieValue, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-      });
+      
+      if (cookieName === ACCESS_TOKEN) tokens.accessToken = cookieValue;
+      if (cookieName === REFRESH_TOKEN) tokens.refreshToken = cookieValue;
+    });
+
+    // Establecer las cookies manualmente
+    cookieStore.set(ACCESS_TOKEN, tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/'
+    });
+    cookieStore.set(REFRESH_TOKEN, tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/'
+    });
+    cookieStore.set('logged_in', 'true', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/'
     });
 
     return {
       success: true,
       redirect: "/",
+      tokens,
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        isActive: true,
+        mustChangePassword: false,
+        lastLogin: new Date().toISOString(),
+        isSuperAdmin: data.isSuperAdmin,
+        roles: data.roles
+      }
     };
   } catch (error) {
     console.error('Error en login:', error);
