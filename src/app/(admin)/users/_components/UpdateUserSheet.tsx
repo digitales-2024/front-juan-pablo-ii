@@ -31,11 +31,16 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@/components/ui/sheet";
-import { User, UserCreateDto, userCreateSchema } from "../types";
+import { UserResponseDto, UserUpdateDto, userUpdateSchema } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { SendNewPasswordForm } from "./SendNewPasswordForm";
+
+import { useUsers } from "../_hooks/useUsers";
+import { useRoles } from "../../roles/_hooks/useRoles";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 const infoSheet = {
 	title: "Actualizar Usuario",
@@ -44,15 +49,18 @@ const infoSheet = {
 
 interface UpdateUserSheetProps
 	extends React.ComponentPropsWithRef<typeof Sheet> {
-	user: User;
+	user: UserResponseDto;
 }
 
 export default function UpdateUserSheet({
 	user,
 	...props
 }: UpdateUserSheetProps) {
-	const form = useForm<UserCreateDto>({
-		resolver: zodResolver(userCreateSchema),
+	const { updateUser, isUpdating } = useUsers();
+	const { data: roles } = useRoles();
+
+	const form = useForm<UserUpdateDto>({
+		resolver: zodResolver(userUpdateSchema),
 		defaultValues: {
 			name: user.name ?? "",
 			phone: user.phone,
@@ -68,9 +76,16 @@ export default function UpdateUserSheet({
 		});
 	}, [user, form]);
 
-	const onSubmit = async (input: UserCreateDto) => {
-		// await updateUser(user.id, input);
-	};
+	function onSubmit(input: UserUpdateDto) {
+		updateUser(
+			{ id: user.id, data: input },
+			{
+				onSuccess: () => {
+					props.onOpenChange?.(false);
+				},
+			}
+		);
+	}
 
 	return (
 		<Sheet {...props}>
@@ -104,7 +119,6 @@ export default function UpdateUserSheet({
 										<FormLabel>Nombre</FormLabel>
 										<FormControl>
 											<Input
-												placeholder="john smith"
 												className="resize-none"
 												{...field}
 											/>
@@ -120,8 +134,7 @@ export default function UpdateUserSheet({
 									<FormItem>
 										<FormLabel>Teléfono</FormLabel>
 										<FormControl>
-											<Input
-												placeholder="985523221"
+											<PhoneInput
 												className="resize-none"
 												{...field}
 											/>
@@ -140,7 +153,9 @@ export default function UpdateUserSheet({
 											onValueChange={(value) =>
 												field.onChange([value])
 											}
-											defaultValue={field.value[0] || ""}
+											defaultValue={
+												field.value?.[0] ?? ""
+											}
 											disabled={user.isSuperAdmin}
 										>
 											<FormControl>
@@ -150,15 +165,16 @@ export default function UpdateUserSheet({
 											</FormControl>
 											<SelectContent>
 												<SelectGroup>
-													{/* {dataRoles?.map((rol) => (
-														<SelectItem
-															key={rol.id}
-															value={rol.id}
-															className="capitalize"
-														>
-															{rol.name}
-														</SelectItem>
-													))} */}
+													{Array.isArray(roles) &&
+														roles.map((rol) => (
+															<SelectItem
+																key={rol.id}
+																value={rol.id}
+																className="capitalize"
+															>
+																{rol.name}
+															</SelectItem>
+														))}
 												</SelectGroup>
 											</SelectContent>
 										</Select>
@@ -169,15 +185,15 @@ export default function UpdateUserSheet({
 
 							<SheetFooter className="gap-2 pt-2 sm:space-x-0">
 								<div className="flex flex-row-reverse flex-wrap gap-2">
-									{/* <Button disabled={isLoadingUpdateUser}>
-										{isLoadingUpdateUser && (
+									<Button disabled={isUpdating}>
+										{isUpdating && (
 											<RefreshCcw
 												className="mr-2 size-4 animate-spin"
 												aria-hidden="true"
 											/>
-										)} */}
-									Actualizar
-									{/* </Button> */}
+										)}
+										Actualizar
+									</Button>
 									<SheetClose asChild>
 										<Button type="button" variant="outline">
 											Cancelar
@@ -188,7 +204,7 @@ export default function UpdateUserSheet({
 						</form>
 					</Form>
 					<Separator className="my-6" />
-					{/* <SendNewPasswordForm user={user} /> */}
+					<SendNewPasswordForm user={user} />
 				</ScrollArea>
 			</SheetContent>
 		</Sheet>
