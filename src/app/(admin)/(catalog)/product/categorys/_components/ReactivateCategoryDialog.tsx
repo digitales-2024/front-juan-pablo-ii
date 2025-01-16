@@ -37,6 +37,22 @@ interface ReactivateCategoryDialogProps
     onSuccess?: () => void;
 }
 
+/**
+ * Componente que renderiza un diálogo para reactivar categorías.
+ *
+ * Este componente se utiliza para reactivar categorías seleccionadas en la tabla
+ * de categorías. Renderiza un botón que abre un diálogo o cajón donde se confirma
+ * la acción de reactivación. Si se seleccionaron filas en la tabla, muestra el
+ * botón para reactivar las categorías seleccionadas. Si no se seleccionaron filas,
+ * no se muestra el botón.
+ *
+ * @param {{ categories: Row<Category>["original"][] }} props - Las categorías
+ * que se van a reactivar.
+ * @param {boolean} props.showTrigger - Si se muestra el botón para reactivar.
+ * @param {() => void} props.onSuccess - La función que se llama cuando se
+ * reactivan las categorías con éxito.
+ */
+
 export const ReactivateCategoryDialog = ({
     categories,
     showTrigger = true,
