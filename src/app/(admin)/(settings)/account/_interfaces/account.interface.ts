@@ -1,19 +1,30 @@
-import { User } from '@/app/(auth)/types';
+import { Profile } from '@/app/(auth)/types';
 
-export interface ExtendedUser extends User {
-  lastLogin?: string;
-  isActive: boolean;
+export interface ExtendedUser extends Omit<Profile, 'roles'> {
+  name: string;
+  email: string;
+  phone?: string;
+  roles: Record<string, never>[];
   isSuperAdmin: boolean;
+  isActive: boolean;
   mustChangePassword: boolean;
+  lastLogin?: string;
 }
 
 export interface UserResponse {
   name: string;
   email: string;
   phone?: string;
-  roles?: Array<{
-    name: string;
-  }>;
+  roles?: Array<{ name: string }>;
   isSuperAdmin: boolean;
   lastLogin?: Date;
+}
+
+// Helper para transformar el usuario
+export function toProfile(user: ExtendedUser): Profile {
+  return {
+    ...user,
+    roles: user.roles || [],
+    lastLogin: user.lastLogin || undefined
+  };
 }

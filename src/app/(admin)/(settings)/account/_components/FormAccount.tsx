@@ -1,7 +1,9 @@
-'use server'
+'use client'
+import { getUser } from '../_actions/get-user.action'
 import AccountData from './AccountData'
 
-export default async function FormAccount() {
+export default function FormAccount() {
+  
   return (
     <div className="space-y-6">
       <div>

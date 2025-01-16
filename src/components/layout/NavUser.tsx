@@ -17,28 +17,23 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { logoutAction } from "@/app/(auth)/actions";
-import { useAuth } from "@/lib/store/auth";
+import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 
 export function NavUser() {
-	const { user, isLoading, logout } = useAuth();
+	const { user, logout } = useAuth();
 	const { isMobile } = useSidebar();
+	const defaultUser = {
+		name: "Usuario",
+		email: "usuario@example.com"
+	};
+	const currentUser = user || defaultUser;
 
 	const handleLogout = async () => {
 		await logoutAction();
 		logout();
 	};
 
-	if (isLoading) {
-		return (
-			<div className="animate-pulse">
-				<div className="h-8 w-8 rounded-full bg-gray-200" />
-			</div>
-		);
-	}
-
-	if (!user) return null;
-
-	return ( 
+	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
 				<DropdownMenu>
@@ -49,18 +44,18 @@ export function NavUser() {
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
 								<AvatarImage
-									alt={user.name}
+									alt={currentUser.name}
 								/>
 								<AvatarFallback className="rounded-lg">
-									{user.name?.substring(0, 2).toUpperCase() || "UN"}
+									{currentUser.name?.substring(0, 2).toUpperCase() || "UN"}
 								</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-semibold">
-									{user.name}
+									{currentUser.name}
 								</span>
 								<span className="truncate text-xs">
-									{user.email}
+									{currentUser.email}
 								</span>
 							</div>
 							<ChevronsUpDown className="ml-auto size-4" />
@@ -76,18 +71,18 @@ export function NavUser() {
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
 									<AvatarImage
-										alt={user.name}
+										alt={currentUser.name}
 									/>
 									<AvatarFallback className="rounded-lg">
-										{user.name?.substring(0, 2).toUpperCase() || "UN"}
+										{currentUser.name?.substring(0, 2).toUpperCase() || "UN"}
 									</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-semibold">
-										{user.name}
+										{currentUser.name}
 									</span>
 									<span className="truncate text-xs">
-										{user.email}
+										{currentUser.email}
 									</span>
 								</div>
 							</div>

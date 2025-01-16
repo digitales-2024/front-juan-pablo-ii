@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuth } from '@/lib/store/auth'
+import { useAuth } from '@/app/(auth)/sign-in/_hooks/useAuth'
 import { useEffect } from 'react'
 import { Profile } from '@/app/(auth)/types'
 import { ProfilePersonalData } from './ProfilePersonalData'

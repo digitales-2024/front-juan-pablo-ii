@@ -15,11 +15,16 @@ import {
 import { LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
 import { logoutAction } from "@/app/(auth)/actions";
-import { useAuth } from "@/lib/store/auth";
+import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 
 export function ProfileDropdown() {
 	const { user, logout } = useAuth();
-	console.log("🚀 ~ ProfileDropdown ~ user:", user)
+	const defaultUser = {
+		name: "Usuario",
+		email: "usuario@example.com"
+	};
+	const currentUser = user || defaultUser;
+
 	const handleLogout = async () => {
 		logout();
 		const response = await logoutAction();
@@ -27,8 +32,6 @@ export function ProfileDropdown() {
 			window.location.href = response.redirect;
 		}
 	};
-
-	if (!user) return null;
 
 	return (
 		<DropdownMenu modal={false}>
@@ -38,8 +41,8 @@ export function ProfileDropdown() {
 					className="relative h-8 w-8 rounded-full"
 				>
 					<Avatar className="h-8 w-8">
-						<AvatarImage alt={user.name} />
-						<AvatarFallback>{user.name?.substring(0, 2).toUpperCase() || "UN"}</AvatarFallback>
+						<AvatarImage alt={currentUser.name} />
+						<AvatarFallback>{currentUser.name?.substring(0, 2).toUpperCase() || "UN"}</AvatarFallback>
 					</Avatar>
 				</Button>
 			</DropdownMenuTrigger>
@@ -47,10 +50,10 @@ export function ProfileDropdown() {
 				<DropdownMenuLabel className="font-normal">
 					<div className="flex flex-col space-y-1">
 						<p className="text-sm font-medium leading-none">
-							{user.name}
+							{currentUser.name}
 						</p>
 						<p className="text-xs leading-none text-muted-foreground">
-							{user.email}
+							{currentUser.email}
 						</p>
 					</div>
 				</DropdownMenuLabel>
