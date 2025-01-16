@@ -61,26 +61,26 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
         },
 
         {
-            id: "name",
+            id: "Nombre",
             accessorKey: "name",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Nombre" />
             ),
             cell: ({ row }) => (
                 <div className="w-40 truncate capitalize">
-                    {row.getValue("name") as string}
+                    {row.getValue("Nombre") as string}
                 </div>
             ),
         },
         {
-            id: "description",
+            id: "Descripción",
             accessorKey: "description",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Descripción" />
             ),
 
             cell: function Cell({ row }) {
-                const description = row.getValue("description") as string;
+                const description = row.getValue("Descripción") as string;
                 const [expanded, setExpanded] = useState(false);
 
                 const handleToggle = () => {
@@ -107,14 +107,14 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
         },
 
         {
-            id: "isActive",
+            id: "Estado",
             accessorKey: "isActive",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Estado" />
             ),
             cell: ({ row }) => (
                 <div>
-                    {row.getValue("isActive") ? (
+                    {row.getValue("Estado") ? (
                         <Badge
                             variant="secondary"
                             className="bg-emerald-100 text-emerald-500"
