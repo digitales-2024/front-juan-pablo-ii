@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RefreshCcw } from "lucide-react";
 
-import { updateProduct } from "../actions";
-import { Product, UpdateProductInput, productSchema } from "../types";
+import { updateCategory } from "../actions";
+import { Category, UpdateCategoryInput, CategorySchema } from "../types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,67 +32,61 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const infoSheet = {
-    title: "Actualizar producto",
-    description: "Actualiza la información del producto y guarda los cambios",
+    title: "Actualizar categoría",
+    description: "Actualiza la información de la categoría y guarda los cambios",
 };
 
-interface UpdateProductsSheetProps
+interface UpdateCategorySheetProps
     extends Omit<
         React.ComponentPropsWithRef<typeof Sheet>,
         "open" | "onOpenChange"
     > {
-    product: Product;
+    category: Category;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export function UpdateProductsSheet({
-    product,
+/**
+ * Componente para actualizar una categoría existente.
+ *
+ * Este componente renderiza un formulario dentro de una hoja deslizante
+ * (Sheet) que permite actualizar el nombre y la descripción de una categoría.
+ * Utiliza `react-hook-form` para manejar el estado del formulario y `zod`
+ * para la validación. Al enviar el formulario, llama a la función
+ * `updateCategory` con los datos proporcionados.
+ *
+ * @param {UpdateCategorySheetProps} props - Las propiedades del componente.
+ * @param {Category} props.category - La categoría que se está actualizando.
+ * @param {boolean} props.open - Indica si la hoja deslizante está abierta.
+ * @param {(open: boolean) => void} props.onOpenChange - Función para cambiar el estado de la hoja deslizante.
+ * @returns {JSX.Element} Un elemento JSX que representa la hoja deslizante para actualizar la categoría.
+ */
+
+export function UpdateCategorySheet({
+    category,
     open,
     onOpenChange,
-}: UpdateProductsSheetProps) {
-    const form = useForm<UpdateProductInput>({
-        resolver: zodResolver(productSchema),
+}: UpdateCategorySheetProps) {
+    const form = useForm<UpdateCategoryInput>({
+        resolver: zodResolver(CategorySchema),
         defaultValues: {
-            name: product.name ?? "",
-            precio: product.precio ?? 0,
-            unidadMedida: product.unidadMedida ?? "",
-            proveedor: product.proveedor ?? "",
-            uso: product.uso ?? "",
-            usoProducto: product.usoProducto ?? "",
-            description: product.description ?? "",
-            codigoProducto: product.codigoProducto ?? "",
-            descuento: product.descuento ?? 0,
-            observaciones: product.observaciones ?? "",
-            condicionesAlmacenamiento: product.condicionesAlmacenamiento ?? "",
-            isActive: product.isActive ?? true,
-            imagenUrl: product.imagenUrl ?? "",
+            name: category.name ?? "",
+            description: category.description ?? "",
         },
     });
 
     useEffect(() => {
         if (open) {
             form.reset({
-                name: product.name ?? "",
-                precio: product.precio ?? 0,
-                unidadMedida: product.unidadMedida ?? "",
-                proveedor: product.proveedor ?? "",
-                uso: product.uso ?? "",
-                usoProducto: product.usoProducto ?? "",
-                description: product.description ?? "",
-                codigoProducto: product.codigoProducto ?? "",
-                descuento: product.descuento ?? 0,
-                observaciones: product.observaciones ?? "",
-                condicionesAlmacenamiento: product.condicionesAlmacenamiento ?? "",
-                isActive: product.isActive ?? true,
-                imagenUrl: product.imagenUrl ?? "",
+                name: category.name ?? "",
+                description: category.description ?? "",
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open, product]);
+    }, [open, category]);
 
-    const onSubmit = async (input: UpdateProductInput) => {
-        await updateProduct(product.id, input);
+    const onSubmit = async (input: UpdateCategoryInput) => {
+        await updateCategory(category.id, input);
         onOpenChange(false);
     };
 
@@ -109,7 +103,7 @@ export function UpdateProductsSheet({
                             className="bg-emerald-100 capitalize text-emerald-700"
                             variant="secondary"
                         >
-                            {product.name}
+                            {category.name}
                         </Badge>
                     </SheetTitle>
                     <SheetDescription>{infoSheet.description}</SheetDescription>
@@ -127,32 +121,11 @@ export function UpdateProductsSheet({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Nombre del Producto
+                                            Nombre de la Categoría
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ingrese el nombre del producto"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            {/* Precio */}
-                            <FormField
-                                control={form.control}
-                                name="precio"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Precio del Producto
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                placeholder="Ingrese el precio del producto"
+                                                placeholder="Ingrese el nombre de la categoría"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -170,7 +143,7 @@ export function UpdateProductsSheet({
                                         <FormLabel>Descripción</FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="Ingrese la descripción del producto"
+                                                placeholder="Ingrese la descripción de la categoría"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -178,8 +151,6 @@ export function UpdateProductsSheet({
                                     </FormItem>
                                 )}
                             />
-
-                            {/* Agrega más campos según sea necesario */}
 
                             <SheetFooter className="gap-2 pt-2 sm:space-x-0">
                                 <div className="flex flex-row-reverse gap-2">

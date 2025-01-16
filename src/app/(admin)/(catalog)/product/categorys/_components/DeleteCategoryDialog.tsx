@@ -1,23 +1,12 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { reactivateManyProducts } from "../actions";
-import { Product } from "../types";
+import { deleteManyCategories } from "../actions";
+import { Category } from "../types";
 import { type Row } from "@tanstack/react-table";
-import { RefreshCcw, RefreshCcwDot } from "lucide-react";
+import { RefreshCcw, Trash } from "lucide-react";
 import { ComponentPropsWithoutRef, useTransition } from "react";
 
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
     Drawer,
@@ -30,25 +19,51 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer";
 
-interface ReactivateProductsDialogProps
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+interface DeleteCategoryDialogProps
     extends ComponentPropsWithoutRef<typeof AlertDialog> {
-    products: Row<Product>["original"][];
+    categories: Row<Category>["original"][];
     showTrigger?: boolean;
     onSuccess?: () => void;
 }
 
-export const ReactivateProductsDialog = ({
-    products,
+/**
+ * Componente que renderiza un diálogo para eliminar categorías.
+ *
+ * Este componente se utiliza para eliminar categorías seleccionadas en la tabla
+ * de categorías. Si se seleccionaron filas en la tabla, renderiza un botón para
+ * eliminar las categorías seleccionadas. Si no se seleccionaron filas en la
+ * tabla, no renderiza nada.
+ *
+ * @param {{ categories: Row<Category>["original"][] }} props - Las categorías
+ * que se van a eliminar.
+ * @param {boolean} props.showTrigger - Si se muestra el botón para eliminar.
+ * @param {() => void} props.onSuccess - La función que se llama cuando se
+ * eliminan las categorías con éxito.
+ */
+export function DeleteCategoryDialog({
+    categories,
     showTrigger = true,
     onSuccess,
     ...props
-}: ReactivateProductsDialogProps) => {
-    const [isReactivatePending, startReactivateTransition] = useTransition();
+}: DeleteCategoryDialogProps) {
+    const [isDeletePending, startDeleteTransition] = useTransition();
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
-    const onReactivateProductsHandler = async () => {
-        startReactivateTransition(async () => {
-            await reactivateManyProducts(products.map((product) => product.id));
+    const onDeleteCategoriesHandler = async () => {
+        startDeleteTransition(async () => {
+            await deleteManyCategories(categories.map((category) => category.id));
             props.onOpenChange?.(false);
             onSuccess?.();
         });
@@ -60,11 +75,8 @@ export const ReactivateProductsDialog = ({
                 {showTrigger ? (
                     <AlertDialogTrigger asChild>
                         <Button variant="outline" size="sm">
-                            <RefreshCcwDot
-                                className="mr-2 size-4"
-                                aria-hidden="true"
-                            />
-                            Reactivar ({products.length})
+                            <Trash className="mr-2 size-4" aria-hidden="true" />
+                            Eliminar ({categories.length})
                         </Button>
                     </AlertDialogTrigger>
                 ) : null}
@@ -74,12 +86,12 @@ export const ReactivateProductsDialog = ({
                             ¿Estás absolutamente seguro?
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                            Esta acción reactivará a{" "}
+                            Esta acción eliminará a
                             <span className="font-medium">
                                 {" "}
-                                {products.length}
+                                {categories.length}
                             </span>
-                            {products.length === 1 ? " producto" : " productos"}
+                            {categories.length === 1 ? " categoría" : " categorías"}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -87,17 +99,17 @@ export const ReactivateProductsDialog = ({
                             <Button variant="outline">Cancelar</Button>
                         </AlertDialogCancel>
                         <AlertDialogAction
-                            aria-label="Reactivate selected rows"
-                            onClick={onReactivateProductsHandler}
-                            disabled={isReactivatePending}
+                            aria-label="Delete selected rows"
+                            onClick={onDeleteCategoriesHandler}
+                            disabled={isDeletePending}
                         >
-                            {isReactivatePending && (
+                            {isDeletePending && (
                                 <RefreshCcw
                                     className="mr-2 size-4 animate-spin"
                                     aria-hidden="true"
                                 />
                             )}
-                            Reactivar
+                            Eliminar
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -110,11 +122,8 @@ export const ReactivateProductsDialog = ({
             {showTrigger ? (
                 <DrawerTrigger asChild>
                     <Button variant="outline" size="sm">
-                        <RefreshCcwDot
-                            className="mr-2 size-4"
-                            aria-hidden="true"
-                        />
-                        Reactivar ({products.length})
+                        <Trash className="mr-2 size-4" aria-hidden="true" />
+                        Eliminar ({categories.length})
                     </Button>
                 </DrawerTrigger>
             ) : null}
@@ -122,24 +131,24 @@ export const ReactivateProductsDialog = ({
                 <DrawerHeader>
                     <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
                     <DrawerDescription>
-                        Esta acción reactivará a
-                        <span className="font-medium">{products.length}</span>
-                        {products.length === 1 ? " producto" : " productos"}
+                        Esta acción eliminará a
+                        <span className="font-medium">{categories.length}</span>
+                        {categories.length === 1 ? " categoría" : " categorías"}
                     </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter className="gap-2 sm:space-x-0">
                     <Button
-                        aria-label="Reactivate selected rows"
-                        onClick={onReactivateProductsHandler}
-                        disabled={isReactivatePending}
+                        aria-label="Delete selected rows"
+                        onClick={onDeleteCategoriesHandler}
+                        disabled={isDeletePending}
                     >
-                        {isReactivatePending && (
+                        {isDeletePending && (
                             <RefreshCcw
                                 className="mr-2 size-4 animate-spin"
                                 aria-hidden="true"
                             />
                         )}
-                        Reactivar
+                        Eliminar
                     </Button>
                     <DrawerClose asChild>
                         <Button variant="outline">Cancelar</Button>
@@ -148,4 +157,4 @@ export const ReactivateProductsDialog = ({
             </DrawerContent>
         </Drawer>
     );
-};
+}
