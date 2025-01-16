@@ -30,6 +30,7 @@ import { Bot } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { RoleResponseDto } from "../../roles/types";
 import { generatePassword } from "../utils";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 interface CreateUsersFormProps
 	extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -99,7 +100,11 @@ export default function CreateUserForm({
 							<FormItem>
 								<FormLabel htmlFor="phone">Teléfono</FormLabel>
 								<FormControl>
-									<Input id="phone" {...field} />
+									<PhoneInput
+										defaultCountry="PE"
+										id="phone"
+										{...field}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
