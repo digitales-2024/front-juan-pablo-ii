@@ -1,7 +1,12 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { UserResponseDto, UserCreateDto } from "./types";
+import {
+	UserResponseDto,
+	UserCreateDto,
+	SendEmailDto,
+	UserUpdateDto,
+} from "./types";
 
 type GetUsersResponse = UserResponseDto[] | { error: string };
 type CreateUserResponse = UserResponseDto | { error: string };
@@ -21,8 +26,9 @@ export async function getUsers(): Promise<GetUsersResponse> {
 	}
 }
 
-
-export async function createUser(data: UserCreateDto): Promise<CreateUserResponse> {
+export async function createUser(
+	data: UserCreateDto
+): Promise<CreateUserResponse> {
 	try {
 		const [user, error] = await http.post<UserResponseDto>("/users", data);
 
@@ -31,6 +37,44 @@ export async function createUser(data: UserCreateDto): Promise<CreateUserRespons
 		}
 
 		return user;
+	} catch (error) {
+		if (error instanceof Error) return { error: error.message };
+		return { error: "Error desconocido" };
+	}
+}
+
+export async function updateUser(
+	id: string,
+	data: UserUpdateDto
+): Promise<CreateUserResponse> {
+	try {
+		const [user, error] = await http.patch<UserResponseDto>(
+			`/users/${id}`,
+			data
+		);
+
+		if (error) {
+			return { error: error.message };
+		}
+
+		return user;
+	} catch (error) {
+		if (error instanceof Error) return { error: error.message };
+		return { error: "Error desconocido" };
+	}
+}
+
+export async function sendNewPassword(
+	data: SendEmailDto
+): Promise<{ error?: string }> {
+	try {
+		const [, error] = await http.post(`/users/send-new-password`, data);
+
+		if (error) {
+			return { error: error.message };
+		}
+
+		return {};
 	} catch (error) {
 		if (error instanceof Error) return { error: error.message };
 		return { error: "Error desconocido" };
