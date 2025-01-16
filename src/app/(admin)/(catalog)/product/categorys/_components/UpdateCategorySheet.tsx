@@ -46,6 +46,22 @@ interface UpdateCategorySheetProps
     onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Componente para actualizar una categoría existente.
+ *
+ * Este componente renderiza un formulario dentro de una hoja deslizante
+ * (Sheet) que permite actualizar el nombre y la descripción de una categoría.
+ * Utiliza `react-hook-form` para manejar el estado del formulario y `zod`
+ * para la validación. Al enviar el formulario, llama a la función
+ * `updateCategory` con los datos proporcionados.
+ *
+ * @param {UpdateCategorySheetProps} props - Las propiedades del componente.
+ * @param {Category} props.category - La categoría que se está actualizando.
+ * @param {boolean} props.open - Indica si la hoja deslizante está abierta.
+ * @param {(open: boolean) => void} props.onOpenChange - Función para cambiar el estado de la hoja deslizante.
+ * @returns {JSX.Element} Un elemento JSX que representa la hoja deslizante para actualizar la categoría.
+ */
+
 export function UpdateCategorySheet({
     category,
     open,
