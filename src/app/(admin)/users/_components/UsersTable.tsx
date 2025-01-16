@@ -1,12 +1,12 @@
 "use client";
 import { DataTable } from "@/components/data-table/DataTable";
-import { User } from "../types";
 import { useMemo } from "react";
 import { usersTableColumns } from "./UsersTableColumns";
 import UsersTableToolbarActions from "./UsersTableToolbarActions";
+import { UserResponseDto } from "../types";
 
 interface TData {
-	data: User[];
+	data: UserResponseDto[];
 }
 export function UsersTable({ data }: TData) {
 	const columns = useMemo(() => usersTableColumns(), []);
