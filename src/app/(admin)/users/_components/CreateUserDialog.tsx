@@ -3,7 +3,6 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserCreateDto, userCreateSchema } from "../types";
-import { createUser } from "../actions";
 import { toast } from "sonner";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
@@ -27,6 +26,7 @@ import {
 	DrawerTitle,
 	DrawerTrigger,
 } from "@/components/ui/drawer";
+import { createUser } from "../actions";
 
 const CREATE_USER_MESSAGES = {
 	button: "Crear usuario",
@@ -54,15 +54,13 @@ export default function CreateUserDialog() {
 		},
 	});
 
-	const handleSubmit = (input: UserCreateDto) => {
+	async function handleSubmit(input: UserCreateDto) {
 		startCreateTransition(async () => {
 			await createUser(input);
-
-			toast.success(CREATE_USER_MESSAGES.success);
 			setOpen(false);
-			form.reset();
+			toast.success(CREATE_USER_MESSAGES.success);
 		});
-	};
+	}
 
 	const handleClose = () => {
 		form.reset();
