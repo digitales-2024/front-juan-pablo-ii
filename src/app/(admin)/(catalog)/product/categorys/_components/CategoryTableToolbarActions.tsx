@@ -13,6 +13,20 @@ export interface CategoryTableToolbarActionsProps {
     exportFile?: boolean;
 }
 
+/**
+ * Componente que renderiza las acciones de la tabla de categorías.
+ * Recibe un objeto {@link Table} que representa la tabla.
+ * Si se seleccionaron filas en la tabla, renderiza dos botones:
+ * - "Eliminar categorías" que lanza un diálogo para eliminar las categorías
+ *   seleccionadas.
+ * - "Reactivar categorías" que lanza un diálogo para reactivar las categorías
+ *   seleccionadas, solo si el perfil del usuario actual tiene permiso de
+ *   administrador.
+ * Si no se seleccionaron filas en la tabla, solo renderiza el botón
+ * "Crear categoría".
+ * @param {{ table?: Table<Category> }} props
+ * @returns {JSX.Element} El componente renderizado.
+ */
 export function CategoryTableToolbarActions({
     table,
 }: CategoryTableToolbarActionsProps) {
