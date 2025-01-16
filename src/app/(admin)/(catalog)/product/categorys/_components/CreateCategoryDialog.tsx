@@ -44,6 +44,19 @@ interface CreateCategoryDialogProps {
     diferentPage?: boolean;
 }
 
+/**
+ * Componente para crear una nueva categoría.
+ *
+ * Este componente renderiza un botón que al hacer click abre un diálogo
+ * para crear una nueva categoría. El diálogo contiene un formulario para
+ * completar los detalles de la categoría y un botón para registrar la
+ * categoría. Al registrar la categoría, se llama a la función
+ * `createCategory` y se cierra el diálogo.
+ *
+ * @param {{ diferentPage?: boolean }} props - Opciones del componente.
+ * @param {boolean} props.diferentPage - Si se muestra en una página diferente.
+ * @returns Un JSX Element para crear una nueva categoría.
+ */
 export function CreateCategoryDialog({
     diferentPage,
 }: CreateCategoryDialogProps) {
