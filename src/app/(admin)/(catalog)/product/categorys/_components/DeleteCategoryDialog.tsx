@@ -38,6 +38,20 @@ interface DeleteCategoryDialogProps
     onSuccess?: () => void;
 }
 
+/**
+ * Componente que renderiza un diálogo para eliminar categorías.
+ *
+ * Este componente se utiliza para eliminar categorías seleccionadas en la tabla
+ * de categorías. Si se seleccionaron filas en la tabla, renderiza un botón para
+ * eliminar las categorías seleccionadas. Si no se seleccionaron filas en la
+ * tabla, no renderiza nada.
+ *
+ * @param {{ categories: Row<Category>["original"][] }} props - Las categorías
+ * que se van a eliminar.
+ * @param {boolean} props.showTrigger - Si se muestra el botón para eliminar.
+ * @param {() => void} props.onSuccess - La función que se llama cuando se
+ * eliminan las categorías con éxito.
+ */
 export function DeleteCategoryDialog({
     categories,
     showTrigger = true,
