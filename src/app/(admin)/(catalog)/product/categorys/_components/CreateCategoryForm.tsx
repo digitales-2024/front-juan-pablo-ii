@@ -21,6 +21,20 @@ interface CreateCategoryFormProps
     onSubmit: (data: CreateCategoryInput) => void;
 }
 
+/**
+ * Componente de formulario para crear una nueva categoría de productos.
+ *
+ * Este componente utiliza react-hook-form para manejar los datos del formulario y
+ * zod para la validación de los mismos. El formulario permite ingresar el nombre
+ * y la descripción de la categoría, y puede incluir campos adicionales si es necesario.
+ *
+ * @param {CreateCategoryFormProps} props - Las propiedades del componente.
+ * @param {React.ReactNode} props.children - Elementos secundarios que se renderizan dentro del formulario.
+ * @param {UseFormReturn<CreateCategoryInput>} props.form - El objeto de formulario de react-hook-form.
+ * @param {(data: CreateCategoryInput) => void} props.onSubmit - Función que se llama al enviar el formulario.
+ * @returns {JSX.Element} Un elemento JSX que representa el formulario de creación de categoría.
+ */
+
 export const CreateCategoryForm = ({
     children,
     form,
