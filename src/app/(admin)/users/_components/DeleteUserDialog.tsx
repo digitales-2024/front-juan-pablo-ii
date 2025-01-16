@@ -23,7 +23,6 @@ import {
 import { User } from "../types";
 import { Row } from "@tanstack/react-table";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { deleteUser } from "../actions";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw, Trash } from "lucide-react";
 
@@ -44,7 +43,7 @@ export default function DeleteUserDialog({
 	const isDesktop = useMediaQuery("(min-width: 640px)");
 
 	const onDeleteUsersHandler = async () => {
-		await deleteUser("asda");
+		// await deleteUser(users[0].id);
 		props.onOpenChange?.(false);
 		onSuccess?.();
 	};
