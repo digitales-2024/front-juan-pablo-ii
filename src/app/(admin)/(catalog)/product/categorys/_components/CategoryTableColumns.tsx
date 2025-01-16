@@ -24,6 +24,12 @@ import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
 import { ReactivateCategoryDialog } from "./ReactivateCategoryDialog";
 import { UpdateCategorySheet } from "./UpdateCategorySheet";
 
+/**
+ * Devuelve la definición de las columnas para la tabla de categorías.
+ *
+ * @param {boolean} isSuperAdmin - Indica si el usuario actual es un superadministrador.
+ * @returns {ColumnDef<Category>[]} Un arreglo de definiciones de columnas.
+ */
 export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] => {
     const columns: ColumnDef<Category>[] = [
         {
@@ -31,6 +37,7 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
             size: 10,
             header: ({ table }) => (
                 <div className="px-2">
+                    {/* Checkbox para seleccionar todas las filas de la página */}
                     <Checkbox
                         checked={
                             table.getIsAllPageRowsSelected() ||
@@ -47,6 +54,7 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
             ),
             cell: ({ row }) => (
                 <div className="px-2">
+                    {/* Checkbox para seleccionar una fila individual */}
                     <Checkbox
                         checked={row.getIsSelected()}
                         onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -59,7 +67,6 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
             enableHiding: false,
             enablePinning: true,
         },
-
         {
             id: "Nombre",
             accessorKey: "name",
@@ -68,6 +75,7 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
             ),
             cell: ({ row }) => (
                 <div className="w-40 truncate capitalize">
+                    {/* Muestra el nombre de la categoría */}
                     {row.getValue("Nombre") as string}
                 </div>
             ),
@@ -78,7 +86,6 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Descripción" />
             ),
-
             cell: function Cell({ row }) {
                 const description = row.getValue("Descripción") as string;
                 const [expanded, setExpanded] = useState(false);
@@ -86,6 +93,7 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
                 const handleToggle = () => {
                     setExpanded(!expanded);
                 };
+
                 return (
                     <div
                         className={cn(
@@ -94,6 +102,7 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
                         )}
                         onClick={handleToggle}
                     >
+                        {/* Muestra la descripción de la categoría, permite expandir */}
                         {description ? (
                             description
                         ) : (
@@ -105,7 +114,6 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
                 );
             },
         },
-
         {
             id: "Estado",
             accessorKey: "isActive",
@@ -114,6 +122,7 @@ export const categoryColumns = (isSuperAdmin: boolean): ColumnDef<Category>[] =>
             ),
             cell: ({ row }) => (
                 <div>
+                    {/* Muestra el estado de la categoría, Activo/Inactivo */}
                     {row.getValue("Estado") ? (
                         <Badge
                             variant="secondary"
