@@ -36,7 +36,6 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { updateUser } from "../actions";
 
 const infoSheet = {
 	title: "Actualizar Usuario",
@@ -70,7 +69,7 @@ export default function UpdateUserSheet({
 	}, [user, form]);
 
 	const onSubmit = async (input: UserCreateDto) => {
-		await updateUser(user.id, input);
+		// await updateUser(user.id, input);
 	};
 
 	return (
