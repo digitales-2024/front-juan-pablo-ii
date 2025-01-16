@@ -1,6 +1,5 @@
 'use client'
 
-import { useAccount } from '../_hooks/useAccount'
 import { useAuth } from '@/lib/store/auth'
 import {
   Card,
@@ -12,10 +11,15 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { useUser } from '../_hooks/useUser'
+
+interface Role {
+  name: string;
+}
 
 export default function AccountData() {
   const { user } = useAuth()
-  const { data: account, isLoading, error } = useAccount(user?.id || '')
+  const { data: account, isLoading, error } = useUser(user?.id || '')
 
   if (isLoading) {
     return (
@@ -69,20 +73,20 @@ export default function AccountData() {
           <p className="text-sm">{account.phone || 'No especificado'}</p>
         </div>
 
-        {/* {account.lastLogin && (
+        {account.lastLogin && (
           <div className="grid gap-2">
             <label className="text-sm font-medium">Último acceso</label>
             <p className="text-sm">
-              {format(new Date(account.lastLogin), "dd 'de' MMMM 'de' yyyy 'a las' HH:mm", { locale: es })}
+              {format(account.lastLogin, "dd 'de' MMMM 'de' yyyy 'a las' HH:mm", { locale: es })}
             </p>
           </div>
-        )} */}
+        )}
 
         <div className="grid gap-2">
           <label className="text-sm font-medium">Roles</label>
           <div className="flex flex-wrap gap-2">
-            {account.roles?.map((role: any) => (
-              <Badge key={role.id} variant="outline">
+            {account.roles?.map((role: Role, index) => (
+              <Badge key={index} variant="outline">
                 {role.name}
               </Badge>
             ))}
