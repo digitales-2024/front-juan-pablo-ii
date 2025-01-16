@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { loginAction } from '@/app/(auth)/actions';
+import { useAuth } from '@/lib/store/auth';
 import { toast } from '@/lib/toast/toast-service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,6 +35,7 @@ type FormValues = z.infer<typeof formSchema>;
 export function UserAuthForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { setTokens, setUser } = useAuth();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -47,18 +49,35 @@ export function UserAuthForm() {
     setIsLoading(true);
 
     try {
-      const response = await loginAction({ email: values.email, password: values.password });
-      console.log(response);
+      const response = await loginAction({ 
+        email: values.email, 
+        password: values.password 
+      });
       
+      console.log('Respuesta completa del login:', response);
+
       if (response.success) {
+        // Primero establecemos los tokens
+        if (response.tokens) {
+          console.log('Estableciendo tokens...');
+          setTokens(response.tokens.accessToken, response.tokens.refreshToken);
+        }
+
+        // Luego establecemos el usuario
+        if (response.user) {
+          console.log('Guardando usuario en store:', response.user);
+          setUser(response.user);
+        }
+        
         toast.success('Inicio de sesión exitoso');
-        router.push(response.redirect || '/');
+        
+        // Eliminamos el setTimeout y usamos replace en lugar de push
+        router.replace(response.redirect || '/');
       } else {
         toast.error(response.message || 'Credenciales inválidas');
       }
     } catch (error) {
-      console.log(error);
-      
+      console.error('Error durante el login:', error);
       toast.error('Ocurrió un error inesperado');
     } finally {
       setIsLoading(false);
@@ -114,7 +133,6 @@ export function UserAuthForm() {
           </Button>
         </form>
       </Form>
-      
     </div>
   );
 }

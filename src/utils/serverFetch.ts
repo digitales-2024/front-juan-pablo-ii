@@ -1,117 +1,97 @@
-"use server";
+//
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import axios, { AxiosError } from "axios";
+import { Result } from "./result";
 
-interface FetchOptions extends RequestInit {
-	skipAuth?: boolean;
-}
+export const api = axios.create({
+	baseURL: process.env.BACKEND_URL,
+	timeout: 5000,
+});
 
-/**
- * Represents a computation that may fail.
- *
- * If the computation is successful, the first item will contain
- * the result, and the second will be null.
- * If the computation is an error, the first item will be null,
- * and the second item will contain the error.
- *
- * Even though the type says the first item is not null,
- * it will be null if there is an error. This is done so
- * the result can be used more comfortably.
- *
- * @example
- * const [value, err] = computation()
- * if (err !== null) {
- *     // handle error
- * }
- */
-type Result<Success, Error> = [Success, Error | null];
+type ServerFetchError = {
+	statusCode: number;
+	message: string;
+	error: string;
+};
 
 /**
- * Fetches a resource from the backend.
+ * Fetches a resource from the API backend, and returns it
+ * in a Result.
+ *
+ * IMPORTANT: This function does not do any session refresh. This function assumes that
+ * access_token is valid. However, refreshing tokens is needed, so, that is done at
+ * the middleware level.
+ *
+ * @type Success The data that the API will return if successful
  */
 export async function serverFetch<Success>(
-	path: string,
-	options: FetchOptions = {}
-): Promise<Result<Success, Response | Error>> {
-	const { ...fetchOptions } = options;
-	const url = `${process.env.BACKEND_URL}${path}`;
+	url: string
+): Promise<Result<Success, ServerFetchError>> {
 	const cookieStore = await cookies();
 	const accessToken = cookieStore.get("access_token")?.value;
-	const refreshToken = cookieStore.get("refresh_token")?.value;
 
-	fetchOptions.headers = {
-		...fetchOptions.headers,
-		Cookie: `refresh_token=${refreshToken}; access_token=${accessToken}`,
-	};
+	if (!accessToken) {
+		redirect("/log-in");
+	}
 
-	let response: Response;
+	// attempt to fetch the url normally
+	let axiosError: AxiosError;
 	try {
-		response = await fetch(url, fetchOptions);
+		const response = await api.request<Success>({
+			url,
+			headers: {
+				Cookie: `access_token=${accessToken}`,
+			},
+		});
+
+		// return the data
+		return [response.data, null];
 	} catch (e) {
+		axiosError = e as AxiosError;
+	}
+
+	//
+	// handle the axios error
+	//
+
+	// Backed responds, with non 2xx status
+	if (axiosError.response) {
+		const data = axiosError.response.data as Partial<ServerFetchError>;
+		return [
+			// @ts-expect-error allowing null
+			null,
+			{
+				statusCode: axiosError.status ?? 502,
+				message: data.message ?? "API no disponible",
+				error: data.error ?? "Error desconocido",
+			},
+		];
+	}
+
+	// The request was made but no response came
+	if (axiosError.request) {
+		return [
+			// @ts-expect-error allowing null
+			null,
+			{
+				statusCode: 502,
+				message: "API no disponible",
+				error: "API no disponible",
+			},
+		];
+	}
+
+	// Some other error
+	console.error(axiosError);
+	return [
 		// @ts-expect-error allowing null
-		return [null, e as Error];
-	}
-
-	if (response.status === 401) {
-		const isLoginRequest = path.includes("/auth/login");
-
-		if (!isLoginRequest) {
-			// Try token refresh
-			let refreshResponse: Response;
-			try {
-				refreshResponse = await fetch(
-					process.env.BACKEND_URL + "/auth/refresh-token",
-					{
-						method: "POST",
-						headers: {
-							Cookie: `refresh_token=${refreshToken}; access_token=${accessToken}`,
-						},
-					}
-				);
-			} catch (e) {
-				// @ts-expect-error allowing null
-				return [null, e as Error];
-			}
-
-			if (refreshResponse.ok) {
-				// Retry original request
-				const newCookies = refreshResponse.headers.getSetCookie();
-				fetchOptions.headers = {
-					...fetchOptions.headers,
-					Cookie: newCookies.join(";"),
-				};
-
-				try {
-					response = await fetch(url, fetchOptions);
-				} catch (e) {
-					// @ts-expect-error allowing null
-					return [null, e as Error];
-				}
-			} else {
-				// Logout and redirect
-				try {
-					await serverFetch(
-						process.env.BACKEND_URL + "/auth/logout",
-						{
-							method: "POST",
-						}
-					);
-				} catch (e) {
-					// @ts-expect-error allowing null
-					return [null, e as Error];
-				} finally {
-					redirect("/sign-in");
-				}
-			}
-		}
-	}
-
-	if (!response.ok) {
-		console.error(`Failed to fetch ${path}:`, response.status);
-		// @ts-expect-error allowing null
-		return [null, response];
-	}
-
-	const result: Success = await response.json();
-	return [result, null];
+		null,
+		{
+			statusCode: 503,
+			message: "Error interno",
+			error: "Error interno",
+		},
+	];
 }
