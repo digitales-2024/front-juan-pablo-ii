@@ -1,7 +1,10 @@
 import { components } from "@/types/api";
 import { z } from "zod";
 export type RolResponseDto = components["schemas"]["RolResponseDto"];
-export type User = Omit<components["schemas"]["UserResponseDto"], "roles"> & {
+export type UserResponseDto = Omit<
+	components["schemas"]["UserResponseDto"],
+	"roles"
+> & {
 	roles: RolResponseDto[];
 };
 export type UserCreateDto = components["schemas"]["CreateUserDto"];
