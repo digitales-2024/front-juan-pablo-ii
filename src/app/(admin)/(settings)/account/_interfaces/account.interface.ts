@@ -14,5 +14,6 @@ export interface UserResponse {
   roles?: Array<{
     name: string;
   }>;
+  isSuperAdmin: boolean;
   lastLogin?: Date;
 }
