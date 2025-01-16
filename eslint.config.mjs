@@ -36,7 +36,8 @@ const eslintConfig = tseslint.config(
 			],
 			"@typescript-eslint/consistent-type-definitions": "off",
 			"@typescript-eslint/consistent-indexed-object-style": "off",
-			"@typescript-eslint/no-misused-promises": "off"
+			"@typescript-eslint/no-misused-promises": "off",
+			"@typescript-eslint/no-unsafe-call": "off",
 		},
 	}
 );
