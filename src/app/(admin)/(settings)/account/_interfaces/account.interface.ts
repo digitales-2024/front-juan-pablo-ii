@@ -1,5 +1,19 @@
 import { User } from '@/app/(auth)/types';
 
-export interface Account extends User {
-  // Aquí puedes agregar propiedades adicionales específicas para la cuenta si las necesitas
+export interface ExtendedUser extends User {
+  lastLogin?: string;
+  isActive: boolean;
+  isSuperAdmin: boolean;
+  mustChangePassword: boolean;
+}
+
+export interface UserResponse {
+  name: string;
+  email: string;
+  phone?: string;
+  roles?: Array<{
+    name: string;
+  }>;
+  isSuperAdmin: boolean;
+  lastLogin?: Date;
 }

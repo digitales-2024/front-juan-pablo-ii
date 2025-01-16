@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RefreshCcw } from "lucide-react";
 
-import { updateProduct } from "../actions";
-import { Product, UpdateProductInput, productSchema } from "../types";
+import { updateTypeProduct } from "../actions";
+import { TypeProduct, UpdateTypeProductInput, TypeProductSchema } from "../types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,67 +32,45 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const infoSheet = {
-    title: "Actualizar producto",
-    description: "Actualiza la información del producto y guarda los cambios",
+    title: "Actualizar tipo de producto",
+    description: "Actualiza la información del tipo de producto y guarda los cambios",
 };
 
-interface UpdateProductsSheetProps
+interface UpdateTypeSheetProps
     extends Omit<
         React.ComponentPropsWithRef<typeof Sheet>,
         "open" | "onOpenChange"
     > {
-    product: Product;
+    typeProduct: TypeProduct;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export function UpdateProductsSheet({
-    product,
+export function UpdateTypeSheet({
+    typeProduct,
     open,
     onOpenChange,
-}: UpdateProductsSheetProps) {
-    const form = useForm<UpdateProductInput>({
-        resolver: zodResolver(productSchema),
+}: UpdateTypeSheetProps) {
+    const form = useForm<UpdateTypeProductInput>({
+        resolver: zodResolver(TypeProductSchema),
         defaultValues: {
-            name: product.name ?? "",
-            precio: product.precio ?? 0,
-            unidadMedida: product.unidadMedida ?? "",
-            proveedor: product.proveedor ?? "",
-            uso: product.uso ?? "",
-            usoProducto: product.usoProducto ?? "",
-            description: product.description ?? "",
-            codigoProducto: product.codigoProducto ?? "",
-            descuento: product.descuento ?? 0,
-            observaciones: product.observaciones ?? "",
-            condicionesAlmacenamiento: product.condicionesAlmacenamiento ?? "",
-            isActive: product.isActive ?? true,
-            imagenUrl: product.imagenUrl ?? "",
+            name: typeProduct.name ?? "",
+            description: typeProduct.description ?? "",
         },
     });
 
     useEffect(() => {
         if (open) {
             form.reset({
-                name: product.name ?? "",
-                precio: product.precio ?? 0,
-                unidadMedida: product.unidadMedida ?? "",
-                proveedor: product.proveedor ?? "",
-                uso: product.uso ?? "",
-                usoProducto: product.usoProducto ?? "",
-                description: product.description ?? "",
-                codigoProducto: product.codigoProducto ?? "",
-                descuento: product.descuento ?? 0,
-                observaciones: product.observaciones ?? "",
-                condicionesAlmacenamiento: product.condicionesAlmacenamiento ?? "",
-                isActive: product.isActive ?? true,
-                imagenUrl: product.imagenUrl ?? "",
+                name: typeProduct.name ?? "",
+                description: typeProduct.description ?? "",
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open, product]);
+    }, [open, typeProduct]);
 
-    const onSubmit = async (input: UpdateProductInput) => {
-        await updateProduct(product.id, input);
+    const onSubmit = async (input: UpdateTypeProductInput) => {
+        await updateTypeProduct(typeProduct.id, input);
         onOpenChange(false);
     };
 
@@ -109,7 +87,7 @@ export function UpdateProductsSheet({
                             className="bg-emerald-100 capitalize text-emerald-700"
                             variant="secondary"
                         >
-                            {product.name}
+                            {typeProduct.name}
                         </Badge>
                     </SheetTitle>
                     <SheetDescription>{infoSheet.description}</SheetDescription>
@@ -127,32 +105,11 @@ export function UpdateProductsSheet({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Nombre del Producto
+                                            Nombre del Tipo de Producto
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ingrese el nombre del producto"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            {/* Precio */}
-                            <FormField
-                                control={form.control}
-                                name="precio"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Precio del Producto
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                placeholder="Ingrese el precio del producto"
+                                                placeholder="Ingrese el nombre del tipo de producto"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -170,7 +127,7 @@ export function UpdateProductsSheet({
                                         <FormLabel>Descripción</FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="Ingrese la descripción del producto"
+                                                placeholder="Ingrese la descripción del tipo de producto"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -178,8 +135,6 @@ export function UpdateProductsSheet({
                                     </FormItem>
                                 )}
                             />
-
-                            {/* Agrega más campos según sea necesario */}
 
                             <SheetFooter className="gap-2 pt-2 sm:space-x-0">
                                 <div className="flex flex-row-reverse gap-2">
