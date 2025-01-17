@@ -7,9 +7,11 @@ import {
 	SendEmailDto,
 	UserUpdateDto,
 } from "./types";
+import { BaseApiResponse } from "@/types/api/types";
 
 type GetUsersResponse = UserResponseDto[] | { error: string };
 type CreateUserResponse = UserResponseDto | { error: string };
+type DeleteUserResponse = BaseApiResponse | { error?: string };
 
 export async function getUsers(): Promise<GetUsersResponse> {
 	try {
@@ -58,6 +60,23 @@ export async function updateUser(
 		}
 
 		return user;
+	} catch (error) {
+		if (error instanceof Error) return { error: error.message };
+		return { error: "Error desconocido" };
+	}
+}
+
+export async function deleteUser(id: string): Promise<DeleteUserResponse> {
+	try {
+		const [response, error] = await http.delete<BaseApiResponse>(
+			`/users/${id}`
+		);
+
+		if (error) {
+			return { error: error.message };
+		}
+
+		return response;
 	} catch (error) {
 		if (error instanceof Error) return { error: error.message };
 		return { error: "Error desconocido" };
