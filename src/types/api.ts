@@ -324,6 +324,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AuthController_verify"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head: operations["AuthController_verifyQuick"];
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/modules": {
         parameters: {
             query?: never;
@@ -2718,10 +2734,11 @@ export interface components {
              */
             mustChangePassword: boolean;
             /**
+             * Format: date-time
              * @description Última vez que el usuario hizo login
-             * @example true
+             * @example 2021-01-01
              */
-            lastLogin: boolean;
+            lastLogin: string;
         };
         SendEmailDto: {
             email: string;
@@ -6336,6 +6353,56 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Refresh token */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_verify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Verify token */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_verifyQuick: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Quick token verification */
             201: {
                 headers: {
                     [name: string]: unknown;
