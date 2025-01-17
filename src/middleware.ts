@@ -1,184 +1,172 @@
-// // src/middleware.ts
-// import { NextResponse, type NextRequest } from "next/server";
-
-// // Define tus rutas públicas
-// const PUBLIC_ROUTES = [
-//   '/sign-in',
-//   '/sign-up',
-//   '/forgot-password'
-// ];
-
-// // Middleware function
-// export function middleware(request: NextRequest) {
-//   const { pathname } = request.nextUrl;
-
-//   // Verifica si la ruta actual es pública
-//   const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
-
-//   // Verifica autenticación
-//   const accessToken = request.cookies.get("access_token")?.value;
-//   const refreshToken = request.cookies.get("refresh_token")?.value;
-//   const isAuthenticated = !!(accessToken || refreshToken);
-
-//   // Si la ruta es pública y el usuario está autenticado, redirige al dashboard
-//   if (isPublicRoute && isAuthenticated) {
-//     return NextResponse.redirect(new URL('/', request.url));
-//   }
-
-//   // Si la ruta NO es pública y el usuario NO está autenticado, redirige al login
-//   if (!isPublicRoute && !isAuthenticated) {
-//     return NextResponse.redirect(new URL('/sign-in', request.url));
-//   }
-
-//   return NextResponse.next();
-// }
-
-// // Configuración estática del matcher
-// export const config = {
-//   matcher: [
-//     /*
-//      * Coincide con todas las rutas excepto:
-//      * 1. /api (rutas API)
-//      * 2. /_next (archivos estáticos de Next.js)
-//      * 3. /_static (si tienes una carpeta static)
-//      * 4. /_vercel (archivos internos de Vercel)
-//      * 5. /favicon.ico, /sitemap.xml, etc.
-//      */
-//     '/((?!api|_next|_static|_vercel|favicon.ico|sitemap.xml).*)',
-//   ]
-// };
-
-
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { jwtDecode } from 'jwt-decode'
-import { AxiosError } from 'axios'
-import { Result } from './utils/result'
+// src/middleware.ts
+import { NextResponse, type NextRequest } from "next/server";
+import { jwtDecode } from "jwt-decode";
 
 interface JWTPayload {
-	exp: number
+	exp: number;
+	id: string;
 }
 
-const routesNotRequiringAuth = ["/sign-in", "/update-password"];
+// Rutas públicas que no requieren autenticación
+const PUBLIC_ROUTES = ["/sign-in"];
+const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:5000/api/v1";
 
-/**
- * Devuelve en cuantos segundos expira el token jwt pasado como param.
- * Si el token es invalido, o ya ha expirado, devuelve 0
- */
-function tokenExpiration(token: string): number {
+// Rutas que no queremos guardar como última URL visitada
+const EXCLUDED_REDIRECT_ROUTES = ["/", "/sign-in"];
+
+// Función para obtener el access token
+function getAccessToken(request: NextRequest) {
+	return request.cookies.get("access_token")?.value ?? null;
+}
+
+// Función para obtener el refresh token
+function getRefreshToken(request: NextRequest) {
+	return request.cookies.get("refresh_token")?.value ?? null;
+}
+
+// Función para verificar si el refresh token no ha expirado
+function checkRefreshTokenExpiration(refreshToken: string | null) {
 	try {
-		const decoded = jwtDecode<JWTPayload>(token)
-		const expirationMs = decoded.exp * 1000;
-		const now = Date.now()
-		const secondsToExpiration = (expirationMs - now) / 1000
-		return secondsToExpiration > 0 ? secondsToExpiration : 0;
-	} catch {
-		return 0;
+		if (!refreshToken) {
+			throw new Error("Refresh token is null");
+		}
+		const decodedToken = jwtDecode<JWTPayload>(refreshToken);
+		const currentTime = Math.floor(Date.now() / 1000); // Convertir a segundos
+
+		return decodedToken.exp > currentTime;
+	} catch (error) {
+		console.error("Error decoding refresh token:", error);
+		return false;
 	}
+}
+
+// Función para refrescar el access token
+async function refreshAccessToken() {
+	try {
+		const response = await fetch(`${BACKEND_URL}/auth/refresh-token`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		if (!response.ok) {
+			throw new Error("Failed to refresh token");
+		}
+
+		const data = (await response.json()) as { access_token: string };
+		return data.access_token;
+	} catch (error) {
+		console.error("Error refreshing access token:", error);
+		return null;
+	}
+}
+
+// Función para llamar al endpoint de logout
+async function logout(request: NextRequest) {
+	try {
+		const refreshToken = getRefreshToken(request);
+
+		if (refreshToken) {
+			await fetch(`${BACKEND_URL}/auth/logout`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ refresh_token: refreshToken }),
+			});
+		}
+
+		const redirectResponse = NextResponse.redirect(
+			new URL("/sign-in", request.url)
+		);
+		redirectResponse.cookies.delete("access_token");
+		redirectResponse.cookies.delete("refresh_token");
+		redirectResponse.cookies.delete("lastUrl");
+
+		return redirectResponse;
+	} catch (error) {
+		console.error("Error during logout:", error);
+		const redirectResponse = NextResponse.redirect(
+			new URL("/sign-in", request.url)
+		);
+		redirectResponse.cookies.delete("access_token");
+		redirectResponse.cookies.delete("refresh_token");
+		redirectResponse.cookies.delete("lastUrl");
+
+		return redirectResponse;
+	}
+}
+
+// Función para manejar la verificación y renovación del access token
+async function handleToken(request: NextRequest) {
+	const accessToken = getAccessToken(request);
+	const refreshToken = getRefreshToken(request);
+	if (!accessToken) {
+		if (refreshToken) {
+			const isRefreshTokenValid =
+				checkRefreshTokenExpiration(refreshToken);
+			if (isRefreshTokenValid) {
+				await refreshAccessToken();
+			} else {
+				await logout(request);
+				return;
+			}
+		} else {
+			await logout(request);
+			return;
+		}
+	}
+	return NextResponse.next();
 }
 
 export async function middleware(request: NextRequest) {
-	const access_token = request.cookies.get('access_token')
-	const refresh_token = request.cookies.get('refresh_token')
+	const { pathname } = request.nextUrl;
 
-	if (routesNotRequiringAuth.includes(request.nextUrl.pathname)) {
-		return NextResponse.next()
+	// Verificar si hay tokens de autenticación
+	const accessToken = request.cookies.get("access_token")?.value ?? null;
+	const refreshToken = request.cookies.get("refresh_token")?.value ?? null;
+	const isAuthenticated = !!(accessToken && refreshToken);
+
+	// Si estamos en una ruta pública (sign-in) y el usuario está autenticado
+	// redirigimos al home o a la última URL visitada
+	if (PUBLIC_ROUTES.includes(pathname) && isAuthenticated) {
+		const lastVisitedUrl = request.cookies.get("lastUrl")?.value ?? "/";
+		return NextResponse.redirect(new URL(lastVisitedUrl, request.url));
 	}
 
-	if (!access_token || !refresh_token) {
-		// No token? GTFO to login
-		return logoutAndRedirectLogin(request);
-	}
+	// Si NO estamos en una ruta pública y el usuario NO está autenticado
+	// guardamos la URL actual (si no está excluida) y redirigimos a sign-in
+	if (!PUBLIC_ROUTES.includes(pathname) && !isAuthenticated) {
+		const response = NextResponse.redirect(
+			new URL("/sign-in", request.url)
+		);
 
-	// if the access_token expires in 60s or less,
-	// attempt to refresh it
-	if (tokenExpiration(access_token.value) < 60) {
-		// check them refresh_token. if it expires in 5 seconds or
-		// less, forget it, remove all tokens and redirect to /login
-		if (tokenExpiration(refresh_token.value) < 5) {
-			console.log('💀 Refresh token almost dead, nuking everything!')
-			return logoutAndRedirectLogin(request);
+		// Solo guardamos la URL si no está en la lista de excluidas
+		if (!EXCLUDED_REDIRECT_ROUTES.includes(pathname)) {
+			response.cookies.set("lastUrl", pathname);
 		}
 
-		// do session refresh here :D
-		const [newCookies, err] = await refresh(access_token.value, refresh_token.value);
-		if (err) {
-			console.log(err)
-			return logoutAndRedirectLogin(request);
-		}
-
-		// Cookies have been refreshed, all is right in the world :D
-		const response = NextResponse.next()
-
-		response.cookies.delete('logged_in')
-		response.cookies.delete('access_token')
-		response.cookies.delete('refresh_token')
-
-		newCookies.forEach(cookie => {
-			// Extract the name and value from the cookie string
-			const [nameValue] = cookie.split(';')
-			const [name, value] = nameValue.split('=')
-
-			// Update the request cookies
-			response.cookies.set({
-				name,
-				value
-			})
-		})
-
-		return response
+		return response;
 	}
 
-	// access_token is valid, just continue :D
-	return NextResponse.next()
-}
-
-function logoutAndRedirectLogin(request: NextRequest) {
-	const response = NextResponse.redirect(new URL('/sign-in', request.url))
-	// Nuke them cookies from orbit
-	response.cookies.delete('logged_in')
-	response.cookies.delete('access_token')
-	response.cookies.delete('refresh_token')
-	return response
-}
-
-/**
- * Attempt to refresh the session cookies. Returns all the
- * Set-Cookie headers, like so:
- * [
- *   "access_token=jfdlskjflsdkfjsldkjf;",
- *   "refresh_token=jfdlskjflsdkfjsldkjf;",
- * ]
- */
-async function refresh(accessToken: string, refreshToken: string): Promise<Result<Array<string>, string>> {
-	try {
-		// Try token refresh
-		const response = await fetch(`${process.env.BACKEND_URL}/auth/refresh-token`, {
-			method: 'POST',
-			headers: {
-				Cookie: `access_token=${accessToken}; refresh_token=${refreshToken}`
-			}
-		});
-		// Get ALL cookies, no games, no tricks
-		const newCookies = response.headers.getSetCookie();
-
-		if (!newCookies || newCookies.length === 0) {
-			return [
-				// @ts-expect-error allowing null
-				null,
-				"El refresh fue exitoso, pero no contenia nuevas cookies"
-			]
-		}
-		return [newCookies, null];
-	} catch (e) {
-		const err = e as AxiosError;
-		console.log(err.response);
-
-		// @ts-expect-error allowing null
-		return [null, "Error refrescando token"]
+	// Si la ruta actual no está excluida, la guardamos como última URL visitada
+	if (!EXCLUDED_REDIRECT_ROUTES.includes(pathname)) {
+		const response = NextResponse.next();
+		response.cookies.set("lastUrl", pathname);
+		return response;
 	}
+
+	// Llamar a la función handleToken
+	const response = await handleToken(request);
+	if (response) {
+		return response;
+	}
+
+	return NextResponse.next();
 }
 
 export const config = {
-	matcher: ["/((?!_next|favicon.ico|static).*)"],
-}
+	matcher: ["/((?!_next|favicon.ico|static|api|images).*)"],
+};
