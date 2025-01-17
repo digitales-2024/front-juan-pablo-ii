@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUser } from '../_actions/get-user.action';
-import { UserResponse } from '../_interfaces/account.interface';
+import { UserResponse } from '@/app/(auth)/sign-in/_interfaces/auth.interface';
 
 export const useUser = (userId: string) => {
   return useQuery<UserResponse, Error>({
