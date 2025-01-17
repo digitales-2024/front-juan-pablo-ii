@@ -2692,6 +2692,14 @@ export interface components {
             /** @description User rols */
             roles?: string[];
         };
+        BaseApiResponse: {
+            /** @description Estado de la operación */
+            success: boolean;
+            /** @description Mensaje descriptivo */
+            message: string;
+            /** @description Datos de la respuesta */
+            data: Record<string, never>;
+        };
         DeleteUsersDto: {
             ids: string[];
         };
@@ -5626,7 +5634,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
             };
             /** @description Bad request */
             400: {
