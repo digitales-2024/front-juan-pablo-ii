@@ -1,11 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useAuth } from '@/app/(auth)/sign-in/_hooks/useAuth';
+import { useSignIn } from '@/app/(auth)/sign-in/_hooks/useAuth';
 import { toast } from '@/lib/toast/toast-service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,11 +16,31 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
+const formSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(1, 'La contraseña debe tener al menos 1 caracteres'),
+});
 
+type FormData = z.infer<typeof formSchema>;
 
+export function UserAuthForm() {
+  const { mutate, isPending } = useSignIn();
 
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
-  
+  const onSubmit = async (data: FormData) => {
+    try {
+      await mutate(data);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Error al iniciar sesión');
+    }
+  };
 
   return (
     <div className="grid gap-6 mt-6">
@@ -38,7 +56,7 @@ import {
                   <Input 
                     placeholder="nombre@ejemplo.com" 
                     type="email"
-                    disabled={isLoading}
+                    disabled={isPending}
                     {...field} 
                   />
                 </FormControl>
@@ -56,7 +74,7 @@ import {
                   <Input
                     type="password"
                     placeholder="********"
-                    disabled={isLoading}
+                    disabled={isPending}
                     {...field}
                   />
                 </FormControl>
@@ -67,9 +85,9 @@ import {
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading}
+            disabled={isPending}
           >
-            {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+            {isPending ? "Iniciando sesión..." : "Iniciar sesión"}
           </Button>
         </form>
       </Form>
