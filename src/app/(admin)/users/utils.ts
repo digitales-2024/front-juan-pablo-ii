@@ -7,9 +7,24 @@ import generator from "generate-password-ts";
  * @returns {string}
  */
 export const generatePassword = (): string => {
-	return generator.generate({
-		length: 10,
-		numbers: true,
-		uppercase: true,
-	});
+	const maxAttempts = 10;
+	let password: string;
+	let attempts = 0;
+
+	do {
+		password = generator.generate({
+			length: 10,
+			numbers: true,
+			uppercase: true,
+		});
+		attempts++;
+	} while (!/\d/.test(password) && attempts < maxAttempts);
+
+	if (!/\d/.test(password)) {
+		throw new Error(
+			"Failed to generate a valid password after maximum attempts"
+		);
+	}
+
+	return password;
 };
