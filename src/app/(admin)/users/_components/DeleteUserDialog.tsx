@@ -8,7 +8,7 @@ import {
 	DrawerTitle,
 	DrawerTrigger,
 } from "@/components/ui/drawer";
-import { ComponentPropsWithoutRef, useTransition } from "react";
+import { ComponentPropsWithoutRef } from "react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,15 +20,16 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { User } from "../types";
 import { Row } from "@tanstack/react-table";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw, Trash } from "lucide-react";
+import { useUsers } from "../_hooks/useUsers";
+import { UserResponseDto } from "../types";
 
 interface DeleteUsersDialogProps
 	extends ComponentPropsWithoutRef<typeof AlertDialog> {
-	users: Row<User>["original"][];
+	users: Row<UserResponseDto>["original"][];
 	showTrigger?: boolean;
 	onSuccess?: () => void;
 }
@@ -39,14 +40,17 @@ export default function DeleteUserDialog({
 	onSuccess,
 	...props
 }: DeleteUsersDialogProps) {
-	const [isDeletePending] = useTransition();
 	const isDesktop = useMediaQuery("(min-width: 640px)");
 
-	const onDeleteUsersHandler = async () => {
-		// await deleteUser(users[0].id);
-		props.onOpenChange?.(false);
-		onSuccess?.();
-	};
+	const { deleteUser, isDeleting } = useUsers();
+
+	function onDeleteUsersHandler() {
+		deleteUser(users[0].id, {
+			onSuccess: () => {
+				onSuccess?.();
+			},
+		});
+	}
 
 	if (isDesktop) {
 		return (
@@ -77,9 +81,9 @@ export default function DeleteUserDialog({
 						<AlertDialogAction
 							aria-label="Delete selected rows"
 							onClick={onDeleteUsersHandler}
-							disabled={isDeletePending}
+							disabled={isDeleting}
 						>
-							{isDeletePending && (
+							{isDeleting && (
 								<RefreshCcw
 									className="mr-2 size-4 animate-spin"
 									aria-hidden="true"
@@ -116,9 +120,9 @@ export default function DeleteUserDialog({
 					<Button
 						aria-label="Delete selected rows"
 						onClick={onDeleteUsersHandler}
-						disabled={isDeletePending}
+						disabled={isDeleting}
 					>
-						{isDeletePending && (
+						{isDeleting && (
 							<RefreshCcw
 								className="mr-2 size-4 animate-spin"
 								aria-hidden="true"
