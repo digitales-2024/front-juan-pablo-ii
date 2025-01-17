@@ -7,7 +7,6 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { User } from "../types";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { Ellipsis, RefreshCcwDot, Squircle, Trash } from "lucide-react";
 import { useState } from "react";
@@ -15,22 +14,47 @@ import UpdateUserSheet from "./UpdateUserSheet";
 import DeleteUserDialog from "./DeleteUserDialog";
 import ReactivateUserDialog from "./ReactivateUserDialog";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { UserResponseDto } from "../types";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
+import { Badge } from "@/components/ui/badge";
 
-export const usersTableColumns = (): ColumnDef<User>[] => [
+export const usersTableColumns = (): ColumnDef<UserResponseDto>[] => [
 	{
-		id: "Nombre",
+		id: "nombre",
 		accessorKey: "name",
-		header: "Nombre",
+		accessorFn: (row) => row.name,
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Nombre" />
+		),
+		cell: ({ row }) => (
+			<span className="capitalize"> {row.original.name}</span>
+		),
 	},
 	{
 		id: "Email",
 		accessorKey: "email",
-		header: "Email",
+		accessorFn: (row) => row.email,
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Email" />
+		),
+		cell: ({ row }) => <div>{row.original.email}</div>,
 	},
 	{
-		id: "Última conexión",
-		accessorKey: "lastLogin",
-		header: "Última conexión",
+		id: "Teléfono",
+		accessorKey: "phone",
+		accessorFn: (row) => row.phone,
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Teléfono" />
+		),
+		cell: ({ row }) => (
+			<div>
+				{row.original.phone
+					? formatPhoneNumberIntl(row.original.phone)
+					: "No disponible"}
+			</div>
+		),
 	},
 	{
 		id: "rol",
@@ -47,6 +71,37 @@ export const usersTableColumns = (): ColumnDef<User>[] => [
 					aria-hidden="true"
 				/>
 				{row.original.roles[0].name}
+			</div>
+		),
+	},
+	{
+		id: "Estado",
+		accessorKey: "isActive",
+		accessorFn: (row) => row.isActive,
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Estado" />
+		),
+		cell: ({ row }) => (
+			<div>
+				{row.original.isActive ? (
+					<Badge variant="success">Activo</Badge>
+				) : (
+					<Badge variant="destructive">Inactivo</Badge>
+				)}
+			</div>
+		),
+	},
+	{
+		id: "Última conexión",
+		accessorKey: "lastLogin",
+		header: "Última conexión",
+		cell: ({ row }) => (
+			<div>
+				{row.original.lastLogin
+					? format(new Date(row.original.lastLogin), "PPPp", {
+							locale: es,
+					  })
+					: "No disponible"}
 			</div>
 		),
 	},
