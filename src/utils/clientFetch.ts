@@ -4,7 +4,7 @@ interface FetchOptions extends Omit<AxiosRequestConfig, 'url'> {
   skipAuth?: boolean;
 }
 
-// Crear instancia de axios
+// Crear instancia de axios con configuración base
 const api: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL,
   timeout: 5000,
@@ -32,32 +32,44 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     if (process.env.NODE_ENV !== 'production') {
+      // Solo registramos datos relevantes y seguros para JSON
       console.log(`✅ [${response.status}] ${response.config.url}`, {
         data: response.data,
+        headers: {
+          'set-cookie': response.headers['set-cookie']
+        }
       });
     }
     return response;
   },
-  (error: AxiosError) => {
-    console.error('❌ Error en la respuesta:', error.response?.data || error.message);
+  (error) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('❌ Error en la respuesta:', error.response?.data || error.message);
+    }
     return Promise.reject(error);
   }
 );
 
-export async function clientFetch<T>(
-  path: string,
-  options: FetchOptions = {}
-): Promise<T> {
+// Función genérica para hacer peticiones
+async function clientFetch<T>(path: string, options: FetchOptions = {}): Promise<{ data: T, headers: any }> {
   try {
-    const { data } = await api.request<T>({
+    const response = await api.request({
       url: path,
       ...options,
+      headers: {
+        ...options.headers,
+        'Accept': 'application/json',
+      }
     });
-    return data;
+
+    // Devolvemos tanto los datos como los headers
+    return {
+      data: response.data,
+      headers: response.headers
+    };
   } catch (error) {
     if (error instanceof AxiosError) {
-      const message = error.response?.data?.message || error.message;
-      throw new Error(message);
+      throw new Error(error.response?.data?.message || error.message);
     }
     throw error;
   }
