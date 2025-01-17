@@ -2,11 +2,9 @@
 
 import { z } from 'zod';
 import { createSafeAction } from '@/utils/createSafeAction';
-import { serverFetch } from '@/utils/serverFetch';
-import { ExtendedUser, UserResponse } from '../_interfaces/account.interface';
-import { sleep } from '@/utils/sleep';
-import type { User } from '@/app/(auth)/types';
+// import { sleep } from '@/utils/sleep';
 import { http } from '@/utils/serverFetch';
+import { UserResponse } from '@/app/(auth)/sign-in/_interfaces/auth.interface';
 
 const GetUserSchema = z.object({
   userId: z.string().min(1, 'El ID de usuario es requerido'),
@@ -23,13 +21,12 @@ const handler = async (data: GetUserInput) => {
     }
 
     const mappedAccount: UserResponse = {
-    
+      id: account.id,
       name: account.name ?? '',
       email: account.email ?? '',
       phone: account.phone ?? '',
       isSuperAdmin: account.isSuperAdmin ?? false,
-      roles: account.roles?.map(role => ({ name: role.name })),
-      lastLogin: account.lastLogin ? new Date(account.lastLogin) : undefined
+      roles: account.roles?.map((role: { name: string }) => ({ name: role.name })),
     };
 
     return { data: mappedAccount };
