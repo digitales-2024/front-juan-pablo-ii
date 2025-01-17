@@ -1,5 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createUser, sendNewPassword, updateUser } from "../actions";
+import {
+	createUser,
+	deleteUser,
+	sendNewPassword,
+	updateUser,
+} from "../actions";
 import { toast } from "sonner";
 import {
 	SendEmailDto,
@@ -7,6 +12,7 @@ import {
 	UserResponseDto,
 	UserUpdateDto,
 } from "../types";
+import { BaseApiResponse } from "@/types/api/types";
 
 interface UpdateUserVariables {
 	id: string;
@@ -127,6 +133,31 @@ export const useUsers = () => {
 		},
 	});
 
+	const deleteUserMutation = useMutation<BaseApiResponse, Error, string>({
+		mutationFn: async (id) => {
+			const response = await deleteUser(id);
+			if ("error" in response) {
+				throw new Error(response.error);
+			}
+			return response;
+		},
+		onSuccess: (response) => {
+			toast.success(response.message);
+		},
+		onError: (error: Error) => {
+			if (
+				error.message.includes("no autorizado") ||
+				error.message.includes("sesión expirada")
+			) {
+				toast.error(
+					"Sesión expirada. Por favor, inicie sesión nuevamente"
+				);
+				return;
+			}
+			toast.error(error.message);
+		},
+	});
+
 	return {
 		// Mutations
 		createUser: createMutation.mutate,
@@ -138,5 +169,9 @@ export const useUsers = () => {
 		sendNewPassword: sendNewPasswordMutation.mutate,
 		isLoadingSendNewPassword: sendNewPasswordMutation.isPending,
 		isSuccessSendNewPassword: sendNewPasswordMutation.isSuccess,
+		sendNewPasswordError: sendNewPasswordMutation.error,
+		deleteUser: deleteUserMutation.mutate,
+		isDeleting: deleteUserMutation.isPending,
+		deleteError: deleteUserMutation.error,
 	};
 };

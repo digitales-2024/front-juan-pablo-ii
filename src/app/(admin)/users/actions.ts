@@ -11,7 +11,7 @@ import { BaseApiResponse } from "@/types/api/types";
 
 type GetUsersResponse = UserResponseDto[] | { error: string };
 type CreateUserResponse = UserResponseDto | { error: string };
-type DeleteUserResponse = BaseApiResponse | { error?: string };
+type DeleteUserResponse = BaseApiResponse | { error: string };
 
 export async function getUsers(): Promise<GetUsersResponse> {
 	try {
