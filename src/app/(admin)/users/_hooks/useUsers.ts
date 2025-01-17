@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	createUser,
 	deleteUser,
+	reactivateUser,
 	sendNewPassword,
 	updateUser,
 } from "../actions";
@@ -158,6 +159,32 @@ export const useUsers = () => {
 		},
 	});
 
+	const reactivateUserMutation = useMutation<BaseApiResponse, Error, string>({
+		mutationFn: async (id) => {
+			const response = await reactivateUser(id);
+			if ("error" in response) {
+				throw new Error(response.error);
+			}
+			return response;
+		},
+		onSuccess: (response) => {
+			toast.success(response.message);
+		},
+		onError: (error: Error) => {
+			if (
+				error.message.includes("no autorizado") ||
+				error.message.includes("sesión expirada")
+			) {
+				toast.error(
+					"Sesión expirada. Por favor, inicie sesión nuevamente"
+				);
+				return;
+			}
+
+			toast.error(error.message);
+		},
+	});
+
 	return {
 		// Mutations
 		createUser: createMutation.mutate,
@@ -173,5 +200,8 @@ export const useUsers = () => {
 		deleteUser: deleteUserMutation.mutate,
 		isDeleting: deleteUserMutation.isPending,
 		deleteError: deleteUserMutation.error,
+		reactivateUser: reactivateUserMutation.mutate,
+		isReactivating: reactivateUserMutation.isPending,
+		reactivateError: reactivateUserMutation.error,
 	};
 };

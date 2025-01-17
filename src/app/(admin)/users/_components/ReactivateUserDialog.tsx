@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Row } from "@tanstack/react-table";
 import { ComponentPropsWithoutRef } from "react";
-import { User } from "../types";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import {
 	Drawer,
@@ -24,11 +23,13 @@ import {
 	DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { RefreshCcwDot } from "lucide-react";
+import { RefreshCcw, RefreshCcwDot } from "lucide-react";
+import { useUsers } from "../_hooks/useUsers";
+import { UserResponseDto } from "../types";
 
 interface ReactivateUsersDialogProps
 	extends ComponentPropsWithoutRef<typeof AlertDialog> {
-	users: Row<User>["original"][];
+	users: Row<UserResponseDto>["original"][];
 	showTrigger?: boolean;
 	onSuccess?: () => void;
 }
@@ -40,11 +41,15 @@ export default function ReactivateUserDialog({
 	...props
 }: ReactivateUsersDialogProps) {
 	const isDesktop = useMediaQuery("(min-width: 640px)");
+	const { reactivateUser, isReactivating } = useUsers();
 
-	const onReactivateUsersHandler = () => {
-		props.onOpenChange?.(false);
-		onSuccess?.();
-	};
+	function onReactivateUsersHandler() {
+		reactivateUser(users[0].id, {
+			onSuccess: () => {
+				onSuccess?.();
+			},
+		});
+	}
 
 	if (isDesktop) {
 		return (
@@ -78,13 +83,14 @@ export default function ReactivateUserDialog({
 						<AlertDialogAction
 							aria-label="Reactivate selected rows"
 							onClick={onReactivateUsersHandler}
+							disabled={isReactivating}
 						>
-							{/* {isLoadingReactivateUsers && (
+							{isReactivating && (
 								<RefreshCcw
 									className="mr-2 size-4 animate-spin"
 									aria-hidden="true"
 								/>
-							)} */}
+							)}
 							Reactivar
 						</AlertDialogAction>
 					</AlertDialogFooter>

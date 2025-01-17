@@ -83,6 +83,23 @@ export async function deleteUser(id: string): Promise<DeleteUserResponse> {
 	}
 }
 
+export async function reactivateUser(id: string): Promise<DeleteUserResponse> {
+	try {
+		const [response, error] = await http.patch<BaseApiResponse>(
+			`/users/reactivate/${id}`
+		);
+
+		if (error) {
+			return { error: error.message };
+		}
+
+		return response;
+	} catch (error) {
+		if (error instanceof Error) return { error: error.message };
+		return { error: "Error desconocido" };
+	}
+}
+
 export async function sendNewPassword(
 	data: SendEmailDto
 ): Promise<{ error?: string }> {
