@@ -14,11 +14,30 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
-import { logoutAction } from "@/app/(auth)/actions";
+import { logoutAction } from "@/app/(auth)/sign-in/_actions/logout.action";
 import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 
 export function ProfileDropdown() {
-	const { user, logout } = useAuth();
+	const { user, isHydrated, logout } = useAuth();
+	
+	// Solo esperamos la hidratación
+	if (!isHydrated) {
+		return (
+			<DropdownMenu modal={false}>
+				<DropdownMenuTrigger asChild>
+					<Button
+						variant="ghost"
+						className="relative h-8 w-8 rounded-full"
+					>
+						<Avatar className="h-8 w-8">
+							<AvatarFallback>UN</AvatarFallback>
+						</Avatar>
+					</Button>
+				</DropdownMenuTrigger>
+			</DropdownMenu>
+		);
+	}
+	
 	const defaultUser = {
 		name: "Usuario",
 		email: "usuario@example.com"

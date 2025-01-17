@@ -16,15 +16,43 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { logoutAction } from "@/app/(auth)/actions";
+import { logoutAction } from "@/app/(auth)/sign-in/_actions/logout.action";
 import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 
 export function NavUser() {
-	const { user, logout } = useAuth();
+	const { user, isHydrated, logout } = useAuth();
 	const { isMobile } = useSidebar();
+	
+	// Solo esperamos la hidratación
+	if (!isHydrated) {
+		return (
+			<SidebarMenu>
+				<SidebarMenuItem>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<SidebarMenuButton
+								size="lg"
+								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+							>
+								<Avatar className="h-8 w-8 rounded-lg">
+									<AvatarFallback className="rounded-lg">UN</AvatarFallback>
+								</Avatar>
+								<div className="grid flex-1 text-left text-sm leading-tight">
+									<span className="truncate font-semibold">Usuario</span>
+									<span className="truncate text-xs">usuario@example.com</span>
+								</div>
+								<ChevronsUpDown className="ml-auto size-4" />
+							</SidebarMenuButton>
+						</DropdownMenuTrigger>
+					</DropdownMenu>
+				</SidebarMenuItem>
+			</SidebarMenu>
+		);
+	}
+	
 	const defaultUser = {
 		name: "Usuario",
-		email: "usuario@example.com"
+		email: "usuario@example.com" 
 	};
 	const currentUser = user || defaultUser;
 
