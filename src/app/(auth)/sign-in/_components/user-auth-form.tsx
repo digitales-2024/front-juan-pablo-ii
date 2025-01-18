@@ -36,7 +36,7 @@ export function UserAuthForm() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await mutate(data);
+      mutate(data);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Error al iniciar sesión');
     }

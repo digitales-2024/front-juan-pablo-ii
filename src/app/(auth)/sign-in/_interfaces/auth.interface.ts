@@ -1,5 +1,5 @@
 import type { components } from '@/types/api';
-import { AxiosResponse, AxiosResponseHeaders, InternalAxiosRequestConfig } from 'axios';
+import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 // Tipos base de la API
 export type LoginAuthDto = components['schemas']['LoginAuthDto'];
@@ -28,7 +28,7 @@ export interface UserResponse {
   isSuperAdmin: boolean;
   headers?: {
     'set-cookie'?: string[];
-    [key: string]: any;
+    [key: string]: unknown;
   };
   config?: InternalAxiosRequestConfig;
   status?: number;
@@ -36,3 +36,4 @@ export interface UserResponse {
 }
 
 export type AuthResponse = AxiosResponse<UserResponse>;
+
