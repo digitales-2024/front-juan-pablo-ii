@@ -15,7 +15,7 @@ import { useProfile } from '../_hooks/useProfile'
 
 export default function AccountData() {
   const { user } = useAuth()
-  const { data: profile } = useProfile()
+  const { profile } = useProfile()
 
   if (!profile) {
     return (
