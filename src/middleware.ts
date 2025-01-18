@@ -1,6 +1,8 @@
-// src/middleware.ts
-import { NextResponse, type NextRequest } from "next/server";
-import { jwtDecode } from "jwt-decode";
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { jwtDecode } from 'jwt-decode'
+import { AxiosError } from 'axios'
+import { Result } from './utils/result'
 
 interface JWTPayload {
 	exp: number;

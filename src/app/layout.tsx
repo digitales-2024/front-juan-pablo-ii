@@ -26,16 +26,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="es" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <QueryProvider>
-          <SearchProvider>{children}</SearchProvider>
-          <ToastProvider />
-        </QueryProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="es" suppressHydrationWarning>
+			<body
+				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+			>
+					<QueryProvider>
+						<SearchProvider>{children}</SearchProvider>
+						<ToastProvider />
+					</QueryProvider>
+			</body>
+		</html>
+	);
 }

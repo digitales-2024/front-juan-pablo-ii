@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/store/auth'
+import { useAuth } from '@/app/(auth)/sign-in/_hooks/useAuth'
 import {
   Card,
   CardContent,
@@ -11,41 +11,22 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { useUser } from '../_hooks/useUser'
-
-interface Role {
-  name: string;
-}
+import { useProfile } from '../_hooks/useProfile'
 
 export default function AccountData() {
   const { user } = useAuth()
-  const { data: account, isLoading, error } = useUser(user?.id || '')
+  const { data: profile } = useProfile()
 
-  if (isLoading) {
+  if (!profile) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Datos de la cuenta</CardTitle>
-          <CardDescription>Cargando información...</CardDescription>
+          <CardDescription>No hay información disponible</CardDescription>
         </CardHeader>
       </Card>
     )
   }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Error</CardTitle>
-          <CardDescription className="text-red-500">
-            {error.message}
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    )
-  }
-
-  if (!account) return null
 
   return (
     <Card>
@@ -56,28 +37,26 @@ export default function AccountData() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        
-
         <div className="grid gap-2">
           <label className="text-sm font-medium">Nombre</label>
-          <p className="text-sm">{account.name}</p>
+          <p className="text-sm">{profile.name}</p>
         </div>
 
         <div className="grid gap-2">
           <label className="text-sm font-medium">Email</label>
-          <p className="text-sm">{account.email}</p>
+          <p className="text-sm">{profile.email}</p>
         </div>
 
         <div className="grid gap-2">
           <label className="text-sm font-medium">Teléfono</label>
-          <p className="text-sm">{account.phone || 'No especificado'}</p>
+          <p className="text-sm">{profile.phone || 'No especificado'}</p>
         </div>
 
-        {account.lastLogin && (
+        {user?.lastLogin && (
           <div className="grid gap-2">
             <label className="text-sm font-medium">Último acceso</label>
             <p className="text-sm">
-              {format(account.lastLogin, "dd 'de' MMMM 'de' yyyy 'a las' HH:mm", { locale: es })}
+              {format(new Date(user?.lastLogin), "dd 'de' MMMM 'de' yyyy 'a las' HH:mm", { locale: es })}
             </p>
           </div>
         )}
@@ -85,16 +64,14 @@ export default function AccountData() {
         <div className="grid gap-2">
           <label className="text-sm font-medium">Roles</label>
           <div className="flex flex-wrap gap-2">
-            {account.roles?.map((role: Role, index) => (
-              <Badge key={index} variant="outline">
-                {role.name}
+            
+              <Badge variant="outline">
+                {profile.roles[0].name}
               </Badge>
-            ))}
+           
           </div>
         </div>
       </CardContent>
     </Card>
   )
 }
-
-

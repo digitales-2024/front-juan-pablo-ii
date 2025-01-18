@@ -1,19 +1,7 @@
-import { User } from '@/app/(auth)/types';
+import { components } from "@/types/api";
 
-export interface ExtendedUser extends User {
-  lastLogin?: string;
-  isActive: boolean;
-  isSuperAdmin: boolean;
-  mustChangePassword: boolean;
-}
+export type ResponseProfile = components["schemas"]["UserProfileResponseDto"];
 
-export interface UserResponse {
-  name: string;
-  email: string;
-  phone?: string;
-  roles?: Array<{
-    name: string;
-  }>;
-  isSuperAdmin: boolean;
-  lastLogin?: Date;
+export type Profile = Omit<ResponseProfile, 'id'> & {
+  roles: { name: string }[];
 }
