@@ -1,4 +1,5 @@
 import { Header } from "@/components/layout/Header";
+import { Main } from "@/components/layout/Main";
 import { ProfileDropdown } from "@/components/layout/ProfileDropdown";
 import { Search } from "@/components/layout/Search";
 import { AppSidebar } from "@/components/layout/Sidebar";
@@ -30,7 +31,7 @@ export default function LayoutAdmin({
 						<ProfileDropdown />
 					</div>
 				</Header>
-				{children}
+				<Main>{children}</Main>
 			</div>
 		</SidebarProvider>
 	);

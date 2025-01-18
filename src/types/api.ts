@@ -2613,22 +2613,42 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        UserProfileResponseDto: {
+        RolResponseDto: {
+            /** @description ID del rol */
+            id: string;
+            /** @description Nombre del rol */
             name: string;
-            email: string;
-            phone?: string;
+            /** @description Descripción del rol */
+            description?: string;
+        };
+        UserProfileResponseDto: {
             /**
-             * @description Array de objetos Role
+             * @description Nombre del usuario
+             * @example John Doe
+             */
+            name: string;
+            /**
+             * @description Correo electrónico del usuario
+             * @example lW3T9@example.com
+             */
+            email: string;
+            /**
+             * @description Número de teléfono del usuario
+             * @example +51999999999
+             */
+            phone?: string;
+            id: string;
+            isSuperAdmin: boolean;
+            /**
+             * @description Roles del usuario
              * @example [
              *       {
-             *         "id": "1",
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
              *         "name": "admin"
              *       }
              *     ]
              */
-            roles: Record<string, never>[];
-            id: string;
-            isSuperAdmin: boolean;
+            roles: components["schemas"]["RolResponseDto"][];
         };
         UpdatePasswordDto: {
             password: string;
@@ -2636,20 +2656,33 @@ export interface components {
             confirmPassword: string;
         };
         CreateUserDto: {
+            /**
+             * @description Nombre del usuario
+             * @example John Doe
+             */
             name: string;
+            /**
+             * @description Correo electrónico del usuario
+             * @example lW3T9@example.com
+             */
             email: string;
+            /**
+             * @description Contraseña del usuario
+             * @example P@ssw0rd
+             */
             password: string;
+            /**
+             * @description Número de teléfono del usuario
+             * @example +51999999999
+             */
             phone?: string;
             /**
-             * @description Array de objetos Role
+             * @description Ids de roles del usuario
              * @example [
-             *       {
-             *         "id": "1",
-             *         "name": "admin"
-             *       }
+             *       "a5ece059-6d13-4c47-94e4-446e6bf6d0e4"
              *     ]
              */
-            roles: Record<string, never>[];
+            roles: string[];
         };
         UpdateUserDto: {
             /** @description User name */
@@ -2659,8 +2692,61 @@ export interface components {
             /** @description User rols */
             roles?: string[];
         };
+        BaseApiResponse: {
+            /** @description Estado de la operación */
+            success: boolean;
+            /** @description Mensaje descriptivo */
+            message: string;
+            /** @description Datos de la respuesta */
+            data: Record<string, never>;
+        };
         DeleteUsersDto: {
             ids: string[];
+        };
+        UserResponseDto: {
+            /**
+             * @description Nombre del usuario
+             * @example John Doe
+             */
+            name: string;
+            /**
+             * @description Correo electrónico del usuario
+             * @example lW3T9@example.com
+             */
+            email: string;
+            /**
+             * @description Número de teléfono del usuario
+             * @example +51999999999
+             */
+            phone?: string;
+            id: string;
+            isSuperAdmin: boolean;
+            /**
+             * @description Roles del usuario
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "name": "admin"
+             *       }
+             *     ]
+             */
+            roles: components["schemas"]["RolResponseDto"][];
+            /**
+             * @description El usuario está activa
+             * @example true
+             */
+            isActive: boolean;
+            /**
+             * @description El usuario debe cambiar la contraseña
+             * @example true
+             */
+            mustChangePassword: boolean;
+            /**
+             * Format: date-time
+             * @description Última vez que el usuario hizo login
+             * @example 2021-01-01
+             */
+            lastLogin: string;
         };
         SendEmailDto: {
             email: string;
@@ -5421,7 +5507,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"][];
+                };
             };
             /** @description Bad request */
             400: {
@@ -5546,7 +5634,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
             };
             /** @description Bad request */
             400: {
