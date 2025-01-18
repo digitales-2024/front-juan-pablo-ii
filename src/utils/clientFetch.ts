@@ -9,7 +9,13 @@ const api: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL,
   timeout: 5000,
   withCredentials: true,
-  validateStatus: (status) => status >= 200 && status < 300,
+  validateStatus: (status) => {
+    // Consideramos 404 como válido durante el logout
+    if (status === 404 && window.location.pathname === '/sign-in') {
+      return true;
+    }
+    return status >= 200 && status < 300;
+  },
 });
 
 // Interceptores para logs
