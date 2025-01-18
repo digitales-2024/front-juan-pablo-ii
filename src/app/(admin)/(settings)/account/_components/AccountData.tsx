@@ -11,16 +11,13 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-
-interface Role {
-  id: string;
-  name: string;
-}
+import { useProfile } from '../_hooks/useProfile'
 
 export default function AccountData() {
   const { user } = useAuth()
+  const { data: profile } = useProfile()
 
-  if (!user) {
+  if (!profile) {
     return (
       <Card>
         <CardHeader>
@@ -42,38 +39,38 @@ export default function AccountData() {
       <CardContent className="space-y-4">
         <div className="grid gap-2">
           <label className="text-sm font-medium">Nombre</label>
-          <p className="text-sm">{user.name}</p>
+          <p className="text-sm">{profile.name}</p>
         </div>
 
         <div className="grid gap-2">
           <label className="text-sm font-medium">Email</label>
-          <p className="text-sm">{user.email}</p>
+          <p className="text-sm">{profile.email}</p>
         </div>
 
         <div className="grid gap-2">
           <label className="text-sm font-medium">Teléfono</label>
-          <p className="text-sm">{user.phone || 'No especificado'}</p>
+          <p className="text-sm">{profile.phone || 'No especificado'}</p>
         </div>
 
-        {user.lastLogin && (
+        {user?.lastLogin && (
           <div className="grid gap-2">
             <label className="text-sm font-medium">Último acceso</label>
             <p className="text-sm">
-              {format(new Date(user.lastLogin), "dd 'de' MMMM 'de' yyyy 'a las' HH:mm", { locale: es })}
+              {format(new Date(user?.lastLogin), "dd 'de' MMMM 'de' yyyy 'a las' HH:mm", { locale: es })}
             </p>
           </div>
         )}
 
-        {/* <div className="grid gap-2">
+        <div className="grid gap-2">
           <label className="text-sm font-medium">Roles</label>
           <div className="flex flex-wrap gap-2">
-            {user.roles?.map((role: Role) => (
-              <Badge key={role.id} variant="outline">
-                {role.name}
+            
+              <Badge variant="outline">
+                {profile.roles[0].name}
               </Badge>
-            ))}
+           
           </div>
-        </div> */}
+        </div>
       </CardContent>
     </Card>
   )
