@@ -7,7 +7,7 @@ export const useProfile = () => {
   const { user, isHydrated } = useAuth();
 
   return useQuery<Profile, Error>({
-    queryKey: ['profile', user?.id],
+    queryKey: ['profile'],
     queryFn: async () => {
       if (!user?.id) {
         throw new Error('Usuario no autenticado');
