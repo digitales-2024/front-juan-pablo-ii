@@ -74,11 +74,13 @@ export const useProfile = () => {
       
       if (response.validationErrors) {
         const firstError = Object.values(response.validationErrors).flat()[0];
-        throw new Error(firstError);
+        toast.error(firstError);
+        // throw new Error(firstError);
       }
 
       if (response.error) {
-        throw new Error(response.error);
+        toast.error(response.error);
+        // throw new Error(response.error);
       }
 
       return response.data;
