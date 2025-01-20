@@ -25,10 +25,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { isValidPhoneNumber } from 'react-phone-number-input'
 
 const formSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
-  phone: z.string().optional(),
+  phone: z.string().refine(isValidPhoneNumber, {
+    message: 'El número de teléfono no es válido.',
+  }),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -50,7 +53,7 @@ export default function AccountData() {
     if (profile) {
       form.reset({
         name: profile.name || '',
-        phone: profile.phone ? `+51${profile.phone}` : '',
+        phone: profile.phone || '',
       })
     }
   }, [profile, form])
@@ -77,7 +80,7 @@ export default function AccountData() {
     
     await updateProfile({
       name: data.name,
-      phone: data.phone?.replace('+51', '') || '', // Remove country code before saving
+      phone: data.phone, // Remove country code before saving
     })
     
     setFormActive(false)
