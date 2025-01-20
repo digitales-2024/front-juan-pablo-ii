@@ -15,12 +15,18 @@ const handler = async (data: PatchProfileInput) => {
   const { userId, ...updateData } = data;
   
   try {
-    const response = await http.patch(`/users/${userId}`, updateData);
-    return { data: response };
-  } catch (error: any) {
-    if (error.response?.data?.message) {
-      return { error: error.response.data.message };
+    const [response, error] = await http.patch(`/users/${userId}`, updateData);
+    
+    if (error) {
+      return { error: error.message };
     }
+
+    if (!response) {
+      return { error: 'No se pudo actualizar el perfil' };
+    }
+
+    return { data: response };
+  } catch (error) {
     return { error: 'Ocurrió un error al actualizar el perfil' };
   }
 };
