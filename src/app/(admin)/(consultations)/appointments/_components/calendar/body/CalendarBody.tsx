@@ -8,9 +8,9 @@ export default function CalendarBody() {
 
 	return (
 		<>
-			{mode === "day" && <CalendarBodyDay />}
-			{mode === "week" && <CalendarBodyWeek />}
-			{mode === "month" && <CalendarBodyMonth />}
+			{mode === "dia" && <CalendarBodyDay />}
+			{mode === "semana" && <CalendarBodyWeek />}
+			{mode === "mes" && <CalendarBodyMonth />}
 		</>
 	);
 }

@@ -2,7 +2,7 @@ import { Columns2, Grid3X3, List } from "lucide-react";
 import { Mode } from "../../_types/CalendarTypes";
 
 export const calendarModeIconMap: Record<Mode, React.ReactNode> = {
-	day: <List />,
-	week: <Columns2 />,
-	month: <Grid3X3 />,
+	dia: <List />,
+	semana: <Columns2 />,
+	mes: <Grid3X3 />,
 };

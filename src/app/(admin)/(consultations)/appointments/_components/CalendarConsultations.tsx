@@ -6,8 +6,8 @@ import Calendar from "./calendar/Calendar";
 
 export default function CalendarConsultations() {
 	const [events, setEvents] = useState<CalendarEvent[]>([]);
-	const [mode, setMode] = useState<Mode>("month");
-	const [date, setDate] = useState<Date>(new Date('2024-01-01'));
+	const [mode, setMode] = useState<Mode>("mes");
+	const [date, setDate] = useState<Date>(new Date("2024-01-01"));
 
 	useEffect(() => {
 		setEvents(generateMockEvents());

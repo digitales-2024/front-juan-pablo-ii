@@ -51,7 +51,7 @@ export default function CalendarBodyMonth() {
 	return (
 		<div className="flex flex-col flex-grow overflow-hidden">
 			<div className="hidden md:grid grid-cols-7 border-border divide-x divide-border">
-				{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+				{["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map(
 					(day) => (
 						<div
 							key={day}
@@ -93,7 +93,7 @@ export default function CalendarBodyMonth() {
 								onClick={(e) => {
 									e.stopPropagation();
 									setDate(day);
-									setMode("day");
+									setMode("dia");
 								}}
 							>
 								<div
@@ -129,7 +129,7 @@ export default function CalendarBodyMonth() {
 												) => {
 													e.stopPropagation();
 													setDate(day);
-													setMode("day");
+													setMode("dia");
 												}}
 											>
 												+{dayEvents.length - 3} more

@@ -24,5 +24,5 @@ export type CalendarEvent = {
 	end: Date;
 };
 
-export const calendarModes = ["day", "week", "month"] as const;
+export const calendarModes = ["dia", "semana", "mes"] as const;
 export type Mode = (typeof calendarModes)[number];

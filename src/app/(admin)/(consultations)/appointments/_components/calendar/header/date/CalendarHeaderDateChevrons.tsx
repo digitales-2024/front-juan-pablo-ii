@@ -10,19 +10,20 @@ import {
 	subWeeks,
 } from "date-fns";
 import { useCalendarContext } from "../../CalendarContext";
+import { es } from "date-fns/locale";
 
 export default function CalendarHeaderDateChevrons() {
 	const { mode, date, setDate } = useCalendarContext();
 
 	function handleDateBackward() {
 		switch (mode) {
-			case "month":
+			case "mes":
 				setDate(subMonths(date, 1));
 				break;
-			case "week":
+			case "semana":
 				setDate(subWeeks(date, 1));
 				break;
-			case "day":
+			case "dia":
 				setDate(subDays(date, 1));
 				break;
 		}
@@ -30,13 +31,13 @@ export default function CalendarHeaderDateChevrons() {
 
 	function handleDateForward() {
 		switch (mode) {
-			case "month":
+			case "mes":
 				setDate(addMonths(date, 1));
 				break;
-			case "week":
+			case "semana":
 				setDate(addWeeks(date, 1));
 				break;
-			case "day":
+			case "dia":
 				setDate(addDays(date, 1));
 				break;
 		}
@@ -53,7 +54,7 @@ export default function CalendarHeaderDateChevrons() {
 			</Button>
 
 			<span className="min-w-[140px] text-center font-medium">
-				{format(date, "MMMM d, yyyy")}
+				{format(date, "MMMM d, yyyy", { locale: es })}
 			</span>
 
 			<Button
