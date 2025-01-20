@@ -56,7 +56,7 @@ export default function AccountData() {
         phone: profile.phone || '',
       })
     }
-  }, [profile, form])
+  }, [profile])
 
   // Watch form fields for changes
   const watchFields = {
@@ -70,7 +70,7 @@ export default function AccountData() {
     
     const isFormModified = 
       profile.name !== watchFields.name || 
-      (profile.phone !== watchFields.phone?.replace('+51', ''))
+      profile.phone !== watchFields.phone
     
     setFormActive(isFormModified)
   }, [watchFields, profile])

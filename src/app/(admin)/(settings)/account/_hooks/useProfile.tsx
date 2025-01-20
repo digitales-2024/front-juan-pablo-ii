@@ -18,10 +18,12 @@ export const useProfile = () => {
       }
 
       const response = await getUser({ userId: user.id });
+      console.log(response);
       
       if (response.validationErrors) {
         const firstError = Object.values(response.validationErrors).flat()[0];
         throw new Error(firstError);
+        
       }
 
       if (response.error) {
