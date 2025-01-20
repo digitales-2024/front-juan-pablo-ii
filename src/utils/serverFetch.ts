@@ -10,10 +10,6 @@ interface ServerFetchConfig extends RequestInit {
 	maxRetries?: number;
 	/** Tiempo base entre reintentos (ms) */
 	retryDelay?: number;
-	/** Número máximo de reintentos para errores temporales */
-	maxRetries?: number;
-	/** Tiempo base entre reintentos (ms) */
-	retryDelay?: number;
 }
 
 /**
@@ -73,20 +69,6 @@ export async function serverFetch<Success>(
 	}
 
 	try {
-		console.log("GIVEN OPTIONS")
-		console.log(JSON.stringify(options, null, 4))
-
-		const flattenedOptions = {
-			...options,
-			headers: {
-				...options?.headers,
-				Cookie: `access_token=${accessToken}`,
-			},
-		}
-
-		console.log("\n\nFLATTENED OPTIONS")
-		console.log(JSON.stringify(flattenedOptions, null, 4))
-
 		const response = await fetch(`${process.env.BACKEND_URL}${url}`, {
 			...options,
 			headers: {
