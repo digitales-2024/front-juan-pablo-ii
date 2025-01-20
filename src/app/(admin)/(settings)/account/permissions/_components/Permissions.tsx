@@ -15,32 +15,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Permission, PermissionResponse, RolPermission } from "../_interfaces/permissions.interface";
 
-interface Permission {
-  id: string;
-  cod: string;
-  name: string;
-  description: string;
-}
 
-interface Module {
-  id: string;
-  cod: string;
-  name: string;
-  description: string;
-}
-
-interface RolPermission {
-  module: Module;
-  permissions: Permission[];
-}
-
-interface PermissionResponse {
-  id: string;
-  name: string;
-  description: string;
-  rolPermissions: RolPermission[];
-}
 
 export const Permissions = () => {
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
