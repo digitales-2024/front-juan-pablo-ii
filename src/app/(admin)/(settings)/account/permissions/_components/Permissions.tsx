@@ -92,10 +92,7 @@ export const Permissions = () => {
                       {rolPermission.permissions.some(
                         (perm: Permission) => perm.cod === type.cod
                       ) ? (
-                        <Badge
-                          variant="default"
-                          className="bg-green-500 hover:bg-green-600"
-                        >
+                        <Badge variant="default">
                           ✓
                         </Badge>
                       ) : (
@@ -146,7 +143,7 @@ export const Permissions = () => {
                         ({permission.cod})
                       </span>
                     </div>
-                    <Badge variant="default" className="bg-green-500">
+                    <Badge variant="default">
                       ✓
                     </Badge>
                   </div>
