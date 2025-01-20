@@ -6,7 +6,7 @@ const URL_BACKEND = new URL(process.env.BACKEND_URL || "http://localhost:5000")
 const SWAGGER_URL = URL_BACKEND + "/api-json";
 const OUTPUT_PATH = path.join(process.cwd(), "src/types/api.ts");
 
-async function generateTypes() {
+function generateTypes() {
 	try {
 		execSync(`pnpx openapi-typescript ${SWAGGER_URL} -o ${OUTPUT_PATH}`, {
 			stdio: "inherit",

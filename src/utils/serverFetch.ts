@@ -10,6 +10,10 @@ interface ServerFetchConfig extends RequestInit {
 	maxRetries?: number;
 	/** Tiempo base entre reintentos (ms) */
 	retryDelay?: number;
+	/** Número máximo de reintentos para errores temporales */
+	maxRetries?: number;
+	/** Tiempo base entre reintentos (ms) */
+	retryDelay?: number;
 }
 
 /**
