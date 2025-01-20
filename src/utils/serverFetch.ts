@@ -1,136 +1,112 @@
 import { cookies } from "next/headers";
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from "axios";
 import { Result } from "./result";
 
-// Tipos para los métodos HTTP
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-
 // Configuración extendida para las peticiones
-interface ServerFetchConfig<T = any> extends Omit<AxiosRequestConfig, 'url' | 'method'> {
-	body?: T;
+interface ServerFetchConfig extends RequestInit {
+	body?: BodyInit;
 	params?: Record<string, string | number>;
 	headers?: Record<string, string>;
+	/** Número máximo de reintentos para errores temporales */
+	maxRetries?: number;
+	/** Tiempo base entre reintentos (ms) */
+	retryDelay?: number;
 }
 
-// Tipo para errores del servidor
+/**
+ * Información acerca del error en la petición al backend
+ */
 type ServerFetchError = {
 	statusCode: number;
 	message: string;
 	error: string;
-}
-
-// Crear instancia de axios
-export const api: AxiosInstance = axios.create({
-	baseURL: process.env.BACKEND_URL,
-	timeout: 5000,
-	validateStatus: (status) => status >= 200 && status < 300,
-});
-
-// Interceptores para logs
-api.interceptors.request.use(
-	(config) => {
-		if (process.env.NODE_ENV !== "production") {
-			console.log(`🚀 [${config.method?.toUpperCase()}] ${config.url}`, {
-				body: config.data,
-				params: config.params
-			});
-		}
-		return config;
-	},
-	(error) => {
-		if (process.env.NODE_ENV !== "production") {
-			console.error("❌ Error en la configuración de la petición:", error);
-		}
-		return Promise.reject(error);
-	}
-);
-
-api.interceptors.response.use(
-	(response) => {
-		if (process.env.NODE_ENV !== "production") {
-			console.log(`✅ [${response.status}] ${response.config.url}`, {
-				data: response.data
-			});
-		}
-		return response;
-	},
-	(error) => {
-		if (process.env.NODE_ENV !== "production") {
-			if (axios.isAxiosError(error) && error.response) {
-				console.error(`❌ [${error.response.status}] ${error.config?.url}`, {
-					error: error.response.data
-				});
-			}
-		}
-		return Promise.reject(error);
-	}
-);
+};
 
 /**
- * Función base para realizar peticiones HTTP
- * @param method Método HTTP
- * @param url URL del endpoint
- * @param config Configuración adicional de la petición
+ * Realiza una petición al backend y devuelve un Result.
+ *
+ * Un Result es una tupla que contiene uno de dos casos:
+ * - Si la petición es exitosa (codigo 2xx) la tupla contiene `[datos, null]`
+ * - Si la petición falla la tupla contiene `[null, ServerFetchError]`
+ *
+ * `ServerFetchError` es un objeto que contiene {statusCode, message, error}
+ *
+ * @example
+ * ```ts
+ * const [user, err] = await serverFetch<User>("/users/123")
+ * if (err !== null) {
+ *     // Manejar error
+ *     return not_found();
+ * }
+ * // Utilizar `user`
+ * return <p>Hola {user.name}</p>
+ * ```
+ *
+ * IMPORTANTE: Si la API no responde, o hubo algun otro error, esta funcion devuelve `{statusCode: 503}`
+ *
+ * IMPORTANTE: Esta funcion no refresca cookies de sesion. Esta función asume
+ * que la cookie `access_token` existe y es válida. El refresco de 
+ * tokens se realiza en el middleware.
+ *
+ * @type Success El tipo de dato que el API devuelve
+ * @param url La URL a hacer la petición
+ * @param options Opciones enviadas a fetch
+ * @returns Una tupla con los datos, o un error
+ *
  */
-export async function serverFetch<Success, ReqBody = any>(
-	method: HttpMethod,
+export async function serverFetch<Success>(
 	url: string,
-	config: ServerFetchConfig<ReqBody> = {}
+	options?: RequestInit,
 ): Promise<Result<Success, ServerFetchError>> {
 	const cookieStore = await cookies();
 	const accessToken = cookieStore.get("access_token")?.value;
 
 	if (!accessToken) {
 		if (process.env.NODE_ENV !== "production") {
-			console.error("DEBUG: Intentando usar serverFetch sin una cookie `access_token` válida");
+			console.error(
+				"DEBUG: Intentando user serverFetch sin una cookie `access_token valida`",
+			);
 		}
 	}
 
 	try {
-		const response = await api.request<Success>({
-			method,
-			url,
-			data: config.body,
-			params: config.params,
+		console.log("GIVEN OPTIONS")
+		console.log(JSON.stringify(options, null, 4))
+
+		const flattenedOptions = {
+			...options,
 			headers: {
-				...config.headers,
+				...options?.headers,
 				Cookie: `access_token=${accessToken}`,
 			},
-			...config
-		});
-
-		return [response.data, null];
-
-	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			const axiosError = error as AxiosError<Partial<ServerFetchError>>;
-
-			if (axiosError.response) {
-				const data = axiosError.response.data;
-				return [
-					// @ts-expect-error allowing null
-					null,
-					{
-						statusCode: axiosError.response.status,
-						message: data?.message ?? "API no disponible",
-						error: data?.error ?? "Error desconocido",
-					}
-				];
-			}
-
-			if (axiosError.request) {
-				return [
-					// @ts-expect-error allowing null
-					null,
-					{
-						statusCode: 502,
-						message: "API no disponible",
-						error: "API no disponible"
-					}
-				];
-			}
 		}
 
+		console.log("\n\nFLATTENED OPTIONS")
+		console.log(JSON.stringify(flattenedOptions, null, 4))
+
+		const response = await fetch(`${process.env.BACKEND_URL}${url}`, {
+			...options,
+			headers: {
+				...options?.headers,
+				Cookie: `access_token=${accessToken}`,
+			},
+		});
+
+		if (!response.ok) {
+			const data = (await response.json()) as Partial<ServerFetchError>;
+			return [
+				// @ts-expect-error allowing null
+				null,
+				{
+					statusCode: response.status,
+					message: data.message ?? "API no disponible",
+					error: data.error ?? "Error desconocido",
+				},
+			];
+		}
+
+		const data = await response.json();
+		return [data, null];
+	} catch (error) {
 		console.error(error);
 		return [
 			// @ts-expect-error allowing null
@@ -138,54 +114,133 @@ export async function serverFetch<Success, ReqBody = any>(
 			{
 				statusCode: 503,
 				message: "Error interno",
-				error: "Error interno"
-			}
+				error: "Error interno",
+			},
 		];
 	}
 }
 
-// Funciones helper para cada método HTTP
+/**
+ * Objeto que proporciona métodos para realizar peticiones HTTP
+ */
 export const http = {
 	/**
-	 * Realizar petición GET
+	 * Realiza una petición GET
+	 * @param url - La URL a la que se realizará la petición
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [data, err] = await http.get<User>("/users/");
+	 * ```
 	 */
-	get: <Response>(
-		url: string,
-		config?: Omit<ServerFetchConfig, 'body'>
-	) => serverFetch<Response>('GET', url, config),
+	get<T>(url: string, config?: RequestInit) {
+		return serverFetch<T>(url, config);
+	},
 
 	/**
-	 * Realizar petición POST
-	 */
-	post: <Response, ReqBody = any>(
+	  * Realiza una petición POST
+	  * @param url - La URL a la que se realizará la petición
+	  * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+	  * @param config - Configuración opcional para la petición fetch
+	  * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	  * @example
+	  * ```ts
+	  * const [newUser, err] = await http.post<User>("/users", { name: "Linus" });
+	  * ```
+	  */
+	post<T>(
 		url: string,
-		body?: ReqBody,
-		config?: Omit<ServerFetchConfig, 'body'>
-	) => serverFetch<Response, ReqBody>('POST', url, { ...config, body }),
+		body?: BodyInit | object,
+		config?: RequestInit
+	) {
+		return serverFetch<T>(url, {
+			...config,
+			method: "POST",
+			body: processBody(body),
+			headers: {
+				"Content-Type": "application/json",
+			}
+		});
+	},
 
 	/**
-	 * Realizar petición PUT
+	 * Realiza una petición PUT
+	 * @param url - La URL a la que se realizará la petición
+	 * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [updatedUser, err] = await http.put<User>("/users/1f0c-3fca" { name: "Torvalds" });
+	 * ```
 	 */
-	put: <Response, ReqBody = any>(
+	put<T>(
 		url: string,
-		body?: ReqBody,
-		config?: Omit<ServerFetchConfig, 'body'>
-	) => serverFetch<Response, ReqBody>('PUT', url, { ...config, body }),
+		body?: BodyInit | object,
+		config?: RequestInit,
+	) {
+		return serverFetch<T>(url, {
+			...config,
+			method: "PUT",
+			body: processBody(body),
+			headers: {
+				"Content-Type": "application/json",
+			}
+		});
+	},
 
 	/**
-	 * Realizar petición DELETE
+	 * Realiza una petición DELETE
+	 * @param url - La URL a la que se realizará la petición
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [result, err] = await http.delete<void>("/users/1ca0-0aa3");
+	 * ```
 	 */
-	delete: <Response>(
-		url: string,
-		config?: ServerFetchConfig
-	) => serverFetch<Response>('DELETE', url, config),
+	delete<T>(url: string, config?: ServerFetchConfig) {
+		return serverFetch<T>(url, {
+			...config,
+			method: "DELETE",
+		});
+	},
 
 	/**
-	 * Realizar petición PATCH
+	 * Realiza una petición PATCH
+	 * @param url - La URL a la que se realizará la petición
+	 * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [patchedUser, err] = await http.patch<User>("/users/1010-1a0b", { name: "Linux" });
+	 * ```
 	 */
-	patch: <Response, ReqBody = any>(
+	patch<T>(
 		url: string,
-		body?: ReqBody,
-		config?: Omit<ServerFetchConfig, 'body'>
-	) => serverFetch<Response, ReqBody>('PATCH', url, { ...config, body }),
+		body?: BodyInit | object,
+		config?: Omit<ServerFetchConfig, "body">
+	) {
+		return serverFetch<T>(url, {
+			...config,
+			method: "PATCH",
+			body: processBody(body),
+			headers: {
+				"Content-Type": "application/json",
+			}
+		});
+	},
 };
+
+/**
+ * Permite utilizar un objeto plano como body
+ */
+function processBody(body: BodyInit | object | undefined): BodyInit | undefined {
+	if (body instanceof Blob || body instanceof ArrayBuffer || body instanceof FormData || body instanceof URLSearchParams || body instanceof ReadableStream) {
+		return body
+	} else {
+		return JSON.stringify(body)
+	}
+}
