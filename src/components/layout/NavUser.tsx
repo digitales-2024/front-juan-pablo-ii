@@ -58,7 +58,7 @@ export function NavUser() {
 
 	const handleLogout = async () => {
 		await logoutAction();
-		logout();
+		await logout();
 	};
 
 	return (
