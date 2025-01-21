@@ -1,6 +1,10 @@
 "use server";
-import { serverFetch } from "@/utils/serverFetch";
-import { TypeProduct, CreateTypeProductInput, UpdateTypeProductInput } from "./types";
+import { http } from "@/utils/serverFetch";
+import {
+	TypeProduct,
+	CreateTypeProductInput,
+	UpdateTypeProductInput,
+} from "./types";
 
 /**
  * Función para obtener todos los tipos de productos.
@@ -12,13 +16,13 @@ import { TypeProduct, CreateTypeProductInput, UpdateTypeProductInput } from "./t
  * @throws Lanzará un error si el proceso de recuperación falla.
  */
 export async function getAllTypeProducts(): Promise<TypeProduct[]> {
-    const [response, error] = await serverFetch<TypeProduct[]>("/type-product");
+	const [response, error] = await http.get<TypeProduct[]>("/type-product");
 
-    if (error) {
-        throw new Error("Error fetching type products");
-    }
+	if (error) {
+		throw new Error("Error fetching type products");
+	}
 
-    return response;
+	return response;
 }
 
 /**
@@ -31,21 +35,23 @@ export async function getAllTypeProducts(): Promise<TypeProduct[]> {
  * @returns {Promise<TypeProduct>} Una promesa que resuelve con el tipo de producto recién creado.
  * @throws Lanza un error si el proceso de creación falla.
  */
-export async function createTypeProduct(data: CreateTypeProductInput): Promise<TypeProduct> {
-    const [response, error] = await serverFetch<TypeProduct>("/type-product", {
-        method: "POST",
-        body: JSON.stringify(data),
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+export async function createTypeProduct(
+	data: CreateTypeProductInput
+): Promise<TypeProduct> {
+	const [response, error] = await http.post<TypeProduct>("/type-product", {
+		method: "POST",
+		body: JSON.stringify(data),
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
 
-    if (error) {
-        throw new Error("Error creating type product");
-    }
+	if (error) {
+		throw new Error("Error creating type product");
+	}
 
-    return response;
+	return response;
 }
 
 /**
@@ -59,13 +65,15 @@ export async function createTypeProduct(data: CreateTypeProductInput): Promise<T
  * @throws Lanza un error si el proceso de recuperación falla.
  */
 export async function getTypeProductById(id: string): Promise<TypeProduct> {
-    const [response, error] = await serverFetch<TypeProduct>(`/type-product/${id}`);
+	const [response, error] = await http.get<TypeProduct>(
+		`/type-product/${id}`
+	);
 
-    if (error) {
-        throw new Error("Error fetching type product");
-    }
+	if (error) {
+		throw new Error("Error fetching type product");
+	}
 
-    return response;
+	return response;
 }
 
 /**
@@ -80,21 +88,27 @@ export async function getTypeProductById(id: string): Promise<TypeProduct> {
  * @returns {Promise<TypeProduct>} Una promesa que resuelve con el tipo de producto actualizado.
  * @throws Lanza un error si el proceso de actualización falla.
  */
-export async function updateTypeProduct(id: string, data: UpdateTypeProductInput): Promise<TypeProduct> {
-    const [response, error] = await serverFetch<TypeProduct>(`/type-product/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+export async function updateTypeProduct(
+	id: string,
+	data: UpdateTypeProductInput
+): Promise<TypeProduct> {
+	const [response, error] = await http.post<TypeProduct>(
+		`/type-product/${id}`,
+		{
+			method: "PATCH",
+			body: JSON.stringify(data),
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
 
-    if (error) {
-        throw new Error("Error updating type product");
-    }
+	if (error) {
+		throw new Error("Error updating type product");
+	}
 
-    return response;
+	return response;
 }
 
 /**
@@ -108,21 +122,26 @@ export async function updateTypeProduct(id: string, data: UpdateTypeProductInput
  * @returns {Promise<TypeProduct[]>} Una promesa que resuelve con los tipos de productos desactivados.
  * @throws Lanza un error si el proceso de desactivación falla.
  */
-export async function deleteManyTypeProducts(ids: string[]): Promise<TypeProduct[]> {
-    const [response, error] = await serverFetch<TypeProduct[]>(`/type-product/remove/all`, {
-        method: "DELETE",
-        body: JSON.stringify({ ids }),
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+export async function deleteManyTypeProducts(
+	ids: string[]
+): Promise<TypeProduct[]> {
+	const [response, error] = await http.patch<TypeProduct[]>(
+		`/type-product/remove/all`,
+		{
+			method: "DELETE",
+			body: JSON.stringify({ ids }),
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
 
-    if (error) {
-        throw new Error("Error deleting type products");
-    }
+	if (error) {
+		throw new Error("Error deleting type products");
+	}
 
-    return response;
+	return response;
 }
 
 /**
@@ -136,19 +155,24 @@ export async function deleteManyTypeProducts(ids: string[]): Promise<TypeProduct
  * @returns {Promise<TypeProduct[]>} Una promesa que resuelve con los tipos de productos reactivados.
  * @throws Lanza un error si el proceso de reactivación falla.
  */
-export async function reactivateManyTypeProducts(ids: string[]): Promise<TypeProduct[]> {
-    const [response, error] = await serverFetch<TypeProduct[]>(`/type-product/reactivate/all`, {
-        method: "PATCH",
-        body: JSON.stringify({ ids }),
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+export async function reactivateManyTypeProducts(
+	ids: string[]
+): Promise<TypeProduct[]> {
+	const [response, error] = await http.patch<TypeProduct[]>(
+		`/type-product/reactivate/all`,
+		{
+			method: "PATCH",
+			body: JSON.stringify({ ids }),
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
 
-    if (error) {
-        throw new Error("Error reactivating type products");
-    }
+	if (error) {
+		throw new Error("Error reactivating type products");
+	}
 
-    return response;
+	return response;
 }
