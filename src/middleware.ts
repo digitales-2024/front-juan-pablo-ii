@@ -85,19 +85,11 @@ export async function middleware(request: NextRequest) {
 
 		const response = NextResponse.next();
 
-		// Eliminar cookies antiguas
-		response.cookies.delete("logged_in");
-		response.cookies.delete("access_token");
-		response.cookies.delete("refresh_token");
+
 
 		// Establecer las nuevas cookies
 		newCookies.forEach((cookie) => {
-			const [nameValue] = cookie.split(";");
-			const [name, value] = nameValue.split("=");
-			response.cookies.set({
-				name,
-				value,
-			});
+			response.headers.append("Set-Cookie", cookie);
 		});
 
 		return response;
@@ -139,7 +131,7 @@ function tokenExpiration(token: string): number {
 async function refresh(
 	accessToken: string,
 	refreshToken: string,
-): Promise<Result<Array<string>, string>> {
+): Promise<Result<string[], string>> {
 	try {
 		const response = await fetch(
 			`${BACKEND_URL}/auth/refresh-token`,
