@@ -3,32 +3,79 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
 import { UseFormReturn } from "react-hook-form";
-
-import { Button } from "@/components/ui/button";
-
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ConsultationSchema } from "../type";
+import ComboboxSelect from "@/components/ui/combobox-select";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
+	children: React.ReactNode;
 }
 
-export default function ConsultationForm({ form }: ConsultationFormProps) {
-	function onSubmit() {}
+//TODO - Mover a un archivo de constantes o servicio API
+const ListServices = [
+	{
+		value: "1",
+		label: "Plasma Rico en Plaquetas",
+	},
+	{
+		value: "2",
+		label: "Toxina Botulínica",
+	},
+	{
+		value: "3",
+		label: "Vitaminas C",
+	},
+	{
+		value: "4",
+		label: "Ácido Hialurónico",
+	},
+	{
+		value: "5",
+		label: "Limpieza Facial",
+	},
+	{
+		value: "6",
+		label: "Criolipolisis",
+	},
+];
+
+const ListPatients = [
+	{
+		value: "1",
+		label: "Paciente 1",
+	},
+	{
+		value: "2",
+		label: "Paciente 2",
+	},
+	{
+		value: "3",
+		label: "Paciente 3",
+	},
+	{
+		value: "4",
+		label: "Paciente 4",
+	},
+	{
+		value: "5",
+		label: "Paciente 5",
+	},
+];
+
+export default function ConsultationForm({
+	form,
+	children,
+}: ConsultationFormProps) {
+	function onSubmit(data: ConsultationSchema) {
+		console.log(data);
+	}
+
 	return (
 		<Card>
 			<CardHeader>
@@ -40,32 +87,50 @@ export default function ConsultationForm({ form }: ConsultationFormProps) {
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className="space-y-5 p-5"
+					className="space-y-5"
 				>
-					<CardContent>
+					<CardContent className="space-y-4">
+						<ComboboxSelect
+							useForm={true}
+							form={form}
+							name="serviceId"
+							label="Servicio"
+							description="Selecciona el servicio que deseas agendar"
+							placeholder="Selecciona un servicio"
+							options={ListServices}
+						/>
+
+						<ComboboxSelect
+							useForm={true}
+							form={form}
+							name="patientId"
+							label="Paciente"
+							description="Selecciona el paciente para la consulta"
+							placeholder="Selecciona un paciente"
+							options={ListPatients}
+						/>
+
 						<FormField
 							control={form.control}
-							name="date"
+							name="description"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Username</FormLabel>
+									<FormLabel>Descripción</FormLabel>
 									<FormControl>
-										<Input
-											placeholder="shadcn"
+										<Textarea
 											{...field}
+											placeholder="Escribe una descripción o notas adicionales"
 										/>
 									</FormControl>
 									<FormDescription>
-										This is your public display name.
+										Agrega cualquier información adicional relevante
 									</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
 					</CardContent>
-					<CardFooter>
-						<Button type="submit">Submit</Button>
-					</CardFooter>
+					{children}
 				</form>
 			</Form>
 		</Card>
