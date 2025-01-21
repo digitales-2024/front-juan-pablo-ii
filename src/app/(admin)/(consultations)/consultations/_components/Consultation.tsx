@@ -26,7 +26,6 @@ export default function Consultation() {
 			patientId: "",
 			description: "",
 		},
-		mode: "onChange",
 	});
 
 	const selectedDate = form.watch("date");
