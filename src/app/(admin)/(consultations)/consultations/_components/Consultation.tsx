@@ -90,17 +90,19 @@ export default function Consultation() {
 					) : (
 						<ConsultationForm form={form}>
 							<CardFooter className="w-full gap-10">
-								<Button
-									variant="ghost"
-									onClick={() => setShowForm(false)}
-									className="gap-2"
-								>
-									<ArrowLeft className="w-4 h-4" />
-									Volver al calendario
-								</Button>
-								<Button type="submit" className="w-full">
-									Guardar
-								</Button>
+								<div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
+									<Button type="submit" className="w-full">
+										Guardar
+									</Button>
+									<Button
+										variant="ghost"
+										onClick={() => setShowForm(false)}
+										className="gap-2"
+									>
+										<ArrowLeft className="w-4 h-4" />
+										Volver al calendario
+									</Button>
+								</div>
 							</CardFooter>
 						</ConsultationForm>
 					)}
