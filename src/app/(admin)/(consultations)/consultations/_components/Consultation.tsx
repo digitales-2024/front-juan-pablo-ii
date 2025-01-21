@@ -35,7 +35,7 @@ export default function Consultation() {
 	return (
 		<Card className="w-full p-8 rounded-lg max-w-7xl mx-auto shadow">
 			<div className="flex flex-wrap gap-3 items-center justify-between mb-6">
-				<div className="flex items-center gap-2">
+				<div className="flex items-center  gap-2">
 					<Button
 						variant={showForm ? "outline" : "default"}
 						onClick={() => setShowForm(false)}
