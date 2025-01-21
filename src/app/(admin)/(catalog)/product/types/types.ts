@@ -1,47 +1,21 @@
 import { components } from "@/types/api";
 import { z } from "zod";
 
-/**
- * Esquema de validación para la creación y actualización de tipos de productos
- */
-export const TypeProductSchema = z.object({
+// Esquema de validación para la creación de productos
+export const TypeProductCreateSchema = z.object({
     name: z.string().min(1, { message: "El nombre es requerido" }),
     description: z.string().optional(),
-});
+}) satisfies z.ZodType<CreateTypeProductDto>;
 
-/**
- * DTO para la creación de un tipo de producto.
- *
- * El DTO tiene las propiedades:
- * - id: string
- * - name: string, required, min 1 character
- * - description: string, optional
- */
-export type CreateTypeProductDto = components["schemas"]["TypeProduct"];
+// Esquema de validación para la actualización de productos
+export const TypeProductUpdateSchema = z.object({
+    name: z.string().min(1, { message: "El nombre es requerido" }),
+    description: z.string().optional(),
+}) satisfies z.ZodType<UpdateTypeProductDto>;
 
-/**
- * Esquema de validación para la creación y actualización de tipos de productos.
- *
- * El esquema tiene dos propiedades:
- * - name: string, required, min 1 character
- * - description: string, optional
- */
-export type TypeProduct = z.infer<typeof TypeProductSchema> & { id: string } & { isActive: boolean };
-
-/**
- * Input para crear un tipo de producto.
- *
- * La interfaz tiene dos propiedades:
- * - name: string, required, min 1 character
- * - description: string, optional
- */
-export type CreateTypeProductInput = z.infer<typeof TypeProductSchema>;
-
-/**
- * Input para actualizar un tipo de producto.
- *
- * La interfaz tiene dos propiedades:
- * - name: string, optional
- * - description: string, optional
- */
-export type UpdateTypeProductInput = Partial<CreateTypeProductInput>;
+// Tipos DTO
+export type TypeProduct = components["schemas"]["TypeProduct"];
+export type CreateTypeProductDto = components["schemas"]["CreateTypeProductDto"];
+export type UpdateTypeProductDto = components["schemas"]["UpdateTypeProductDto"];
+export type DeleteTypeProductDto = components["schemas"]["DeleteTypeProductDto"];
+export type ReactivateTypeProductDto = components["schemas"]["DeleteTypeProductDto"];
