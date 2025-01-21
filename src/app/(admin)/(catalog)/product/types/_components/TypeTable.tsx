@@ -1,36 +1,22 @@
 "use client";
 import { DataTable } from "@/components/data-table/DataTable";
-import { useEffect, useMemo } from "react";
-import { TypeProduct } from "../types";
+import { useMemo } from "react";
 import { typeColumns } from "./TypeTableColumns";
 import { TypeTableToolbarActions } from "./TypeTableToolbarActions";
-import { Profile } from "@/app/(account)/type";
-import { useProfileStore } from "@/app/hooks/use-profile";
+import { CreateTypeProductDto } from "../types";
 
-interface TypeTableProps {
-    data: TypeProduct[];
-    profile: Profile;
+interface TData {
+    data: CreateTypeProductDto[];
 }
 
-const TypeTable: React.FC<TypeTableProps> = ({ data, profile }) => {
-    const columns = useMemo(
-        () => typeColumns(profile.isSuperAdmin),
-        [profile]
-    );
-    const { setProfile } = useProfileStore();
-
-    useEffect(() => {
-        setProfile(profile);
-    }, [profile]);
-
+export function TypeTable({ data }: TData) {
+const columns = useMemo(() => typeColumns(), []);
+  
     return (
         <DataTable
-            data={data}
+            data={data|| []}
             columns={columns}
             toolbarActions={<TypeTableToolbarActions />}
-            placeholder="Buscar tipo de producto..."
         />
     );
 };
-
-export default TypeTable;
