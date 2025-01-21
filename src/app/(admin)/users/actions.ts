@@ -10,7 +10,7 @@ import {
 import { BaseApiResponse } from "@/types/api/types";
 
 type GetUsersResponse = UserResponseDto[] | { error: string };
-type CreateUserResponse = UserResponseDto | { error: string };
+type CreateUserResponse = BaseApiResponse | { error: string };
 type DeleteUserResponse = BaseApiResponse | { error: string };
 
 export async function getUsers(): Promise<GetUsersResponse> {
@@ -32,7 +32,7 @@ export async function createUser(
 	data: UserCreateDto
 ): Promise<CreateUserResponse> {
 	try {
-		const [user, error] = await http.post<UserResponseDto>("/users", data);
+		const [user, error] = await http.post<BaseApiResponse>("/users", data);
 
 		if (error) {
 			return { error: error.message };
@@ -50,7 +50,7 @@ export async function updateUser(
 	data: UserUpdateDto
 ): Promise<CreateUserResponse> {
 	try {
-		const [user, error] = await http.patch<UserResponseDto>(
+		const [user, error] = await http.patch<BaseApiResponse>(
 			`/users/${id}`,
 			data
 		);

@@ -24,7 +24,11 @@ export const useUsers = () => {
 	const queryClient = useQueryClient();
 
 	// Mutación para crear usuario
-	const createMutation = useMutation<UserResponseDto, Error, UserCreateDto>({
+	const createMutation = useMutation<
+		BaseApiResponse<UserResponseDto>,
+		Error,
+		UserCreateDto
+	>({
 		mutationFn: async (data) => {
 			const response = await createUser(data);
 			if ("error" in response) {
@@ -32,38 +36,26 @@ export const useUsers = () => {
 			}
 			return response;
 		},
-		onSuccess: (newUser) => {
+		onSuccess: (res) => {
 			// Actualizar la caché de usuarios
 			queryClient.setQueryData<UserResponseDto[]>(
 				["users"],
 				(oldUsers) => {
-					if (!oldUsers) return [newUser];
-					return [...oldUsers, newUser];
+					if (!oldUsers) return [res.data];
+					return [...oldUsers, res.data];
 				}
 			);
 
-			toast.success("Usuario creado exitosamente");
+			toast.success(res.message);
 		},
-		onError: (error: Error) => {
-			// Manejar diferentes tipos de errores
-			if (
-				error.message.includes("no autorizado") ||
-				error.message.includes("sesión expirada")
-			) {
-				toast.error(
-					"Sesión expirada. Por favor, inicie sesión nuevamente"
-				);
-				// TODO: Redirigir al login
-				return;
-			}
-
+		onError: (error) => {
 			toast.error(error.message);
 		},
 	});
 
 	// Mutación para actualizar usuario
 	const updateMutation = useMutation<
-		UserResponseDto,
+		BaseApiResponse<UserResponseDto>,
 		Error,
 		UpdateUserVariables
 	>({
@@ -74,33 +66,25 @@ export const useUsers = () => {
 			}
 			return response;
 		},
-		onSuccess: (updatedUser) => {
+		onSuccess: (res) => {
 			// Actualizar la caché de usuarios
 			queryClient.setQueryData<UserResponseDto[]>(
 				["users"],
 				(oldUsers) => {
-					if (!oldUsers) return [updatedUser];
-					return oldUsers.map((user) =>
-						user.id === updatedUser.id ? updatedUser : user
-					);
+					if (!oldUsers) return [res.data];
+					return oldUsers.map((user) => {
+						if (user.id === res.data.id) {
+							return res.data;
+						} else {
+							return user;
+						}
+					});
 				}
 			);
 
 			toast.success("Usuario actualizado exitosamente");
 		},
-		onError: (error: Error) => {
-			// Manejar diferentes tipos de errores
-			if (
-				error.message.includes("no autorizado") ||
-				error.message.includes("sesión expirada")
-			) {
-				toast.error(
-					"Sesión expirada. Por favor, inicie sesión nuevamente"
-				);
-				// TODO: Redirigir al login
-				return;
-			}
-
+		onError: (error) => {
 			toast.error(error.message);
 		},
 	});
@@ -120,16 +104,7 @@ export const useUsers = () => {
 		onSuccess: () => {
 			toast.success("Nueva contraseña enviada exitosamente");
 		},
-		onError: (error: Error) => {
-			if (
-				error.message.includes("no autorizado") ||
-				error.message.includes("sesión expirada")
-			) {
-				toast.error(
-					"Sesión expirada. Por favor, inicie sesión nuevamente"
-				);
-				return;
-			}
+		onError: (error) => {
 			toast.error(error.message);
 		},
 	});
@@ -145,16 +120,7 @@ export const useUsers = () => {
 		onSuccess: (response) => {
 			toast.success(response.message);
 		},
-		onError: (error: Error) => {
-			if (
-				error.message.includes("no autorizado") ||
-				error.message.includes("sesión expirada")
-			) {
-				toast.error(
-					"Sesión expirada. Por favor, inicie sesión nuevamente"
-				);
-				return;
-			}
+		onError: (error) => {
 			toast.error(error.message);
 		},
 	});
@@ -170,17 +136,7 @@ export const useUsers = () => {
 		onSuccess: (response) => {
 			toast.success(response.message);
 		},
-		onError: (error: Error) => {
-			if (
-				error.message.includes("no autorizado") ||
-				error.message.includes("sesión expirada")
-			) {
-				toast.error(
-					"Sesión expirada. Por favor, inicie sesión nuevamente"
-				);
-				return;
-			}
-
+		onError: (error) => {
 			toast.error(error.message);
 		},
 	});
