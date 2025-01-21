@@ -5,7 +5,6 @@ import LeftPanel from "./LeftPanel";
 import { ConsultationSchema, consultationsSchema } from "../type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Separator } from "@/components/ui/separator";
 import ConsultationCalendarTime from "./ConsultationCalendarTime";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -65,9 +64,8 @@ export default function Consultation() {
 				</div>
 			</div>
 
-			<div className="grid grid-cols-[1fr_auto_1fr] gap-8">
+			<div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] w-full  gap-8">
 				<LeftPanel date={selectedDate} time={selectedTime} />
-				<Separator orientation="vertical" className="h-auto" />
 				<div className="relative">
 					{!showForm ? (
 						<div className="pb-12">
