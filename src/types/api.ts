@@ -2655,54 +2655,6 @@ export interface components {
             newPassword: string;
             confirmPassword: string;
         };
-        CreateUserDto: {
-            /**
-             * @description Nombre del usuario
-             * @example John Doe
-             */
-            name: string;
-            /**
-             * @description Correo electrónico del usuario
-             * @example lW3T9@example.com
-             */
-            email: string;
-            /**
-             * @description Contraseña del usuario
-             * @example P@ssw0rd
-             */
-            password: string;
-            /**
-             * @description Número de teléfono del usuario
-             * @example +51999999999
-             */
-            phone?: string;
-            /**
-             * @description Ids de roles del usuario
-             * @example [
-             *       "a5ece059-6d13-4c47-94e4-446e6bf6d0e4"
-             *     ]
-             */
-            roles: string[];
-        };
-        UpdateUserDto: {
-            /** @description User name */
-            name?: string;
-            /** @description User phone */
-            phone?: string;
-            /** @description User rols */
-            roles?: string[];
-        };
-        BaseApiResponse: {
-            /** @description Estado de la operación */
-            success: boolean;
-            /** @description Mensaje descriptivo */
-            message: string;
-            /** @description Datos de la respuesta */
-            data: Record<string, never>;
-        };
-        DeleteUsersDto: {
-            ids: string[];
-        };
         UserResponseDto: {
             /**
              * @description Nombre del usuario
@@ -2747,6 +2699,60 @@ export interface components {
              * @example 2021-01-01
              */
             lastLogin: string;
+        };
+        CreateUserDto: {
+            /**
+             * @description Nombre del usuario
+             * @example John Doe
+             */
+            name: string;
+            /**
+             * @description Correo electrónico del usuario
+             * @example lW3T9@example.com
+             */
+            email: string;
+            /**
+             * @description Contraseña del usuario
+             * @example P@ssw0rd
+             */
+            password: string;
+            /**
+             * @description Número de teléfono del usuario
+             * @example +51999999999
+             */
+            phone?: string;
+            /**
+             * @description Ids de roles del usuario
+             * @example [
+             *       "a5ece059-6d13-4c47-94e4-446e6bf6d0e4"
+             *     ]
+             */
+            roles: string[];
+        };
+        BaseApiResponse: {
+            /**
+             * @description Estado de la operación
+             * @example true
+             */
+            success: boolean;
+            /**
+             * @description Mensaje descriptivo
+             * @example Operación realizada con éxito
+             */
+            message: string;
+            /** @description Datos de la respuesta */
+            data: Record<string, never> | null;
+        };
+        UpdateUserDto: {
+            /** @description User name */
+            name?: string;
+            /** @description User phone */
+            phone?: string;
+            /** @description User rols */
+            roles?: string[];
+        };
+        DeleteUsersDto: {
+            ids: string[];
         };
         SendEmailDto: {
             email: string;
@@ -5502,7 +5508,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Get all users */
+            /** @description Usuarios obtenidos correctamente */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -5547,12 +5553,14 @@ export interface operations {
             };
         };
         responses: {
-            /** @description User created */
-            201: {
+            /** @description Usuario creado correctamente */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
             };
             /** @description Bad request */
             400: {
@@ -5588,12 +5596,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Get user by id */
+            /** @description Usuario obtenido correctamente */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"][];
+                };
             };
             /** @description Bad request */
             400: {
@@ -5629,7 +5639,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description User deleted */
+            /** @description Usuario eliminado correctamente */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -5676,12 +5686,14 @@ export interface operations {
             };
         };
         responses: {
-            /** @description User updated */
+            /** @description Usuario actualizado correctamente */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
             };
             /** @description Bad request */
             400: {
@@ -5808,7 +5820,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
             };
             /** @description Bad request */
             400: {
@@ -5842,12 +5856,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Get new password */
+            /** @description Contraseña generada correctamente */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
             };
             /** @description Bad request */
             400: {
@@ -5885,12 +5901,14 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Send new password */
+            /** @description Nueva contraseña enviada correctamente */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
             };
             /** @description Bad request */
             400: {
