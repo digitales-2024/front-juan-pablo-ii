@@ -39,14 +39,13 @@ export const useTypeProducts = () => {
         },
         // Actualizar la caché de tipos de productos con el nuevo tipo de producto
         onSuccess: (newTypeProduct) => {
-
             
             // Actualizar la caché de tipos de productos
             queryClient.setQueryData<ResponseDataTypeProduct>(
                 ["type-products"],
                 (oldTypeProducts) => {
-                    if (!oldTypeProducts) return [newTypeProduct.data];
-                    return [...oldTypeProducts, newTypeProduct.data];
+                    if (!oldTypeProducts) return [newTypeProduct];
+                    return [...oldTypeProducts, newTypeProduct];
                 }
             );
 
