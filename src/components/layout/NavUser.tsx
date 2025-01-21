@@ -54,7 +54,7 @@ export function NavUser() {
 		name: "Usuario",
 		email: "usuario@example.com" 
 	};
-	const currentUser = user || defaultUser;
+	const currentUser = user ?? defaultUser;
 
 	const handleLogout = async () => {
 		await logoutAction();
