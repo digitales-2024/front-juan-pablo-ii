@@ -8,6 +8,7 @@ import { signIn } from '../_actions/sign-in.action'
 import { useRouter } from 'next/navigation'
 import { Profile } from '../_interfaces/auth.interface'
 import { LoginAuthDto } from '../_interfaces/auth.interface'
+import { toast } from 'sonner'
 
 /**
  * @interface AuthState
@@ -108,7 +109,6 @@ export function useSignIn() {
      */
     mutationFn: async (credentials: LoginAuthDto) => {
       const result = await signIn(credentials)
-      console.log("🚀 ~ mutationFn: ~ result:", result)
       
       if (result.validationErrors) {
         throw new Error(Object.values(result.validationErrors).flat().join(', '))
@@ -142,15 +142,13 @@ export function useSignIn() {
         mustChangePassword: false,
         lastLogin: new Date().toISOString()
       }
-
-      console.log("🚀 ~ useSignIn ~ profileData:", profileData)
       setUser(profileData)
       queryClient.invalidateQueries({ queryKey: ['user'] })
+      toast.success('Inicio de sesión exitoso')
       router.push('/')
     },
     onError: (error: Error) => {
-      console.error('Error en inicio de sesión:', error)
-      throw error
+      toast.error(`Error en inicio de sesión: ${error.message}`, )
     }
   })
 }

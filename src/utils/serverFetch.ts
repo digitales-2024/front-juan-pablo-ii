@@ -1,266 +1,230 @@
 import { cookies } from "next/headers";
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from "axios";
+import { Result } from "./result";
 
-// Types
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-
-interface DALConfig<T = any>
-	extends Omit<AxiosRequestConfig, "url" | "method"> {
-	body?: T;
+// Configuración extendida para las peticiones
+interface ServerFetchConfig extends RequestInit {
+	body?: BodyInit;
 	params?: Record<string, string | number>;
 	headers?: Record<string, string>;
 	maxRetries?: number;
 	retryDelay?: number;
 }
 
-interface DALError {
+/**
+ * Información acerca del error en la petición al backend
+ */
+type ServerFetchError = {
 	statusCode: number;
 	message: string;
 	error: string;
-	isRetryable?: boolean;
-}
-
-interface TokenResponse {
-	access_token: string;
-}
-
-type Result<T> = Promise<[T | null, DALError | null]>;
-
-// Constants
-const DEFAULT_CONFIG = {
-	maxRetries: 3,
-	retryDelay: 1000,
-	baseURL: process.env.BACKEND_URL,
-	timeout: 5000,
 };
 
-// Singleton for token refresh
-let refreshPromise: Promise<string | null> | null = null;
-
-// Create axios instance
-const api: AxiosInstance = axios.create({
-	baseURL: DEFAULT_CONFIG.baseURL,
-	timeout: DEFAULT_CONFIG.timeout,
-	validateStatus: (status) => status >= 200 && status < 300,
-});
-
-// Development logging
-if (process.env.NODE_ENV !== "production") {
-	api.interceptors.request.use(
-		(config) => {
-			console.log(`🚀 [${config.method?.toUpperCase()}] ${config.url}`, {
-				body: config.data,
-				params: config.params,
-			});
-			return config;
-		},
-		(error) => {
-			console.error("❌ Request configuration error:", error);
-			return Promise.reject(error);
-		}
-	);
-
-	api.interceptors.response.use(
-		(response) => {
-			console.log(`✅ [${response.status}] ${response.config.url}`, {
-				data: response.data,
-			});
-			return response;
-		},
-		(error) => {
-			if (axios.isAxiosError(error) && error.response) {
-				console.error(
-					`❌ [${error.response.status}] ${error.config?.url}`,
-					{
-						error: error.response.data,
-					}
-				);
-			}
-			return Promise.reject(error);
-		}
-	);
-}
-
-// Utility functions
-const isRetryableError = (error: AxiosError): boolean => {
-	if (!error.response) return true;
-	const status = error.response.status;
-	return status >= 500 || status === 429;
-};
-
-const getRetryDelay = (retryCount: number, baseDelay: number): number => {
-	return Math.min(baseDelay * Math.pow(2, retryCount), 10000);
-};
-
-const refreshAccessToken = async (): Promise<string | null> => {
-	if (refreshPromise) return refreshPromise;
-
-	refreshPromise = (async () => {
-		try {
-			const cookieStore = await cookies();
-			const refreshToken = cookieStore.get("refresh_token")?.value;
-
-			if (!refreshToken) {
-				console.warn("No refresh token available");
-				return null;
-			}
-
-			const response = await api.post<TokenResponse>(
-				"/auth/refresh-token",
-				null,
-				{
-					headers: {
-						Cookie: `refresh_token=${refreshToken}`,
-					},
-				}
-			);
-
-			return response.data.access_token;
-		} catch (error) {
-			console.error("Token refresh failed:", error);
-			return null;
-		} finally {
-			refreshPromise = null;
-		}
-	})();
-
-	return refreshPromise;
-};
-
-// Main DAL function
-async function dal<T, ReqBody = any>(
-	method: HttpMethod,
+/**
+ * Realiza una petición al backend y devuelve un Result.
+ *
+ * Un Result es una tupla que contiene uno de dos casos:
+ * - Si la petición es exitosa (codigo 2xx) la tupla contiene `[datos, null]`
+ * - Si la petición falla la tupla contiene `[null, ServerFetchError]`
+ *
+ * `ServerFetchError` es un objeto que contiene {statusCode, message, error}
+ *
+ * @example
+ * ```ts
+ * const [user, err] = await serverFetch<User>("/users/123")
+ * if (err !== null) {
+ *     // Manejar error
+ *     return not_found();
+ * }
+ * // Utilizar `user`
+ * return <p>Hola {user.name}</p>
+ * ```
+ *
+ * IMPORTANTE: Si la API no responde, o hubo algun otro error, esta funcion devuelve `{statusCode: 503}`
+ *
+ * IMPORTANTE: Esta funcion no refresca cookies de sesion. Esta función asume
+ * que la cookie `access_token` existe y es válida. El refresco de
+ * tokens se realiza en el middleware.
+ *
+ * @type Success El tipo de dato que el API devuelve
+ * @param url La URL a hacer la petición
+ * @param options Opciones enviadas a fetch
+ * @returns Una tupla con los datos, o un error
+ *
+ */
+export async function serverFetch<Success>(
 	url: string,
-	config: DALConfig<ReqBody> = {}
-): Result<T> {
-	const {
-		maxRetries = DEFAULT_CONFIG.maxRetries,
-		retryDelay = DEFAULT_CONFIG.retryDelay,
-		...restConfig
-	} = config;
+	options?: RequestInit
+): Promise<Result<Success, ServerFetchError>> {
+	const cookieStore = await cookies();
+	const accessToken = cookieStore.get("access_token")?.value;
 
-	let retryCount = 0;
+	if (!accessToken) {
+		if (process.env.NODE_ENV !== "production") {
+			console.error(
+				"DEBUG: Intentando user serverFetch sin una cookie `access_token valida`"
+			);
+		}
+	}
 
-	const executeRequest = async (accessToken: string | null): Result<T> => {
-		try {
-			const response = await api.request<T>({
-				method,
-				url,
-				data: config.body,
-				params: config.params,
-				headers: {
-					...config.headers,
-					...(accessToken && {
-						Cookie: `access_token=${accessToken}`,
-					}),
-				},
-				...restConfig,
-			});
+	try {
+		const response = await fetch(`${process.env.BACKEND_URL}${url}`, {
+			...options,
+			headers: {
+				...options?.headers,
+				Cookie: `access_token=${accessToken}`,
+			},
+		});
 
-			return [response.data, null];
-		} catch (error) {
-			if (axios.isAxiosError(error)) {
-				// Handle 401 - Unauthorized
-				if (error.response?.status === 401) {
-					const newToken = await refreshAccessToken();
-					if (newToken) {
-						return executeRequest(newToken);
-					}
-
-					// If refresh failed, return auth error
-					return [
-						null,
-						{
-							statusCode: 401,
-							message: "Session expired",
-							error: "Please sign in again",
-							isRetryable: false,
-						},
-					];
-				}
-
-				// Handle retryable errors
-				if (isRetryableError(error) && retryCount < maxRetries) {
-					retryCount++;
-					const delay = getRetryDelay(retryCount, retryDelay);
-					await new Promise((resolve) => setTimeout(resolve, delay));
-					return executeRequest(accessToken);
-				}
-
-				// Handle HTTP errors
-				if (error.response) {
-					const data = error.response.data;
-					return [
-						null,
-						{
-							statusCode: error.response.status,
-							message: data?.message ?? "API unavailable",
-							error: data?.error ?? "Unknown error",
-							isRetryable: isRetryableError(error),
-						},
-					];
-				}
-
-				// Handle network errors
-				if (error.request) {
-					return [
-						null,
-						{
-							statusCode: 502,
-							message: "API unavailable",
-							error: "Network error",
-							isRetryable: true,
-						},
-					];
-				}
-			}
-
-			// Handle unexpected errors
-			console.error("Unexpected error:", error);
+		if (!response.ok) {
+			const data = (await response.json()) as Partial<ServerFetchError>;
 			return [
+				// @ts-expect-error allowing null
 				null,
 				{
-					statusCode: 503,
-					message: "Internal error",
-					error: "Unexpected error",
-					isRetryable: true,
+					statusCode: response.status,
+					message: data.message ?? "API no disponible",
+					error: data.error ?? "Error desconocido",
 				},
 			];
 		}
-	};
 
-	// Get initial access token
-	const cookieStore = await cookies();
-	let accessToken = cookieStore.get("access_token")?.value;
-
-	if (!accessToken) {
-		accessToken = await refreshAccessToken();
+		const data = await response.json();
+		return [data, null];
+	} catch (error) {
+		console.error(error);
+		return [
+			// @ts-expect-error allowing null
+			null,
+			{
+				statusCode: 503,
+				message: "Error interno",
+				error: "Error interno",
+			},
+		];
 	}
-
-	return executeRequest(accessToken);
 }
 
-// HTTP method helpers
+/**
+ * Objeto que proporciona métodos para realizar peticiones HTTP
+ */
 export const http = {
-	get<T>(url: string, config?: Omit<DALConfig, "body">) {
-		return dal<T>("GET", url, config);
+	/**
+	 * Realiza una petición GET
+	 * @param url - La URL a la que se realizará la petición
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [data, err] = await http.get<User>("/users/");
+	 * ```
+	 */
+	get<T>(url: string, config?: RequestInit) {
+		return serverFetch<T>(url, config);
 	},
 
-	post<T, B = any>(url: string, body?: B, config?: Omit<DALConfig, "body">) {
-		return dal<T, B>("POST", url, { ...config, body });
+	/**
+	 * Realiza una petición POST
+	 * @param url - La URL a la que se realizará la petición
+	 * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [newUser, err] = await http.post<User>("/users", { name: "Linus" });
+	 * ```
+	 */
+	post<T>(url: string, body?: BodyInit | object, config?: RequestInit) {
+		return serverFetch<T>(url, {
+			...config,
+			method: "POST",
+			body: processBody(body),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 	},
 
-	put<T, B = any>(url: string, body?: B, config?: Omit<DALConfig, "body">) {
-		return dal<T, B>("PUT", url, { ...config, body });
+	/**
+	 * Realiza una petición PUT
+	 * @param url - La URL a la que se realizará la petición
+	 * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [updatedUser, err] = await http.put<User>("/users/1f0c-3fca" { name: "Torvalds" });
+	 * ```
+	 */
+	put<T>(url: string, body?: BodyInit | object, config?: RequestInit) {
+		return serverFetch<T>(url, {
+			...config,
+			method: "PUT",
+			body: processBody(body),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 	},
 
-	delete<T>(url: string, config?: DALConfig) {
-		return dal<T>("DELETE", url, config);
+	/**
+	 * Realiza una petición DELETE
+	 * @param url - La URL a la que se realizará la petición
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [result, err] = await http.delete<void>("/users/1ca0-0aa3");
+	 * ```
+	 */
+	delete<T>(url: string, config?: ServerFetchConfig) {
+		return serverFetch<T>(url, {
+			...config,
+			method: "DELETE",
+		});
 	},
 
-	patch<T, B = any>(url: string, body?: B, config?: Omit<DALConfig, "body">) {
-		return dal<T, B>("PATCH", url, { ...config, body });
+	/**
+	 * Realiza una petición PATCH
+	 * @param url - La URL a la que se realizará la petición
+	 * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+	 * @param config - Configuración opcional para la petición fetch
+	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
+	 * @example
+	 * ```ts
+	 * const [patchedUser, err] = await http.patch<User>("/users/1010-1a0b", { name: "Linux" });
+	 * ```
+	 */
+	patch<T>(
+		url: string,
+		body?: BodyInit | object,
+		config?: Omit<ServerFetchConfig, "body">
+	) {
+		return serverFetch<T>(url, {
+			...config,
+			method: "PATCH",
+			body: processBody(body),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 	},
 };
 
-export default http;
+/**
+ * Permite utilizar un objeto plano como body
+ */
+function processBody(
+	body: BodyInit | object | undefined
+): BodyInit | undefined {
+	if (
+		body instanceof Blob ||
+		body instanceof ArrayBuffer ||
+		body instanceof FormData ||
+		body instanceof URLSearchParams ||
+		body instanceof ReadableStream
+	) {
+		return body;
+	} else {
+		return JSON.stringify(body);
+	}
+}

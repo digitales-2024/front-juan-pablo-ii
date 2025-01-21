@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { createSafeAction } from '@/utils/createSafeAction';
 // import { sleep } from '@/utils/sleep';
 import { http } from '@/utils/serverFetch';
-import { UserResponse } from '@/app/(auth)/sign-in/_interfaces/auth.interface';
 import { Profile } from '../_interfaces/account.interface';
 
 const GetUserSchema = z.object({
@@ -26,7 +25,7 @@ const handler = async (data: GetUserInput) => {
       email: account.email ?? '',
       phone: account.phone ?? '',
       isSuperAdmin: account.isSuperAdmin ?? false,
-      roles: account.roles?.map(role => ({ name: role.name })) || [],
+      roles: account.roles?.map(role => ({ id: role.id, name: role.name })) || [],
     };
 
     return { data: mappedAccount };
