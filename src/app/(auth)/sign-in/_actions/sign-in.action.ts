@@ -26,30 +26,23 @@ export async function signIn(data: LoginAuthDto) {
       return { error: 'Credenciales inválidas' };
     }
 
-    console.log("🍪 Headers completos:", headers);
-    console.log("🍪 Set-Cookie Headers:", headers?.['set-cookie']);
-
     const cookieStore = await cookies();
     const setCookieHeaders = headers?.['set-cookie'] || [];
     
-    console.log("🍪 Cookies a procesar:", setCookieHeaders);
+   
 
     // Primero eliminamos las cookies existentes
     cookieStore.delete('logged_in');
     cookieStore.delete('access_token');
     cookieStore.delete('refresh_token');
-    console.log("🍪 Cookies eliminadas");
 
     // Establecemos las nuevas cookies
     if (Array.isArray(setCookieHeaders)) {
       setCookieHeaders.forEach(cookie => {
-        console.log("🍪 Procesando cookie:", cookie);
 
         // Extraemos el nombre y valor de la cookie
         const [nameValue] = cookie.split(';');
         const [name, value] = nameValue.split('=');
-        console.log("🍪 Nombre:", name);
-        console.log("🍪 Valor:", value);
 
         // Establecemos la cookie
         cookieStore.set(name, value, {
@@ -58,13 +51,11 @@ export async function signIn(data: LoginAuthDto) {
           sameSite: 'strict',
           path: '/',
         });
-        console.log(`🍪 Cookie ${name} establecida`);
       });
     }
 
     // Verificamos las cookies establecidas
     const allCookies = cookieStore.getAll();
-    console.log("🍪 Cookies actuales:", allCookies);
 
     const profile: Profile = {
       id: responseData.id,
@@ -80,7 +71,6 @@ export async function signIn(data: LoginAuthDto) {
 
     return { data: profile };
   } catch (error: any) {
-    console.error('Error en sign-in:', error);
     return { 
       error: error?.message || 'Error al iniciar sesión'
     };
