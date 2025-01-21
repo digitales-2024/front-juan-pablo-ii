@@ -1,5 +1,6 @@
 import { components } from "@/types/api";
 import { z } from "zod";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 // Tipos base de la API
 export type Branch = components['schemas']['Branch'];
@@ -16,7 +17,9 @@ export interface BranchTableItem extends Branch {
 export const createBranchSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   address: z.string().min(1, "La dirección es requerida"),
-  phone: z.string().optional(),
+  phone: z.string().refine((value) => !value || isValidPhoneNumber(value), {
+    message: "El número de teléfono no es válido",
+  }),
 }) satisfies z.ZodType<CreateBranchDto>;
 
 export const updateBranchSchema = z.object({
