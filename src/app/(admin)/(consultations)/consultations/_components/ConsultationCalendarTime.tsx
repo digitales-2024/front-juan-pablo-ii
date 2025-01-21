@@ -3,7 +3,6 @@ import { ConsultationSchema } from "../type";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { CalendarBig } from "./calendar/CalendarBig";
-import { Separator } from "@/components/ui/separator";
 import { format, isBefore, isToday, startOfDay, startOfToday } from "date-fns";
 import { cn } from "@/lib/utils";
 import { es } from "date-fns/locale";
@@ -36,7 +35,7 @@ export default function ConsultationCalendarTime({
 	};
 
 	return (
-		<div className="w-auto space-x-10 flex items-start">
+		<div className="w-auto space-x-10 flex-wrap flex items-start h-fit">
 			<div className="space-y-4">
 				<h3 className="font-semibold">Fecha de consulta</h3>
 				<CalendarBig
@@ -65,7 +64,6 @@ export default function ConsultationCalendarTime({
 					}}
 				/>
 			</div>
-			<Separator orientation="vertical" />
 			<div className="space-y-4">
 				<h3 className="font-semibold">Hora de consulta</h3>
 				<p className="text-sm text-muted-foreground">
