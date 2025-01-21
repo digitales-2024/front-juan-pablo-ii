@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 interface CreateBranchFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -63,7 +64,12 @@ export function CreateBranchForm({
               <FormItem>
                 <FormLabel>Teléfono (opcional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="+51999999999" {...field} />
+                  <PhoneInput
+                    defaultCountry="PE"
+                    placeholder="Ingrese el teléfono"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
