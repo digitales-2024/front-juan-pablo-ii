@@ -54,15 +54,17 @@ export async function createBranch(
     const [branch, error] = await http.post<BaseApiResponse>("/branch", data);
 
     if (error) {
+      // Solo manejamos el 401, pero podrían haber otros códigos importantes
+      if (error.statusCode === 401) {
+        return { error: "No autorizado. Por favor, inicie sesión nuevamente." };
+      }
       return { error: error.message };
     }
 
-    
     return branch;
-
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido" };
+    return { error: "Error desconocido al crear la sucursal" };
   }
 }
 

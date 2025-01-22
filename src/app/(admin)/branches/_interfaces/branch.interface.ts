@@ -17,9 +17,12 @@ export interface BranchTableItem extends Branch {
 export const createBranchSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   address: z.string().min(1, "La dirección es requerida"),
-  phone: z.string().refine((value) => !value || isValidPhoneNumber(value), {
-    message: "El número de teléfono no es válido",
-  }),
+  phone: z.string()
+    .transform(val => val === "" ? undefined : val)
+    .optional()
+    .refine(value => !value || isValidPhoneNumber(value), {
+      message: "El número de teléfono no es válido",
+    }),
 }) satisfies z.ZodType<CreateBranchDto>;
 
 export const updateBranchSchema = z.object({
