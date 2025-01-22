@@ -3,20 +3,20 @@ import { Result } from "./result";
 
 // Configuración extendida para las peticiones
 interface ServerFetchConfig extends RequestInit {
-	body?: BodyInit;
-	params?: Record<string, string | number>;
-	headers?: Record<string, string>;
-	maxRetries?: number;
-	retryDelay?: number;
+  body?: BodyInit;
+  params?: Record<string, string | number>;
+  headers?: Record<string, string>;
+  maxRetries?: number;
+  retryDelay?: number;
 }
 
 /**
  * Información acerca del error en la petición al backend
  */
 type ServerFetchError = {
-	statusCode: number;
-	message: string;
-	error: string;
+  statusCode: number;
+  message: string;
+  error: string;
 };
 
 /**
@@ -52,179 +52,185 @@ type ServerFetchError = {
  *
  */
 export async function serverFetch<Success>(
-	url: string,
-	options?: RequestInit
+  url: string,
+  options?: RequestInit
 ): Promise<Result<Success, ServerFetchError>> {
-	const cookieStore = await cookies();
-	const accessToken = cookieStore.get("access_token")?.value;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
 
-	if (!accessToken) {
-		if (process.env.NODE_ENV !== "production") {
-			console.error(
-				"DEBUG: Intentando user serverFetch sin una cookie `access_token valida`"
-			);
-		}
-	}
+  if (process.env.NODE_ENV === "development") {
+    console.log("\tSERVER FETCH: server fetch hit w cookie:");
+    console.log("\tSERVER FETCH:", accessToken ?? "---");
+  }
 
-	try {
-		const response = await fetch(`${process.env.BACKEND_URL}${url}`, {
-			...options,
-			headers: {
-				...options?.headers,
-				Cookie: `access_token=${accessToken}`,
-			},
-		});
+  if (!accessToken) {
+    if (process.env.NODE_ENV === "development") {
+      console.error(
+        "\tSERVER FETCH: Intentando user serverFetch sin una cookie `access_token valida`"
+      );
+    }
+  }
 
-		if (!response.ok) {
-			const data = (await response.json()) as Partial<ServerFetchError>;
-			return [
-				// @ts-expect-error allowing null
-				null,
-				{
-					statusCode: response.status,
-					message: data.message ?? "API no disponible",
-					error: data.error ?? "Error desconocido",
-				},
-			];
-		}
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}${url}`, {
+      ...options,
+      headers: {
+        ...options?.headers,
+        Cookie: `access_token=${accessToken}`,
+      },
+    });
 
-		const data = await response.json();
-		return [data, null];
-	} catch (error) {
-		console.error(error);
-		return [
-			// @ts-expect-error allowing null
-			null,
-			{
-				statusCode: 503,
-				message: "Error interno",
-				error: "Error interno",
-			},
-		];
-	}
+    if (!response.ok) {
+      const data = (await response.json()) as Partial<ServerFetchError>;
+      return [
+        // @ts-expect-error allowing null
+        null,
+        {
+          statusCode: response.status,
+          message: data.message ?? "API no disponible",
+          error: data.error ?? "Error desconocido",
+        },
+      ];
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const data = await response.json();
+    return [data, null];
+  } catch (error) {
+    console.error(error);
+    return [
+      // @ts-expect-error allowing null
+      null,
+      {
+        statusCode: 503,
+        message: "Error interno",
+        error: "Error interno",
+      },
+    ];
+  }
 }
 
 /**
  * Objeto que proporciona métodos para realizar peticiones HTTP
  */
 export const http = {
-	/**
-	 * Realiza una petición GET
-	 * @param url - La URL a la que se realizará la petición
-	 * @param config - Configuración opcional para la petición fetch
-	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
-	 * @example
-	 * ```ts
-	 * const [data, err] = await http.get<User>("/users/");
-	 * ```
-	 */
-	get<T>(url: string, config?: RequestInit) {
-		return serverFetch<T>(url, config);
-	},
+  /**
+   * Realiza una petición GET
+   * @param url - La URL a la que se realizará la petición
+   * @param config - Configuración opcional para la petición fetch
+   * @returns Una promesa que resuelve con los datos de tipo T, o un error
+   * @example
+   * ```ts
+   * const [data, err] = await http.get<User>("/users/");
+   * ```
+   */
+  get<T>(url: string, config?: RequestInit) {
+    return serverFetch<T>(url, config);
+  },
 
-	/**
-	 * Realiza una petición POST
-	 * @param url - La URL a la que se realizará la petición
-	 * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
-	 * @param config - Configuración opcional para la petición fetch
-	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
-	 * @example
-	 * ```ts
-	 * const [newUser, err] = await http.post<User>("/users", { name: "Linus" });
-	 * ```
-	 */
-	post<T>(url: string, body?: BodyInit | object, config?: RequestInit) {
-		return serverFetch<T>(url, {
-			...config,
-			method: "POST",
-			body: processBody(body),
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
-	},
+  /**
+   * Realiza una petición POST
+   * @param url - La URL a la que se realizará la petición
+   * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+   * @param config - Configuración opcional para la petición fetch
+   * @returns Una promesa que resuelve con los datos de tipo T, o un error
+   * @example
+   * ```ts
+   * const [newUser, err] = await http.post<User>("/users", { name: "Linus" });
+   * ```
+   */
+  post<T>(url: string, body?: BodyInit | object, config?: RequestInit) {
+    return serverFetch<T>(url, {
+      ...config,
+      method: "POST",
+      body: processBody(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  },
 
-	/**
-	 * Realiza una petición PUT
-	 * @param url - La URL a la que se realizará la petición
-	 * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
-	 * @param config - Configuración opcional para la petición fetch
-	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
-	 * @example
-	 * ```ts
-	 * const [updatedUser, err] = await http.put<User>("/users/1f0c-3fca" { name: "Torvalds" });
-	 * ```
-	 */
-	put<T>(url: string, body?: BodyInit | object, config?: RequestInit) {
-		return serverFetch<T>(url, {
-			...config,
-			method: "PUT",
-			body: processBody(body),
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
-	},
+  /**
+   * Realiza una petición PUT
+   * @param url - La URL a la que se realizará la petición
+   * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+   * @param config - Configuración opcional para la petición fetch
+   * @returns Una promesa que resuelve con los datos de tipo T, o un error
+   * @example
+   * ```ts
+   * const [updatedUser, err] = await http.put<User>("/users/1f0c-3fca" { name: "Torvalds" });
+   * ```
+   */
+  put<T>(url: string, body?: BodyInit | object, config?: RequestInit) {
+    return serverFetch<T>(url, {
+      ...config,
+      method: "PUT",
+      body: processBody(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  },
 
-	/**
-	 * Realiza una petición DELETE
-	 * @param url - La URL a la que se realizará la petición
-	 * @param config - Configuración opcional para la petición fetch
-	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
-	 * @example
-	 * ```ts
-	 * const [result, err] = await http.delete<void>("/users/1ca0-0aa3");
-	 * ```
-	 */
-	delete<T>(url: string, config?: ServerFetchConfig) {
-		return serverFetch<T>(url, {
-			...config,
-			method: "DELETE",
-		});
-	},
+  /**
+   * Realiza una petición DELETE
+   * @param url - La URL a la que se realizará la petición
+   * @param config - Configuración opcional para la petición fetch
+   * @returns Una promesa que resuelve con los datos de tipo T, o un error
+   * @example
+   * ```ts
+   * const [result, err] = await http.delete<void>("/users/1ca0-0aa3");
+   * ```
+   */
+  delete<T>(url: string, config?: ServerFetchConfig) {
+    return serverFetch<T>(url, {
+      ...config,
+      method: "DELETE",
+    });
+  },
 
-	/**
-	 * Realiza una petición PATCH
-	 * @param url - La URL a la que se realizará la petición
-	 * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
-	 * @param config - Configuración opcional para la petición fetch
-	 * @returns Una promesa que resuelve con los datos de tipo T, o un error
-	 * @example
-	 * ```ts
-	 * const [patchedUser, err] = await http.patch<User>("/users/1010-1a0b", { name: "Linux" });
-	 * ```
-	 */
-	patch<T>(
-		url: string,
-		body?: BodyInit | object,
-		config?: Omit<ServerFetchConfig, "body">
-	) {
-		return serverFetch<T>(url, {
-			...config,
-			method: "PATCH",
-			body: processBody(body),
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
-	},
+  /**
+   * Realiza una petición PATCH
+   * @param url - La URL a la que se realizará la petición
+   * @param body - El cuerpo de la petición, puede ser un objeto o BodyInit
+   * @param config - Configuración opcional para la petición fetch
+   * @returns Una promesa que resuelve con los datos de tipo T, o un error
+   * @example
+   * ```ts
+   * const [patchedUser, err] = await http.patch<User>("/users/1010-1a0b", { name: "Linux" });
+   * ```
+   */
+  patch<T>(
+    url: string,
+    body?: BodyInit | object,
+    config?: Omit<ServerFetchConfig, "body">
+  ) {
+    return serverFetch<T>(url, {
+      ...config,
+      method: "PATCH",
+      body: processBody(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  },
 };
 
 /**
  * Permite utilizar un objeto plano como body
  */
 function processBody(
-	body: BodyInit | object | undefined
+  body: BodyInit | object | undefined
 ): BodyInit | undefined {
-	if (
-		body instanceof Blob ||
-		body instanceof ArrayBuffer ||
-		body instanceof FormData ||
-		body instanceof URLSearchParams ||
-		body instanceof ReadableStream
-	) {
-		return body;
-	} else {
-		return JSON.stringify(body);
-	}
+  if (
+    body instanceof Blob ||
+    body instanceof ArrayBuffer ||
+    body instanceof FormData ||
+    body instanceof URLSearchParams ||
+    body instanceof ReadableStream
+  ) {
+    return body;
+  } else {
+    return JSON.stringify(body);
+  }
 }
