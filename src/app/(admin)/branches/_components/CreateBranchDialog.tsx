@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateBranchInput, createBranchSchema } from "../_interfaces/branch.interface";
@@ -38,7 +38,7 @@ const CREATE_BRANCH_MESSAGES = {
 
 export function CreateBranchDialog() {
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { createMutation } = useBranches();
 
@@ -49,60 +49,55 @@ export function CreateBranchDialog() {
       address: "",
       phone: "",
     },
-    mode: "onChange",
   });
 
-  async function handleSubmit(input: CreateBranchInput) {
-    if (isSubmitting) return;
+  function handleSubmit(input: CreateBranchInput) {
+    if (createMutation.isPending || isCreatePending) return;
 
-    try {
-      setIsSubmitting(true);
-      await createMutation.mutateAsync(input, {
+    startCreateTransition(() => {
+      createMutation.mutate(input, {
         onSuccess: () => {
           setOpen(false);
           form.reset();
         },
         onError: (error) => {
           console.error("Error al crear sucursal:", error);
+          if (error.message.includes("No autorizado")) {
+            setTimeout(() => {
+              form.reset();
+            }, 1000);
+          }
         },
       });
-    } finally {
-      setTimeout(() => {
-        setIsSubmitting(false);
-      }, 1000);
-    }
+    });
   }
 
   const handleClose = () => {
-    if (!isSubmitting) {
-      form.reset();
-      setOpen(false);
-    }
+    form.reset();
+    setOpen(false);
   };
 
-  const isLoading = isSubmitting || createMutation.isPending;
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
       <Button 
         type="submit" 
-        disabled={isLoading || !form.formState.isValid}
+        disabled={isCreatePending || createMutation.isPending}
         className="w-full"
       >
-        {isLoading && (
+        {(isCreatePending || createMutation.isPending) && (
           <RefreshCcw
             className="mr-2 size-4 animate-spin"
             aria-hidden="true"
           />
         )}
-        {isLoading ? "Creando..." : CREATE_BRANCH_MESSAGES.submitButton}
+        {CREATE_BRANCH_MESSAGES.submitButton}
       </Button>
       <Button
         type="button"
         variant="outline"
         className="w-full"
         onClick={handleClose}
-        disabled={isLoading}
       >
         {CREATE_BRANCH_MESSAGES.cancel}
       </Button>
@@ -111,10 +106,9 @@ export function CreateBranchDialog() {
 
   const TriggerButton = () => (
     <Button 
-      onClick={() => !isLoading && setOpen(true)} 
+      onClick={() => setOpen(true)}
       variant="outline" 
       size="sm"
-      disabled={isLoading}
     >
       <Plus className="size-4 mr-2" aria-hidden="true" />
       {CREATE_BRANCH_MESSAGES.button}

@@ -67,8 +67,8 @@ export function CreateBranchForm({
                   <PhoneInput
                     defaultCountry="PE"
                     placeholder="Ingrese el teléfono"
-                    value={field.value}
-                    onChange={field.onChange}
+                    value={field.value ?? ""}
+                    onChange={(value) => field.onChange(value ?? undefined)}
                   />
                 </FormControl>
                 <FormMessage />
