@@ -182,10 +182,15 @@ export const http = {
    * const [result, err] = await http.delete<void>("/users/1ca0-0aa3");
    * ```
    */
-  delete<T>(url: string, config?: ServerFetchConfig) {
+  delete<T>(url: string, body?: BodyInit | object, config?: ServerFetchConfig) {
     return serverFetch<T>(url, {
       ...config,
       method: "DELETE",
+      body: processBody(body),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
   },
 
