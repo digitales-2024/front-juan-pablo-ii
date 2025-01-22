@@ -4,6 +4,7 @@ import {
   updateBranch,
   deleteBranches,
   getBranches,
+  reactivateBranches,
 } from "../_actions/branch.actions";
 import { toast } from "sonner";
 import {
@@ -69,66 +70,127 @@ export const useBranches = () => {
   });
 
   // Mutación para actualizar sucursal
-  const updateMutation = useMutation<Branch, Error, UpdateBranchVariables>({
+  const updateMutation = useMutation<BaseApiResponse<Branch>, Error, UpdateBranchVariables>({
     mutationFn: async ({ id, data }) => {
       const response = await updateBranch(id, data);
+      
       if ("error" in response) {
         throw new Error(response.error);
       }
       return response;
     },
-    onSuccess: (updatedBranch) => {
+    onSuccess: (res) => {
       queryClient.setQueryData<Branch[]>(["branches"], (oldBranches) => {
-        if (!oldBranches) return [updatedBranch];
-        return oldBranches.map((branch) =>
-          branch.id === updatedBranch.id ? updatedBranch : branch
+        if (!oldBranches) {
+          return [res.data];
+        }
+        const updatedBranches = oldBranches.map((branch) =>
+          branch.id === res.data.id ? res.data : branch
         );
+        return updatedBranches;
       });
-
       toast.success("Sucursal actualizada exitosamente");
     },
-    onError: (error: Error) => {
-      if (
-        error.message.includes("no autorizado") ||
-        error.message.includes("sesión expirada")
-      ) {
+    onError: (error) => {
+      console.error("💥 Error en la mutación:", error);
+      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
-        toast.error(error.message);
+        toast.error(error.message || "Error al actualizar la sucursal");
       }
     },
   });
 
   // Mutación para eliminar sucursales
-  const deleteMutation = useMutation<void, Error, DeleteBranchesDto>({
+  const deleteMutation = useMutation<BaseApiResponse<Branch>, Error, DeleteBranchesDto>({
     mutationFn: async (data) => {
+      console.log("🚀 Iniciando deleteMutation con:", data);
       const response = await deleteBranches(data);
+      console.log("📥 Respuesta de deleteBranches:", response);
+      
       if ("error" in response) {
+        console.error("❌ Error en deleteBranches:", response.error);
         throw new Error(response.error);
       }
+      return response;
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (res, variables) => {
+      console.log("✅ Eliminación exitosa:", res);
       queryClient.setQueryData<Branch[]>(["branches"], (oldBranches) => {
-        if (!oldBranches) return [];
-        return oldBranches.filter(
-          (branch) => !variables.ids.includes(branch.id)
-        );
+        console.log("🔄 Cache actual:", oldBranches);
+        if (!oldBranches) {
+          console.log("⚠️ No hay branches en caché");
+          return [];
+        }
+        const updatedBranches = oldBranches.map((branch) => {
+          if (variables.ids.includes(branch.id)) {
+            return { ...branch, isActive: false };
+          }
+          return branch;
+        });
+        console.log("📦 Nueva caché:", updatedBranches);
+        return updatedBranches;
       });
 
       toast.success(
         variables.ids.length === 1
-          ? "Sucursal eliminada exitosamente"
-          : "Sucursales eliminadas exitosamente"
+          ? "Sucursal desactivada exitosamente"
+          : "Sucursales desactivadas exitosamente"
       );
     },
-    onError: (error: Error) => {
-      if (
-        error.message.includes("no autorizado") ||
-        error.message.includes("sesión expirada")
-      ) {
+    onError: (error) => {
+      console.error("💥 Error en la mutación:", error);
+      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
-        toast.error(error.message);
+        toast.error(error.message || "Error al desactivar la(s) sucursal(es)");
+      }
+    },
+  });
+
+  // Mutación para reactivar sucursales
+  const reactivateMutation = useMutation<BaseApiResponse<Branch>, Error, DeleteBranchesDto>({
+    mutationFn: async (data) => {
+      console.log("🚀 Iniciando reactivateMutation con:", data);
+      const response = await reactivateBranches(data);
+      console.log("📥 Respuesta de reactivateBranches:", response);
+      
+      if ("error" in response) {
+        console.error("❌ Error en reactivateBranches:", response.error);
+        throw new Error(response.error);
+      }
+      return response;
+    },
+    onSuccess: (res, variables) => {
+      console.log("✅ Reactivación exitosa:", res);
+      queryClient.setQueryData<Branch[]>(["branches"], (oldBranches) => {
+        console.log("🔄 Cache actual:", oldBranches);
+        if (!oldBranches) {
+          console.log("⚠️ No hay branches en caché");
+          return [];
+        }
+        const updatedBranches = oldBranches.map((branch) => {
+          if (variables.ids.includes(branch.id)) {
+            return { ...branch, isActive: true };
+          }
+          return branch;
+        });
+        console.log("📦 Nueva caché:", updatedBranches);
+        return updatedBranches;
+      });
+
+      toast.success(
+        variables.ids.length === 1
+          ? "Sucursal reactivada exitosamente"
+          : "Sucursales reactivadas exitosamente"
+      );
+    },
+    onError: (error) => {
+      console.error("💥 Error en la mutación:", error);
+      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+        toast.error("No tienes permisos para realizar esta acción");
+      } else {
+        toast.error(error.message || "Error al reactivar la(s) sucursal(es)");
       }
     },
   });
@@ -139,5 +201,6 @@ export const useBranches = () => {
     createMutation,
     updateMutation,
     deleteMutation,
+    reactivateMutation,
   };
 };

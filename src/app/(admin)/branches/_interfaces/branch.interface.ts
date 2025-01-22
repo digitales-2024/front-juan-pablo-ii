@@ -8,6 +8,9 @@ export type CreateBranchDto = components['schemas']['CreateBranchDto'];
 export type UpdateBranchDto = components['schemas']['UpdateBranchDto'];
 export type DeleteBranchesDto = components['schemas']['DeleteBranchesDto'];
 
+// Podemos usar el mismo DTO que delete ya que la estructura es idéntica
+export type ReactivateBranchesDto = DeleteBranchesDto;
+
 // Interfaz para la tabla extendiendo el tipo base
 export interface BranchTableItem extends Branch {
   selected?: boolean;

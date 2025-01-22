@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 // type GetBranchesResponse = Branch[] | { error: string };
 type CreateBranchResponse = BaseApiResponse | { error: string };
-type UpdateBranchResponse = Branch | { error: string };
+type UpdateBranchResponse = BaseApiResponse | { error: string };
 type DeleteBranchResponse = BaseApiResponse | { error: string };
 
 // type ApiResponse<T> = BaseApiResponse & {
@@ -73,7 +73,7 @@ export async function updateBranch(
   data: UpdateBranchDto
 ): Promise<UpdateBranchResponse> {
   try {
-    const [branch, error] = await http.patch<Branch>(`/branch/${id}`, data);
+    const [branch, error] = await http.patch<BaseApiResponse>(`/branch/${id}`, data);
 
     if (error) {
       return { error: error.message };
@@ -88,17 +88,36 @@ export async function updateBranch(
 
 export async function deleteBranches(data: DeleteBranchesDto): Promise<DeleteBranchResponse> {
   try {
-    const [response, error] = await http.patch<BaseApiResponse>("/branch", {
-      body: data,
-    });
+    const [response, error] = await http.delete<BaseApiResponse>("/branch/remove/all",data);
 
     if (error) {
+      if (error.statusCode === 401) {
+        return { error: "No autorizado. Por favor, inicie sesión nuevamente." };
+      }
       return { error: error.message };
     }
 
     return response;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido" };
+    return { error: "Error desconocido al eliminar las sucursales" };
+  }
+}
+
+export async function reactivateBranches(data: DeleteBranchesDto): Promise<DeleteBranchResponse> {
+  try {
+    const [response, error] = await http.patch<BaseApiResponse>("/branch/reactivate/all", data);
+
+    if (error) {
+      if (error.statusCode === 401) {
+        return { error: "No autorizado. Por favor, inicie sesión nuevamente." };
+      }
+      return { error: error.message };
+    }
+
+    return response;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido al reactivar las sucursales" };
   }
 }
