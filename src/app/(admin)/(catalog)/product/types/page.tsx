@@ -5,9 +5,9 @@ import { notFound } from "next/navigation";
 
 
 export default async function Page() {
-  const typeProducts= await getTypeProducts();
+  const response= await getTypeProducts();
 
-  if (!typeProducts || 'error' in typeProducts) {
+  if (!response || 'error' in response) {
     notFound();
   }
 
@@ -27,7 +27,7 @@ export default async function Page() {
 
       {/* Contenido principal */}
       <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-        <TypeTable data={typeProducts} />
+        <TypeTable data={response} />
       </div>
     </>
   );
