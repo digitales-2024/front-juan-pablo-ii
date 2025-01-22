@@ -54,11 +54,18 @@ export function NavUser() {
 		name: "Usuario",
 		email: "usuario@example.com" 
 	};
-	const currentUser = user || defaultUser;
+	const currentUser = user ?? defaultUser;
 
 	const handleLogout = async () => {
-		await logoutAction();
-		logout();
+		try {
+			await logout(); // Primero limpiamos el estado
+			const response = await logoutAction(); // Luego ejecutamos la acción del servidor
+			if (response.success && response.redirect) {
+				window.location.href = response.redirect;
+			}
+		} catch (error) {
+			console.error('Error durante el logout:', error);
+		}
 	};
 
 	return (

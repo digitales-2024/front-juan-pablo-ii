@@ -42,13 +42,17 @@ export function ProfileDropdown() {
 		name: "Usuario",
 		email: "usuario@example.com"
 	};
-	const currentUser = user || defaultUser;
+	const currentUser = user ?? defaultUser;
 
 	const handleLogout = async () => {
-		logout();
-		const response = await logoutAction();
-		if (response.success && response.redirect) {
-			window.location.href = response.redirect;
+		try {
+			await logout(); // Primero limpiamos el estado
+			const response = await logoutAction(); // Luego ejecutamos la acción del servidor
+			if (response.success && response.redirect) {
+				window.location.href = response.redirect;
+			}
+		} catch (error) {
+			console.error('Error durante el logout:', error);
 		}
 	};
 

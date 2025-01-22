@@ -42,7 +42,7 @@ export const useProfile = () => {
   });
 
   const { data: permissions, isLoading: isLoadingPermissions } = useQuery({
-    queryKey: ['permissions', profile?.roles[0]?.id],
+    queryKey: ['permissions'],
     queryFn: async () => {
       if (!profile?.roles[0]?.id) {
         throw new Error('Usuario no tiene rol asignado');
@@ -87,9 +87,9 @@ export const useProfile = () => {
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Perfil actualizado correctamente');
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      await queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al actualizar el perfil');
