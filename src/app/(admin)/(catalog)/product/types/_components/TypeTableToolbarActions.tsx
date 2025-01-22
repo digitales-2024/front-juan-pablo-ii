@@ -1,14 +1,14 @@
 "use client";
 
 import { type Table } from "@tanstack/react-table";
-import { TypeProduct } from "../types";
+import {TypeProductResponse } from "../types";
 import { CreateTypeDialog } from "./CreateTypeDialog";
 import { DeleteTypeDialog } from "./DeleteTypeDialog";
 import { ReactivateTypeDialog } from "./ReactivateTypeDialog";
 
 
 export interface TypeTableToolbarActionsProps {
-  table?: Table<TypeProduct>;
+  table?: Table<TypeProductResponse>;
 
 }
 
