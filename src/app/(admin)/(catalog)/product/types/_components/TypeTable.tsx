@@ -3,10 +3,10 @@ import { DataTable } from "@/components/data-table/DataTable";
 import { useMemo } from "react";
 import { typeColumns } from "./TypeTableColumns";
 import { TypeTableToolbarActions } from "./TypeTableToolbarActions";
-import { CreateTypeProductDto } from "../types";
+import {  TypeProductResponse } from "../types";
 
 interface TData {
-    data: CreateTypeProductDto[];
+    data: TypeProductResponse[];
 }
 
 export function TypeTable({ data }: TData) {
