@@ -17,5 +17,5 @@ function generateTypes() {
 		process.exit(1);
 	}
 }
-
+//pnpm run generate-types
 generateTypes();
