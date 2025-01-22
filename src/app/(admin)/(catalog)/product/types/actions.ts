@@ -2,11 +2,11 @@
 
 import { http } from "@/utils/serverFetch";
 import {
-    TypeProduct,
     CreateTypeProductDto,
     UpdateTypeProductDto,
     DeleteTypeProductDto,
     ReactivateTypeProductDto,
+    TypeProductResponse,
 } from "./types";
 import { BaseApiResponse } from "@/types/api/types";
 
@@ -16,7 +16,7 @@ import { BaseApiResponse } from "@/types/api/types";
     message: string;
     data: Record<string, never>;
 } */
-type GetTypeProductsResponse = TypeProduct[] | { error: string };//[]debe de ser  un array de objetos 
+type GetTypeProductsResponse = TypeProductResponse[] | { error: string };//[]debe de ser  un array de objetos 
 type CreateTypeProductResponse = BaseApiResponse | { error: string };//{} debe de ser un objeto sin el id
 type UpdateTypeProductResponse = BaseApiResponse | { error: string };//{} debe de ser un objeto
 type DeleteTypeProductResponse = BaseApiResponse | { error: string };//{} debe de ser un objeto
@@ -24,7 +24,7 @@ type ReactivateTypeProductResponse = BaseApiResponse | { error: string };//{} de
 
 export async function getTypeProducts(): Promise<GetTypeProductsResponse> {
     try {
-        const [typeProducts, error] = await http.get<TypeProduct[]>("/type-products");
+        const [typeProducts, error] = await http.get<TypeProductResponse[]>("/type-products");
 
         if (error) {
             return { error: error.message };
@@ -75,12 +75,12 @@ export async function updateTypeProduct(
     }
 }
 //funcion para desactivar un producto usando delete como adjetivo
-export async function deleteTypeProduct(id: string,
+export async function deleteTypeProduct(
     data: DeleteTypeProductDto
 ): Promise<DeleteTypeProductResponse> {
     try {
         const [response, error] = await http.patch<BaseApiResponse>(
-            `/type-products/${id}`,
+            `/type-products/`,
             data
         );
 
@@ -96,12 +96,11 @@ export async function deleteTypeProduct(id: string,
 }
 
 export async function reactivateTypeProduct(
-    id: string,
     data: ReactivateTypeProductDto
 ): Promise<ReactivateTypeProductResponse> {
     try {
         const [response, error] = await http.patch<BaseApiResponse>(
-            `/type-products/reactivate/${id}`,
+            `/type-products/reactivate`,
             data
         );
 
