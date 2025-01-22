@@ -1,11 +1,11 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { reactivateManyTypeProducts } from "../actions";
-import { TypeProduct } from "../types";
+
+import {TypeProductResponse } from "../types";
 import { type Row } from "@tanstack/react-table";
 import { RefreshCcw, RefreshCcwDot } from "lucide-react";
-import { ComponentPropsWithoutRef, useTransition } from "react";
+import { ComponentPropsWithoutRef } from "react";
 
 import {
     AlertDialog,
@@ -29,10 +29,11 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
+import { useTypeProducts } from "../hook/useType";
 
 interface ReactivateTypeDialogProps
     extends ComponentPropsWithoutRef<typeof AlertDialog> {
-    types: Row<TypeProduct>["original"][];
+    types: Row<TypeProductResponse>["original"][];
     showTrigger?: boolean;
     onSuccess?: () => void;
 }
@@ -43,14 +44,15 @@ export const ReactivateTypeDialog = ({
     onSuccess,
     ...props
 }: ReactivateTypeDialogProps) => {
-    const [isReactivatePending, startReactivateTransition] = useTransition();
-    const isDesktop = useMediaQuery("(min-width: 640px)");
 
-    const onReactivateTypesHandler = async () => {
-        startReactivateTransition(async () => {
-            await reactivateManyTypeProducts(types.map((type) => type.id));
-            props.onOpenChange?.(false);
-            onSuccess?.();
+    const isDesktop = useMediaQuery("(min-width: 640px)");
+    const { reactivateTypeProduct, isReactivating } = useTypeProducts();
+
+    function onReactivateTypesHandler() {
+        reactivateTypeProduct({ ids: types.map((type) => type.id) }, {
+            onSuccess: () => {
+                onSuccess?.();
+            },
         });
     };
 
@@ -89,9 +91,9 @@ export const ReactivateTypeDialog = ({
                         <AlertDialogAction
                             aria-label="Reactivate selected rows"
                             onClick={onReactivateTypesHandler}
-                            disabled={isReactivatePending}
+                            disabled={isReactivating}
                         >
-                            {isReactivatePending && (
+                            {isReactivating && (
                                 <RefreshCcw
                                     className="mr-2 size-4 animate-spin"
                                     aria-hidden="true"
@@ -131,9 +133,9 @@ export const ReactivateTypeDialog = ({
                     <Button
                         aria-label="Reactivate selected rows"
                         onClick={onReactivateTypesHandler}
-                        disabled={isReactivatePending}
+                        disabled={isReactivating}
                     >
-                        {isReactivatePending && (
+                        {isReactivating && (
                             <RefreshCcw
                                 className="mr-2 size-4 animate-spin"
                                 aria-hidden="true"
