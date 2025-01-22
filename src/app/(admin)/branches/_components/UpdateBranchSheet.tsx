@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,10 +20,13 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetFooter,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Branch, updateBranchSchema, UpdateBranchInput } from "../_interfaces/branch.interface";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, RefreshCcw } from "lucide-react";
 import { useBranches } from "../_hooks/useBranches";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 interface UpdateBranchSheetProps {
   branch: Branch;
@@ -55,32 +57,47 @@ export function UpdateBranchSheet({
     },
   });
 
-  async function onSubmit(data: UpdateBranchInput) {
+  const onSubmit = async (data: UpdateBranchInput) => {
+    if (updateMutation.isPending) return;
+
     try {
-      await updateMutation.mutateAsync({ id: branch.id, data });
-      toast.success("Sucursal actualizada exitosamente");
-      setOpen(false);
+      await updateMutation.mutateAsync({
+        id: branch.id,
+        data,
+      }, {
+        onSuccess: () => {
+          setOpen(false);
+          form.reset();
+        },
+        onError: (error) => {
+          console.error("Error al actualizar sucursal:", error);
+          if (error.message.includes("No autorizado")) {
+            setTimeout(() => {
+              form.reset();
+            }, 1000);
+          }
+        },
+      });
     } catch (error) {
-      console.log(error);
-      // El error ya es manejado por el hook
+      // El error ya es manejado por la mutación
+      console.error("Error en onSubmit:", error);
     }
-  }
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
-      {showTrigger ? (
+      {showTrigger && (
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon">
-            <PencilIcon className="h-4 w-4" />
-            <span className="sr-only">Editar sucursal</span>
+            <PencilIcon className="size-4" aria-hidden="true" />
           </Button>
         </SheetTrigger>
-      ) : null}
+      )}
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Editar Sucursal</SheetTitle>
+          <SheetTitle>Actualizar Sucursal</SheetTitle>
           <SheetDescription>
-            Actualice los datos de la sucursal "{branch.name}".
+            Actualiza la información de la sucursal y guarda los cambios
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">
@@ -121,16 +138,40 @@ export function UpdateBranchSheet({
                   <FormItem>
                     <FormLabel>Teléfono (opcional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="+51999999999" {...field} />
+                      <PhoneInput
+                        defaultCountry="PE"
+                        placeholder="Ingrese el teléfono"
+                        value={field.value ?? ""}
+                        onChange={(value) => field.onChange(value ?? undefined)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* <Button type="submit" className="w-full" disabled={updateMutation.isLoading}>
-                {updateMutation.isLoading ? "Actualizando..." : "Actualizar Sucursal"}
-              </Button> */}
+              <SheetFooter>
+                <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline">
+                      Cancelar
+                    </Button>
+                  </SheetClose>
+                  <Button 
+                    type="submit" 
+                    disabled={updateMutation.isPending}
+                  >
+                    {updateMutation.isPending ? (
+                      <>
+                        <RefreshCcw className="mr-2 size-4 animate-spin" />
+                        Actualizando...
+                      </>
+                    ) : (
+                      "Actualizar"
+                    )}
+                  </Button>
+                </div>
+              </SheetFooter>
             </form>
           </Form>
         </div>

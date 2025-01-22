@@ -7,7 +7,6 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { UpdateBranchSheet } from "./UpdateBranchSheet";
-import { DeleteBranchDialog } from "./DeleteBranchDialog";
 import { Button } from "@/components/ui/button";
 import { Ellipsis } from "lucide-react";
 import {
@@ -18,8 +17,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { PencilIcon, Trash } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
+import { ReactivateBranchDialog } from "./ReactivateBranchDialog";
+import { BanIcon, ActivityIcon } from "lucide-react";
+import { DeactivateBranchDialog } from "./DeactivateBranchDialog";
 
 export const columns: ColumnDef<Branch>[] = [
   {
@@ -68,7 +70,8 @@ export const columns: ColumnDef<Branch>[] = [
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: function Cell({ row }) {
-      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+      const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
+      const [showReactivateDialog, setShowReactivateDialog] = useState(false);
       const [showEditSheet, setShowEditSheet] = useState(false);
       const branch = row.original;
       const isActive = branch.isActive;
@@ -82,12 +85,21 @@ export const columns: ColumnDef<Branch>[] = [
               onOpenChange={setShowEditSheet}
               showTrigger={false}
             />
-            <DeleteBranchDialog 
-              branch={branch}
-              open={showDeleteDialog}
-              onOpenChange={setShowDeleteDialog}
-              showTrigger={false}
-            />
+            {isActive ? (
+              <DeactivateBranchDialog 
+                branch={branch}
+                open={showDeactivateDialog}
+                onOpenChange={setShowDeactivateDialog}
+                showTrigger={false}
+              />
+            ) : (
+              <ReactivateBranchDialog 
+                branch={branch}
+                open={showReactivateDialog}
+                onOpenChange={setShowReactivateDialog}
+                showTrigger={false}
+              />
+            )}
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -110,16 +122,27 @@ export const columns: ColumnDef<Branch>[] = [
                 </DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onSelect={() => setShowDeleteDialog(true)}
-                disabled={!isActive}
-                className="text-destructive"
-              >
-                Eliminar
-                <DropdownMenuShortcut>
-                  <Trash className="size-4" aria-hidden="true" />
-                </DropdownMenuShortcut>
-              </DropdownMenuItem>
+              {isActive ? (
+                <DropdownMenuItem 
+                  onSelect={() => setShowDeactivateDialog(true)}
+                  className="text-destructive"
+                >
+                  Desactivar
+                  <DropdownMenuShortcut>
+                    <BanIcon className="size-4" aria-hidden="true" />
+                  </DropdownMenuShortcut>
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem 
+                  onSelect={() => setShowReactivateDialog(true)}
+                  className="text-green-600"
+                >
+                  Reactivar
+                  <DropdownMenuShortcut>
+                    <ActivityIcon className="size-4" aria-hidden="true" />
+                  </DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
