@@ -4474,6 +4474,12 @@ export interface components {
             name: string;
             description: string;
         };
+        TypeProductResponse: {
+            id: string;
+            name: string;
+            description: string;
+            isActive: boolean;
+        };
         UpdateTypeProductDto: {
             /**
              * @description Nombre del tipo de producto
@@ -11164,7 +11170,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeProduct"][];
+                    "application/json": components["schemas"]["TypeProductResponse"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
