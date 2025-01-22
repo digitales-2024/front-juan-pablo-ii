@@ -11,9 +11,7 @@ import {
   UpdateTypeProductDto,
   ReactivateTypeProductDto,
   DeleteTypeProductDto,
-  TypeProduct,
   TypeProductResponse,
-
 } from "../types";
 import { BaseApiResponse } from "@/types/api/types";
 
@@ -24,7 +22,6 @@ interface UpdateTypeProductVariables {
 
 export const useTypeProducts = () => {
   const queryClient = useQueryClient();
-
 
   const createMutation = useMutation<
     BaseApiResponse<CreateTypeProductDto>,
@@ -70,27 +67,33 @@ export const useTypeProducts = () => {
       }
       return response;
     },
-	onSuccess: (res) => {
-        // Actualizar la caché de usuarios
-        queryClient.setQueryData<TypeProductResponse[]>(
-            ["type-products"],
-            (oldTypeProducts) => {
-              if (!oldTypeProducts) return [updateTypeProduct];
-              return oldTypeProducts.map((typeProduct) =>
-                typeProduct.id === updateTypeProduct.id ? updateTypeProduct : typeProduct
-              );
-            }
-          );
+    onSuccess: (res) => {
+      // Actualizar la caché de usuarios
+      queryClient.setQueryData<TypeProductResponse[]>(
+        ["type-products"],
+        (oldTypeProducts) => {
+          if (!oldTypeProducts) return [res.data];
 
-          toast.success(res.message);
+          const updatedTypeProducts = oldTypeProducts.map((typeProduct) =>
+            typeProduct.id === res.data.id ? res.data : typeProduct
+          );
+          return updatedTypeProducts;
+        }
+      );
+
+      toast.success(res.message);
     },
     onError: (error) => {
-        toast.error(error.message);
+      toast.error(error.message);
     },
   });
 
   // Mutación para eliminar tipo de producto
-  const deleteMutation = useMutation<BaseApiResponse, Error, DeleteTypeProductDto>({
+  const deleteMutation = useMutation<
+    BaseApiResponse,
+    Error,
+    DeleteTypeProductDto
+  >({
     mutationFn: async (DeleteTypeProductDto) => {
       const response = await deleteTypeProduct(DeleteTypeProductDto);
       if ("error" in response) {
@@ -114,7 +117,11 @@ export const useTypeProducts = () => {
   });
 
   // Mutación para reactivar tipo de producto
-  const reactivateMutation = useMutation<BaseApiResponse, Error, ReactivateTypeProductDto>({
+  const reactivateMutation = useMutation<
+    BaseApiResponse,
+    Error,
+    ReactivateTypeProductDto
+  >({
     mutationFn: async (ReactivateTypeProductDto) => {
       const response = await reactivateTypeProduct(ReactivateTypeProductDto);
       if ("error" in response) {
