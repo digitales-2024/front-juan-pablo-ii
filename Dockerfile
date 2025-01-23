@@ -32,7 +32,7 @@ ENV BACKEND_URL=${BACKEND_URL}
 RUN echo "BACKEND_URL=$BACKEND_URL" >> .env
 
 # Build the project
-RUN pnpm run build || (echo "Build failed with lint errors, attempting without lint" && SKIP_LINT=true pnpm run build)
+RUN SKIP_LINT=true pnpm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner

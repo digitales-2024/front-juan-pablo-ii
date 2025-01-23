@@ -23,7 +23,7 @@ export type ActionResponse<T> = {
  * @param handler - Función que maneja la lógica principal de la acción
  * @returns Función asíncrona que ejecuta la acción con validación y manejo de errores
  */
-export async function createSafeAction<TInput, TOutput>(
+export  function createSafeAction<TInput, TOutput>(
   schema: z.Schema<TInput>,
   handler: (validatedData: TInput) => Promise<ActionResponse<TOutput>>
 ) {
@@ -45,6 +45,8 @@ export async function createSafeAction<TInput, TOutput>(
       // Si la validación es exitosa, ejecutamos el handler con los datos validados
       return await handler(validationResult.data);
     } catch (error) {
+      console.log(error);
+      
       // Capturamos cualquier error no manejado y devolvemos un mensaje genérico
       return {
         error: 'Ha ocurrido un error interno',
