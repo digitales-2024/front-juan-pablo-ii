@@ -77,7 +77,12 @@ export function CreateServiceForm({
                     type="number" 
                     placeholder="0.00" 
                     {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/^0+/, '');
+                      field.onChange(value === '' ? '' : Number(value));
+                    }}
+                    min="0"
+                    step="1"
                   />
                 </FormControl>
                 <FormMessage />

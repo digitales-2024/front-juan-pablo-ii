@@ -18,6 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { PencilIcon, BanIcon, ActivityIcon } from "lucide-react";
+import { DeactivateServiceDialog } from "./DeactivateServiceDialog";
+import { ReactivateServiceDialog } from "./ReactivateServiceDialog";
+import { UpdateServiceSheet } from "./UpdateServiceSheet";
 
 export const columns: ColumnDef<Service>[] = [
   {
@@ -76,7 +79,27 @@ export const columns: ColumnDef<Service>[] = [
       return (
         <div>
           <div>
-            {/* Aquí irán los componentes de diálogo/sheet cuando los creemos */}
+            <UpdateServiceSheet 
+              service={service} 
+              open={showEditSheet}
+              onOpenChange={setShowEditSheet}
+              showTrigger={false}
+            />
+            {isActive ? (
+              <DeactivateServiceDialog 
+                service={service}
+                open={showDeactivateDialog}
+                onOpenChange={setShowDeactivateDialog}
+                showTrigger={false}
+              />
+            ) : (
+              <ReactivateServiceDialog 
+                service={service}
+                open={showReactivateDialog}
+                onOpenChange={setShowReactivateDialog}
+                showTrigger={false}
+              />
+            )}
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
