@@ -3189,8 +3189,37 @@ export interface components {
             /** @description ID of the service type */
             serviceTypeId: string;
         };
-        Service: Record<string, never>;
-        UpdateServiceDto: Record<string, never>;
+        Service: {
+            id: string;
+            name: string;
+            description?: string;
+            price: number;
+            serviceTypeId: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateServiceDto: {
+            /**
+             * @description Name of the service
+             * @example Consultation
+             */
+            name?: string;
+            /**
+             * @description Description of the service
+             * @example Medical consultation with a specialist
+             */
+            description?: string;
+            /**
+             * @description Price of the service
+             * @example 50
+             */
+            price?: number;
+            /** @description ID of the service type */
+            serviceTypeId?: string;
+        };
         DeleteServicesDto: {
             ids: string[];
         };
@@ -3206,8 +3235,28 @@ export interface components {
              */
             description?: string;
         };
-        ServiceType: Record<string, never>;
-        UpdateServiceTypeDto: Record<string, never>;
+        ServiceType: {
+            id: string;
+            name: string;
+            description?: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateServiceTypeDto: {
+            /**
+             * @description Name of the service type
+             * @example Consultation
+             */
+            name?: string;
+            /**
+             * @description Description of the service type
+             * @example Medical consultation with a specialist
+             */
+            description?: string;
+        };
         DeleteServiceTypesDto: {
             ids: string[];
         };
