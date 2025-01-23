@@ -15,7 +15,7 @@ export function UsersTable({ data }: TData) {
 		<DataTable
 			data={data || []}
 			columns={columns}
-			toolbarActions={<UsersTableToolbarActions />}
+		    toolbarActions={(table) => <UsersTableToolbarActions table={table} />}
 		/>
 	);
 }
