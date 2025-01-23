@@ -22,10 +22,10 @@ COPY . .
 # Next.js collects completely anonymous telemetry data about general usage.
 
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG NEXT_PUBLIC_BACKEND_URL="/"
-ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+ARG BACKEND_URL="/"
+ENV BACKEND_URL=${BACKEND_URL}
 
-RUN echo "NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL" >> .env
+RUN echo "BACKEND_URL=$BACKEND_URL" >> .env
 
 # Build the project ignoring lint errors
 RUN npm run build || (echo "Build failed with lint errors, attempting without lint" && SKIP_LINT=true npm run build)
