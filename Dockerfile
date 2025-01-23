@@ -5,20 +5,21 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install pnpm robustly
-RUN npm install -g pnpm@latest
-RUN pnpm --version
+# Usar corepack para instalar pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN pnpm config set store-dir ~/.pnpm-store
 
 # Install dependencies
-COPY package.json pnpm-lock.yaml* .npmrc* ./
+COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --frozen-lockfile
-
-# Install sharp for image optimization
-RUN pnpm add sharp
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+
+# Necesitamos instalar pnpm también en la etapa builder
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
