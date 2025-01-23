@@ -22,8 +22,41 @@ import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { ReactivateBranchDialog } from "./ReactivateBranchDialog";
 import { BanIcon, ActivityIcon } from "lucide-react";
 import { DeactivateBranchDialog } from "./DeactivateBranchDialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const columns: ColumnDef<Branch>[] = [
+  {
+    id: "select",
+    size: 10,
+    header: ({ table }) => (
+      <div className="px-2">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) =>
+            table.toggleAllPageRowsSelected(!!value)
+          }
+          aria-label="Select all"
+          className="translate-y-0.5"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="px-2">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-0.5"
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+    enablePinning: true,
+  },
   {
     accessorKey: "name",
     header: ({ column }) => (

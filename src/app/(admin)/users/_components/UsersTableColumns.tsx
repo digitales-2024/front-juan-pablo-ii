@@ -19,8 +19,42 @@ import { es } from "date-fns/locale";
 import { UserResponseDto } from "../types";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const usersTableColumns = (): ColumnDef<UserResponseDto>[] => [
+	{
+		id: "select",
+		size: 10,
+		header: ({ table }) => (
+		  <div className="px-2">
+			<Checkbox
+			  checked={
+				table.getIsAllPageRowsSelected() ||
+				(table.getIsSomePageRowsSelected() && "indeterminate")
+			  }
+			  onCheckedChange={(value) =>
+				table.toggleAllPageRowsSelected(!!value)
+			  }
+			  aria-label="Select all"
+			  className="translate-y-0.5"
+			/>
+		  </div>
+		),
+		cell: ({ row }) => (
+		  <div className="px-2">
+			<Checkbox
+			  checked={row.getIsSelected()}
+			  onCheckedChange={(value) => row.toggleSelected(!!value)}
+			  aria-label="Select row"
+			  className="translate-y-0.5"
+			/>
+		  </div>
+		),
+		enableSorting: false,
+		enableHiding: false,
+		enablePinning: true,
+	  },
+  
 	{
 		id: "nombre",
 		accessorKey: "name",

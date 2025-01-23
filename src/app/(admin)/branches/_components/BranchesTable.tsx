@@ -17,7 +17,7 @@ export function BranchesTable({ data }: BranchesTableProps) {
       columns={columns}
       data={data}
       placeholder="Buscar por nombre o dirección..."
-      toolbarActions={<BranchesTableToolbarActions />}
+      toolbarActions={(table) => <BranchesTableToolbarActions table={table} />}
     />
   );
 }

@@ -17,7 +17,7 @@ export function ServicesTable({ data }: ServicesTableProps) {
       columns={columns}
       data={data}
       placeholder="Buscar por nombre o descripción..."
-      toolbarActions={<ServicesTableToolbarActions />}
+       toolbarActions={(table) => <ServicesTableToolbarActions table={table} />}
     />
   );
 } 
