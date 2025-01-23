@@ -1,29 +1,29 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { Service } from "../_interfaces/service.interface";
-import { format } from "date-fns";
+import { TypeProductResponse } from "../types";
+import { type ColumnDef } from "@tanstack/react-table";
+import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
+import { useState } from "react";
 import { es } from "date-fns/locale";
-import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Ellipsis } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
   DropdownMenuShortcut,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { PencilIcon, BanIcon, ActivityIcon } from "lucide-react";
-import { DeactivateServiceDialog } from "./DeactivateServiceDialog";
-import { ReactivateServiceDialog } from "./ReactivateServiceDialog";
-import { UpdateServiceSheet } from "./UpdateServiceSheet";
-import { Checkbox } from "@/components/ui/checkbox";
 
-export const columns: ColumnDef<Service>[] = [
+import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
+import { Badge } from "@/components/ui/badge";
+import { DeleteTypeDialog } from "./DeleteTypeDialog";
+import { ReactivateTypeDialog } from "./ReactivateTypeDialog";
+import { UpdateTypeSheet } from "./UpdateCategorySheet";
+
+export const typeColumns = (): ColumnDef<TypeProductResponse>[] => [
   {
     id: "select",
     size: 10,
@@ -54,35 +54,48 @@ export const columns: ColumnDef<Service>[] = [
     enableHiding: false,
     enablePinning: true,
   },
+
   {
+    id: "Nombre",
     accessorKey: "name",
+    accessorFn: (row) => row.name,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
+    cell: ({ row }) => <span className="capitalize"> {row.original.name}</span>,
   },
   {
+    id: "Descripción",
     accessorKey: "description",
+    accessorFn: (row) => row.description,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
-    cell: ({ row }) => row.original.description ?? "---",
-  },
-  {
-    accessorKey: "price",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Precio" />
+    cell: ({ row }) => (
+      <span className="capitalize"> {row.original.description}</span>
     ),
-    cell: ({ row }) => `S/ ${row.original.price.toFixed(2)}`,
   },
   {
+    id: "isActive",
     accessorKey: "isActive",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => (
-      <Badge variant={row.original.isActive ? "success" : "destructive"}>
-        {row.original.isActive ? "Activo" : "Inactivo"}
-      </Badge>
+      <div>
+        {row.getValue("isActive") ? (
+          <Badge
+            variant="secondary"
+            className="bg-emerald-100 text-emerald-500"
+          >
+            Activo
+          </Badge>
+        ) : (
+          <Badge variant="secondary" className="bg-red-100 text-red-500">
+            Inactivo
+          </Badge>
+        )}
+      </div>
     ),
   },
   {
@@ -94,43 +107,41 @@ export const columns: ColumnDef<Service>[] = [
       format(new Date(row.original.createdAt), "PPp", { locale: es }),
   },
   {
-    id: "Acciones",
-    accessorKey: "actions",
+    id: "actions",
     size: 10,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Acciones" />
-    ),
     cell: function Cell({ row }) {
-      const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
+      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
-      const [showEditSheet, setShowEditSheet] = useState(false);
-      const service = row.original;
-      const isActive = service.isActive;
+      const [showEditDialog, setShowEditDialog] = useState(false);
 
+      const { isActive } = row.original;
+      const isSuperAdmin = true;
       return (
         <div>
           <div>
-            <UpdateServiceSheet 
-              service={service} 
-              open={showEditSheet}
-              onOpenChange={setShowEditSheet}
-              showTrigger={false}
+            <UpdateTypeSheet
+              open={showEditDialog}
+              onOpenChange={setShowEditDialog}
+              typeProduct={row?.original}
             />
-            {isActive ? (
-              <DeactivateServiceDialog 
-                service={service}
-                open={showDeactivateDialog}
-                onOpenChange={setShowDeactivateDialog}
-                showTrigger={false}
-              />
-            ) : (
-              <ReactivateServiceDialog 
-                service={service}
-                open={showReactivateDialog}
-                onOpenChange={setShowReactivateDialog}
-                showTrigger={false}
-              />
-            )}
+            <DeleteTypeDialog
+              open={showDeleteDialog}
+              onOpenChange={setShowDeleteDialog}
+              types={[row?.original]}
+              showTrigger={false}
+              onSuccess={() => {
+                row.toggleSelected(false);
+              }}
+            />
+            <ReactivateTypeDialog
+              open={showReactivateDialog}
+              onOpenChange={setShowReactivateDialog}
+              types={[row?.original]}
+              showTrigger={false}
+              onSuccess={() => {
+                row.toggleSelected(false);
+              }}
+            />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -143,37 +154,33 @@ export const columns: ColumnDef<Service>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem 
-                onSelect={() => setShowEditSheet(true)}
+              <DropdownMenuItem
+                onSelect={() => setShowEditDialog(true)}
                 disabled={!isActive}
               >
                 Editar
-                <DropdownMenuShortcut>
-                  <PencilIcon className="size-4" aria-hidden="true" />
-                </DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              {isActive ? (
-                <DropdownMenuItem 
-                  onSelect={() => setShowDeactivateDialog(true)}
-                  className="text-destructive"
-                >
-                  Desactivar
-                  <DropdownMenuShortcut>
-                    <BanIcon className="size-4" aria-hidden="true" />
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem 
+              {isSuperAdmin && (
+                <DropdownMenuItem
                   onSelect={() => setShowReactivateDialog(true)}
-                  className="text-green-600"
+                  disabled={isActive}
                 >
                   Reactivar
                   <DropdownMenuShortcut>
-                    <ActivityIcon className="size-4" aria-hidden="true" />
+                    <RefreshCcwDot className="size-4" aria-hidden="true" />
                   </DropdownMenuShortcut>
                 </DropdownMenuItem>
               )}
+              <DropdownMenuItem
+                onSelect={() => setShowDeleteDialog(true)}
+                disabled={!isActive}
+              >
+                Eliminar
+                <DropdownMenuShortcut>
+                  <Trash className="size-4" aria-hidden="true" />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
