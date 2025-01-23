@@ -11,7 +11,7 @@ interface TData {
 
 export function TypeTable({ data }: TData) {
   const columns = useMemo(() => typeColumns(), []);
-
+//
   return (
     <DataTable
       data={data ?? []}
