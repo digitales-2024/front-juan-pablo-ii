@@ -34,14 +34,6 @@ const ListServices = [
 		label: "Plasma Rico en Plaquetas",
 	},
 	{
-		value: "2",
-		label: "Toxina Botulínica",
-	},
-	{
-		value: "3",
-		label: "Vitaminas C",
-	},
-	{
 		value: "4",
 		label: "Ácido Hialurónico",
 	},
@@ -53,6 +45,22 @@ const ListServices = [
 		value: "6",
 		label: "Criolipolisis",
 	},
+];
+
+const ListSucursal = [
+	{
+		value: "1",
+		label: "Sucursal principal",
+	},
+	{
+		value: "4",
+		label: "Sucursal 1",
+	},
+	{
+		value: "5",
+		label: "Sucursal 2",
+	},
+
 ];
 
 const ListPatients = [
@@ -100,6 +108,7 @@ export default function ConsultationForm({
 					className="space-y-5"
 				>
 					<CardContent className="space-y-4">
+						<div className="grid grid-cols-2 gap-4">
 						<FormField
 							control={form.control}
 							name="date"
@@ -131,6 +140,25 @@ export default function ConsultationForm({
 											{...field}
 											readOnly
 											className="cursor-not-allowed"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						</div>
+						<FormField
+							control={form.control}
+							name="serviceId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Sucursal</FormLabel>
+									<FormControl>
+										<ComboboxSelect
+											options={ListSucursal}
+											{...field}
+											description="Selecciona la sucursal donde se realizará la consulta"
+											placeholder="Selecciona un sucursal"
 										/>
 									</FormControl>
 									<FormMessage />
