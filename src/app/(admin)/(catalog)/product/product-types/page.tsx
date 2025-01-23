@@ -1,15 +1,13 @@
+"use client";
+
 import { TypeTable } from "./_components/TypeTable";
-import { getTypeProducts } from "./actions";
-import { notFound } from "next/navigation";
+
+import { useTypeProducts } from "./hook/useType";
+
+export default function TypeProductsPage() {
+  const { data: response,  } = useTypeProducts();
 
 
-
-export default async function TypeProductsPage() {
-  const response= await getTypeProducts();
-
-  if (!response || 'error' in response) {
-    throw response || notFound();
-  }
 
   return (
     <>
