@@ -25,6 +25,7 @@ COPY . .
 
 # Next.js telemetry disabled
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV DISABLE_ESLINT_PLUGIN=true
 
 # Backend URL configuration
 ARG BACKEND_URL="/"
@@ -32,7 +33,7 @@ ENV BACKEND_URL=${BACKEND_URL}
 RUN echo "BACKEND_URL=$BACKEND_URL" >> .env
 
 # Build the project
-RUN SKIP_LINT=true pnpm run build
+RUN pnpm run build --no-lint
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -44,10 +45,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
+# Asegúrate de que estos directorios existan
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
