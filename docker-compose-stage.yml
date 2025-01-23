@@ -1,0 +1,9 @@
+services:
+    front-juan-pablo:
+        container_name: front-juan-pablo
+        image: front-juan-pablo
+        build:
+            context: .
+            dockerfile: Dockerfile.stage
+        ports:
+            - "3000:3000"
