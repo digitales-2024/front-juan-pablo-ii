@@ -4479,6 +4479,8 @@ export interface components {
             name: string;
             description: string;
             isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
         };
         UpdateTypeProductDto: {
             /**
