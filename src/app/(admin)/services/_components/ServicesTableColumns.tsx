@@ -72,7 +72,7 @@ export const columns: ColumnDef<Service>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Precio" />
     ),
-    cell: ({ row }) => `S/ ${row.original.price.toFixed(2)}`,
+    cell: ({ row }) => `S/ ${(row.original.price as number).toFixed(2)}`,
   },
   {
     accessorKey: "isActive",
