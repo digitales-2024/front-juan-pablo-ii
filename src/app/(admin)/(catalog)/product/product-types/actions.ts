@@ -79,8 +79,8 @@ export async function deleteTypeProduct(
     data: DeleteTypeProductDto
 ): Promise<DeleteTypeProductResponse> {
     try {
-        const [response, error] = await http.patch<BaseApiResponse>(
-            `/type-product/`,
+        const [response, error] = await http.delete<BaseApiResponse>(
+            `/type-product/remove/all`,
             data
         );
 
