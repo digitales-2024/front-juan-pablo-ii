@@ -23,7 +23,7 @@ export type ActionResponse<T> = {
  * @param handler - Función que maneja la lógica principal de la acción
  * @returns Función asíncrona que ejecuta la acción con validación y manejo de errores
  */
-export  function createSafeAction<TInput, TOutput>(
+export  async function createSafeAction<TInput, TOutput>(
   schema: z.Schema<TInput>,
   handler: (validatedData: TInput) => Promise<ActionResponse<TOutput>>
 ) {
