@@ -26,8 +26,8 @@ export const DataTablePagination = <TData,>({
 }: DataTablePaginationProps<TData>) => (
     <div className="flex w-full flex-wrap-reverse items-end justify-center gap-4 overflow-auto p-1 sm:justify-between sm:gap-8">
         <div className="flex-1 whitespace-nowrap text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} fila(s) seleccionada.
+            {table.getFilteredSelectedRowModel().rows.length} de{" "}
+            {table.getFilteredRowModel().rows.length} fila(s) seleccionada(s).
         </div>
         <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
             <div className="flex items-center space-x-2">

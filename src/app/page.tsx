@@ -1,5 +1,9 @@
-import AdminLayout from "./(admin)/layout";
+import LayoutAdmin from "./(admin)/layout";
 
 export default function Home() {
-    return <AdminLayout>Inicio</AdminLayout>;
+	return (
+		<LayoutAdmin>
+			<div>hola</div>
+		</LayoutAdmin>
+	);
 }
