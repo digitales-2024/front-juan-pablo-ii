@@ -1,18 +1,11 @@
-FROM node:21-alpine3.18 AS base
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+FROM node:23-alpine3.20 AS base
 
 WORKDIR /src
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json .
 
-# Install dependencies
-RUN pnpm install
+RUN npm install
 
-# Copy the rest of the code
 COPY . .
 
-# Start development server
-CMD ["pnpm", "dev"]
+CMD npx next dev

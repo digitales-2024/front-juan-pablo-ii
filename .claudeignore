@@ -1,0 +1,7 @@
+node_modules
+src
+!/src/redux/providers.tsx
+!/src/components/admin-panel/UserNav.tsx
+!/src/components/admin-panel/SidebarHeader.tsx
+!/src/components/ThemeTogle.tsx
+!/src/app/(auth)/log-in/page.tsx
