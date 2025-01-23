@@ -1,11 +1,10 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { deleteManyTypeProducts } from "../actions";
-import { TypeProduct } from "../types";
+import { TypeProductResponse, } from "../types";
 import { type Row } from "@tanstack/react-table";
 import { RefreshCcw, Trash } from "lucide-react";
-import { ComponentPropsWithoutRef, useTransition } from "react";
+import { ComponentPropsWithoutRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,10 +29,12 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useTypeProducts } from "../hook/useType";
+
 
 interface DeleteTypeDialogProps
     extends ComponentPropsWithoutRef<typeof AlertDialog> {
-    types: Row<TypeProduct>["original"][];
+    types: Row<TypeProductResponse>["original"][];
     showTrigger?: boolean;
     onSuccess?: () => void;
 }
@@ -44,14 +45,15 @@ export function DeleteTypeDialog({
     onSuccess,
     ...props
 }: DeleteTypeDialogProps) {
-    const [isDeletePending, startDeleteTransition] = useTransition();
-    const isDesktop = useMediaQuery("(min-width: 640px)");
 
-    const onDeleteTypesHandler = async () => {
-        startDeleteTransition(async () => {
-            await deleteManyTypeProducts(types.map((type) => type.id));
-            props.onOpenChange?.(false);
-            onSuccess?.();
+    const isDesktop = useMediaQuery("(min-width: 640px)");
+    const { deleteTypeProduct, isDeleting } = useTypeProducts();
+
+    function onDeleteTypesHandler() {
+        deleteTypeProduct({ ids: types.map((type) => type.id) }, {
+            onSuccess: () => {
+                onSuccess?.();
+            },
         });
     };
 
@@ -87,9 +89,9 @@ export function DeleteTypeDialog({
                         <AlertDialogAction
                             aria-label="Delete selected rows"
                             onClick={onDeleteTypesHandler}
-                            disabled={isDeletePending}
+                            disabled={isDeleting}
                         >
-                            {isDeletePending && (
+                            {isDeleting && (
                                 <RefreshCcw
                                     className="mr-2 size-4 animate-spin"
                                     aria-hidden="true"
@@ -126,9 +128,9 @@ export function DeleteTypeDialog({
                     <Button
                         aria-label="Delete selected rows"
                         onClick={onDeleteTypesHandler}
-                        disabled={isDeletePending}
+                        disabled={isDeleting}
                     >
-                        {isDeletePending && (
+                        {isDeleting && (
                             <RefreshCcw
                                 className="mr-2 size-4 animate-spin"
                                 aria-hidden="true"

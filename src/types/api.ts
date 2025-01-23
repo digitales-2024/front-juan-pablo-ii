@@ -3189,37 +3189,8 @@ export interface components {
             /** @description ID of the service type */
             serviceTypeId: string;
         };
-        Service: {
-            id: string;
-            name: string;
-            description?: string;
-            price: number;
-            serviceTypeId: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpdateServiceDto: {
-            /**
-             * @description Name of the service
-             * @example Consultation
-             */
-            name?: string;
-            /**
-             * @description Description of the service
-             * @example Medical consultation with a specialist
-             */
-            description?: string;
-            /**
-             * @description Price of the service
-             * @example 50
-             */
-            price?: number;
-            /** @description ID of the service type */
-            serviceTypeId?: string;
-        };
+        Service: Record<string, never>;
+        UpdateServiceDto: Record<string, never>;
         DeleteServicesDto: {
             ids: string[];
         };
@@ -3235,28 +3206,8 @@ export interface components {
              */
             description?: string;
         };
-        ServiceType: {
-            id: string;
-            name: string;
-            description?: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpdateServiceTypeDto: {
-            /**
-             * @description Name of the service type
-             * @example Consultation
-             */
-            name?: string;
-            /**
-             * @description Description of the service type
-             * @example Medical consultation with a specialist
-             */
-            description?: string;
-        };
+        ServiceType: Record<string, never>;
+        UpdateServiceTypeDto: Record<string, never>;
         DeleteServiceTypesDto: {
             ids: string[];
         };
@@ -4522,6 +4473,14 @@ export interface components {
             id: string;
             name: string;
             description: string;
+        };
+        TypeProductResponse: {
+            id: string;
+            name: string;
+            description: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
         };
         UpdateTypeProductDto: {
             /**
@@ -11213,7 +11172,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeProduct"][];
+                    "application/json": components["schemas"]["TypeProductResponse"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -11251,7 +11210,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeProduct"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o tipo de producto ya existe */
@@ -11335,7 +11294,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeProduct"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -11373,7 +11332,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeProduct"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o tipos de productos no existen */
@@ -11411,7 +11370,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeProduct"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o tipos de productos no existen */

@@ -15,7 +15,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { getAllCategories } from "../../categorys/actions";
-import { getAllTypeProducts } from "../../types/actions";
+import { getAllTypeProducts } from "../../product-types/actions";
 
 interface CreateProductFormProps
     extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {

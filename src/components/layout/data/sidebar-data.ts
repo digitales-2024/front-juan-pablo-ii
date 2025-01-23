@@ -155,7 +155,7 @@ export const sidebarData: SidebarData = {
 						},
 						{
 							title: "Tipos",
-							url: "/product/types",
+							url: "/product/product-types",
 							icon: Boxes,
 						},
 					],

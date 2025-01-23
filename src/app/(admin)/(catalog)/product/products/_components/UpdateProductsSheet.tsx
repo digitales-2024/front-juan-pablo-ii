@@ -32,7 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { AutoComplete, Option } from "@/components/ui/autocomplete";
 import { getAllCategories } from "../../categorys/actions";
-import { getAllTypeProducts } from "../../types/actions";
+import { getAllTypeProducts } from "../../product-types/actions";
 
 const infoSheet = {
     title: "Actualizar producto",
