@@ -1,9 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import {
   createTypeProduct,
   deleteTypeProduct,
   reactivateTypeProduct,
   updateTypeProduct,
+  getTypeProducts,
 } from "../actions";
 import { toast } from "sonner";
 import {
@@ -23,34 +24,44 @@ interface UpdateTypeProductVariables {
 export const useTypeProducts = () => {
   const queryClient = useQueryClient();
 
+  // Query para obtener los tipos de productos
+  const typeProductsQuery = useQuery<TypeProductResponse[], Error>({
+    queryKey: ["type-products"],
+    queryFn: async () => {
+      const response = await getTypeProducts();
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      return response;
+    },
+  });
+
+  // Mutación para crear tipo de producto
   const createMutation = useMutation<
-    BaseApiResponse<CreateTypeProductDto>,
+    BaseApiResponse<TypeProductResponse>,
     Error,
     CreateTypeProductDto
   >({
     mutationFn: async (data) => {
-      // Llamar a la función action para crear tipo de producto
       const response = await createTypeProduct(data);
       if ("error" in response) {
         throw new Error(response.error);
       }
       return response;
     },
-    // Actualizar la caché de tipos de productos con el nuevo tipo de producto
     onSuccess: (res) => {
-      // Actualizar la caché de tipos de productos
-      queryClient.setQueryData<CreateTypeProductDto[]>(
+      queryClient.setQueryData<TypeProductResponse[]>(
         ["type-products"],
         (oldTypeProducts) => {
           if (!oldTypeProducts) return [res.data];
           return [...oldTypeProducts, res.data];
         }
       );
-
-      toast.success(res.message);
+      toast.success("Tipo de producto creado exitosamente");
     },
     onError: (error) => {
-      toast.error(error.message);
+     
+      toast.error(error.message || "Error al crear el tipo de producto");
     },
   });
 
@@ -94,43 +105,76 @@ export const useTypeProducts = () => {
     Error,
     DeleteTypeProductDto
   >({
-    mutationFn: async (DeleteTypeProductDto) => {
-      const response = await deleteTypeProduct(DeleteTypeProductDto);
+    mutationFn: async (data) => {
+      const response = await deleteTypeProduct(data);
       if ("error" in response) {
         throw new Error(response.error);
       }
       return response;
     },
-    onSuccess: (response) => {
-      toast.success(response.message);
+    onSuccess: (res, variables) => {
+      queryClient.setQueryData<TypeProductResponse[]>(
+        ["type-products"],
+        (oldTypeProducts) => {
+          if (!oldTypeProducts) return [];
+          
+          const updatedTypeProducts = oldTypeProducts.map((typeProduct) => {
+            if (variables.ids.includes(typeProduct.id)) {
+              return { ...typeProduct, isActive: false };
+            }
+            return typeProduct;
+          });
+          return updatedTypeProducts;
+        }
+      );
+
+      toast.success(
+        variables.ids.length === 1
+          ? "Tipo de producto desactivado exitosamente"
+          : "Tipos de producto desactivados exitosamente"
+      );
     },
     onError: (error: Error) => {
-      if (
-        error.message.includes("no autorizado") ||
-        error.message.includes("sesión expirada")
-      ) {
-        toast.error("Sesión expirada. Por favor, inicie sesión nuevamente");
-        return;
+      
+      if (error.message.includes("no autorizado") || error.message.includes("sesión expirada")) {
+        toast.error("No tienes permisos para realizar esta acción");
+      } else {
+        toast.error(error.message || "Error al desactivar el/los tipo(s) de producto");
       }
-      toast.error(error.message);
     },
   });
 
   // Mutación para reactivar tipo de producto
   const reactivateMutation = useMutation<
-    BaseApiResponse,
+    BaseApiResponse<TypeProductResponse>,
     Error,
     ReactivateTypeProductDto
   >({
-    mutationFn: async (ReactivateTypeProductDto) => {
-      const response = await reactivateTypeProduct(ReactivateTypeProductDto);
+    mutationFn: async (data) => {
+      const response = await reactivateTypeProduct(data);
       if ("error" in response) {
         throw new Error(response.error);
       }
       return response;
     },
-    onSuccess: (response) => {
-      toast.success(response.message);
+    onSuccess: (res, variables) => {
+      // Actualizar la caché de tipos de productos
+      queryClient.setQueryData<TypeProductResponse[]>(
+        ["type-products"],
+        (oldTypeProducts) => {
+          if (!oldTypeProducts) return [];
+          
+          const updatedTypeProducts = oldTypeProducts.map((typeProduct) => {
+            if (variables.ids.includes(typeProduct.id)) {
+              return { ...typeProduct, isActive: true };
+            }
+            return typeProduct;
+          });
+          return updatedTypeProducts;
+        }
+      );
+      
+      toast.success(res.message);
     },
     onError: (error: Error) => {
       if (
@@ -146,7 +190,11 @@ export const useTypeProducts = () => {
   });
 
   return {
-    // Mutations
+
+    data: typeProductsQuery.data,
+    isLoading: typeProductsQuery.isLoading,
+    isError: typeProductsQuery.isError,
+    error: typeProductsQuery.error,
     createTypeProduct: createMutation.mutate,
     isCreating: createMutation.isPending,
     createError: createMutation.error,
