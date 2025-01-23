@@ -5,8 +5,9 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm robustly
+RUN npm install -g pnpm@latest
+RUN pnpm --version
 
 # Install dependencies
 COPY package.json pnpm-lock.yaml* .npmrc* ./
