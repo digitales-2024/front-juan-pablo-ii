@@ -8,6 +8,7 @@ import {
   FileHeart,
   FileText,
   Handshake,
+  Home,
   Hospital,
   KeyRound,
   ListTodo,
@@ -26,7 +27,6 @@ import {
   UserRoundSearch,
 } from "lucide-react";
 import { type SidebarData } from "../types";
-import { Search } from "../Search";
 
 export const sidebarData: SidebarData = {
   user: {
@@ -41,7 +41,7 @@ export const sidebarData: SidebarData = {
         {
           title: "Inicio",
           url: "/",
-          icon: Hospital,
+          icon: Home,
         },
         {
           title: "Consultas",
@@ -188,7 +188,7 @@ export const sidebarData: SidebarData = {
               icon: CalendarRange,
             },
             {
-              title: "Horarios",
+              title: "Turnos",
               url: "/schedules",
               icon: Clock,
             },
