@@ -1,22 +1,22 @@
-'use client'
+'use client';
 
-import { useAuth } from '@/app/(auth)/sign-in/_hooks/useAuth'
+import { useAuth } from '@/app/(auth)/sign-in/_hooks/useAuth';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { useProfile } from '../_hooks/useProfile'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { PhoneInput } from '@/components/ui/phone-input'
-import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useProfile } from '../_hooks/useProfile';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { PhoneInput } from '@/components/ui/phone-input';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import {
   Form,
   FormControl,
@@ -24,22 +24,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { isValidPhoneNumber } from 'react-phone-number-input'
+} from '@/components/ui/form';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 const formSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
   phone: z.string().refine(isValidPhoneNumber, {
     message: 'El número de teléfono no es válido.',
   }),
-})
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 export default function AccountData() {
-  const { user } = useAuth()
-  const { profile, updateProfile } = useProfile()
-  const [formActive, setFormActive] = useState(false)
+  const { user } = useAuth();
+  const { profile, updateProfile } = useProfile();
+  const [formActive, setFormActive] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -47,44 +47,43 @@ export default function AccountData() {
       name: '',
       phone: '',
     },
-  })
+  });
 
   useEffect(() => {
     if (profile) {
       form.reset({
-        name: profile.name || '',
-        phone: profile.phone || '',
-      })
+        name: profile.name ?? '',
+        phone: profile.phone ?? '',
+      });
     }
-  }, [profile])
+  }, [profile]);
 
   // Watch form fields for changes
   const watchFields = {
     name: form.watch('name'),
     phone: form.watch('phone'),
-  }
+  };
 
   // Detect if form has been modified
   useEffect(() => {
-    if (!profile) return
-    
-    const isFormModified = 
-      profile.name !== watchFields.name || 
-      profile.phone !== watchFields.phone
-    
-    setFormActive(isFormModified)
-  }, [watchFields, profile])
+    if (!profile) return;
+
+    const isFormModified =
+      profile.name !== watchFields.name || profile.phone !== watchFields.phone;
+
+    setFormActive(isFormModified);
+  }, [watchFields, profile]);
 
   const onSubmit = async (data: FormValues) => {
-    if (!user?.id) return
-    
+    if (!user?.id) return;
+
     await updateProfile({
       name: data.name,
       phone: data.phone, // Remove country code before saving
-    })
-    
-    setFormActive(false)
-  }
+    });
+
+    setFormActive(false);
+  };
 
   if (!profile) {
     return (
@@ -94,16 +93,14 @@ export default function AccountData() {
           <CardDescription>No hay información disponible</CardDescription>
         </CardHeader>
       </Card>
-    )
+    );
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Datos de la cuenta</CardTitle>
-        <CardDescription>
-          Información detallada de tu cuenta
-        </CardDescription>
+        <CardDescription>Información detallada de tu cuenta</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -122,7 +119,7 @@ export default function AccountData() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="phone"
@@ -143,7 +140,9 @@ export default function AccountData() {
               />
 
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Correo electrónico</label>
+                <label className="text-sm font-medium">
+                  Correo electrónico
+                </label>
                 <p className="text-sm text-muted-foreground">{profile.email}</p>
               </div>
 
@@ -162,5 +161,5 @@ export default function AccountData() {
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }
