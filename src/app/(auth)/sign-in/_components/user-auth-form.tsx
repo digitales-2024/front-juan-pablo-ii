@@ -36,9 +36,11 @@ export function UserAuthForm() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      mutate(data);
+      await mutate(data);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Error al iniciar sesión');
+      toast.error(
+        error instanceof Error ? error.message : 'Error al iniciar sesión'
+      );
     }
   };
 
@@ -53,11 +55,11 @@ export function UserAuthForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="nombre@ejemplo.com" 
+                  <Input
+                    placeholder="nombre@ejemplo.com"
                     type="email"
                     disabled={isPending}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -82,12 +84,8 @@ export function UserAuthForm() {
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isPending}
-          >
-            {isPending ? "Iniciando sesión..." : "Iniciar sesión"}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </Button>
         </form>
       </Form>
