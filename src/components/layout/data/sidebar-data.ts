@@ -15,6 +15,7 @@ import {
   PackageMinus,
   PackageOpen,
   PackagePlus,
+  PackageSearch,
   ShieldBan,
   ShieldCheck,
   ShieldPlus,
@@ -25,6 +26,7 @@ import {
   UserRoundSearch,
 } from "lucide-react";
 import { type SidebarData } from "../types";
+import { Search } from "../Search";
 
 export const sidebarData: SidebarData = {
   user: {
@@ -199,12 +201,12 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: "Productos",
-          icon: Package,
+          icon: PackageSearch,
           items: [
             {
               title: "Productos",
               url: "/product/products",
-              icon: Package,
+              icon: PackageSearch,
             },
             {
               title: "Categorías",
