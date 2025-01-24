@@ -8,6 +8,7 @@ import {
   FileHeart,
   FileText,
   Handshake,
+  Home,
   Hospital,
   KeyRound,
   ListTodo,
@@ -15,6 +16,7 @@ import {
   PackageMinus,
   PackageOpen,
   PackagePlus,
+  PackageSearch,
   ShieldBan,
   ShieldCheck,
   ShieldPlus,
@@ -39,29 +41,23 @@ export const sidebarData: SidebarData = {
         {
           title: "Inicio",
           url: "/",
-          icon: Hospital,
+          icon: Home,
+        },
+        {
+          title: "Consultas",
+          url: "/consultations",
+          icon: Handshake,
+        },
+        {
+          title: "Citas",
+          url: "/appointments",
+          icon: CalendarPlus,
         },
       ],
     },
     {
       title: "Registros Operativos",
       items: [
-        {
-          title: "Gestión de Citas",
-          icon: CalendarPlus,
-          items: [
-            {
-              title: "Consultas",
-              url: "/consultations",
-              icon: Handshake,
-            },
-            {
-              title: "Citas",
-              url: "/appointments",
-              icon: CalendarPlus,
-            },
-          ],
-        },
         {
           title: "Procedimientos",
           icon: ShieldPlus,
@@ -97,12 +93,6 @@ export const sidebarData: SidebarData = {
               url: "/clients",
               icon: UserRound,
             },
-          ],
-        },
-        {
-          title: "Documentación",
-          icon: FileText,
-          items: [
             {
               title: "Historias Clinicas",
               url: "/medical-records",
@@ -115,18 +105,34 @@ export const sidebarData: SidebarData = {
             },
           ],
         },
+        // {
+        //   title: "Documentación",
+        //   icon: FileText,
+        //   items: [
+        //     {
+        //       title: "Historias Clinicas",
+        //       url: "/medical-records",
+        //       icon: BookPlus,
+        //     },
+        //     {
+        //       title: "Recetas médicas",
+        //       url: "/prescriptions",
+        //       icon: FileHeart,
+        //     },
+        //   ],
+        // },
       ],
     },
     {
-      title: "Ordenes y Pagos",
+      title: "Órdenes y Pagos",
       items: [
         {
           title: "Gestión de Pagos",
           icon: DollarSign,
           items: [
             {
-              title: "Ordenes",
-              url: "/order",
+              title: "Órdenes",
+              url: "/orders",
               icon: FileText,
             },
             {
@@ -182,7 +188,7 @@ export const sidebarData: SidebarData = {
               icon: CalendarRange,
             },
             {
-              title: "Horarios",
+              title: "Turnos",
               url: "/schedules",
               icon: Clock,
             },
@@ -195,12 +201,12 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: "Productos",
-          icon: Package,
+          icon: PackageSearch,
           items: [
             {
               title: "Productos",
               url: "/product/products",
-              icon: Package,
+              icon: PackageSearch,
             },
             {
               title: "Categorías",

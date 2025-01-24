@@ -17,7 +17,7 @@ export default function SignIn2() {
               &ldquo;Esta plataforma me ha ayudado a gestionar de manera más eficiente todos 
               los procesos administrativos de mi empresa.&rdquo;
             </p>
-            <footer className="text-sm">Chupetin Trujillo</footer>
+            <footer className="text-sm">Juan Pérez</footer>
           </blockquote>
         </div>
       </div>
