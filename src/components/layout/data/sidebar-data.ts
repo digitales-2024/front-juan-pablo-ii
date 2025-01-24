@@ -97,12 +97,6 @@ export const sidebarData: SidebarData = {
               url: "/clients",
               icon: UserRound,
             },
-          ],
-        },
-        {
-          title: "Documentación",
-          icon: FileText,
-          items: [
             {
               title: "Historias Clinicas",
               url: "/medical-records",
@@ -115,6 +109,22 @@ export const sidebarData: SidebarData = {
             },
           ],
         },
+        // {
+        //   title: "Documentación",
+        //   icon: FileText,
+        //   items: [
+        //     {
+        //       title: "Historias Clinicas",
+        //       url: "/medical-records",
+        //       icon: BookPlus,
+        //     },
+        //     {
+        //       title: "Recetas médicas",
+        //       url: "/prescriptions",
+        //       icon: FileHeart,
+        //     },
+        //   ],
+        // },
       ],
     },
     {
