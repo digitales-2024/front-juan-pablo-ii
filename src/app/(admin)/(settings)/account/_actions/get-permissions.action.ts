@@ -20,8 +20,10 @@ type GetPermissionsInput = z.infer<typeof GetPermissionsSchema>;
 
 const handler = async (data: GetPermissionsInput) => {
   try {
-    const [permissions, error] = await http.get<Permission>(`/rol/${data.roleId}`);
-    
+    const [permissions, error] = await http.get<Permission>(
+      `/rol/${data.roleId}`
+    );
+
     if (error) {
       return { error: error.message };
     }
@@ -32,8 +34,12 @@ const handler = async (data: GetPermissionsInput) => {
 
     return { data: permissions };
   } catch (error) {
+    console.log(error);
     return { error: 'Error al obtener los permisos' };
   }
 };
 
-export const getPermissions = await createSafeAction(GetPermissionsSchema, handler);
+export const getPermissions = await createSafeAction(
+  GetPermissionsSchema,
+  handler
+);
