@@ -41,27 +41,21 @@ export const sidebarData: SidebarData = {
           url: "/",
           icon: Hospital,
         },
+        {
+          title: "Consultas",
+          url: "/consultations",
+          icon: Handshake,
+        },
+        {
+          title: "Citas",
+          url: "/appointments",
+          icon: CalendarPlus,
+        },
       ],
     },
     {
       title: "Registros Operativos",
       items: [
-        {
-          title: "Gestión de Citas",
-          icon: CalendarPlus,
-          items: [
-            {
-              title: "Consultas",
-              url: "/consultations",
-              icon: Handshake,
-            },
-            {
-              title: "Citas",
-              url: "/appointments",
-              icon: CalendarPlus,
-            },
-          ],
-        },
         {
           title: "Procedimientos",
           icon: ShieldPlus,
@@ -128,15 +122,15 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: "Ordenes y Pagos",
+      title: "Órdenes y Pagos",
       items: [
         {
           title: "Gestión de Pagos",
           icon: DollarSign,
           items: [
             {
-              title: "Ordenes",
-              url: "/order",
+              title: "Órdenes",
+              url: "/orders",
               icon: FileText,
             },
             {
