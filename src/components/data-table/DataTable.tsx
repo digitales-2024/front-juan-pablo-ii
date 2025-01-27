@@ -16,6 +16,7 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
+  Table as TableType,
 } from "@tanstack/react-table";
 import { CSSProperties, ReactElement, useState } from "react";
 
@@ -37,7 +38,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
   placeholder?: string;
-  toolbarActions?: (table: Table<TData>) => ReactElement | undefined;
+  toolbarActions?: (table: TableType<TData>) => ReactElement | undefined;
   viewOptions?: boolean;
   getSubRows?: (row: TData) => TData[] | undefined;
 }

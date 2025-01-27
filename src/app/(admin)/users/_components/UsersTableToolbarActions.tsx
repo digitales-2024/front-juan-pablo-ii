@@ -1,11 +1,11 @@
 import { Table } from "@tanstack/react-table";
-import { User } from "../types";
+import { UserResponseDto } from "../types";
 import DeleteUserDialog from "./DeleteUserDialog";
 import ReactivateUserDialog from "./ReactivateUserDialog";
 import CreateUserDialog from "./CreateUserDialog";
 
 export interface UsersTableToolbarActionsProps {
-  table?: Table<User>;
+  table?: Table<UserResponseDto>;
 }
 
 export default function UsersTableToolbarActions({
