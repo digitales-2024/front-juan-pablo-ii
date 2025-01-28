@@ -32,9 +32,10 @@ const getStaffTypesHandler = async () => {
     if (!Array.isArray(staffTypes)) {
       return { error: 'Respuesta inválida del servidor' };
     }
-
+      
     return { data: staffTypes };
   } catch (error) {
+    console.error("💥 Error en getStaffTypesHandler:", error);
     return { error: "Error al obtener los tipos de personal" };
   }
 }
