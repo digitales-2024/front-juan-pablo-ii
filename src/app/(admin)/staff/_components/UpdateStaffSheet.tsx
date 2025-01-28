@@ -34,7 +34,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { PhoneInput } from "@/components/ui/phone-input";
+import { toast } from "sonner";
 interface UpdateStaffSheetProps {
   staff: Staff;
   open?: boolean;
@@ -65,7 +66,6 @@ export function UpdateStaffSheet({
       email: staff.email,
       phone: staff.phone ?? "",
       staffTypeId: staff.staffTypeId,
-      userId: staff.userId,
     },
   });
 
@@ -83,11 +83,7 @@ export function UpdateStaffSheet({
         },
         onError: (error) => {
           console.error("Error al actualizar personal:", error);
-          if (error.message.includes("No autorizado")) {
-            setTimeout(() => {
-              form.reset();
-            }, 1000);
-          }
+          toast.error(error.message || "Error al actualizar el personal");
         },
       });
     } catch (error) {
@@ -202,7 +198,7 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>Teléfono (opcional)</FormLabel>
                     <FormControl>
-                      <Input 
+                      <PhoneInput 
                         placeholder="999888777" 
                         {...field}
                       />
@@ -232,20 +228,6 @@ export function UpdateStaffSheet({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="userId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Usuario</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
