@@ -11,7 +11,7 @@ export default function Home() {
 						Bienvenido
 					</h1>
 					<h2 className="text-3xl text-gray-500 mt-2">
-						Clínica Juan Pablo II
+						Juan Pablo II
 					</h2>
 				</div>
 			</div>
