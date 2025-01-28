@@ -210,7 +210,7 @@ export const sidebarData: SidebarData = {
             },
             {
               title: "Categorías",
-              url: "/product/categorys",
+              url: "/product/category",
               icon: Tag,
             },
             {
