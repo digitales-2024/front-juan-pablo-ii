@@ -1441,43 +1441,43 @@ export interface paths {
         patch: operations["HistoryController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/specialization": {
+    "/api/v1/staff-type": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todas las especialidades */
-        get: operations["SpecializationController_findAll"];
+        /** Obtener todos los tipos de personal */
+        get: operations["StaffTypeController_findAll"];
         put?: never;
-        /** Crear una nueva especialidad */
-        post: operations["SpecializationController_create"];
+        /** Crear un nuevo tipo de personal */
+        post: operations["StaffTypeController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/specialization/{id}": {
+    "/api/v1/staff-type/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener especialidad por ID */
-        get: operations["SpecializationController_findOne"];
+        /** Obtener tipo de personal por ID */
+        get: operations["StaffTypeController_findOne"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        /** Eliminar múltiples especialidades */
-        patch: operations["SpecializationController_update"];
+        /** Actualizar un tipo de personal */
+        patch: operations["StaffTypeController_update"];
         trace?: never;
     };
-    "/api/v1/specialization/remove/all": {
+    "/api/v1/staff-type/remove/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -1487,14 +1487,14 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Eliminar múltiples especialidades */
-        delete: operations["SpecializationController_deleteMany"];
+        /** Eliminar múltiples tipos de personal */
+        delete: operations["StaffTypeController_deleteMany"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/specialization/reactivate/all": {
+    "/api/v1/staff-type/reactivate/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -1507,8 +1507,8 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Reactivar múltiples especialidades */
-        patch: operations["SpecializationController_reactivateAll"];
+        /** Reactivar múltiples tipos de personal */
+        patch: operations["StaffTypeController_reactivateAll"];
         trace?: never;
     };
     "/api/v1/staff": {
@@ -1557,7 +1557,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Actualizar personal existente */
+        /** Eliminar múltiple personal */
         delete: operations["StaffController_deleteMany"];
         options?: never;
         head?: never;
@@ -4076,7 +4076,7 @@ export interface components {
         DeleteHistoryDto: {
             ids: string[];
         };
-        CreateSpecializationDto: {
+        CreateStaffTypeDto: {
             /**
              * @description Nombre de la especialidad
              * @example Cardiología
@@ -4088,8 +4088,27 @@ export interface components {
              */
             description: string;
         };
-        Specialization: Record<string, never>;
-        UpdateSpecializationDto: {
+        StaffType: {
+            /** @description ID único del tipo de personal */
+            id: string;
+            /** @description Nombre del tipo de personal */
+            name: string;
+            /** @description Descripción del tipo de personal */
+            description?: string;
+            /** @description Estado activo/inactivo del tipo de personal */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de creación del registro
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Fecha de última actualización
+             */
+            updatedAt: string;
+        };
+        UpdateStaffTypeDto: {
             /**
              * @description Nombre de la especialidad
              * @example Cardiología
@@ -4101,15 +4120,15 @@ export interface components {
              */
             description?: string;
         };
-        DeleteSpecializationDto: {
+        DeleteStaffTypeDto: {
             ids: string[];
         };
         CreateStaffDto: {
             /**
-             * @description ID de la especialidad del personal médico
+             * @description ID del tipo de personal
              * @example 550e8400-e29b-41d4-a716-446655440000
              */
-            especialidadId: string;
+            staffTypeId: string;
             /**
              * @description ID del usuario asociado al personal médico en el sistema
              * @example 7c4dd6ce-scratch-41d4-a716-446655441111
@@ -4146,13 +4165,44 @@ export interface components {
              */
             phone?: string;
         };
-        Staff: Record<string, never>;
+        Staff: {
+            /** @description ID único del personal */
+            id: string;
+            /** @description ID del tipo de personal */
+            staffTypeId: string;
+            /** @description ID del usuario asociado */
+            userId: string;
+            /** @description Nombre del personal */
+            name: string;
+            /** @description Correo electrónico */
+            email: string;
+            /** @description Número telefónico */
+            phone: string;
+            /** @description Apellido del personal */
+            lastName: string;
+            /** @description Documento Nacional de Identidad */
+            dni: string;
+            /** @description Fecha de nacimiento */
+            birth: string;
+            /** @description Estado activo/inactivo del personal */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de creación del registro
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Fecha de última actualización
+             */
+            updatedAt: string;
+        };
         UpdateStaffDto: {
             /**
-             * @description ID de la especialidad del personal médico
+             * @description ID del tipo de personal
              * @example 550e8400-e29b-41d4-a716-446655440000
              */
-            especialidadId?: string;
+            staffTypeId?: string;
             /**
              * @description ID del usuario asociado al personal médico en el sistema
              * @example 7c4dd6ce-scratch-41d4-a716-446655441111
@@ -4490,6 +4540,9 @@ export interface components {
             id: string;
             name: string;
             description: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
         };
         UpdateCategoryDto: {
             /**
@@ -9830,7 +9883,7 @@ export interface operations {
             };
         };
     };
-    SpecializationController_findAll: {
+    StaffTypeController_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -9839,13 +9892,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Lista de todas las especialidades */
+            /** @description Lista de todos los tipos de personal */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Specialization"][];
+                    "application/json": components["schemas"]["StaffType"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9864,7 +9917,7 @@ export interface operations {
             };
         };
     };
-    SpecializationController_create: {
+    StaffTypeController_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -9873,20 +9926,20 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateSpecializationDto"];
+                "application/json": components["schemas"]["CreateStaffTypeDto"];
             };
         };
         responses: {
-            /** @description Especialidad creada exitosamente */
+            /** @description Tipo de personal creado exitosamente */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Specialization"];
+                    "application/json": components["schemas"]["StaffType"];
                 };
             };
-            /** @description Datos de entrada inválidos o especialidad ya existe */
+            /** @description Datos de entrada inválidos o tipo de personal ya existe */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9902,7 +9955,7 @@ export interface operations {
             };
         };
     };
-    SpecializationController_findOne: {
+    StaffTypeController_findOne: {
         parameters: {
             query?: never;
             header?: never;
@@ -9913,13 +9966,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Especialidad encontrada */
+            /** @description Tipo de personal encontrado */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Specialization"];
+                    "application/json": components["schemas"]["StaffType"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9938,7 +9991,7 @@ export interface operations {
             };
         };
     };
-    SpecializationController_update: {
+    StaffTypeController_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -9949,17 +10002,17 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateSpecializationDto"];
+                "application/json": components["schemas"]["UpdateStaffTypeDto"];
             };
         };
         responses: {
-            /** @description Especialidad actualizada exitosamente */
+            /** @description Tipo de personal actualizado exitosamente */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Specialization"];
+                    "application/json": components["schemas"]["StaffType"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9978,7 +10031,7 @@ export interface operations {
             };
         };
     };
-    SpecializationController_deleteMany: {
+    StaffTypeController_deleteMany: {
         parameters: {
             query?: never;
             header?: never;
@@ -9987,20 +10040,20 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteSpecializationDto"];
+                "application/json": components["schemas"]["DeleteStaffTypeDto"];
             };
         };
         responses: {
-            /** @description Especialidades eliminadas exitosamente */
+            /** @description Tipos de personal eliminados exitosamente */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Specialization"][];
+                    "application/json": components["schemas"]["StaffType"][];
                 };
             };
-            /** @description IDs inválidos o especialidades no existen */
+            /** @description IDs inválidos o tipos de personal no existen */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10016,7 +10069,7 @@ export interface operations {
             };
         };
     };
-    SpecializationController_reactivateAll: {
+    StaffTypeController_reactivateAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -10025,20 +10078,20 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteSpecializationDto"];
+                "application/json": components["schemas"]["DeleteStaffTypeDto"];
             };
         };
         responses: {
-            /** @description Especialidades reactivadas exitosamente */
+            /** @description Tipos de personal reactivados exitosamente */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Specialization"][];
+                    "application/json": components["schemas"]["StaffType"][];
                 };
             };
-            /** @description IDs inválidos o especialidades no existen */
+            /** @description IDs inválidos o tipos de personal no existen */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10063,7 +10116,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Lista de todo el personal médico */
+            /** @description Lista de todo el personal */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -10101,7 +10154,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Personal médico creado exitosamente */
+            /** @description Personal creado exitosamente */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -10110,7 +10163,7 @@ export interface operations {
                     "application/json": components["schemas"]["Staff"];
                 };
             };
-            /** @description Datos de entrada inválidos o personal médico ya existe */
+            /** @description Datos de entrada inválidos o personal ya existe */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10137,7 +10190,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Personal médico encontrado */
+            /** @description Personal encontrado */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -10177,7 +10230,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Personal médico actualizado exitosamente */
+            /** @description Personal actualizado exitosamente */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -10989,7 +11042,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -11022,12 +11075,12 @@ export interface operations {
         };
         responses: {
             /** @description Categoría creada exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o categoría ya existe */
@@ -11111,7 +11164,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -11149,7 +11202,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o categorías no existen */
@@ -11187,7 +11240,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o categorías no existen */
