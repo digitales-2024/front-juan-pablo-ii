@@ -16,7 +16,6 @@ export type StaffTableItem = Staff & { selected?: boolean };
 // Schema de validación para crear personal
 export const createStaffSchema = z.object({
   staffTypeId: z.string().min(1, "El tipo de personal es requerido"),
-  userId: z.string().min(1, "El usuario es requerido"),
   name: z.string().min(1, "El nombre es requerido"),
   lastName: z.string().min(1, "El apellido es requerido"),
   dni: z.string().min(8, "El DNI debe tener 8 dígitos").max(8, "El DNI debe tener 8 dígitos"),
@@ -28,7 +27,6 @@ export const createStaffSchema = z.object({
 // Schema de validación para actualizar personal
 export const updateStaffSchema = z.object({
   staffTypeId: z.string().min(1, "El tipo de personal es requerido").optional(),
-  userId: z.string().min(1, "El usuario es requerido").optional(),
   name: z.string().min(1, "El nombre es requerido").optional(),
   lastName: z.string().min(1, "El apellido es requerido").optional(),
   dni: z.string().min(8, "El DNI debe tener 8 dígitos").max(8, "El DNI debe tener 8 dígitos").optional(),
