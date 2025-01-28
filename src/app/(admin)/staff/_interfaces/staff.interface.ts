@@ -2,7 +2,11 @@ import { components } from "@/types/api";
 import { z } from "zod";
 
 // Tipos base de la API
-export type Staff = components['schemas']['Staff'];
+export type Staff = components['schemas']['Staff'] & {
+  staffType?: {
+    name: string;
+  };
+};
 export type CreateStaffDto = components['schemas']['CreateStaffDto'];
 export type UpdateStaffDto = components['schemas']['UpdateStaffDto'];
 export type DeleteStaffDto = components['schemas']['DeleteStaffDto'];

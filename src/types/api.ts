@@ -4088,26 +4088,7 @@ export interface components {
              */
             description: string;
         };
-        StaffType: {
-            /** @description ID único del tipo de personal */
-            id: string;
-            /** @description Nombre del tipo de personal */
-            name: string;
-            /** @description Descripción del tipo de personal */
-            description?: string;
-            /** @description Estado activo/inactivo del tipo de personal */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @description Fecha de creación del registro
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Fecha de última actualización
-             */
-            updatedAt: string;
-        };
+        StaffType: Record<string, never>;
         UpdateStaffTypeDto: {
             /**
              * @description Nombre de la especialidad
@@ -4170,6 +4151,11 @@ export interface components {
             id: string;
             /** @description ID del tipo de personal */
             staffTypeId: string;
+            /**
+             * @description Nombre del tipo de personal
+             * @example Médico General
+             */
+            readonly type: string;
             /** @description ID del usuario asociado */
             userId: string;
             /** @description Nombre del personal */

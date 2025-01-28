@@ -102,9 +102,8 @@ export const useStaffTypes = () => {
       return response;
     },
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<StaffType[]>(["staffTypes"], (oldTypes) => {
-        if (!oldTypes) return [];
-        return oldTypes.map((type) => {
+      queryClient.setQueryData<StaffType[]>(["staffTypes"], (oldTypes = []) => {
+        return oldTypes.map((type: StaffType) => {
           if (variables.ids.includes(type.id)) {
             return { ...type, isActive: false };
           }

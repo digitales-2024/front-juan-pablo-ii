@@ -2,12 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { Staff } from "../_interfaces/staff.interface";
+import { StaffType } from "../_interfaces/staff-type.interface";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, PencilIcon, BanIcon, ActivityIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,13 +17,12 @@ import {
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { PencilIcon, BanIcon, ActivityIcon } from "lucide-react";
-import { DeactivateStaffDialog } from "./DeactivateStaffDialog";
-import { ReactivateStaffDialog } from "./ReactivateStaffDialog";
-import { UpdateStaffSheet } from "./UpdateStaffSheet";
+import { DeleteStaffTypeDialog } from "./DeleteStaffTypeDialog";
+import { ReactivateStaffTypeDialog } from "./ReactivateStaffTypeDialog";
+import { UpdateStaffTypeSheet } from "./UpdateStaffTypeSheet";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const columns: ColumnDef<Staff>[] = [
+export const columns: ColumnDef<StaffType>[] = [
   {
     id: "select",
     size: 10,
@@ -55,46 +54,17 @@ export const columns: ColumnDef<Staff>[] = [
     enablePinning: true,
   },
   {
-    accessorKey: "staffType.name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo de Personal" />
-    ),
-    cell: ({ row }) => (
-      <span className="capitalize">
-        {row.original.staffType?.name ?? "---"}
-      </span>
-    ),
-  },
-  {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
   },
   {
-    accessorKey: "lastName",
+    accessorKey: "description",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Apellido" />
+      <DataTableColumnHeader column={column} title="Descripción" />
     ),
-  },
-  {
-    accessorKey: "dni",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="DNI" />
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
-    ),
-  },
-  {
-    accessorKey: "phone",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Teléfono" />
-    ),
-    cell: ({ row }) => row.original.phone ?? "---",
+    cell: ({ row }) => row.original.description ?? "---",
   },
   {
     accessorKey: "isActive",
@@ -122,30 +92,30 @@ export const columns: ColumnDef<Staff>[] = [
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: function Cell({ row }) {
-      const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
+      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
       const [showEditSheet, setShowEditSheet] = useState(false);
-      const staff = row.original;
-      const isActive = staff.isActive;
+      const staffType = row.original;
+      const isActive = staffType.isActive;
 
       return (
         <div>
-          <UpdateStaffSheet 
-            staff={staff} 
+          <UpdateStaffTypeSheet 
+            staffType={staffType} 
             open={showEditSheet}
             onOpenChange={setShowEditSheet}
             showTrigger={false}
           />
           {isActive ? (
-            <DeactivateStaffDialog 
-              staff={staff}
-              open={showDeactivateDialog}
-              onOpenChange={setShowDeactivateDialog}
+            <DeleteStaffTypeDialog 
+              staffType={staffType}
+              open={showDeleteDialog}
+              onOpenChange={setShowDeleteDialog}
               showTrigger={false}
             />
           ) : (
-            <ReactivateStaffDialog 
-              staff={staff}
+            <ReactivateStaffTypeDialog 
+              staffType={staffType}
               open={showReactivateDialog}
               onOpenChange={setShowReactivateDialog}
               showTrigger={false}
@@ -174,7 +144,7 @@ export const columns: ColumnDef<Staff>[] = [
               <DropdownMenuSeparator />
               {isActive ? (
                 <DropdownMenuItem 
-                  onSelect={() => setShowDeactivateDialog(true)}
+                  onSelect={() => setShowDeleteDialog(true)}
                   className="text-destructive"
                 >
                   Desactivar
