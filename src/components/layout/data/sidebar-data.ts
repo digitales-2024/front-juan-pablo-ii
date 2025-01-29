@@ -22,6 +22,7 @@ import {
   ShieldPlus,
   Tag,
   User,
+  UserPen,
   UserPlus,
   UserRound,
   UserRoundSearch,
@@ -181,6 +182,11 @@ export const sidebarData: SidebarData = {
               title: "Personal",
               url: "/staff",
               icon: UserRoundSearch,
+            },
+            {
+              title: "Tipos de Personal",
+              url: "/staff/types",
+              icon: UserPen,
             },
             {
               title: "Cronograma",
