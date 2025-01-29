@@ -10,15 +10,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Service } from "../_interfaces/service.interface";
+import { StaffType } from "../_interfaces/staff-type.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
-import { useServices } from "../_hooks/useServices";
+import { useStaffTypes } from "../_hooks/useStaffTypes";
 import { toast } from "sonner";
 
-interface DeactivateServiceDialogProps {
-  service?: Service;
-  services?: Service[];
+interface DeleteStaffTypeDialogProps {
+  staffType?: StaffType;
+  staffTypes?: StaffType[];
   variant?: "default" | "outline";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -26,33 +26,37 @@ interface DeactivateServiceDialogProps {
   onSuccess?: () => void;
 }
 
-export function DeactivateServiceDialog({
-  service,
-  services,
+export function DeleteStaffTypeDialog({
+  staffType,
+  staffTypes,
   variant = "default",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
   onSuccess
-}: DeactivateServiceDialogProps) {
+}: DeleteStaffTypeDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const { deleteMutation: { isPending, mutateAsync } } = useServices();
+  const { deleteMutation: { isPending, mutateAsync } } = useStaffTypes();
 
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
-  const items = services ?? (service ? [service] : []);
-  const title = items.length === 1 ? "Desactivar Servicio" : "Desactivar Servicios";
+  const items = staffTypes ?? (staffType ? [staffType] : []);
+  const title = items.length === 1 ? "Desactivar Tipo de Personal" : "Desactivar Tipos de Personal";
   const description =
     items.length === 1
-      ? `¿Estás seguro de que deseas desactivar el servicio "${items[0].name}"?`
-      : `¿Estás seguro de que deseas desactivar ${items.length} servicios?`;
+      ? `¿Estás seguro de que deseas desactivar el tipo "${items[0].name}"?`
+      : `¿Estás seguro de que deseas desactivar ${items.length} tipos de personal?`;
 
   async function onDelete() {
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      
+      // toast.success(
+      //   items.length === 1
+      //     ? "Tipo de personal desactivado exitosamente"
+      //     : "Tipos de personal desactivados exitosamente"
+      // );
       setOpen(false);
       onSuccess?.();
     } catch (error) {
