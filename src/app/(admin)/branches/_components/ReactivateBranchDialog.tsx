@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Branch } from "../_interfaces/branch.interface";
-import { ActivityIcon } from "lucide-react";
+import { RefreshCcwDot } from "lucide-react";
 import { useState } from "react";
 import { useBranches } from "../_hooks/useBranches";
 
@@ -28,7 +28,7 @@ interface ReactivateBranchDialogProps {
 export function ReactivateBranchDialog({
   branch,
   branches,
-  variant = "default",
+  variant = "outline",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
@@ -67,9 +67,8 @@ export function ReactivateBranchDialog({
           <Button 
             variant={variant} 
             size={variant === "outline" ? "sm" : "default"}
-            className="text-green-600"
           >
-            <ActivityIcon className="mr-2 h-4 w-4" />
+            <RefreshCcwDot className="mr-2 h-4 w-4" />
             {items.length === 1 ? "Reactivar" : `Reactivar (${items.length})`}
           </Button>
         </DialogTrigger>
