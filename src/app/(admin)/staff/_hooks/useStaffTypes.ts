@@ -102,14 +102,16 @@ export const useStaffTypes = () => {
       return response;
     },
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<StaffType[]>(["staffTypes"], (oldTypes = []) => {
-        return oldTypes.map((type: StaffType) => {
+      queryClient.setQueryData<StaffType[]>(["staffTypes"], (oldTypes) => {
+        if (!oldTypes) return [];
+        return oldTypes.map((type) => {
           if (variables.ids.includes(type.id)) {
             return { ...type, isActive: false };
           }
           return type;
         });
       });
+
       toast.success(
         variables.ids.length === 1
           ? "Tipo de personal desactivado exitosamente"

@@ -2,7 +2,6 @@ import { Table } from '@tanstack/react-table';
 import { Staff } from '../_interfaces/staff.interface';
 import { DeactivateStaffDialog } from './DeactivateStaffDialog';
 import { ReactivateStaffDialog } from './ReactivateStaffDialog';
-import { CreateStaffTypeDialog } from './CreateStaffTypeDialog';
 import { CreateStaffDialog } from './CreateStaffDialog';
 
 export interface StaffTableToolbarActionsProps {
@@ -30,7 +29,6 @@ export function StaffTableToolbarActions({
           />
         </>
       ) : null}
-      <CreateStaffTypeDialog />
       <CreateStaffDialog />
     </div>
   );

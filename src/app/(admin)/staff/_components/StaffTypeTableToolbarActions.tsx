@@ -1,7 +1,7 @@
 import { Table } from '@tanstack/react-table';
 import { StaffType } from '../_interfaces/staff-type.interface';
 import { CreateStaffTypeDialog } from './CreateStaffTypeDialog';
-import { DeleteStaffTypeDialog } from './DeleteStaffTypeDialog';
+import { DeleteStaffTypeDialog } from './DeactivateStaffTypeDialog';
 import { ReactivateStaffTypeDialog } from './ReactivateStaffTypeDialog';
 
 export interface StaffTypeTableToolbarActionsProps {

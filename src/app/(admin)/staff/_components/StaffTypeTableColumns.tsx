@@ -17,7 +17,7 @@ import {
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { DeleteStaffTypeDialog } from "./DeleteStaffTypeDialog";
+import { DeleteStaffTypeDialog } from "./DeactivateStaffTypeDialog";
 import { ReactivateStaffTypeDialog } from "./ReactivateStaffTypeDialog";
 import { UpdateStaffTypeSheet } from "./UpdateStaffTypeSheet";
 import { Checkbox } from "@/components/ui/checkbox";
