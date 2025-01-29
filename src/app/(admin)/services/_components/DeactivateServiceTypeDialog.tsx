@@ -10,14 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Branch } from "../_interfaces/branch.interface";
+import { ServiceType } from "../_interfaces/service-type.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
-import { useBranches } from "../_hooks/useBranches";
+import { useServiceTypes } from "../_hooks/useServiceTypes";
 
-interface DeactivateBranchDialogProps {
-  branch?: Branch;
-  branches?: Branch[];
+interface DeactivateServiceTypeDialogProps {
+  serviceType?: ServiceType;
+  serviceTypes?: ServiceType[];
   variant?: "default" | "outline";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -25,39 +25,36 @@ interface DeactivateBranchDialogProps {
   onSuccess?: () => void;
 }
 
-export function DeactivateBranchDialog({
-  branch,
-  branches,
+export function DeactivateServiceTypeDialog({
+  serviceType,
+  serviceTypes,
   variant = "default",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
   onSuccess
-}: DeactivateBranchDialogProps) {
+}: DeactivateServiceTypeDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const { deleteMutation: { isPending, mutateAsync } } = useBranches();
+  const { deleteMutation: { isPending, mutateAsync } } = useServiceTypes();
 
-  // Usar el estado controlado si se proporcionan las props, sino usar el estado interno
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
-  const items = branches ?? (branch ? [branch] : []);
-  const title = items.length === 1 ? "Desactivar Sucursal" : "Desactivar Sucursales";
+  const items = serviceTypes ?? (serviceType ? [serviceType] : []);
+  const title = items.length === 1 ? "Desactivar Tipo de Servicio" : "Desactivar Tipos de Servicio";
   const description =
     items.length === 1
-      ? `¿Estás seguro de que deseas desactivar la sucursal "${items[0].name}"?`
-      : `¿Estás seguro de que deseas desactivar ${items.length} sucursales?`;
+      ? `¿Estás seguro de que deseas desactivar el tipo "${items[0].name}"?`
+      : `¿Estás seguro de que deseas desactivar ${items.length} tipos de servicio?`;
 
   async function onDelete() {
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-     
       setOpen(false);
       onSuccess?.();
     } catch (error) {
-        console.log(error);
-        
+      console.log(error);
       // El error ya es manejado por el hook
     }
   }
@@ -88,4 +85,4 @@ export function DeactivateBranchDialog({
       </DialogContent>
     </Dialog>
   );
-}
+} 
