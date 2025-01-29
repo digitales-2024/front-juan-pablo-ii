@@ -28,7 +28,7 @@ interface DeactivateBranchDialogProps {
 export function DeactivateBranchDialog({
   branch,
   branches,
-  variant = "default",
+  variant = "outline",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
@@ -66,7 +66,10 @@ export function DeactivateBranchDialog({
     <Dialog open={isOpen} onOpenChange={setOpen}>
       {showTrigger && (
         <DialogTrigger asChild>
-          <Button variant={variant} size={variant === "outline" ? "sm" : "default"}>
+          <Button 
+            variant={variant} 
+            size={variant === "outline" ? "sm" : "default"}
+          >
             <TrashIcon className="mr-2 h-4 w-4" />
             {items.length === 1 ? "Desactivar" : `Desactivar (${items.length})`}
           </Button>
@@ -81,7 +84,11 @@ export function DeactivateBranchDialog({
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
-          <Button variant="destructive" onClick={onDelete} disabled={isPending}>
+          <Button 
+            variant="destructive"
+            onClick={onDelete} 
+            disabled={isPending}
+          >
             {isPending ? "Desactivando..." : "Desactivar"}
           </Button>
         </DialogFooter>

@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Staff } from "../_interfaces/staff.interface";
-import { ActivityIcon } from "lucide-react";
+import { RefreshCcwDot } from "lucide-react";
 import { useState } from "react";
 import { useStaff } from "../_hooks/useStaff";
 
@@ -28,7 +28,7 @@ interface ReactivateStaffDialogProps {
 export function ReactivateStaffDialog({
   staff,
   staffs,
-  variant = "default",
+  variant = "outline",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
@@ -66,9 +66,8 @@ export function ReactivateStaffDialog({
           <Button 
             variant={variant} 
             size={variant === "outline" ? "sm" : "default"}
-            className="text-green-600"
           >
-            <ActivityIcon className="mr-2 h-4 w-4" />
+            <RefreshCcwDot className="mr-2 h-4 w-4" />
             {items.length === 1 ? "Reactivar" : `Reactivar (${items.length})`}
           </Button>
         </DialogTrigger>

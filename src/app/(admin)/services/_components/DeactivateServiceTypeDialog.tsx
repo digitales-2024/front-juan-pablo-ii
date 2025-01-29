@@ -28,7 +28,7 @@ interface DeactivateServiceTypeDialogProps {
 export function DeactivateServiceTypeDialog({
   serviceType,
   serviceTypes,
-  variant = "default",
+  variant = "outline",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
