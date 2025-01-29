@@ -52,11 +52,7 @@ export function DeactivateServiceDialog({
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      toast.success(
-        items.length === 1
-          ? "Servicio desactivado exitosamente"
-          : "Servicios desactivados exitosamente"
-      );
+      
       setOpen(false);
       onSuccess?.();
     } catch (error) {

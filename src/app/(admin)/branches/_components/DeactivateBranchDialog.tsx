@@ -53,11 +53,7 @@ export function DeactivateBranchDialog({
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      toast.success(
-        items.length === 1
-          ? "Sucursal desactivada exitosamente"
-          : "Sucursales desactivadas exitosamente"
-      );
+     
       setOpen(false);
       onSuccess?.();
     } catch (error) {

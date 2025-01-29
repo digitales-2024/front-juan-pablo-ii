@@ -14,7 +14,6 @@ import { Staff } from "../_interfaces/staff.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { useStaff } from "../_hooks/useStaff";
-import { toast } from "sonner";
 
 interface DeactivateStaffDialogProps {
   staff?: Staff;
@@ -52,11 +51,7 @@ export function DeactivateStaffDialog({
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      toast.success(
-        items.length === 1
-          ? "Personal desactivado exitosamente"
-          : "Personal desactivado exitosamente"
-      );
+      
       setOpen(false);
       onSuccess?.();
     } catch (error) {

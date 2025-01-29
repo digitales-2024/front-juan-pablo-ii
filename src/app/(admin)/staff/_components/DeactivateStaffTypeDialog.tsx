@@ -52,11 +52,11 @@ export function DeleteStaffTypeDialog({
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      toast.success(
-        items.length === 1
-          ? "Tipo de personal desactivado exitosamente"
-          : "Tipos de personal desactivados exitosamente"
-      );
+      // toast.success(
+      //   items.length === 1
+      //     ? "Tipo de personal desactivado exitosamente"
+      //     : "Tipos de personal desactivados exitosamente"
+      // );
       setOpen(false);
       onSuccess?.();
     } catch (error) {
