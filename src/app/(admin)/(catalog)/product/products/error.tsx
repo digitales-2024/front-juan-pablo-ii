@@ -15,8 +15,8 @@ export default function ErrorBranches({
     <>
       <div className="mb-2 flex items-center justify-between space-y-2">
         <PageHeader
-          title="Categorías"
-          description="Administra las sucursales de tu empresa"
+          title="Productos"
+          description="Administra todos los productos de tu catálogo"
         />
       </div>
       <div className="flex h-[450px] shrink-0 items-center justify-center rounded-md border border-dashed">

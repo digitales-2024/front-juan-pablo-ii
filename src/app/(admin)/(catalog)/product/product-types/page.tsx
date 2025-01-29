@@ -15,7 +15,7 @@ export default function TypeProductsPage() {
       <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap gap-x-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
-            Tipos de Productos
+            Subcategorìas
           </h2>
           <p className="text-muted-foreground">
             Lista de tipos de productos registrados en el sistema.

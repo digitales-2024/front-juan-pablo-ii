@@ -150,7 +150,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(
                             isOpen ? "block" : "hidden",
                         )}
                     >
-                        <ScrollArea className="h-[10rem]">
+                        <ScrollArea className="h-fit max-h-44 overflow-auto">
                             <CommandList className="h-full rounded-lg capitalize ring-1 ring-slate-200">
                                 {isLoading && (
                                     <CommandPrimitive.Loading>

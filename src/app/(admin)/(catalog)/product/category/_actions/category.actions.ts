@@ -42,8 +42,29 @@ const getCategoriesHandler = async () => {
   }
 };
 
-export const getCategories = await createSafeAction(GetCategoriesSchema, getCategoriesHandler);
+const getActiveCategoriesHandler = async () => {
+  try {
+    const [categories, error] = await http.get<ListCategoryResponse>("/category/active");
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener las categorías",
+      };
+    }
+    if (!Array.isArray(categories)) {
+      return { error: "Respuesta inválida del servidor" };
+    }
+    return { data: categories };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
 
+export const getCategories = await createSafeAction(GetCategoriesSchema, getCategoriesHandler);
+export const getActiveCategories = await createSafeAction(GetCategoriesSchema, getActiveCategoriesHandler);
 
 /**
  * Crea una nueva categoría de productos en el catálogo.

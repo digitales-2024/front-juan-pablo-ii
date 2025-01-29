@@ -1,23 +1,22 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
 import { TableSkeleton } from "@/components/data-table/TableSkeleton";
-import { Box } from "lucide-react";
+import { List } from "lucide-react";
 
-const USERS_PAGE = {
-	title: "Subcategorías",
-	description: "Administra las subcategorías de tu catálogo de productos.",
-	icon: Box,
+const CATEGORIES_PAGE = {
+	title: "Productos",
+	description: "Administra todos los productos de tu catálogo",
+	icon: List,
 } as const;
 
-export default function LoadingUsers() {
+export default function LoadingCategories() {
 	return (
 		<div className="flex flex-col gap-4">
 			<PageHeader
-				title={USERS_PAGE.title}
-				description={USERS_PAGE.description}
-				Icon={USERS_PAGE.icon}
+				title={CATEGORIES_PAGE.title}
+				description={CATEGORIES_PAGE.description}
+				Icon={CATEGORIES_PAGE.icon}
 			/>
-
 			<Card>
 				<TableSkeleton columns={5} rows={10} />
 			</Card>

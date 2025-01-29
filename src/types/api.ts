@@ -1827,6 +1827,23 @@ export interface paths {
         patch: operations["CategoryController_update"];
         trace?: never;
     };
+    "/api/v1/category/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las categorías activas */
+        get: operations["CategoryController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/category/remove/all": {
         parameters: {
             query?: never;
@@ -1873,6 +1890,23 @@ export interface paths {
         put?: never;
         /** Crear nuevo tipo de producto */
         post: operations["TypeProductController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/type-product/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los tipos de productos activos */
+        get: operations["TypeProductController_findAllActive"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1949,6 +1983,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/detailed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los productos con informaciòn detallada */
+        get: operations["ProductController_findAllWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/{id}": {
         parameters: {
             query?: never;
@@ -1965,6 +2016,23 @@ export interface paths {
         head?: never;
         /** Actualizar producto existente */
         patch: operations["ProductController_update"];
+        trace?: never;
+    };
+    "/api/v1/product/{id}/detailed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener producto por ID con informaciòn detallada anidada */
+        get: operations["ProductController_findOneWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/product/remove/all": {
@@ -4571,11 +4639,6 @@ export interface components {
              */
             description?: string;
         };
-        TypeProduct: {
-            id: string;
-            name: string;
-            description: string;
-        };
         TypeProductResponse: {
             id: string;
             name: string;
@@ -4583,6 +4646,11 @@ export interface components {
             isActive: boolean;
             /** Format: date-time */
             createdAt: string;
+        };
+        TypeProduct: {
+            id: string;
+            name: string;
+            description: string;
         };
         UpdateTypeProductDto: {
             /**
@@ -4687,6 +4755,31 @@ export interface components {
             observaciones: string;
             condicionesAlmacenamiento: string;
             imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        ProductWithRelations: {
+            id: string;
+            categoriaId: string;
+            tipoProductoId: string;
+            name: string;
+            precio: number;
+            unidadMedida: string;
+            proveedor: string;
+            uso: string;
+            usoProducto: string;
+            description: string;
+            codigoProducto: string;
+            descuento: number;
+            observaciones: string;
+            condicionesAlmacenamiento: string;
+            imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            categoria: Record<string, never>;
+            tipoProducto: Record<string, never>;
         };
         UpdateProductDto: {
             /**
@@ -11183,6 +11276,40 @@ export interface operations {
             };
         };
     };
+    CategoryController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las categorías activas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     CategoryController_deleteMany: {
         parameters: {
             query?: never;
@@ -11316,6 +11443,40 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o tipo de producto ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de productos activos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeProductResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11539,7 +11700,7 @@ export interface operations {
         };
         responses: {
             /** @description Producto creado exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -11548,6 +11709,40 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o producto ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_findAllWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los productos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductWithRelations"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11640,6 +11835,50 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductWithRelations"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Producto no encontrado */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

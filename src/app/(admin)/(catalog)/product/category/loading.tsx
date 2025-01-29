@@ -5,7 +5,7 @@ import { List } from "lucide-react";
 
 const CATEGORIES_PAGE = {
 	title: "Categorías",
-	description: "Administra las categorías de tus productos",
+	description: "Administra las categorías del catálogo de productos.",
 	icon: List,
 } as const;
 
