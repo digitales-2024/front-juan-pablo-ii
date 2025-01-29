@@ -1,7 +1,6 @@
 import { Table } from '@tanstack/react-table';
 import { Service } from '../_interfaces/service.interface';
 import { CreateServiceDialog } from './CreateServiceDialog';
-import { CreateServiceTypeDialog } from './CreateServiceTypeDialog';
 import { DeactivateServiceDialog } from './DeactivateServiceDialog';
 import { ReactivateServiceDialog } from './ReactivateServiceDialog';
 
@@ -30,7 +29,6 @@ export function ServicesTableToolbarActions({
           />
         </>
       ) : null}
-      <CreateServiceTypeDialog />
       <CreateServiceDialog />
     </div>
   );

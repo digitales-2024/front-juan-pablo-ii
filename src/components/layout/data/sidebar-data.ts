@@ -12,7 +12,6 @@ import {
   Home,
   Hospital,
   KeyRound,
-  ListTodo,
   Package,
   PackageMinus,
   PackageOpen,
