@@ -28,7 +28,7 @@ interface DeactivateStaffDialogProps {
 export function DeactivateStaffDialog({
   staff,
   staffs,
-  variant = "default",
+  variant = "outline",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,

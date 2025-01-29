@@ -14,7 +14,6 @@ import { StaffType } from "../_interfaces/staff-type.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { useStaffTypes } from "../_hooks/useStaffTypes";
-import { toast } from "sonner";
 
 interface DeleteStaffTypeDialogProps {
   staffType?: StaffType;
@@ -29,7 +28,7 @@ interface DeleteStaffTypeDialogProps {
 export function DeleteStaffTypeDialog({
   staffType,
   staffTypes,
-  variant = "default",
+  variant = "outline",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
