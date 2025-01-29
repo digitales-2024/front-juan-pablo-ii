@@ -1949,6 +1949,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/detailed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los productos con informaciòn detallada */
+        get: operations["ProductController_findAllWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/{id}": {
         parameters: {
             query?: never;
@@ -1965,6 +1982,23 @@ export interface paths {
         head?: never;
         /** Actualizar producto existente */
         patch: operations["ProductController_update"];
+        trace?: never;
+    };
+    "/api/v1/product/{id}/detailed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener producto por ID con informaciòn detallada anidada */
+        get: operations["ProductController_findOneWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/product/remove/all": {
@@ -4171,7 +4205,7 @@ export interface components {
             /** @description ID del tipo de personal */
             staffTypeId: string;
             /** @description ID del usuario asociado */
-            userId: string;
+            userId: string | null;
             /** @description Nombre del personal */
             name: string;
             /** @description Correo electrónico */
@@ -4196,6 +4230,19 @@ export interface components {
              * @description Fecha de última actualización
              */
             updatedAt: string;
+            /**
+             * @description Información del tipo de personal
+             * @example {
+             *       "name": "doctor"
+             *     }
+             */
+            staffType: {
+                /**
+                 * @description Nombre del tipo de personal
+                 * @example doctor
+                 */
+                name?: string;
+            };
         };
         UpdateStaffDto: {
             /**
@@ -4244,65 +4291,90 @@ export interface components {
         };
         CreateCalendarDto: {
             /**
+             * @description Nombre del calendario
+             * @example Horario Normal
+             */
+            name: string;
+            /**
+             * @description Tipo de calendario
+             * @example PERSONAL, CITAS_MEDICAS o CONSULTAS_MEDICAS
+             */
+            type: Record<string, never>;
+            /**
+             * @description ID de la cita médica asociada al calendario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            medicalAppointmentId?: string;
+            /**
+             * @description ID de la consulta médica asociada al calendario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            medicalConsultationId?: string;
+            /**
              * @description ID del personal asociado al calendario
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            personalId: string;
+            staffId?: string;
             /**
              * @description ID de la sucursal asociada al calendario
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            sucursalId: string;
+            branchId?: string;
             /**
-             * @description Nombre del calendario
-             * @example Horario Normal
+             * @description Indica si el calendario está activo
+             * @example true
              */
-            nombre: string;
-            /**
-             * @description Color del calendario
-             * @example #FF0000
-             */
-            color?: string;
-            /**
-             * @description Indica si es el calendario predeterminado
-             * @example false
-             */
-            isDefault: boolean;
+            isActive: boolean;
         };
         Calendar: {
             id: string;
-            personalId: string;
-            sucursalId: string;
-            nombre: string;
-            color: string;
-            isDefault: boolean;
+            name: string;
+            type: string;
+            medicalAppointmentId?: string;
+            medicalConsultationId?: string;
+            staffId?: string;
+            branchId?: string;
+            /** @default true */
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
         };
         UpdateCalendarDto: {
-            /**
-             * @description ID del personal asociado al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            personalId?: string;
-            /**
-             * @description ID de la sucursal asociada al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            sucursalId?: string;
             /**
              * @description Nombre del calendario
              * @example Horario Normal
              */
-            nombre?: string;
+            name?: string;
             /**
-             * @description Color del calendario
-             * @example #FF0000
+             * @description Tipo de calendario
+             * @example PERSONAL, CITAS_MEDICAS o CONSULTAS_MEDICAS
              */
-            color?: string;
+            type?: Record<string, never>;
             /**
-             * @description Indica si es el calendario predeterminado
-             * @example false
+             * @description ID de la cita médica asociada al calendario
+             * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            isDefault?: boolean;
+            medicalAppointmentId?: string;
+            /**
+             * @description ID de la consulta médica asociada al calendario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            medicalConsultationId?: string;
+            /**
+             * @description ID del personal asociado al calendario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal asociada al calendario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description Indica si el calendario está activo
+             * @example true
+             */
+            isActive?: boolean;
         };
         DeleteCalendarDto: {
             ids: string[];
@@ -4312,214 +4384,311 @@ export interface components {
              * @description ID del calendario al que pertenece el evento
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            calendarioId: string;
+            calendarId: string;
             /**
-             * @description ID del cita al que pertenece el evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
+             * @description Tipo de evento
+             * @example INGRESO
              */
-            appointmentId: string;
+            type: Record<string, never>;
             /**
-             * @description Título descriptivo del evento
+             * @description Nombre del evento
              * @example Ingreso turno mañana
              */
-            titulo: string;
+            name: string;
             /**
              * @description Descripción detallada del evento
              * @example Ingreso del personal para el turno de la mañana
              */
-            descripcion?: string;
+            description?: string;
             /**
+             * Format: date-time
              * @description Fecha y hora de inicio del evento
              * @example 2024-03-15T08:00:00
              */
-            fechaInicio: string;
+            startDate: string;
             /**
+             * Format: date-time
              * @description Fecha y hora de fin del evento
              * @example 2024-03-15T17:00:00
              */
-            fechaFin: string;
-            /**
-             * @description Indica si el evento dura todo el día
-             * @default false
-             * @example false
-             */
-            todoElDia: boolean;
-            /**
-             * @description Tipo de evento
-             * @example INGRESO, SALIDA, ETC
-             */
-            tipo: string;
+            endDate: string;
             /**
              * @description Color para identificar visualmente el evento
              * @example #FF0000
              */
             color?: string;
             /**
-             * @description Indica si el evento es un permiso
-             * @default false
-             * @example false
-             */
-            esPermiso: boolean;
-            /**
              * @description Tipo de permiso (si aplica)
-             * @example MEDICO, PERSONAL,ETC
+             * @example MEDICO
              */
-            tipoPermiso?: string;
+            permissionType?: Record<string, never>;
             /**
              * @description Estado del permiso
-             * @example PENDIENTE, APROBADO, RECHAZADO, ETC
+             * @example PENDIENTE
              */
-            estadoPermiso?: string;
+            permissionStatus?: Record<string, never>;
+            /**
+             * @description Duración del evento en minutos
+             * @example 60
+             */
+            duration?: number;
+            /**
+             * @description ID del paciente asociado al evento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId?: string;
+            /**
+             * @description ID del personal asociado al evento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
+            /**
+             * @description Indica si el evento está activo
+             * @default true
+             * @example true
+             */
+            isActive: boolean;
         };
         Event: {
             id: string;
-            calendarioId: string;
-            appointmentId: string;
-            titulo: string;
-            descripcion: string;
-            fechaInicio: string;
-            fechaFin: string;
-            todoElDia: boolean;
-            tipo: string;
-            color: string;
-            esPermiso: boolean;
-            tipoPermiso: string;
-            estadoPermiso: string;
+            calendarId: string;
+            type: string;
+            name: string;
+            description?: string;
+            /** Format: date-time */
+            startDate: string;
+            /** Format: date-time */
+            endDate: string;
+            color?: string;
+            permissionType?: string;
+            permissionStatus?: string;
+            duration?: number;
+            patientId?: string;
+            staffId?: string;
+            /** @default true */
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            recurrenceId?: string;
         };
         UpdateEventDto: {
             /**
              * @description ID del calendario al que pertenece el evento
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            calendarioId?: string;
+            calendarId?: string;
             /**
-             * @description ID del cita al que pertenece el evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
+             * @description Tipo de evento
+             * @example INGRESO
              */
-            appointmentId?: string;
+            type?: Record<string, never>;
             /**
-             * @description Título descriptivo del evento
+             * @description Nombre del evento
              * @example Ingreso turno mañana
              */
-            titulo?: string;
+            name?: string;
             /**
              * @description Descripción detallada del evento
              * @example Ingreso del personal para el turno de la mañana
              */
-            descripcion?: string;
+            description?: string;
             /**
+             * Format: date-time
              * @description Fecha y hora de inicio del evento
              * @example 2024-03-15T08:00:00
              */
-            fechaInicio?: string;
+            startDate?: string;
             /**
+             * Format: date-time
              * @description Fecha y hora de fin del evento
              * @example 2024-03-15T17:00:00
              */
-            fechaFin?: string;
-            /**
-             * @description Indica si el evento dura todo el día
-             * @default false
-             * @example false
-             */
-            todoElDia: boolean;
-            /**
-             * @description Tipo de evento
-             * @example INGRESO, SALIDA, ETC
-             */
-            tipo?: string;
+            endDate?: string;
             /**
              * @description Color para identificar visualmente el evento
              * @example #FF0000
              */
             color?: string;
             /**
-             * @description Indica si el evento es un permiso
-             * @default false
-             * @example false
-             */
-            esPermiso: boolean;
-            /**
              * @description Tipo de permiso (si aplica)
-             * @example MEDICO, PERSONAL,ETC
+             * @example MEDICO
              */
-            tipoPermiso?: string;
+            permissionType?: Record<string, never>;
             /**
              * @description Estado del permiso
-             * @example PENDIENTE, APROBADO, RECHAZADO, ETC
+             * @example PENDIENTE
              */
-            estadoPermiso?: string;
+            permissionStatus?: Record<string, never>;
+            /**
+             * @description Duración del evento en minutos
+             * @example 60
+             */
+            duration?: number;
+            /**
+             * @description ID del paciente asociado al evento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId?: string;
+            /**
+             * @description ID del personal asociado al evento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
+            /**
+             * @description Indica si el evento está activo
+             * @default true
+             * @example true
+             */
+            isActive: boolean;
         };
         DeleteEventDto: {
             ids: string[];
         };
         CreateRecurrenceDto: {
             /**
-             * @description ID del calendario al que pertenece la recurrencia
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            calendarioId: string;
-            /**
              * @description Frecuencia de la recurrencia
              * @example DIARIA
              */
-            frecuencia: string;
+            frequency: Record<string, never>;
             /**
              * @description Intervalo de repetición
              * @example 1
              */
-            intervalo: number;
+            interval: number;
+            /**
+             * @description Días específicos de la semana (opcional)
+             * @example [
+             *       "LUNES",
+             *       "MIERCOLES",
+             *       "VIERNES"
+             *     ]
+             */
+            daysOfWeek?: string[];
+            /**
+             * @description Fechas específicas a excluir
+             * @example [
+             *       "SABADO",
+             *       "DOMINGO"
+             *     ]
+             */
+            exceptions?: string[];
             /**
              * Format: date-time
              * @description Fecha de inicio de la recurrencia
              * @example 2024-03-15T00:00:00Z
              */
-            fechaInicio: string;
+            startDate: string;
             /**
              * Format: date-time
              * @description Fecha de fin de la recurrencia
              * @example 2024-12-31T00:00:00Z
              */
-            fechaFin?: string;
+            endDate?: string;
+            /**
+             * @description Indica si la recurrencia está activa
+             * @default true
+             */
+            isActive: boolean;
         };
         Recurrence: {
             id: string;
-            calendarioId: string;
-            frecuencia: string;
-            intervalo: number;
-            /** Format: date-time */
-            fechaInicio: string;
-            /** Format: date-time */
-            fechaFin: string;
-        };
-        UpdateRecurrenceDto: {
-            /**
-             * @description ID del calendario al que pertenece la recurrencia
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            calendarioId?: string;
             /**
              * @description Frecuencia de la recurrencia
              * @example DIARIA
              */
-            frecuencia?: string;
+            frequency: string;
             /**
              * @description Intervalo de repetición
              * @example 1
              */
-            intervalo?: number;
+            interval: number;
+            /**
+             * @description Días específicos de la semana (opcional)
+             * @example [
+             *       "LUNES",
+             *       "MIERCOLES",
+             *       "VIERNES"
+             *     ]
+             */
+            daysOfWeek?: string[];
+            /**
+             * @description Fechas específicas a excluir
+             * @example [
+             *       "SABADO",
+             *       "DOMINGO"
+             *     ]
+             */
+            exceptions?: string[];
             /**
              * Format: date-time
              * @description Fecha de inicio de la recurrencia
              * @example 2024-03-15T00:00:00Z
              */
-            fechaInicio?: string;
+            startDate: string;
             /**
              * Format: date-time
              * @description Fecha de fin de la recurrencia
              * @example 2024-12-31T00:00:00Z
              */
-            fechaFin?: string;
+            endDate?: string;
+            /**
+             * @description Indica si la recurrencia está activa
+             * @default true
+             * @example true
+             */
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateRecurrenceDto: {
+            /**
+             * @description Frecuencia de la recurrencia
+             * @example DIARIA
+             */
+            frequency?: Record<string, never>;
+            /**
+             * @description Intervalo de repetición
+             * @example 1
+             */
+            interval?: number;
+            /**
+             * @description Días específicos de la semana (opcional)
+             * @example [
+             *       "LUNES",
+             *       "MIERCOLES",
+             *       "VIERNES"
+             *     ]
+             */
+            daysOfWeek?: string[];
+            /**
+             * @description Fechas específicas a excluir
+             * @example [
+             *       "SABADO",
+             *       "DOMINGO"
+             *     ]
+             */
+            exceptions?: string[];
+            /**
+             * Format: date-time
+             * @description Fecha de inicio de la recurrencia
+             * @example 2024-03-15T00:00:00Z
+             */
+            startDate?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de fin de la recurrencia
+             * @example 2024-12-31T00:00:00Z
+             */
+            endDate?: string;
+            /**
+             * @description Indica si la recurrencia está activa
+             * @default true
+             */
+            isActive: boolean;
         };
         DeleteRecurrenceDto: {
             ids: string[];
@@ -4687,6 +4856,25 @@ export interface components {
             observaciones: string;
             condicionesAlmacenamiento: string;
             imagenUrl: string;
+        };
+        ProductWithRelations: {
+            id: string;
+            categoriaId: string;
+            tipoProductoId: string;
+            name: string;
+            precio: number;
+            unidadMedida: string;
+            proveedor: string;
+            uso: string;
+            usoProducto: string;
+            description: string;
+            codigoProducto: string;
+            descuento: number;
+            observaciones: string;
+            condicionesAlmacenamiento: string;
+            imagenUrl: string;
+            categoria: Record<string, never>;
+            tipoProducto: Record<string, never>;
         };
         UpdateProductDto: {
             /**
@@ -10379,12 +10567,12 @@ export interface operations {
         };
         responses: {
             /** @description Calendario creado exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Calendar"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o calendario ya existe */
@@ -10468,7 +10656,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Calendar"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -10506,7 +10694,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Calendar"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o calendarios no existen */
@@ -10544,7 +10732,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Calendar"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o calendarios no existen */
@@ -10616,7 +10804,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Event"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o evento ya existe */
@@ -10700,7 +10888,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Event"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -10738,7 +10926,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Event"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o eventos no existen */
@@ -10776,7 +10964,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Event"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o eventos no existen */
@@ -10848,7 +11036,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recurrence"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o recurrencia ya existe */
@@ -10932,7 +11120,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recurrence"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -10970,7 +11158,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recurrence"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o recurrencias no existen */
@@ -11008,7 +11196,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recurrence"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o recurrencias no existen */
@@ -11539,7 +11727,7 @@ export interface operations {
         };
         responses: {
             /** @description Producto creado exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -11548,6 +11736,40 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o producto ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_findAllWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los productos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductWithRelations"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11640,6 +11862,50 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductWithRelations"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Producto no encontrado */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

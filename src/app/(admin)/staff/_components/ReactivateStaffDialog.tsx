@@ -10,15 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Service } from "../_interfaces/service.interface";
-import { TrashIcon } from "lucide-react";
+import { Staff } from "../_interfaces/staff.interface";
+import { ActivityIcon } from "lucide-react";
 import { useState } from "react";
-import { useServices } from "../_hooks/useServices";
-import { toast } from "sonner";
+import { useStaff } from "../_hooks/useStaff";
 
-interface DeactivateServiceDialogProps {
-  service?: Service;
-  services?: Service[];
+interface ReactivateStaffDialogProps {
+  staff?: Staff;
+  staffs?: Staff[];
   variant?: "default" | "outline";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -26,33 +25,32 @@ interface DeactivateServiceDialogProps {
   onSuccess?: () => void;
 }
 
-export function DeactivateServiceDialog({
-  service,
-  services,
+export function ReactivateStaffDialog({
+  staff,
+  staffs,
   variant = "default",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
   onSuccess
-}: DeactivateServiceDialogProps) {
+}: ReactivateStaffDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const { deleteMutation: { isPending, mutateAsync } } = useServices();
+  const { reactivateMutation: { isPending, mutateAsync } } = useStaff();
 
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
-  const items = services ?? (service ? [service] : []);
-  const title = items.length === 1 ? "Desactivar Servicio" : "Desactivar Servicios";
+  const items = staffs ?? (staff ? [staff] : []);
+  const title = items.length === 1 ? "Reactivar Personal" : "Reactivar Personal";
   const description =
     items.length === 1
-      ? `¿Estás seguro de que deseas desactivar el servicio "${items[0].name}"?`
-      : `¿Estás seguro de que deseas desactivar ${items.length} servicios?`;
+      ? `¿Estás seguro de que deseas reactivar a "${items[0].name} ${items[0].lastName}"?`
+      : `¿Estás seguro de que deseas reactivar ${items.length} miembros del personal?`;
 
-  async function onDelete() {
+  async function onReactivate() {
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      
       setOpen(false);
       onSuccess?.();
     } catch (error) {
@@ -65,9 +63,13 @@ export function DeactivateServiceDialog({
     <Dialog open={isOpen} onOpenChange={setOpen}>
       {showTrigger && (
         <DialogTrigger asChild>
-          <Button variant={variant} size={variant === "outline" ? "sm" : "default"}>
-            <TrashIcon className="mr-2 h-4 w-4" />
-            {items.length === 1 ? "Desactivar" : `Desactivar (${items.length})`}
+          <Button 
+            variant={variant} 
+            size={variant === "outline" ? "sm" : "default"}
+            className="text-green-600"
+          >
+            <ActivityIcon className="mr-2 h-4 w-4" />
+            {items.length === 1 ? "Reactivar" : `Reactivar (${items.length})`}
           </Button>
         </DialogTrigger>
       )}
@@ -80,8 +82,13 @@ export function DeactivateServiceDialog({
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
-          <Button variant="destructive" onClick={onDelete} disabled={isPending}>
-            {isPending ? "Desactivando..." : "Desactivar"}
+          <Button 
+            variant="default" 
+            onClick={onReactivate} 
+            disabled={isPending}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            {isPending ? "Reactivando..." : "Reactivar"}
           </Button>
         </DialogFooter>
       </DialogContent>

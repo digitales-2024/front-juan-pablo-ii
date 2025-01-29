@@ -14,7 +14,6 @@ import { Branch } from "../_interfaces/branch.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { useBranches } from "../_hooks/useBranches";
-import { toast } from "sonner";
 
 interface DeactivateBranchDialogProps {
   branch?: Branch;
@@ -53,11 +52,7 @@ export function DeactivateBranchDialog({
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      toast.success(
-        items.length === 1
-          ? "Sucursal desactivada exitosamente"
-          : "Sucursales desactivadas exitosamente"
-      );
+     
       setOpen(false);
       onSuccess?.();
     } catch (error) {

@@ -3,6 +3,7 @@ import {
   Boxes,
   CalendarPlus,
   CalendarRange,
+  ClipboardType,
   Clock,
   DollarSign,
   FileHeart,
@@ -11,7 +12,6 @@ import {
   Home,
   Hospital,
   KeyRound,
-  ListTodo,
   Package,
   PackageMinus,
   PackageOpen,
@@ -20,8 +20,10 @@ import {
   ShieldBan,
   ShieldCheck,
   ShieldPlus,
+  Stethoscope,
   Tag,
   User,
+  UserPen,
   UserPlus,
   UserRound,
   UserRoundSearch,
@@ -183,6 +185,11 @@ export const sidebarData: SidebarData = {
               icon: UserRoundSearch,
             },
             {
+              title: "Tipos de Personal",
+              url: "/staff/types",
+              icon: UserPen,
+            },
+            {
               title: "Cronograma",
               url: "/timetable",
               icon: CalendarRange,
@@ -223,8 +230,19 @@ export const sidebarData: SidebarData = {
 
         {
           title: "Servicios",
-          url: "/services",
-          icon: ListTodo,
+          icon: Stethoscope,
+          items: [
+            {
+              title: "Servicios",
+              url: "/services",
+              icon: Stethoscope,
+            },
+            {
+              title: "Tipos de Servicios",
+              url: "/services/types",
+              icon: ClipboardType,
+            },
+          ],
         },
         {
           title: "Sucursales",

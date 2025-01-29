@@ -1,35 +1,35 @@
 import { Table } from '@tanstack/react-table';
-import { Service } from '../_interfaces/service.interface';
-import { CreateServiceDialog } from './CreateServiceDialog';
-import { DeactivateServiceDialog } from './DeactivateServiceDialog';
-import { ReactivateServiceDialog } from './ReactivateServiceDialog';
+import { Staff } from '../_interfaces/staff.interface';
+import { DeactivateStaffDialog } from './DeactivateStaffDialog';
+import { ReactivateStaffDialog } from './ReactivateStaffDialog';
+import { CreateStaffDialog } from './CreateStaffDialog';
 
-export interface ServicesTableToolbarActionsProps {
-  table?: Table<Service>;
+export interface StaffTableToolbarActionsProps {
+  table?: Table<Staff>;
 }
 
-export function ServicesTableToolbarActions({
+export function StaffTableToolbarActions({
   table,
-}: ServicesTableToolbarActionsProps) {
+}: StaffTableToolbarActionsProps) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
         <>
-          <DeactivateServiceDialog
-            services={table
+          <DeactivateStaffDialog
+            staffs={table
               .getFilteredSelectedRowModel()
               .rows.map((row) => row.original)}
             onSuccess={() => table.toggleAllRowsSelected(false)}
           />
-          <ReactivateServiceDialog
-            services={table
+          <ReactivateStaffDialog
+            staffs={table
               .getFilteredSelectedRowModel()
               .rows.map((row) => row.original)}
             onSuccess={() => table.toggleAllRowsSelected(false)}
           />
         </>
       ) : null}
-      <CreateServiceDialog />
+      <CreateStaffDialog />
     </div>
   );
-}
+} 

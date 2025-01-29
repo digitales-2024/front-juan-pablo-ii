@@ -10,15 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Service } from "../_interfaces/service.interface";
+import { ServiceType } from "../_interfaces/service-type.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
-import { useServices } from "../_hooks/useServices";
-import { toast } from "sonner";
+import { useServiceTypes } from "../_hooks/useServiceTypes";
 
-interface DeactivateServiceDialogProps {
-  service?: Service;
-  services?: Service[];
+interface DeactivateServiceTypeDialogProps {
+  serviceType?: ServiceType;
+  serviceTypes?: ServiceType[];
   variant?: "default" | "outline";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -26,33 +25,32 @@ interface DeactivateServiceDialogProps {
   onSuccess?: () => void;
 }
 
-export function DeactivateServiceDialog({
-  service,
-  services,
+export function DeactivateServiceTypeDialog({
+  serviceType,
+  serviceTypes,
   variant = "default",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
   onSuccess
-}: DeactivateServiceDialogProps) {
+}: DeactivateServiceTypeDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const { deleteMutation: { isPending, mutateAsync } } = useServices();
+  const { deleteMutation: { isPending, mutateAsync } } = useServiceTypes();
 
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
-  const items = services ?? (service ? [service] : []);
-  const title = items.length === 1 ? "Desactivar Servicio" : "Desactivar Servicios";
+  const items = serviceTypes ?? (serviceType ? [serviceType] : []);
+  const title = items.length === 1 ? "Desactivar Tipo de Servicio" : "Desactivar Tipos de Servicio";
   const description =
     items.length === 1
-      ? `¿Estás seguro de que deseas desactivar el servicio "${items[0].name}"?`
-      : `¿Estás seguro de que deseas desactivar ${items.length} servicios?`;
+      ? `¿Estás seguro de que deseas desactivar el tipo "${items[0].name}"?`
+      : `¿Estás seguro de que deseas desactivar ${items.length} tipos de servicio?`;
 
   async function onDelete() {
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      
       setOpen(false);
       onSuccess?.();
     } catch (error) {

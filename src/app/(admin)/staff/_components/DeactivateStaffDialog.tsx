@@ -10,15 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Service } from "../_interfaces/service.interface";
+import { Staff } from "../_interfaces/staff.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
-import { useServices } from "../_hooks/useServices";
-import { toast } from "sonner";
+import { useStaff } from "../_hooks/useStaff";
 
-interface DeactivateServiceDialogProps {
-  service?: Service;
-  services?: Service[];
+interface DeactivateStaffDialogProps {
+  staff?: Staff;
+  staffs?: Staff[];
   variant?: "default" | "outline";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -26,27 +25,27 @@ interface DeactivateServiceDialogProps {
   onSuccess?: () => void;
 }
 
-export function DeactivateServiceDialog({
-  service,
-  services,
+export function DeactivateStaffDialog({
+  staff,
+  staffs,
   variant = "default",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
   onSuccess
-}: DeactivateServiceDialogProps) {
+}: DeactivateStaffDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const { deleteMutation: { isPending, mutateAsync } } = useServices();
+  const { deleteMutation: { isPending, mutateAsync } } = useStaff();
 
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
-  const items = services ?? (service ? [service] : []);
-  const title = items.length === 1 ? "Desactivar Servicio" : "Desactivar Servicios";
+  const items = staffs ?? (staff ? [staff] : []);
+  const title = items.length === 1 ? "Desactivar Personal" : "Desactivar Personal";
   const description =
     items.length === 1
-      ? `¿Estás seguro de que deseas desactivar el servicio "${items[0].name}"?`
-      : `¿Estás seguro de que deseas desactivar ${items.length} servicios?`;
+      ? `¿Estás seguro de que deseas desactivar a "${items[0].name} ${items[0].lastName}"?`
+      : `¿Estás seguro de que deseas desactivar ${items.length} miembros del personal?`;
 
   async function onDelete() {
     const ids = items.map((item) => item.id);
