@@ -4088,7 +4088,26 @@ export interface components {
              */
             description: string;
         };
-        StaffType: Record<string, never>;
+        StaffType: {
+            /** @description ID único del tipo de personal */
+            id: string;
+            /** @description Nombre del tipo de personal */
+            name: string;
+            /** @description Descripción del tipo de personal */
+            description?: string;
+            /** @description Estado activo/inactivo del tipo de personal */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de creación del registro
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Fecha de última actualización
+             */
+            updatedAt: string;
+        };
         UpdateStaffTypeDto: {
             /**
              * @description Nombre de la especialidad
@@ -4151,13 +4170,8 @@ export interface components {
             id: string;
             /** @description ID del tipo de personal */
             staffTypeId: string;
-            /**
-             * @description Nombre del tipo de personal
-             * @example Médico General
-             */
-            readonly type: string;
             /** @description ID del usuario asociado */
-            userId: string;
+            userId: string | null;
             /** @description Nombre del personal */
             name: string;
             /** @description Correo electrónico */
@@ -4182,6 +4196,19 @@ export interface components {
              * @description Fecha de última actualización
              */
             updatedAt: string;
+            /**
+             * @description Información del tipo de personal
+             * @example {
+             *       "name": "doctor"
+             *     }
+             */
+            staffType: {
+                /**
+                 * @description Nombre del tipo de personal
+                 * @example doctor
+                 */
+                name?: string;
+            };
         };
         UpdateStaffDto: {
             /**
@@ -4526,6 +4553,9 @@ export interface components {
             id: string;
             name: string;
             description: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
         };
         UpdateCategoryDto: {
             /**
@@ -11025,7 +11055,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -11058,12 +11088,12 @@ export interface operations {
         };
         responses: {
             /** @description Categoría creada exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o categoría ya existe */
@@ -11147,7 +11177,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -11185,7 +11215,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o categorías no existen */
@@ -11223,7 +11253,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Category"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o categorías no existen */
