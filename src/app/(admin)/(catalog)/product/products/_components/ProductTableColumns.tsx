@@ -8,7 +8,7 @@ import { DetailedProduct } from "../_interfaces/products.interface";
 import { Badge } from "@/components/ui/badge";
 import { UpdateProductSheet } from "./UpdateProductSheet";
 import { Button } from "@/components/ui/button";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { PencilIcon } from "lucide-react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { ReactivateProductDialog } from "./ReactivateProductDialog";
-import { BanIcon, ActivityIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateProductDialog } from "./DeactivateProductDialog";
 // import Image from "next/image";
@@ -199,36 +197,34 @@ export const columns: ColumnDef<DetailedProduct>[] = [
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: function Cell({ row }) {
-      const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
+      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
       const [showEditSheet, setShowEditSheet] = useState(false);
-      const branch = row.original;
-      const isActive = branch.isActive;
+      const product = row.original;
+      const { isActive } = product;
+      const isSuperAdmin = true;
 
       return (
         <div>
           <div>
             <UpdateProductSheet
-              product={branch}
+              product={product}
               open={showEditSheet}
               onOpenChange={setShowEditSheet}
               showTrigger={false}
             />
-            {isActive ? (
-              <DeactivateProductDialog
-                product={branch}
-                open={showDeactivateDialog}
-                onOpenChange={setShowDeactivateDialog}
-                showTrigger={false}
-              />
-            ) : (
-              <ReactivateProductDialog
-                product={branch}
-                open={showReactivateDialog}
-                onOpenChange={setShowReactivateDialog}
-                showTrigger={false}
-              />
-            )}
+            <DeactivateProductDialog
+              product={product}
+              open={showDeleteDialog}
+              onOpenChange={setShowDeleteDialog}
+              showTrigger={false}
+            />
+            <ReactivateProductDialog
+              product={product}
+              open={showReactivateDialog}
+              onOpenChange={setShowReactivateDialog}
+              showTrigger={false}
+            />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -246,32 +242,28 @@ export const columns: ColumnDef<DetailedProduct>[] = [
                 disabled={!isActive}
               >
                 Editar
-                <DropdownMenuShortcut>
-                  <PencilIcon className="size-4" aria-hidden="true" />
-                </DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              {isActive ? (
-                <DropdownMenuItem 
-                  onSelect={() => setShowDeactivateDialog(true)}
-                  className="text-destructive"
-                >
-                  Desactivar
-                  <DropdownMenuShortcut>
-                    <BanIcon className="size-4" aria-hidden="true" />
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem 
+              {isSuperAdmin && (
+                <DropdownMenuItem
                   onSelect={() => setShowReactivateDialog(true)}
-                  className="text-green-600"
+                  disabled={isActive}
                 >
                   Reactivar
                   <DropdownMenuShortcut>
-                    <ActivityIcon className="size-4" aria-hidden="true" />
+                    <RefreshCcwDot className="size-4" aria-hidden="true" />
                   </DropdownMenuShortcut>
                 </DropdownMenuItem>
               )}
+              <DropdownMenuItem
+                onSelect={() => setShowDeleteDialog(true)}
+                disabled={!isActive}
+              >
+                Eliminar
+                <DropdownMenuShortcut>
+                  <Trash className="size-4" aria-hidden="true" />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

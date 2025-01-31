@@ -12,6 +12,7 @@ import {
 import { toast } from "sonner";
 import {
   Product, CreateProductDto, DeleteProductDto, UpdateProductDto,
+  DetailedProduct,
 } from "../_interfaces/products.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
@@ -90,9 +91,10 @@ export const useProducts = () => {
       return response;
     },
     onSuccess: (res) => {
-      queryClient.setQueryData<Product[]>(["products"], (oldProducts) => {
-        if (!oldProducts) return [res.data];
-        return [...oldProducts, res.data];
+      queryClient.setQueryData<DetailedProduct[] | undefined>(
+        ["detailed-products"], (oldProducts) => {
+          if (!oldProducts) return [res.data as DetailedProduct];
+          return [...oldProducts, res.data as DetailedProduct];
       });
       toast.success(res.message);
     },
@@ -111,14 +113,11 @@ export const useProducts = () => {
       return response;
     },
     onSuccess: (res) => {
-      queryClient.setQueryData<Product[]>(["products"], (oldProducts) => {
-        if (!oldProducts) {
-          return [res.data];
-        }
-        const updatedProducts = oldProducts.map((product) =>
-          product.id === res.data.id ? res.data : product
+      queryClient.setQueryData<DetailedProduct[] | undefined>(["detailed-products"], (oldProducts) => {
+        if (!oldProducts) return undefined;
+        return oldProducts.map((product) =>
+          product.id === res.data.id ? {...product, ...res.data} : product
         );
-        return updatedProducts;
       });
       toast.success("Producto actualizado exitosamente");
     },
@@ -141,9 +140,10 @@ export const useProducts = () => {
       return response;
     },
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Product[]>(["products"], (oldProducts) => {
-        // console.log("🔄 Cache actual:", oldProducts);
+      queryClient.setQueryData<DetailedProduct[]>(["detailed-products"], (oldProducts) => {
+        console.log("🔄 Cache actual:", oldProducts);
         if (!oldProducts) {
+          console.log("⚠️ No hay productos en caché");
           return [];
         }
         const updatedProducts = oldProducts.map((product) => {
@@ -152,6 +152,7 @@ export const useProducts = () => {
           }
           return product;
         });
+        console.log("📦 Nueva caché:", updatedProducts);
         return updatedProducts;
       });
 
@@ -162,6 +163,7 @@ export const useProducts = () => {
       );
     },
     onError: (error) => {
+      console.error("💥 Error en la mutación:", error);
       if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
@@ -180,7 +182,7 @@ export const useProducts = () => {
       return response;
     },
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Product[]>(["products"], (oldProducts) => {
+      queryClient.setQueryData<DetailedProduct[]>(["detailed-products"], (oldProducts) => {
         if (!oldProducts) {
           return [];
         }

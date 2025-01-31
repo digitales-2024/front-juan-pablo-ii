@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
+import { ERRORS } from './_statics/errors';
 
 export default function ErrorProductTypes({
 	error,
@@ -22,10 +23,10 @@ export default function ErrorProductTypes({
 			<div className="flex flex-col items-center justify-center text-center">
 				<AlertTriangle className="h-10 w-10 text-destructive" />
 				<h2 className="mt-4 text-lg font-semibold">
-					Error al cargar los Tipos de Productos
+					{ERRORS.loading}
 				</h2>
 				<p className="mt-2 text-sm text-muted-foreground">
-					{error.message || 'Ha ocurrido un error inesperado'}
+					{error.message || ERRORS.generic}
 				</p>
 				<Button
 					onClick={reset}

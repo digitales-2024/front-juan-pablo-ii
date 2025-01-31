@@ -1,27 +1,37 @@
 "use client";
 
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Product } from "../_interfaces/products.interface";
-import { TrashIcon } from "lucide-react";
-import { useState } from "react";
+import { RefreshCcw, Trash } from "lucide-react";
 import { useProducts } from "../_hooks/useProduct";
 import { toast } from "sonner";
+import { ComponentPropsWithoutRef } from "react";
 
-interface DeactivateProductDialogProps {
+interface DeactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
   product?: Product;
   products?: Product[];
-  variant?: "default" | "outline";
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
@@ -29,25 +39,14 @@ interface DeactivateProductDialogProps {
 export function DeactivateProductDialog({
   product,
   products,
-  variant = "outline",
-  open: controlledOpen,
-  onOpenChange,
   showTrigger = true,
-  onSuccess
+  onSuccess,
+  ...props
 }: DeactivateProductDialogProps) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 640px)");
   const { deleteMutation: { isPending, mutateAsync } } = useProducts();
 
-  // Use controlled state if props are provided, otherwise use internal state
-  const isOpen = controlledOpen ?? uncontrolledOpen;
-  const setOpen = onOpenChange ?? setUncontrolledOpen;
-
   const items = products ?? (product ? [product] : []);
-  const title = items.length === 1 ? "Desactivar Producto" : "Desactivar Productos";
-  const description =
-    items.length === 1
-      ? `¿Estás seguro de que deseas desactivar el producto "${items[0].name}"?`
-      : `¿Estás seguro de que deseas desactivar ${items.length} productos?`;
 
   async function onDelete() {
     const ids = items.map((item) => item.id);
@@ -58,39 +57,85 @@ export function DeactivateProductDialog({
           ? "Producto desactivado exitosamente"
           : "Productos desactivados exitosamente"
       );
-      setOpen(false);
       onSuccess?.();
     } catch (error) {
-        console.log(error);
-        
-      // The error is already handled by the hook
+      console.log(error);
     }
   }
 
+  if (isDesktop) {
+    return (
+      <AlertDialog {...props}>
+        {showTrigger && (
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Trash className="mr-2 size-4" aria-hidden="true" />
+              Desactivar ({items.length})
+            </Button>
+          </AlertDialogTrigger>
+        )}
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción desactivará a
+              <span className="font-medium"> {items.length}</span>
+              {items.length === 1 ? " producto" : " productos"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:space-x-0">
+            <AlertDialogCancel asChild>
+              <Button variant="outline">Cancelar</Button>
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={onDelete}
+              disabled={isPending}
+            >
+              {isPending && (
+                <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
+              )}
+              Desactivar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={setOpen}>
+    <Drawer {...props}>
       {showTrigger && (
-        <DialogTrigger asChild>
-          <Button variant={variant} size={variant === "outline" ? "sm" : "default"}>
-            <TrashIcon className="mr-2 h-4 w-4" />
-            {items.length === 1 ? "Desactivar" : `Desactivar (${items.length})`}
+        <DrawerTrigger asChild>
+          <Button variant="outline" size="sm">
+            <Trash className="mr-2 size-4" aria-hidden="true" />
+            Desactivar ({items.length})
           </Button>
-        </DialogTrigger>
+        </DrawerTrigger>
       )}
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancelar
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
+          <DrawerDescription>
+            Esta acción desactivará a
+            <span className="font-medium"> {items.length}</span>
+            {items.length === 1 ? " producto" : " productos"}
+          </DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter className="gap-2 sm:space-x-0">
+          <Button
+            onClick={onDelete}
+            disabled={isPending}
+          >
+            {isPending && (
+              <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
+            )}
+            Desactivar
           </Button>
-          <Button variant="destructive" onClick={onDelete} disabled={isPending}>
-            {isPending ? "Desactivando..." : "Desactivar"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DrawerClose asChild>
+            <Button variant="outline">Cancelar</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }

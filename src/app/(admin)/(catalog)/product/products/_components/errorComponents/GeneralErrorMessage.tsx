@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { AlertCircle } from 'lucide-react'
 import React from 'react'
+import { ERRORS } from '../../_statics/errors';
 
 
 export default function GeneralErrorMessage({
@@ -16,7 +17,7 @@ export default function GeneralErrorMessage({
           <AlertCircle className="h-10 w-10 text-red-500" />
           <h3 className="mt-4 text-lg font-semibold">Algo salió mal</h3>
           <p className="mb-4 mt-2 text-sm text-muted-foreground">
-            {error.message || "Ocurrió un error al cargar las sucursales"}
+            {error.message || ERRORS.generic}
           </p>
           <Button size="sm" onClick={reset}>
             Intentar de nuevo

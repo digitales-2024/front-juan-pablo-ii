@@ -12,11 +12,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { AutoComplete, Option } from "@/components/ui/autocomplete";
+import { AutoComplete } from "@/components/ui/autocomplete";
 import LoadingDialogForm from "./LoadingDialogForm";
 import { useCategories } from "../../category/_hooks/useCategory";
-import GeneralErrorMessage from "./GeneralErrorMessage";
-import { useTypeProducts } from "../../product-types/hook/useType";
+import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
+import { useTypeProducts } from "../../product-types/_hooks/useType";
+import { FORMSTATICS as STATIC_FORM } from "../_statics/forms";
+import { Option } from "@/types/statics/forms";
+import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
+import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
+import { METADATA } from "../_statics/metadata";
+import { useMemo } from "react";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -52,110 +58,191 @@ export function CreateProductForm({
 
   const { activeCategoriesQuery: responseCategories } = useCategories();
   const responseTypeProducts = useTypeProducts();
+  const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
   if (responseCategories.isLoading && responseTypeProducts.activeIsLoading) {
     return <LoadingDialogForm />;
-  } else{
+  } else {
     if (responseCategories.isError) {
-      return (<GeneralErrorMessage error={responseCategories.error} reset={responseCategories.refetch} />);
+      return (
+        <GeneralErrorMessage
+          error={responseCategories.error}
+          reset={responseCategories.refetch}
+        />
+      );
     }
     if (!responseCategories.data) {
-      return <GeneralErrorMessage error={new Error("No se encontraron categorías")} reset={responseCategories.refetch} />;
+      return (
+        <GeneralErrorMessage
+          error={new Error("No se encontraron categorías")}
+          reset={responseCategories.refetch}
+        />
+      );
     }
     if (responseTypeProducts.activeIsError) {
-      return responseTypeProducts.activeError ? (<GeneralErrorMessage error={responseTypeProducts.activeError} reset={responseTypeProducts.activeRefetch} />) : null;
+      return responseTypeProducts.activeError ? (
+        <GeneralErrorMessage
+          error={responseTypeProducts.activeError}
+          reset={responseTypeProducts.activeRefetch}
+        />
+      ) : null;
     }
     if (!responseTypeProducts.activeData) {
-      return <GeneralErrorMessage error={new Error("No se encontraron subcategorías")} reset={responseTypeProducts.activeRefetch} />;
+      return (
+        <GeneralErrorMessage
+          error={new Error("No se encontraron subcategorías")}
+          reset={responseTypeProducts.activeRefetch}
+        />
+      );
     }
   }
 
-  const categoryOptions:Option[] = responseCategories.data.map((category) => ({
+  if (
+    METADATA.dataDependencies &&
+    (responseCategories.data.length === 0 ||
+      responseTypeProducts.activeData.length === 0)
+  ) {
+    return (
+      <DataDependencyErrorMessage
+        error={
+          new Error(
+            `No existe la información necesaria. Revisar presencia de información en: ${METADATA.dataDependencies
+              .map((dependency) => dependency.dependencyName)
+              .join(", ")}`
+          )
+        }
+        dataDependencies={METADATA.dataDependencies}
+      />
+    );
+  }
+
+  const categoryOptions: Option[] = responseCategories.data.map((category) => ({
     label: category.name,
     value: category.id,
   }));
 
-  const typeProductOptions:Option[] = responseTypeProducts.activeData.map((typeProduct) => ({
-    label: typeProduct.name,
-    value: typeProduct.id,
-  }));
+  const typeProductOptions: Option[] = responseTypeProducts.activeData.map(
+    (typeProduct) => ({
+      label: typeProduct.name,
+      value: typeProduct.id,
+    })
+  );
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {
-          (<div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-2 gap-4">
-            <FormField
+        <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-2 gap-4">
+          {/* <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nombre del producto" {...field} />
+                    <Input placeholder="Ingresa el nombre" {...field}/>
                   </FormControl>
+                  <CustomFormDescription required={FORMSTATICS.name.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
-            />
-
-            <FormField
+            /> */}
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.name.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>{FORMSTATICS.name.label}</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder={FORMSTATICS.name.placeholder}
+                    type={FORMSTATICS.name.type}
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.name.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.codigoProducto.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>{FORMSTATICS.codigoProducto.label}</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder={FORMSTATICS.codigoProducto.placeholder}
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.codigoProducto.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="precio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{FORMSTATICS.precio.label}</FormLabel>
+                <div className="flex items-center space-x-2">
+                  <div className="text-muted-foreground">S/.</div>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder={FORMSTATICS.precio.placeholder}
+                      type={FORMSTATICS.precio.type}
+                    />
+                  </FormControl>
+                </div>
+                <CustomFormDescription
+                  required={FORMSTATICS.precio.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.descuento.name}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{FORMSTATICS.descuento.label}</FormLabel>
+                <div className="flex items-center space-x-2">
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder={FORMSTATICS.descuento.placeholder}
+                      type={FORMSTATICS.descuento.type}
+                    />
+                  </FormControl>
+                  <div className="text-muted-foreground">%</div>
+                </div>
+                <FormMessage />
+                <CustomFormDescription
+                  required={FORMSTATICS.descuento.required}
+                ></CustomFormDescription>
+              </FormItem>
+            )}
+          />
+          {/* Campo de categoría */}
+          <FormField
               control={form.control}
-              name="codigoProducto"
+              name={FORMSTATICS.categoriaId.name}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Código del producto</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Código del producto" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="precio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Precio</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Precio sin descuentos" {...field} type="number"/>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="descuento"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descuento</FormLabel>
-                  <div className="flex items-center space-x-2">
-                    <FormControl>
-                      <Input placeholder="Descuento del producto" {...field} type="number"/>
-                    </FormControl>
-                    <div className="text-muted-foreground">%</div>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Campo de categoría */}
-            <FormField
-              control={form.control}
-              name="categoriaId"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel htmlFor="categoryId">Categoría</FormLabel>
+                  <FormLabel htmlFor={FORMSTATICS.categoriaId.name}>{FORMSTATICS.categoriaId.label}</FormLabel>
                   <FormControl>
                     <AutoComplete
                       options={categoryOptions}
-                      placeholder="Selecciona una categoría"
-                      emptyMessage="No se encontraron categorías"
+                      placeholder={FORMSTATICS.categoriaId.placeholder}
+                      emptyMessage={FORMSTATICS.categoriaId.emptyMessage!}
                       value={
                         categoryOptions.find(
                           (option) => option.value === field.value
@@ -166,6 +253,7 @@ export function CreateProductForm({
                       }}
                     />
                   </FormControl>
+                  <CustomFormDescription required={FORMSTATICS.categoriaId.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -173,17 +261,17 @@ export function CreateProductForm({
             {/* Campo de tipo de producto */}
             <FormField
               control={form.control}
-              name="tipoProductoId"
+              name={FORMSTATICS.tipoProductoId.name}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel htmlFor="typeProductId">
-                    Tipo de Producto
+                  <FormLabel>
+                    {FORMSTATICS.tipoProductoId.label}
                   </FormLabel>
                   <FormControl>
                     <AutoComplete
                       options={typeProductOptions}
-                      placeholder="Selecciona un tipo de producto"
-                      emptyMessage="No se encontraron tipos de productos"
+                      placeholder={FORMSTATICS.tipoProductoId.placeholder}
+                      emptyMessage={FORMSTATICS.tipoProductoId.emptyMessage!}
                       value={
                         typeProductOptions.find(
                           (option) => option.value === field.value
@@ -194,68 +282,25 @@ export function CreateProductForm({
                       }}
                     />
                   </FormControl>
+                  <CustomFormDescription required={FORMSTATICS.tipoProductoId.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
-              name="unidadMedida"
+              name={FORMSTATICS.unidadMedida.name}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Unidad de medida</FormLabel>
+                  <FormLabel>{FORMSTATICS.unidadMedida.label}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Unidad de medida (ml, kg, caja, etc.)"
+                      placeholder={FORMSTATICS.unidadMedida.placeholder}
                       {...field}
                     />
                   </FormControl>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="proveedor"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Proveedor</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Proveedor del producto" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* <FormField
-              control={form.control}
-              name="uso"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>¿Para quién?</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Paciente, cliente, personal, etc."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
-
-            <FormField
-              control={form.control}
-              name="usoProducto"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Ámbito de uso</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Venta, uso interno, etc." {...field} />
-                  </FormControl>
+                  <CustomFormDescription required={FORMSTATICS.unidadMedida.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -263,33 +308,47 @@ export function CreateProductForm({
 
             <FormField
               control={form.control}
-              name="imagenUrl"
+              name={FORMSTATICS.proveedor.name}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL de la imagen</FormLabel>
+                  <FormLabel>{FORMSTATICS.proveedor.label}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="URL de la imagen del producto"
-                      {...field}
-                    />
+                    <Input {...field} placeholder={FORMSTATICS.proveedor.placeholder}/>
                   </FormControl>
+                  <FormMessage />
+                  <CustomFormDescription required={FORMSTATICS.proveedor.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
-              name="description"
+              name={FORMSTATICS.usoProducto.name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{FORMSTATICS.usoProducto.label}</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder={FORMSTATICS.usoProducto.placeholder} />
+                  </FormControl>
+                  <CustomFormDescription required={FORMSTATICS.usoProducto.required}></CustomFormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={FORMSTATICS.description.name}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Descripción</FormLabel>
+                  <FormLabel>{FORMSTATICS.description.label}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Descripción del producto"
                       {...field}
+                      placeholder={FORMSTATICS.description.placeholder}
                     />
                   </FormControl>
+                  <FormMessage />
+                  <CustomFormDescription required={FORMSTATICS.description.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -297,16 +356,19 @@ export function CreateProductForm({
 
             <FormField
               control={form.control}
-              name="observaciones"
+              name={FORMSTATICS.observaciones.name}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Observaciones</FormLabel>
+                  <FormLabel>{FORMSTATICS.observaciones.label}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Observaciones del producto"
                       {...field}
+                      placeholder={FORMSTATICS.observaciones.placeholder}
                     />
                   </FormControl>
+                  <FormMessage />
+                  <CustomFormDescription required={FORMSTATICS.observaciones.required}></CustomFormDescription>
+                  <FormMessage />
                   <FormMessage />
                 </FormItem>
               )}
@@ -314,22 +376,22 @@ export function CreateProductForm({
 
             <FormField
               control={form.control}
-              name="condicionesAlmacenamiento"
+              name={FORMSTATICS.condicionesAlmacenamiento.name}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Condiciones de almacenamiento</FormLabel>
+                  <FormLabel>{FORMSTATICS.condicionesAlmacenamiento.label}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Condiciones de almacenamiento del producto"
                       {...field}
+                      placeholder={FORMSTATICS.condicionesAlmacenamiento.placeholder}
                     />
                   </FormControl>
+                  <CustomFormDescription required={FORMSTATICS.condicionesAlmacenamiento.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>)
-        }
+        </div>
         {children}
       </form>
     </Form>

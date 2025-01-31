@@ -83,18 +83,9 @@ export const typeColumns = (): ColumnDef<TypeProductResponse>[] => [
     ),
     cell: ({ row }) => (
       <div>
-        {row.getValue("isActive") ? (
-          <Badge
-            variant="secondary"
-            className="bg-emerald-100 text-emerald-500"
-          >
-            Activo
-          </Badge>
-        ) : (
-          <Badge variant="secondary" className="bg-red-100 text-red-500">
-            Inactivo
-          </Badge>
-        )}
+        <Badge variant={row.original.isActive ? "success" : "destructive"}>
+          {row.original.isActive ? "Activo" : "Inactivo"}
+        </Badge>
       </div>
     ),
   },

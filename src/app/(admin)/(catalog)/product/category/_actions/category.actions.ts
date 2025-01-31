@@ -151,7 +151,7 @@ export async function deleteCategory(data: DeleteCategoriesDto): Promise<Categor
  */
 export async function reactivateCategory(data: DeleteCategoriesDto): Promise<CategoryResponse> {
   try {
-    const [response, error] = await http.patch<BaseApiResponse>("/branch/reactivate/all", data);
+    const [response, error] = await http.patch<BaseApiResponse>("/category/reactivate/all", data);
 
     if (error) {
       if (error.statusCode === 401) {

@@ -8,6 +8,7 @@ import React, {
     type KeyboardEvent,
     forwardRef,
 } from "react";
+import type { Option } from "@/types/statics/forms";
 
 import { cn } from "@/lib/utils";
 
@@ -19,12 +20,6 @@ import {
 } from "./command";
 import { ScrollArea } from "./scroll-area";
 import { Skeleton } from "./skeleton";
-
-export type Option = {
-    value: string;
-    label: string;
-    [key: string]: string;
-};
 
 type AutoCompleteProps = {
     options: Option[];

@@ -1,8 +1,9 @@
 "use client";
 
 import { TypeTable } from "./_components/TypeTable";
+import { METADATA } from "./_statics/metadata";
 
-import { useTypeProducts } from "./hook/useType";
+import { useTypeProducts } from "./_hooks/useType";
 
 export default function TypeProductsPage() {
   const { data: response,  } = useTypeProducts();
@@ -15,10 +16,10 @@ export default function TypeProductsPage() {
       <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap gap-x-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
-            Subcategorìas
+            {METADATA.title}
           </h2>
           <p className="text-muted-foreground">
-            Lista de tipos de productos registrados en el sistema.
+            {METADATA.description}
           </p>
         </div>
       </div>
