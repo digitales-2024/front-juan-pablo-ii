@@ -1231,6 +1231,22 @@ export interface paths {
         patch: operations["PacientController_reactivateAll"];
         trace?: never;
     };
+    "/api/v1/paciente/upload/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PacientController_uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/receta": {
         parameters: {
             query?: never;
@@ -1239,10 +1255,10 @@ export interface paths {
             cookie?: never;
         };
         /** Obtener todas las recetas médicas */
-        get: operations["RecipeController_findAll"];
+        get: operations["PrescriptionController_findAll"];
         put?: never;
         /** Crear nueva receta médica */
-        post: operations["RecipeController_create"];
+        post: operations["PrescriptionController_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1257,14 +1273,14 @@ export interface paths {
             cookie?: never;
         };
         /** Obtener receta médica por ID */
-        get: operations["RecipeController_findOne"];
+        get: operations["PrescriptionController_findOne"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** Actualizar receta médica existente */
-        patch: operations["RecipeController_update"];
+        patch: operations["PrescriptionController_update"];
         trace?: never;
     };
     "/api/v1/receta/remove/all": {
@@ -1278,7 +1294,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Desactivar múltiples recetas médicas */
-        delete: operations["RecipeController_deleteMany"];
+        delete: operations["PrescriptionController_deleteMany"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1298,10 +1314,10 @@ export interface paths {
         options?: never;
         head?: never;
         /** Reactivar múltiples recetas médicas */
-        patch: operations["RecipeController_reactivateAll"];
+        patch: operations["PrescriptionController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/update-historia": {
+    "/api/v1/update-history": {
         parameters: {
             query?: never;
             header?: never;
@@ -1309,17 +1325,17 @@ export interface paths {
             cookie?: never;
         };
         /** Obtener todas las actualizaciones de historias médicas */
-        get: operations["UpHistoryController_findAll"];
+        get: operations["UpdateHistoryController_findAll"];
         put?: never;
         /** Crear nueva actualización de historia médica */
-        post: operations["UpHistoryController_create"];
+        post: operations["UpdateHistoryController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/update-historia/{id}": {
+    "/api/v1/update-history/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1327,17 +1343,17 @@ export interface paths {
             cookie?: never;
         };
         /** Obtener actualización de historia médica por ID */
-        get: operations["UpHistoryController_findOne"];
+        get: operations["UpdateHistoryController_findOne"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** Actualizar actualización de historia médica existente */
-        patch: operations["UpHistoryController_update"];
+        patch: operations["UpdateHistoryController_update"];
         trace?: never;
     };
-    "/api/v1/update-historia/remove/all": {
+    "/api/v1/update-history/remove/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -1348,13 +1364,13 @@ export interface paths {
         put?: never;
         post?: never;
         /** Desactivar múltiples actualizaciones de historias médicas */
-        delete: operations["UpHistoryController_deleteMany"];
+        delete: operations["UpdateHistoryController_deleteMany"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/update-historia/reactivate/all": {
+    "/api/v1/update-history/reactivate/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -1368,10 +1384,10 @@ export interface paths {
         options?: never;
         head?: never;
         /** Reactivar múltiples actualizaciones de historias médicas */
-        patch: operations["UpHistoryController_reactivateAll"];
+        patch: operations["UpdateHistoryController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/historia": {
+    "/api/v1/medical-history": {
         parameters: {
             query?: never;
             header?: never;
@@ -1379,17 +1395,17 @@ export interface paths {
             cookie?: never;
         };
         /** Obtener todas las historias médicas */
-        get: operations["HistoryController_findAll"];
+        get: operations["MedicalHistoryController_findAll"];
         put?: never;
         /** Crear nueva historia médica */
-        post: operations["HistoryController_create"];
+        post: operations["MedicalHistoryController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/historia/{id}": {
+    "/api/v1/medical-history/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1397,17 +1413,17 @@ export interface paths {
             cookie?: never;
         };
         /** Obtener historia médica por ID */
-        get: operations["HistoryController_findOne"];
+        get: operations["MedicalHistoryController_findOne"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** Actualizar historia médica existente */
-        patch: operations["HistoryController_update"];
+        patch: operations["MedicalHistoryController_update"];
         trace?: never;
     };
-    "/api/v1/historia/remove/all": {
+    "/api/v1/medical-history/remove/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -1418,13 +1434,13 @@ export interface paths {
         put?: never;
         post?: never;
         /** Desactivar múltiples historias médicas */
-        delete: operations["HistoryController_deleteMany"];
+        delete: operations["MedicalHistoryController_deleteMany"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/historia/reactivate/all": {
+    "/api/v1/medical-history/reactivate/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -1438,7 +1454,7 @@ export interface paths {
         options?: never;
         head?: never;
         /** Reactivar múltiples historias médicas */
-        patch: operations["HistoryController_reactivateAll"];
+        patch: operations["MedicalHistoryController_reactivateAll"];
         trace?: never;
     };
     "/api/v1/staff-type": {
@@ -1809,6 +1825,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/category/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las categorías activas */
+        get: operations["CategoryController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/category/{id}": {
         parameters: {
             query?: never;
@@ -1873,6 +1906,23 @@ export interface paths {
         put?: never;
         /** Crear nuevo tipo de producto */
         post: operations["TypeProductController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/type-product/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los tipos de productos activos */
+        get: operations["TypeProductController_findAllActive"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3454,17 +3504,17 @@ export interface components {
         DeleteAppointmentsDto: {
             ids: string[];
         };
-        CreatePacienteDto: {
+        CreatePatientDto: {
             /**
              * @description Nombre completo del paciente
              * @example Juan Pérez
              */
-            nombre: string;
+            name: string;
             /**
              * @description Apellido del paciente
              * @example González
              */
-            apellido?: string;
+            lastName?: string;
             /**
              * @description DNI del paciente
              * @example 12345678
@@ -3475,168 +3525,126 @@ export interface components {
              * @description Fecha de nacimiento del paciente
              * @example 1990-01-01
              */
-            cumpleanos: string;
+            birthDate: string;
             /**
              * @description Sexo del paciente (M/F)
-             * @example true
+             * @example M
              */
-            sexo: boolean;
+            gender: string;
             /**
              * @description Dirección del paciente
              * @example Av. Principal 123
              */
-            direccion?: string;
+            address?: string;
             /**
              * @description Número de teléfono del paciente
              * @example +51999999999
              */
-            telefono?: string;
+            phone?: string;
             /**
              * @description Correo electrónico del paciente
              * @example juan.perez@example.com
              */
-            correo?: string;
+            email?: string;
             /**
              * Format: date-time
              * @description Fecha de registro del paciente
              * @example 2023-01-01
              */
-            fechaRegistro: string;
-            /**
-             * @description Alergias conocidas del paciente
-             * @example Polen, Maní
-             */
-            alergias?: string;
-            /**
-             * @description Medicamentos que el paciente está tomando
-             * @example Ibuprofeno, Paracetamol
-             */
-            medicamentosActuales?: string;
+            registrationDate: string;
             /**
              * @description Nombre del contacto de emergencia
              * @example María Pérez
              */
-            contactoEmergencia?: string;
+            emergencyContact?: string;
             /**
              * @description Teléfono del contacto de emergencia
              * @example +51999999999
              */
-            telefonoEmergencia?: string;
+            emergencyPhone?: string;
             /**
              * @description Nombre de la compañía de seguro médico
              * @example Seguro Salud
              */
-            seguroMedico?: string;
+            healthInsurance?: string;
             /**
              * @description Estado civil del paciente
              * @example Soltero
              */
-            estadoCivil?: string;
+            maritalStatus?: string;
             /**
              * @description Profesión del paciente
              * @example Ingeniero
              */
-            ocupacion?: string;
+            occupation?: string;
             /**
              * @description Nombre y dirección del lugar de trabajo
              * @example Empresa XYZ, Av. Industrial 456
              */
-            lugarTrabajo?: string;
+            workplace?: string;
             /**
              * @description Grupo sanguíneo del paciente
              * @example O+
              */
-            tipoSangre?: string;
-            /**
-             * @description Enfermedades hereditarias en la familia
-             * @example Diabetes, Hipertensión
-             */
-            antecedentesFamiliares?: string;
-            /**
-             * @description Hábitos como consumo de tabaco, alcohol, etc.
-             * @example Fuma, Bebe ocasionalmente
-             */
-            habitosVida?: string;
-            /**
-             * @description Registro de vacunas recibidas
-             * @example [
-             *       {
-             *         "COVID-19": 1,
-             *         "Influenza": 2,
-             *         "Hepatitis B": 3,
-             *         "Sarampión": 1
-             *       }
-             *     ]
-             */
-            vacunas?: string;
+            bloodType?: string;
             /**
              * @description Nombre y contacto del médico principal
              * @example Dr. Juan Pérez, +51999999999
              */
-            medicoCabecera?: string;
+            primaryDoctor?: string;
             /**
              * @description Idioma preferido del paciente
              * @example Español
              */
-            idioma?: string;
-            /**
-             * @description Consentimientos y autorizaciones firmadas
-             * @example Consentimiento informado firmado el 01/01/2023
-             */
-            autorizacionTratamiento?: string;
+            language?: string;
             /**
              * @description Cualquier otra observación relevante
              * @example Paciente con antecedentes de alergias severas
              */
-            observaciones?: string;
+            notes?: string;
             /**
              * @description Imagen del paciente para identificación visual
              * @example data:image/png;base64,...
              */
-            fotografiaPaciente?: string;
+            patientPhoto?: string;
         };
-        Paciente: {
+        Patient: {
             id: string;
-            nombre: string;
-            apellido: string;
+            name: string;
+            lastName: string;
             dni: string;
             /** Format: date-time */
-            cumpleanos: string;
-            sexo: boolean;
-            direccion: string;
-            telefono: string;
-            correo: string;
+            birthDate: string;
+            gender: string;
+            address: string;
+            phone: string;
+            email: string;
             /** Format: date-time */
-            fechaRegistro: string;
-            alergias: string;
-            medicamentosActuales: string;
-            contactoEmergencia: string;
-            telefonoEmergencia: string;
-            seguroMedico: string;
-            estadoCivil: string;
-            ocupacion: string;
-            lugarTrabajo: string;
-            tipoSangre: string;
-            antecedentesFamiliares: string;
-            habitosVida: string;
-            vacunas: string;
-            medicoCabecera: string;
-            idioma: string;
-            autorizacionTratamiento: string;
-            observaciones: string;
-            fotografiaPaciente: string;
+            registrationDate: string;
+            emergencyContact: string;
+            emergencyPhone: string;
+            healthInsurance: string;
+            maritalStatus: string;
+            occupation: string;
+            workplace: string;
+            bloodType: string;
+            primaryDoctor: string;
+            language: string;
+            notes: string;
+            patientPhoto: string;
+            isActive: boolean;
         };
-        UpdatePacientDto: {
+        UpdatePatientDto: {
             /**
              * @description Nombre completo del paciente
              * @example Juan Pérez
              */
-            nombre?: string;
+            name?: string;
             /**
              * @description Apellido del paciente
              * @example González
              */
-            apellido?: string;
+            lastName?: string;
             /**
              * @description DNI del paciente
              * @example 12345678
@@ -3647,156 +3655,119 @@ export interface components {
              * @description Fecha de nacimiento del paciente
              * @example 1990-01-01
              */
-            cumpleanos?: string;
+            birthDate?: string;
             /**
              * @description Sexo del paciente (M/F)
-             * @example true
+             * @example M
              */
-            sexo?: boolean;
+            gender?: string;
             /**
              * @description Dirección del paciente
              * @example Av. Principal 123
              */
-            direccion?: string;
+            address?: string;
             /**
              * @description Número de teléfono del paciente
              * @example +51999999999
              */
-            telefono?: string;
+            phone?: string;
             /**
              * @description Correo electrónico del paciente
              * @example juan.perez@example.com
              */
-            correo?: string;
+            email?: string;
             /**
              * Format: date-time
              * @description Fecha de registro del paciente
              * @example 2023-01-01
              */
-            fechaRegistro?: string;
-            /**
-             * @description Alergias conocidas del paciente
-             * @example Polen, Maní
-             */
-            alergias?: string;
-            /**
-             * @description Medicamentos que el paciente está tomando
-             * @example Ibuprofeno, Paracetamol
-             */
-            medicamentosActuales?: string;
+            registrationDate?: string;
             /**
              * @description Nombre del contacto de emergencia
              * @example María Pérez
              */
-            contactoEmergencia?: string;
+            emergencyContact?: string;
             /**
              * @description Teléfono del contacto de emergencia
              * @example +51999999999
              */
-            telefonoEmergencia?: string;
+            emergencyPhone?: string;
             /**
              * @description Nombre de la compañía de seguro médico
              * @example Seguro Salud
              */
-            seguroMedico?: string;
+            healthInsurance?: string;
             /**
              * @description Estado civil del paciente
              * @example Soltero
              */
-            estadoCivil?: string;
+            maritalStatus?: string;
             /**
              * @description Profesión del paciente
              * @example Ingeniero
              */
-            ocupacion?: string;
+            occupation?: string;
             /**
              * @description Nombre y dirección del lugar de trabajo
              * @example Empresa XYZ, Av. Industrial 456
              */
-            lugarTrabajo?: string;
+            workplace?: string;
             /**
              * @description Grupo sanguíneo del paciente
              * @example O+
              */
-            tipoSangre?: string;
-            /**
-             * @description Enfermedades hereditarias en la familia
-             * @example Diabetes, Hipertensión
-             */
-            antecedentesFamiliares?: string;
-            /**
-             * @description Hábitos como consumo de tabaco, alcohol, etc.
-             * @example Fuma, Bebe ocasionalmente
-             */
-            habitosVida?: string;
-            /**
-             * @description Registro de vacunas recibidas
-             * @example [
-             *       {
-             *         "COVID-19": 1,
-             *         "Influenza": 2,
-             *         "Hepatitis B": 3,
-             *         "Sarampión": 1
-             *       }
-             *     ]
-             */
-            vacunas?: string;
+            bloodType?: string;
             /**
              * @description Nombre y contacto del médico principal
              * @example Dr. Juan Pérez, +51999999999
              */
-            medicoCabecera?: string;
+            primaryDoctor?: string;
             /**
              * @description Idioma preferido del paciente
              * @example Español
              */
-            idioma?: string;
-            /**
-             * @description Consentimientos y autorizaciones firmadas
-             * @example Consentimiento informado firmado el 01/01/2023
-             */
-            autorizacionTratamiento?: string;
+            language?: string;
             /**
              * @description Cualquier otra observación relevante
              * @example Paciente con antecedentes de alergias severas
              */
-            observaciones?: string;
+            notes?: string;
             /**
              * @description Imagen del paciente para identificación visual
              * @example data:image/png;base64,...
              */
-            fotografiaPaciente?: string;
+            patientPhoto?: string;
         };
-        DeletePacientDto: {
+        DeletePatientDto: {
             ids: string[];
         };
-        CreateRecipeDto: {
+        CreatePrescriptionDto: {
             /**
              * @description ID de la actualización de historia médica
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            updateHistoriaId: string;
+            updateHistoryId: string;
             /**
              * @description ID de la sucursal donde se emite la receta
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            sucursalId: string;
+            branchId: string;
             /**
              * @description ID del personal médico que emite la receta
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            personalId: string;
+            staffId: string;
             /**
              * @description ID del paciente
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            pacienteId: string;
+            patientId: string;
             /**
              * Format: date-time
              * @description Fecha de emisión de la receta
              * @example 2024-03-15T10:00:00Z
              */
-            fechaRegistro: string;
+            registrationDate: string;
             /**
              * @description Detalle de medicamentos y dosificación
              * @example {
@@ -3810,57 +3781,58 @@ export interface components {
              *       ]
              *     }
              */
-            receta: Record<string, never>;
+            prescription: Record<string, never>;
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
              */
-            descripcion?: string;
+            description?: string;
             /**
              * @description ID de la orden de compra asociada
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            ordenCompraId?: string;
+            purchaseOrderId?: string;
         };
-        Recipe: {
+        Prescription: {
             id: string;
-            updateHistoriaId: string;
-            sucursalId: string;
-            personalId: string;
-            pacienteId: string;
+            updateHistoryId: string;
+            branchId: string;
+            staffId: string;
+            patientId: string;
             /** Format: date-time */
-            fechaRegistro: string;
-            receta: string;
-            descripcion: string;
-            ordenCompraId: string;
+            registrationDate: string;
+            prescription: string;
+            description: string;
+            purchaseOrderId: string;
+            isActive: boolean;
         };
-        UpdateRecipeDto: {
+        UpdatePrescriptionDto: {
             /**
              * @description ID de la actualización de historia médica
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            updateHistoriaId?: string;
+            updateHistoryId?: string;
             /**
              * @description ID de la sucursal donde se emite la receta
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            sucursalId?: string;
+            branchId?: string;
             /**
              * @description ID del personal médico que emite la receta
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            personalId?: string;
+            staffId?: string;
             /**
              * @description ID del paciente
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            pacienteId?: string;
+            patientId?: string;
             /**
              * Format: date-time
              * @description Fecha de emisión de la receta
              * @example 2024-03-15T10:00:00Z
              */
-            fechaRegistro?: string;
+            registrationDate?: string;
             /**
              * @description Detalle de medicamentos y dosificación
              * @example {
@@ -3874,59 +3846,53 @@ export interface components {
              *       ]
              *     }
              */
-            receta?: Record<string, never>;
+            prescription?: Record<string, never>;
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
              */
-            descripcion?: string;
+            description?: string;
             /**
              * @description ID de la orden de compra asociada
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            ordenCompraId?: string;
+            purchaseOrderId?: string;
         };
-        DeleteRecipeDto: {
+        DeletePrescriptionDto: {
             ids: string[];
         };
-        CreateUpHistoryDto: {
+        CreateUpdateHistoryDto: {
             /**
-             * @description ID de la consulta médica
+             * @description ID del servicio
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            consultaMedicaId: string;
+            serviceId: string;
             /**
              * @description ID del personal médico
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            personalId: string;
+            staffId: string;
             /**
              * @description ID de la sucursal
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            sucursalId: string;
+            branchId: string;
             /**
              * @description ID de la historia médica
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            historiaMedicaId: string;
+            medicalHistoryId: string;
             /**
              * @description Indica si tiene receta médica
              * @default false
              * @example false
              */
-            receta: boolean;
+            prescription: boolean;
             /**
              * @description ID de la receta médica
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            recetaMedicaId?: string;
-            /**
-             * Format: date-time
-             * @description Fecha de la actualización
-             * @example 2024-03-15T10:00:00Z
-             */
-            fecha: string;
+            prescriptionId?: string;
             /**
              * @description Detalles de la actualización
              * @example {
@@ -3935,7 +3901,7 @@ export interface components {
              *       "observaciones": "Seguimiento en 7 días"
              *     }
              */
-            updateHistoria: Record<string, never>;
+            updateHistory: Record<string, never>;
             /**
              * @description Descripción adicional
              * @example Paciente presenta mejoría
@@ -3946,66 +3912,81 @@ export interface components {
              * @default false
              * @example false
              */
-            descansoMedico: boolean;
+            medicalLeave: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de inicio del descanso médico
+             * @example 2024-03-16T10:00:00Z
+             */
+            medicalLeaveStartDate?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de fin del descanso médico
+             * @example 2024-03-19T10:00:00Z
+             */
+            medicalLeaveEndDate?: string;
+            /**
+             * @description Cantidad de días de descanso médico
+             * @example 3
+             */
+            medicalLeaveDays?: number;
             /**
              * @description Descripción del descanso médico
              * @example Reposo por 3 días
              */
-            descripDescanso?: string;
+            leaveDescription?: string;
         };
-        UpHistory: {
+        UpdateHistory: {
             id: string;
-            consultaMedicaId: string;
-            personalId: string;
-            sucursalId: string;
-            historiaMedicaId: string;
-            receta: boolean;
-            recetaMedicaId: string;
-            /** Format: date-time */
-            fecha: string;
-            updateHistoria: Record<string, never>;
+            serviceId: string;
+            staffId: string;
+            branchId: string;
+            medicalHistoryId: string;
+            prescription: boolean;
+            prescriptionId: string;
+            updateHistory: Record<string, never>;
             description: string;
-            descansoMedico: boolean;
-            descripDescanso: string;
+            medicalLeave: boolean;
+            /** Format: date-time */
+            medicalLeaveStartDate: string;
+            /** Format: date-time */
+            medicalLeaveEndDate: string;
+            medicalLeaveDays: number;
+            leaveDescription: string;
+            isActive: boolean;
         };
-        UpdateUpHistoryDto: {
+        UpdateUpdateHistoryDto: {
             /**
-             * @description ID de la consulta médica
+             * @description ID del servicio
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            consultaMedicaId?: string;
+            serviceId?: string;
             /**
              * @description ID del personal médico
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            personalId?: string;
+            staffId?: string;
             /**
              * @description ID de la sucursal
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            sucursalId?: string;
+            branchId?: string;
             /**
              * @description ID de la historia médica
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            historiaMedicaId?: string;
+            medicalHistoryId?: string;
             /**
              * @description Indica si tiene receta médica
              * @default false
              * @example false
              */
-            receta: boolean;
+            prescription: boolean;
             /**
              * @description ID de la receta médica
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            recetaMedicaId?: string;
-            /**
-             * Format: date-time
-             * @description Fecha de la actualización
-             * @example 2024-03-15T10:00:00Z
-             */
-            fecha?: string;
+            prescriptionId?: string;
             /**
              * @description Detalles de la actualización
              * @example {
@@ -4014,7 +3995,7 @@ export interface components {
              *       "observaciones": "Seguimiento en 7 días"
              *     }
              */
-            updateHistoria?: Record<string, never>;
+            updateHistory?: Record<string, never>;
             /**
              * @description Descripción adicional
              * @example Paciente presenta mejoría
@@ -4025,89 +4006,93 @@ export interface components {
              * @default false
              * @example false
              */
-            descansoMedico: boolean;
+            medicalLeave: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de inicio del descanso médico
+             * @example 2024-03-16T10:00:00Z
+             */
+            medicalLeaveStartDate?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de fin del descanso médico
+             * @example 2024-03-19T10:00:00Z
+             */
+            medicalLeaveEndDate?: string;
+            /**
+             * @description Cantidad de días de descanso médico
+             * @example 3
+             */
+            medicalLeaveDays?: number;
             /**
              * @description Descripción del descanso médico
              * @example Reposo por 3 días
              */
-            descripDescanso?: string;
+            leaveDescription?: string;
         };
-        DeleteUpHistoryDto: {
+        DeleteUpdateHistoryDto: {
             ids: string[];
         };
-        CreateHistoryDto: {
+        CreateMedicalHistoryDto: {
             /**
-             * @description ID del paciente
+             * @description ID of the patient
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            pacienteId: string;
+            patientId: string;
             /**
-             * @description Datos de la historia médica
+             * @description Medical history data
              * @example {
-             *       "antecedentes": "Sin antecedentes relevantes",
-             *       "alergias": "Ninguna conocida",
+             *       "antecedentes": "No relevant history",
+             *       "alergias": "None known",
              *       "enfermedadesCronicas": [
-             *         "Hipertensión"
+             *         "Hypertension"
              *       ],
              *       "cirugiasPrevias": [
-             *         "Apendicectomía 2018"
+             *         "Appendectomy 2018"
              *       ]
              *     }
              */
-            historiaMedica: string;
+            medicalHistory: Record<string, never>;
             /**
-             * Format: date-time
-             * @description Fecha de la historia médica
-             * @example 2024-03-15T10:00:00Z
-             */
-            date: string;
-            /**
-             * @description Descripción adicional
-             * @example Primera consulta del paciente
+             * @description Additional description
+             * @example First patient consultation
              */
             description?: string;
         };
-        History: {
+        MedicalHistory: {
             id: string;
-            pacienteId: string;
-            historiaMedica: Record<string, never>;
-            /** Format: date-time */
-            date: string;
+            patientId: string;
+            medicalHistory: Record<string, never>;
             description: string;
+            isActive: boolean;
         };
-        UpdateHistoryDto: {
+        UpdateMedicalHistoryDto: {
             /**
-             * @description ID del paciente
+             * @description ID of the patient
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            pacienteId?: string;
+            patientId?: string;
             /**
-             * @description Datos de la historia médica
+             * @description Medical history data
              * @example {
-             *       "antecedentes": "Sin antecedentes relevantes",
-             *       "alergias": "Ninguna conocida",
+             *       "antecedentes": "No relevant history",
+             *       "alergias": "None known",
              *       "enfermedadesCronicas": [
-             *         "Hipertensión"
+             *         "Hypertension"
              *       ],
              *       "cirugiasPrevias": [
-             *         "Apendicectomía 2018"
+             *         "Appendectomy 2018"
              *       ]
              *     }
              */
-            historiaMedica?: string;
+            medicalHistory?: Record<string, never>;
             /**
-             * Format: date-time
-             * @description Fecha de la historia médica
-             * @example 2024-03-15T10:00:00Z
-             */
-            date?: string;
-            /**
-             * @description Descripción adicional
-             * @example Primera consulta del paciente
+             * @description Additional description
+             * @example First patient consultation
              */
             description?: string;
         };
-        DeleteHistoryDto: {
+        DeleteMedicalHistoryDto: {
             ids: string[];
         };
         CreateStaffTypeDto: {
@@ -4443,6 +4428,11 @@ export interface components {
              */
             staffId?: string;
             /**
+             * @description ID del personal asociado al evento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            recurrenceId?: string;
+            /**
              * @description Indica si el evento está activo
              * @default true
              * @example true
@@ -4536,6 +4526,11 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             staffId?: string;
+            /**
+             * @description ID del personal asociado al evento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            recurrenceId?: string;
             /**
              * @description Indica si el evento está activo
              * @default true
@@ -4740,11 +4735,6 @@ export interface components {
              */
             description?: string;
         };
-        TypeProduct: {
-            id: string;
-            name: string;
-            description: string;
-        };
         TypeProductResponse: {
             id: string;
             name: string;
@@ -4752,6 +4742,11 @@ export interface components {
             isActive: boolean;
             /** Format: date-time */
             createdAt: string;
+        };
+        TypeProduct: {
+            id: string;
+            name: string;
+            description: string;
         };
         UpdateTypeProductDto: {
             /**
@@ -4856,6 +4851,9 @@ export interface components {
             observaciones: string;
             condicionesAlmacenamiento: string;
             imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
         };
         ProductWithRelations: {
             id: string;
@@ -4873,6 +4871,9 @@ export interface components {
             observaciones: string;
             condicionesAlmacenamiento: string;
             imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
             categoria: Record<string, never>;
             tipoProducto: Record<string, never>;
         };
@@ -9158,7 +9159,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Paciente"][];
+                    "application/json": components["schemas"]["Patient"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9186,7 +9187,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreatePacienteDto"];
+                "application/json": components["schemas"]["CreatePatientDto"];
             };
         };
         responses: {
@@ -9196,7 +9197,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Paciente"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o paciente ya existe */
@@ -9233,7 +9234,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Paciente"];
+                    "application/json": components["schemas"]["Patient"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9270,7 +9271,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdatePacientDto"];
+                "application/json": components["schemas"]["UpdatePatientDto"];
             };
         };
         responses: {
@@ -9280,7 +9281,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Paciente"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9308,7 +9309,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeletePacientDto"];
+                "application/json": components["schemas"]["DeletePatientDto"];
             };
         };
         responses: {
@@ -9318,7 +9319,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Paciente"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o pacientes no existen */
@@ -9346,7 +9347,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeletePacientDto"];
+                "application/json": components["schemas"]["DeletePatientDto"];
             };
         };
         responses: {
@@ -9356,7 +9357,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Paciente"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o pacientes no existen */
@@ -9375,22 +9376,36 @@ export interface operations {
             };
         };
     };
-    RecipeController_findAll: {
+    PacientController_uploadImage: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description Archivo de imagen a subir
+                     */
+                    image?: string;
+                };
+            };
+        };
         responses: {
-            /** @description Lista de todas las recetas médicas */
-            200: {
+            /** @description Imagen subida exitosamente */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recipe"][];
+                    "application/json": {
+                        statusCode?: number;
+                        message?: string;
+                        data?: string;
+                    };
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9409,7 +9424,41 @@ export interface operations {
             };
         };
     };
-    RecipeController_create: {
+    PrescriptionController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las recetas médicas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Prescription"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PrescriptionController_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -9418,7 +9467,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateRecipeDto"];
+                "application/json": components["schemas"]["CreatePrescriptionDto"];
             };
         };
         responses: {
@@ -9428,7 +9477,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recipe"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o receta ya existe */
@@ -9447,7 +9496,7 @@ export interface operations {
             };
         };
     };
-    RecipeController_findOne: {
+    PrescriptionController_findOne: {
         parameters: {
             query?: never;
             header?: never;
@@ -9465,7 +9514,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recipe"];
+                    "application/json": components["schemas"]["Prescription"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9491,7 +9540,7 @@ export interface operations {
             };
         };
     };
-    RecipeController_update: {
+    PrescriptionController_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -9502,7 +9551,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateRecipeDto"];
+                "application/json": components["schemas"]["UpdatePrescriptionDto"];
             };
         };
         responses: {
@@ -9512,7 +9561,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recipe"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9531,7 +9580,7 @@ export interface operations {
             };
         };
     };
-    RecipeController_deleteMany: {
+    PrescriptionController_deleteMany: {
         parameters: {
             query?: never;
             header?: never;
@@ -9540,7 +9589,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteRecipeDto"];
+                "application/json": components["schemas"]["DeletePrescriptionDto"];
             };
         };
         responses: {
@@ -9550,7 +9599,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recipe"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o recetas no existen */
@@ -9569,7 +9618,7 @@ export interface operations {
             };
         };
     };
-    RecipeController_reactivateAll: {
+    PrescriptionController_reactivateAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -9578,7 +9627,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteRecipeDto"];
+                "application/json": components["schemas"]["DeletePrescriptionDto"];
             };
         };
         responses: {
@@ -9588,7 +9637,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Recipe"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o recetas no existen */
@@ -9607,7 +9656,7 @@ export interface operations {
             };
         };
     };
-    UpHistoryController_findAll: {
+    UpdateHistoryController_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -9622,7 +9671,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpHistory"][];
+                    "application/json": components["schemas"]["UpdateHistory"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9641,7 +9690,7 @@ export interface operations {
             };
         };
     };
-    UpHistoryController_create: {
+    UpdateHistoryController_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -9650,7 +9699,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateUpHistoryDto"];
+                "application/json": components["schemas"]["CreateUpdateHistoryDto"];
             };
         };
         responses: {
@@ -9660,7 +9709,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpHistory"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o actualización ya existe */
@@ -9679,7 +9728,7 @@ export interface operations {
             };
         };
     };
-    UpHistoryController_findOne: {
+    UpdateHistoryController_findOne: {
         parameters: {
             query?: never;
             header?: never;
@@ -9697,7 +9746,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpHistory"];
+                    "application/json": components["schemas"]["UpdateHistory"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9723,7 +9772,7 @@ export interface operations {
             };
         };
     };
-    UpHistoryController_update: {
+    UpdateHistoryController_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -9734,7 +9783,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateUpHistoryDto"];
+                "application/json": components["schemas"]["UpdateUpdateHistoryDto"];
             };
         };
         responses: {
@@ -9744,7 +9793,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpHistory"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9763,7 +9812,7 @@ export interface operations {
             };
         };
     };
-    UpHistoryController_deleteMany: {
+    UpdateHistoryController_deleteMany: {
         parameters: {
             query?: never;
             header?: never;
@@ -9772,7 +9821,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteUpHistoryDto"];
+                "application/json": components["schemas"]["DeleteUpdateHistoryDto"];
             };
         };
         responses: {
@@ -9782,7 +9831,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpHistory"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o actualizaciones no existen */
@@ -9801,7 +9850,7 @@ export interface operations {
             };
         };
     };
-    UpHistoryController_reactivateAll: {
+    UpdateHistoryController_reactivateAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -9810,7 +9859,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteUpHistoryDto"];
+                "application/json": components["schemas"]["DeleteUpdateHistoryDto"];
             };
         };
         responses: {
@@ -9820,7 +9869,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpHistory"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o actualizaciones no existen */
@@ -9839,7 +9888,7 @@ export interface operations {
             };
         };
     };
-    HistoryController_findAll: {
+    MedicalHistoryController_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -9854,7 +9903,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["History"][];
+                    "application/json": components["schemas"]["MedicalHistory"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9873,7 +9922,7 @@ export interface operations {
             };
         };
     };
-    HistoryController_create: {
+    MedicalHistoryController_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -9882,7 +9931,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateHistoryDto"];
+                "application/json": components["schemas"]["CreateMedicalHistoryDto"];
             };
         };
         responses: {
@@ -9892,7 +9941,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["History"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o historia médica ya existe */
@@ -9911,7 +9960,7 @@ export interface operations {
             };
         };
     };
-    HistoryController_findOne: {
+    MedicalHistoryController_findOne: {
         parameters: {
             query?: never;
             header?: never;
@@ -9929,7 +9978,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["History"];
+                    "application/json": components["schemas"]["MedicalHistory"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9955,7 +10004,7 @@ export interface operations {
             };
         };
     };
-    HistoryController_update: {
+    MedicalHistoryController_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -9966,7 +10015,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateHistoryDto"];
+                "application/json": components["schemas"]["UpdateMedicalHistoryDto"];
             };
         };
         responses: {
@@ -9976,7 +10025,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["History"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9995,7 +10044,7 @@ export interface operations {
             };
         };
     };
-    HistoryController_deleteMany: {
+    MedicalHistoryController_deleteMany: {
         parameters: {
             query?: never;
             header?: never;
@@ -10004,7 +10053,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteHistoryDto"];
+                "application/json": components["schemas"]["DeleteMedicalHistoryDto"];
             };
         };
         responses: {
@@ -10014,7 +10063,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["History"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o historias médicas no existen */
@@ -10033,7 +10082,7 @@ export interface operations {
             };
         };
     };
-    HistoryController_reactivateAll: {
+    MedicalHistoryController_reactivateAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -10042,7 +10091,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteHistoryDto"];
+                "application/json": components["schemas"]["DeleteMedicalHistoryDto"];
             };
         };
         responses: {
@@ -10052,7 +10101,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["History"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o historias médicas no existen */
@@ -11287,6 +11336,40 @@ export interface operations {
             };
         };
     };
+    CategoryController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las categorías activas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     CategoryController_findOne: {
         parameters: {
             query?: never;
@@ -11504,6 +11587,40 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o tipo de producto ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de productos activos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeProductResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;

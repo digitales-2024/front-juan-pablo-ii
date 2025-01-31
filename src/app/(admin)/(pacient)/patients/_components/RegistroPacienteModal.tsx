@@ -87,7 +87,7 @@ export function RegistroPacienteModal({ isOpen, onClose }: RegistroPacienteModal
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Registrar Nuevo Paciente</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">Datos del Paciente</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex justify-center mb-6">
@@ -165,23 +165,13 @@ export function RegistroPacienteModal({ isOpen, onClose }: RegistroPacienteModal
             </div>
           </div>
           
-          <div>
-            <Label htmlFor="alergias">Alergias</Label>
-            <Textarea id="alergias" name="alergias" value={formData.alergias} onChange={handleInputChange} placeholder="Describa las alergias del paciente..." className="min-h-[100px]" />
-          </div>
-          
-          <div>
-            <Label htmlFor="medicamentosActuales">Medicamentos Actuales</Label>
-            <Textarea id="medicamentosActuales" name="medicamentosActuales" value={formData.medicamentosActuales} onChange={handleInputChange} placeholder="Liste los medicamentos actuales..." className="min-h-[100px]" />
-          </div>
-          
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="contactoEmergencia">Contacto de Emergencia</Label>
               <InputWithIcon icon={<UserPlus className="w-4 h-4" />} id="contactoEmergencia" name="contactoEmergencia" value={formData.contactoEmergencia} onChange={handleInputChange} />
             </div>
             <div>
-              <Label htmlFor="telefonoEmergencia">Teléfono de Emergencia</Label>
+              <Label htmlFor="telefonoEmergencia">Numero de Emergencia</Label>
               <InputWithIcon icon={<PhoneIcon className="w-4 h-4" />} id="telefonoEmergencia" name="telefonoEmergencia" value={formData.telefonoEmergencia} onChange={handleInputChange} />
             </div>
           </div>
@@ -190,6 +180,7 @@ export function RegistroPacienteModal({ isOpen, onClose }: RegistroPacienteModal
             <div>
               <Label htmlFor="seguroMedico">Seguro Médico</Label>
               <InputWithIcon icon={<Heart className="w-4 h-4" />} id="seguroMedico" name="seguroMedico" value={formData.seguroMedico} onChange={handleInputChange} />
+              
             </div>
             <div>
               <Label htmlFor="estadoCivil">Estado Civil</Label>
@@ -217,7 +208,7 @@ export function RegistroPacienteModal({ isOpen, onClose }: RegistroPacienteModal
               <InputWithIcon icon={<MapPin className="w-4 h-4" />} id="lugarTrabajo" name="lugarTrabajo" value={formData.lugarTrabajo} onChange={handleInputChange} />
             </div>
           </div>
-          
+          <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="tipoSangre">Tipo de Sangre</Label>
             <Select name="tipoSangre" value={formData.tipoSangre} onValueChange={(value) => handleSelectChange('tipoSangre', value)}>
@@ -237,37 +228,30 @@ export function RegistroPacienteModal({ isOpen, onClose }: RegistroPacienteModal
             </Select>
           </div>
           
-          <div>
-            <Label htmlFor="antecedentesFamiliares">Antecedentes Familiares</Label>
-            <Textarea id="antecedentesFamiliares" name="antecedentesFamiliares" value={formData.antecedentesFamiliares} onChange={handleInputChange} placeholder="Describa los antecedentes familiares relevantes..." className="min-h-[100px]" />
-          </div>
-          
-          <div>
-            <Label htmlFor="habitosVida">Hábitos de Vida</Label>
-            <Textarea id="habitosVida" name="habitosVida" value={formData.habitosVida} onChange={handleInputChange} placeholder="Describa los hábitos de vida del paciente..." className="min-h-[100px]" />
-          </div>
           
           <div>
             <Label htmlFor="medicoCabecera">Médico de Cabecera</Label>
             <InputWithIcon icon={<User className="w-4 h-4" />} id="medicoCabecera" name="medicoCabecera" value={formData.medicoCabecera} onChange={handleInputChange} />
           </div>
+          </div>
+
           
           <div>
             <Label htmlFor="idioma">Idioma</Label>
             <InputWithIcon icon={<Globe className="w-4 h-4" />} id="idioma" name="idioma" value={formData.idioma} onChange={handleInputChange} />
-          </div>
-          
-          <div>
-            <Label htmlFor="autorizacionTratamiento">Autorización de Tratamiento</Label>
-            <InputWithIcon icon={<FileText className="w-4 h-4" />} id="autorizacionTratamiento" name="autorizacionTratamiento" value={formData.autorizacionTratamiento} onChange={handleInputChange} />
-          </div>
+          </div>  
           
           <div>
             <Label htmlFor="observaciones">Observaciones</Label>
             <Textarea id="observaciones" name="observaciones" value={formData.observaciones} onChange={handleInputChange} placeholder="Añada cualquier observación relevante..." className="min-h-[100px]" />
           </div>
           
+          <div className="grid grid-cols-2 gap-4">
+          <Button type="submit" className="w-full">Cancelar</Button>
           <Button type="submit" className="w-full">Registrar Paciente</Button>
+          </div>
+         
+
         </form>
       </DialogContent>
     </Dialog>
