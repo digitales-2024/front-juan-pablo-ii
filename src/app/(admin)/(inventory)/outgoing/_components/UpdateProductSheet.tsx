@@ -31,8 +31,8 @@ import {
 import { PencilIcon, RefreshCcw } from "lucide-react";
 import { useProducts } from "../_hooks/useProduct";
 import { AutoComplete } from "@/components/ui/autocomplete";
-import { useCategories } from "../../category/_hooks/useCategory";
-import { useTypeProducts } from "../../product-types/_hooks/useType";
+import { useCategories } from "@/app/(admin)/(catalog)/product/category/_hooks/useCategory";
+import { useTypeProducts } from "@/app/(admin)/(catalog)/product/product-types/_hooks/useType";
 import LoadingDialogForm from "./LoadingDialogForm";
 import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
 import { Textarea } from "@/components/ui/textarea";

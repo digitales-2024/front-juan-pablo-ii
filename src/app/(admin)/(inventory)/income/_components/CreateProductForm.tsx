@@ -14,15 +14,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AutoComplete } from "@/components/ui/autocomplete";
 import LoadingDialogForm from "./LoadingDialogForm";
-import { useCategories } from "../../category/_hooks/useCategory";
 import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
-import { useTypeProducts } from "../../product-types/_hooks/useType";
 import { FORMSTATICS as STATIC_FORM } from "../_statics/forms";
 import { Option } from "@/types/statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
 import { METADATA } from "../_statics/metadata";
 import { useMemo } from "react";
+import { useCategories } from "@/app/(admin)/(catalog)/product/category/_hooks/useCategory";
+import { useTypeProducts } from "@/app/(admin)/(catalog)/product/product-types/_hooks/useType";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
