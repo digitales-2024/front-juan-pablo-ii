@@ -5,6 +5,7 @@ import {
   reactivateTypeProduct,
   updateTypeProduct,
   getTypeProducts,
+  getActiveTypeProducts,
 } from "../actions";
 import { toast } from "sonner";
 import {
@@ -29,6 +30,16 @@ export const useTypeProducts = () => {
     queryKey: ["type-products"],
     queryFn: async () => {
       const response = await getTypeProducts();
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      return response;
+    },
+  });
+  const activeTypeProductsQuery = useQuery<TypeProductResponse[], Error>({
+    queryKey: ["activeTypeProducts"],
+    queryFn: async () => {
+      const response = await getActiveTypeProducts();
       if ("error" in response) {
         throw new Error(response.error);
       }
@@ -195,6 +206,12 @@ export const useTypeProducts = () => {
     isLoading: typeProductsQuery.isLoading,
     isError: typeProductsQuery.isError,
     error: typeProductsQuery.error,
+    refetch: typeProductsQuery.refetch,
+    activeData: activeTypeProductsQuery.data,
+    activeIsLoading: activeTypeProductsQuery.isLoading,
+    activeIsError: activeTypeProductsQuery.isError,
+    activeError: activeTypeProductsQuery.error,
+    activeRefetch: activeTypeProductsQuery.refetch,
     createTypeProduct: createMutation.mutate,
     isCreating: createMutation.isPending,
     createError: createMutation.error,
