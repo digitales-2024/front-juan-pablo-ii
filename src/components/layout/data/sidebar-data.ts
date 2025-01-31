@@ -160,12 +160,12 @@ export const sidebarData: SidebarData = {
             },
             {
               title: "Entradas",
-              url: "/entries",
+              url: "/income",
               icon: PackagePlus,
             },
             {
               title: "Salidas",
-              url: "/exits",
+              url: "/outgoing",
               icon: PackageMinus,
             },
           ],
