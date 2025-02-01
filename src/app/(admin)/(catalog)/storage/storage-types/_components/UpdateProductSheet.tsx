@@ -24,12 +24,12 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import {
-  updateProductSchema,
-  UpdateProductInput,
-  Product,
-} from "../_interfaces/products.interface";
+  updateTypeStorageSchema,
+  UpdateTypeStorageInput,
+  TypeStorage,
+} from "../_interfaces/storageTypes.interface";
 import { PencilIcon, RefreshCcw } from "lucide-react";
-import { useProducts } from "../_hooks/useProduct";
+import { useTypeStorages } from "../_hooks/useStorageTypes";
 import { AutoComplete } from "@/components/ui/autocomplete";
 import { useCategories } from "@/app/(admin)/(catalog)/product/category/_hooks/useCategory";
 import { useTypeProducts } from "@/app/(admin)/(catalog)/product/product-types/_hooks/useType";
@@ -41,20 +41,20 @@ import { UPDATEFORMSTATICS as FORMSTATICS} from "../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 
 interface UpdateProductSheetProps {
-  product: Product;
+  typeStorage: TypeStorage;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   showTrigger?: boolean;
 }
 
 export function UpdateProductSheet({
-  product,
+  typeStorage,
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
 }: UpdateProductSheetProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const { updateMutation } = useProducts();
+  const { updateMutation } = useTypeStorages();
 
   // Use controlled state if props are provided, otherwise use internal state
   const isOpen = controlledOpen ?? uncontrolledOpen;
@@ -72,59 +72,32 @@ export function UpdateProductSheet({
   //   }
   // }
 
-  // export const updateProductSchema = z.object({
-  //   categoriaId: z.string().uuid().optional(),
-  //   tipoProductoId: z.string().uuid().optional(),
-  //   name: z.string().min(1, "El nombre es requerido").optional(),
-  //   precio: z.number().min(0, "El precio no puede ser negativo").optional(),
-  //   unidadMedida: z.string().optional(),
-  //   proveedor: z.string().optional(),
-  //   uso: z.string().optional(),
-  //   usoProducto: z.string().optional(),
-  //   description: z.string().optional(),
-  //   codigoProducto: z.string().optional(),
-  //   descuento: z.number().optional(),
-  //   observaciones: z.string().optional(),
-  //   condicionesAlmacenamiento: z.string().optional(),
-  //   imagenUrl: z.string().url().optional(),
-  // }) satisfies z.ZodType<UpdateProductDto>;
+// export const updateTypeStorageSchema = z.object(
+//   {
+//     name: z.string().optional(),
+//     description: z.string().optional(),
+//     branchId: z.string().uuid().optional(),
+//     staffId: z.string().uuid().optional(),
+//   }
+// ) satisfies z.ZodType<UpdateTypeStorageDto>;
 
-  const form = useForm<UpdateProductInput>({
-    resolver: zodResolver(updateProductSchema),
+  const form = useForm<UpdateTypeStorageInput>({
+    resolver: zodResolver(updateTypeStorageSchema),
     defaultValues: {
-      categoriaId:
-        product.categoriaId ?? FORMSTATICS.categoriaId.defaultValue,
-      tipoProductoId:
-        product.tipoProductoId ?? FORMSTATICS.tipoProductoId.defaultValue,
-      name: product.name ?? FORMSTATICS.name.defaultValue,
-      precio: product.precio ?? FORMSTATICS.precio.defaultValue,
-      unidadMedida:
-        product.unidadMedida ?? FORMSTATICS.unidadMedida.defaultValue,
-      proveedor: product.proveedor ?? FORMSTATICS.proveedor.defaultValue,
-      uso: product.uso ?? FORMSTATICS.uso.defaultValue,
-      usoProducto:
-        product.usoProducto ?? FORMSTATICS.usoProducto.defaultValue,
-      description:
-        product.description ?? FORMSTATICS.description.defaultValue,
-      codigoProducto:
-        product.codigoProducto ?? FORMSTATICS.codigoProducto.defaultValue,
-      descuento: product.descuento ?? FORMSTATICS.descuento.defaultValue,
-      observaciones:
-        product.observaciones ?? FORMSTATICS.observaciones.defaultValue,
-      condicionesAlmacenamiento:
-        product.condicionesAlmacenamiento ??
-        FORMSTATICS.condicionesAlmacenamiento.defaultValue,
-      imagenUrl: product.imagenUrl ?? FORMSTATICS.imagenUrl.defaultValue,
+      name: typeStorage.name ?? FORMSTATICS.name.defaultValue,
+      description: typeStorage.description ?? FORMSTATICS.description.defaultValue,
+      branchId: typeStorage.branchId ?? FORMSTATICS.branchId.defaultValue,
+      staffId: typeStorage.staffId ?? FORMSTATICS.staffId.defaultValue,
     },
   });
 
-  const onSubmit = async (data: UpdateProductInput) => {
+  const onSubmit = async (data: UpdateTypeStorageInput) => {
     if (updateMutation.isPending) return;
 
     try {
       await updateMutation.mutateAsync(
         {
-          id: product.id,
+          id: typeStorage.id,
           data,
         },
         {
@@ -219,105 +192,38 @@ export function UpdateProductSheet({
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-2 gap-4">
-                <FormField
+              <FormField
+                control={form.control}
+                name={FORMSTATICS.name.name}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>{FORMSTATICS.name.label}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder={FORMSTATICS.name.placeholder}
+                        type={FORMSTATICS.name.type}
+                      />
+                    </FormControl>
+                    <CustomFormDescription
+                      required={FORMSTATICS.name.required}
+                    ></CustomFormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Campo de Sucursal */}
+              <FormField
                   control={form.control}
-                  name={FORMSTATICS.name.name}
+                  name={FORMSTATICS.branchId.name}
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.name.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.name.placeholder}
-                          type={FORMSTATICS.name.type}
-                        />
-                      </FormControl>
-                      <CustomFormDescription
-                        required={FORMSTATICS.name.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.codigoProducto.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.codigoProducto.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.codigoProducto.placeholder}
-                        />
-                      </FormControl>
-                      <CustomFormDescription
-                        required={FORMSTATICS.codigoProducto.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="precio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FORMSTATICS.precio.label}</FormLabel>
-                      <div className="flex items-center space-x-2">
-                        <div className="text-muted-foreground">S/.</div>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder={FORMSTATICS.precio.placeholder}
-                            type={FORMSTATICS.precio.type}
-                          />
-                        </FormControl>
-                      </div>
-                      <CustomFormDescription
-                        required={FORMSTATICS.precio.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.descuento.name}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FORMSTATICS.descuento.label}</FormLabel>
-                      <div className="flex items-center space-x-2">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder={FORMSTATICS.descuento.placeholder}
-                            type={FORMSTATICS.descuento.type}
-                          />
-                        </FormControl>
-                        <div className="text-muted-foreground">%</div>
-                      </div>
-                      <FormMessage />
-                      <CustomFormDescription
-                        required={FORMSTATICS.descuento.required}
-                      ></CustomFormDescription>
-                    </FormItem>
-                  )}
-                />
-                {/* Campo de categoría */}
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.categoriaId.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel htmlFor={FORMSTATICS.categoriaId.name}>
-                        {FORMSTATICS.categoriaId.label}
-                      </FormLabel>
+                      <FormLabel htmlFor={FORMSTATICS.branchId.name}>{FORMSTATICS.branchId.label}</FormLabel>
                       <FormControl>
                         <AutoComplete
                           options={categoryOptions}
-                          placeholder={FORMSTATICS.categoriaId.placeholder}
-                          emptyMessage={FORMSTATICS.categoriaId.emptyMessage!}
+                          placeholder={FORMSTATICS.branchId.placeholder}
+                          emptyMessage={FORMSTATICS.branchId.emptyMessage!}
                           value={
                             categoryOptions.find(
                               (option) => option.value === field.value
@@ -328,9 +234,7 @@ export function UpdateProductSheet({
                           }}
                         />
                       </FormControl>
-                      <CustomFormDescription
-                        required={FORMSTATICS.categoriaId.required}
-                      ></CustomFormDescription>
+                      <CustomFormDescription required={FORMSTATICS.branchId.required}></CustomFormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -338,17 +242,17 @@ export function UpdateProductSheet({
                 {/* Campo de tipo de producto */}
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.tipoProductoId.name}
+                  name={FORMSTATICS.staffId.name}
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.tipoProductoId.label}</FormLabel>
+                      <FormLabel>
+                        {FORMSTATICS.staffId.label}
+                      </FormLabel>
                       <FormControl>
                         <AutoComplete
                           options={typeProductOptions}
-                          placeholder={FORMSTATICS.tipoProductoId.placeholder}
-                          emptyMessage={
-                            FORMSTATICS.tipoProductoId.emptyMessage!
-                          }
+                          placeholder={FORMSTATICS.staffId.placeholder}
+                          emptyMessage={FORMSTATICS.staffId.emptyMessage!}
                           value={
                             typeProductOptions.find(
                               (option) => option.value === field.value
@@ -359,69 +263,7 @@ export function UpdateProductSheet({
                           }}
                         />
                       </FormControl>
-                      <CustomFormDescription
-                        required={FORMSTATICS.tipoProductoId.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.unidadMedida.name}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FORMSTATICS.unidadMedida.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={FORMSTATICS.unidadMedida.placeholder}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <CustomFormDescription
-                        required={FORMSTATICS.unidadMedida.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.proveedor.name}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FORMSTATICS.proveedor.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.proveedor.placeholder}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <CustomFormDescription
-                        required={FORMSTATICS.proveedor.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.usoProducto.name}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FORMSTATICS.usoProducto.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.usoProducto.placeholder}
-                        />
-                      </FormControl>
-                      <CustomFormDescription
-                        required={FORMSTATICS.usoProducto.required}
-                      ></CustomFormDescription>
+                      <CustomFormDescription required={FORMSTATICS.staffId.required}></CustomFormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -439,57 +281,7 @@ export function UpdateProductSheet({
                         />
                       </FormControl>
                       <FormMessage />
-                      <CustomFormDescription
-                        required={FORMSTATICS.description.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.observaciones.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.observaciones.label}</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          placeholder={FORMSTATICS.observaciones.placeholder}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <CustomFormDescription
-                        required={FORMSTATICS.observaciones.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.condicionesAlmacenamiento.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>
-                        {FORMSTATICS.condicionesAlmacenamiento.label}
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          placeholder={
-                            FORMSTATICS.condicionesAlmacenamiento.placeholder
-                          }
-                        />
-                      </FormControl>
-                      <CustomFormDescription
-                        required={
-                          FORMSTATICS.condicionesAlmacenamiento.required
-                        }
-                      ></CustomFormDescription>
+                      <CustomFormDescription required={FORMSTATICS.description.required}></CustomFormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

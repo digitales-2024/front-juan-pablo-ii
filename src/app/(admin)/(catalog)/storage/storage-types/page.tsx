@@ -1,10 +1,10 @@
 "use client";
 
-import { ProductTable } from "./_components/ProductTable";
+import { ProductTable } from "./_components/StorageTypeTable";
 import { PageHeader } from "@/components/PageHeader";
 // import { getBranches } from "./_actions/branch.actions";
 import { notFound } from "next/navigation";
-import { useProducts } from "./_hooks/useProduct";
+import { useProducts } from "./_hooks/useStorageTypes";
 import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
 

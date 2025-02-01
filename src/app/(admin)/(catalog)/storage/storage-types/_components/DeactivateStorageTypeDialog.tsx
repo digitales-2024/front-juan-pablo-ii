@@ -23,30 +23,30 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Product } from "../_interfaces/products.interface";
+import { TypeStorage } from "../_interfaces/storageTypes.interface";
 import { RefreshCcw, Trash } from "lucide-react";
-import { useProducts } from "../_hooks/useProduct";
+import { useTypeStorages } from "../_hooks/useStorageTypes";
 import { toast } from "sonner";
 import { ComponentPropsWithoutRef } from "react";
 
-interface DeactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
-  product?: Product;
-  products?: Product[];
+interface DeactivateTypeStorageDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+  typeStorage?: TypeStorage;
+  typeStorages?: TypeStorage[];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export function DeactivateProductDialog({
-  product,
-  products,
+export function DeactivateTypeStorageDialog({
+  typeStorage,
+  typeStorages,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeactivateProductDialogProps) {
+}: DeactivateTypeStorageDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { deleteMutation: { isPending, mutateAsync } } = useProducts();
+  const { deleteMutation: { isPending, mutateAsync } } = useTypeStorages();
 
-  const items = products ?? (product ? [product] : []);
+  const items = typeStorages ?? (typeStorage ? [typeStorage] : []);
 
   async function onDelete() {
     const ids = items.map((item) => item.id);
@@ -54,8 +54,8 @@ export function DeactivateProductDialog({
       await mutateAsync({ ids });
       toast.success(
         items.length === 1
-          ? "Producto desactivado exitosamente"
-          : "Productos desactivados exitosamente"
+          ? "Tipo de almacenamiento desactivado exitosamente"
+          : "Tipos de almacenamiento desactivados exitosamente"
       );
       onSuccess?.();
     } catch (error) {
@@ -80,7 +80,7 @@ export function DeactivateProductDialog({
             <AlertDialogDescription>
               Esta acción desactivará a
               <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? " producto" : " productos"}
+              {items.length === 1 ? " tipo de almacenamiento" : " tipos de almacenamiento"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -118,7 +118,7 @@ export function DeactivateProductDialog({
           <DrawerDescription>
             Esta acción desactivará a
             <span className="font-medium"> {items.length}</span>
-            {items.length === 1 ? " producto" : " productos"}
+            {items.length === 1 ? " tipo de almacenamiento" : " tipos de almacenamiento"}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">

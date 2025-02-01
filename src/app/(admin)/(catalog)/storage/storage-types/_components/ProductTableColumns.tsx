@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { DetailedProduct } from "../_interfaces/storageTypes.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +20,7 @@ import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { ReactivateProductDialog } from "./ReactivateProductDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DeactivateProductDialog } from "./DeactivateProductDialog";
+import { DeactivateProductDialog } from "./DeactivateStorageTypeDialog";
 // import Image from "next/image";
 
 export const columns: ColumnDef<DetailedProduct>[] = [

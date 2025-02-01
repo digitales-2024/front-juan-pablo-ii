@@ -2,12 +2,12 @@
 import { useEffect, useState, useTransition } from "react";
 import { FieldErrors, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateProductInput, createProductSchema } from "../_interfaces/products.interface";
+import { CreateTypeStorageInput, createTypeStorageSchema } from "../_interfaces/storageTypes.interface";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateProductForm } from "./CreateProductForm";
-import { useProducts } from "../_hooks/useProduct";
+import { useTypeStorages } from "../_hooks/useStorageTypes";
 import {
   Dialog,
   DialogContent,
@@ -40,46 +40,26 @@ export function CreateProductDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { createMutation } = useProducts();
+  const { createMutation } = useTypeStorages();
 
-  // export const createProductSchema = z.object({
-  //   categoriaId: z.string().min(1, "La categoría es requerida").uuid(),
-  //   tipoProductoId: z.string().min(1, "El tipo de producto es requerido").uuid(),
-  //   name: z.string().min(1, "El nombre es requerido"),
-  //   precio: z.number().min(0, "El precio no puede ser negativo"),
-  //   unidadMedida: z.string().optional(),
-  //   proveedor: z.string().optional(),
-  //   uso: z.string().optional(),
-  //   usoProducto: z.string().optional(),
-  //   description: z.string().optional(),
-  //   codigoProducto: z.string().optional(),
-  //   descuento: z.number().optional(),
-  //   observaciones: z.string().optional(),
-  //   condicionesAlmacenamiento: z.string().optional(),
-  //   imagenUrl: z.string().url().optional(),
-  // }) satisfies z.ZodType<CreateProductDto>;
+// export const createTypeStorageSchema = z.object({
+//   name: z.string().min(1, "El nombre es requerido"),
+//   description: z.string().optional(),
+//   branchId: z.string().uuid().optional(),
+//   staffId: z.string().uuid().optional(),
+// }) satisfies z.ZodType<CreateTypeStorageDto>;
 
-  const form = useForm<CreateProductInput>({
-    resolver: zodResolver(createProductSchema),
+  const form = useForm<CreateTypeStorageInput>({
+    resolver: zodResolver(createTypeStorageSchema),
     defaultValues: {
-      categoriaId: "",
-      tipoProductoId: "",
       name: "",
-      precio: 0,
-      unidadMedida: "",
-      proveedor: "",
-      uso: "",
-      usoProducto: "",
       description: "",
-      codigoProducto: "",
-      descuento: 0,
-      observaciones: "",
-      condicionesAlmacenamiento: "",
-      imagenUrl: "https://fakeimg.pl/600x400"
+      branchId: "",
+      staffId: "",
     },
   });
 
-  function handleSubmit(input: CreateProductInput) {
+  function handleSubmit(input: CreateTypeStorageInput) {
     console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
     if (createMutation.isPending || isCreatePending) return;
 
@@ -198,10 +178,10 @@ export function CreateProductDialog() {
 }
 
 
-function DevelopmentZodError({ form }: { form: UseFormReturn<CreateProductInput> }) {
+function DevelopmentZodError({ form }: { form: UseFormReturn<CreateTypeStorageInput> }) {
   console.log('Ingresando a DevelopmentZodError', process.env.NEXT_PUBLIC_ENV);
   if (process.env.NEXT_PUBLIC_ENV !== "development") return null;
-  const [errors, setErrors] = useState<FieldErrors<CreateProductInput>>({});
+  const [errors, setErrors] = useState<FieldErrors<CreateTypeStorageInput>>({});
   useEffect(() => {
     if (form.formState.errors) {
       setErrors(form.formState.errors);
@@ -213,7 +193,7 @@ function DevelopmentZodError({ form }: { form: UseFormReturn<CreateProductInput>
         {
           Object.keys(errors).map((key) => (
             <p key={key}>
-              {key}: {errors[key as keyof CreateProductInput]?.message}
+              {key}: {errors[key as keyof CreateTypeStorageInput]?.message}
             </p>
           ))
         }

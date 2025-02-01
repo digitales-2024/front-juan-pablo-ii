@@ -1,7 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { CreateProductInput } from "../_interfaces/products.interface";
+import { CreateTypeStorageInput } from "../_interfaces/storageTypes.interface";
 import {
   Form,
   FormControl,
@@ -27,8 +27,8 @@ import { useMemo } from "react";
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
-  form: UseFormReturn<CreateProductInput>;
-  onSubmit: (data: CreateProductInput) => void;
+  form: UseFormReturn<CreateTypeStorageInput>;
+  onSubmit: (data: CreateTypeStorageInput) => void;
 }
 
 // export const createProductSchema = z.object({
@@ -166,83 +166,18 @@ export function CreateProductForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name={FORMSTATICS.codigoProducto.name}
-            render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel>{FORMSTATICS.codigoProducto.label}</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder={FORMSTATICS.codigoProducto.placeholder}
-                  />
-                </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.codigoProducto.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="precio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{FORMSTATICS.precio.label}</FormLabel>
-                <div className="flex items-center space-x-2">
-                  <div className="text-muted-foreground">S/.</div>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={FORMSTATICS.precio.placeholder}
-                      type={FORMSTATICS.precio.type}
-                    />
-                  </FormControl>
-                </div>
-                <CustomFormDescription
-                  required={FORMSTATICS.precio.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name={FORMSTATICS.descuento.name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{FORMSTATICS.descuento.label}</FormLabel>
-                <div className="flex items-center space-x-2">
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={FORMSTATICS.descuento.placeholder}
-                      type={FORMSTATICS.descuento.type}
-                    />
-                  </FormControl>
-                  <div className="text-muted-foreground">%</div>
-                </div>
-                <FormMessage />
-                <CustomFormDescription
-                  required={FORMSTATICS.descuento.required}
-                ></CustomFormDescription>
-              </FormItem>
-            )}
-          />
-          {/* Campo de categoría */}
+          {/* Campo de Sucursal */}
           <FormField
               control={form.control}
-              name={FORMSTATICS.categoriaId.name}
+              name={FORMSTATICS.branchId.name}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel htmlFor={FORMSTATICS.categoriaId.name}>{FORMSTATICS.categoriaId.label}</FormLabel>
+                  <FormLabel htmlFor={FORMSTATICS.branchId.name}>{FORMSTATICS.branchId.label}</FormLabel>
                   <FormControl>
                     <AutoComplete
                       options={categoryOptions}
-                      placeholder={FORMSTATICS.categoriaId.placeholder}
-                      emptyMessage={FORMSTATICS.categoriaId.emptyMessage!}
+                      placeholder={FORMSTATICS.branchId.placeholder}
+                      emptyMessage={FORMSTATICS.branchId.emptyMessage!}
                       value={
                         categoryOptions.find(
                           (option) => option.value === field.value
@@ -253,7 +188,7 @@ export function CreateProductForm({
                       }}
                     />
                   </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.categoriaId.required}></CustomFormDescription>
+                  <CustomFormDescription required={FORMSTATICS.branchId.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -261,17 +196,17 @@ export function CreateProductForm({
             {/* Campo de tipo de producto */}
             <FormField
               control={form.control}
-              name={FORMSTATICS.tipoProductoId.name}
+              name={FORMSTATICS.staffId.name}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>
-                    {FORMSTATICS.tipoProductoId.label}
+                    {FORMSTATICS.staffId.label}
                   </FormLabel>
                   <FormControl>
                     <AutoComplete
                       options={typeProductOptions}
-                      placeholder={FORMSTATICS.tipoProductoId.placeholder}
-                      emptyMessage={FORMSTATICS.tipoProductoId.emptyMessage!}
+                      placeholder={FORMSTATICS.staffId.placeholder}
+                      emptyMessage={FORMSTATICS.staffId.emptyMessage!}
                       value={
                         typeProductOptions.find(
                           (option) => option.value === field.value
@@ -282,55 +217,7 @@ export function CreateProductForm({
                       }}
                     />
                   </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.tipoProductoId.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.unidadMedida.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{FORMSTATICS.unidadMedida.label}</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={FORMSTATICS.unidadMedida.placeholder}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.unidadMedida.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.proveedor.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{FORMSTATICS.proveedor.label}</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder={FORMSTATICS.proveedor.placeholder}/>
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.proveedor.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.usoProducto.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{FORMSTATICS.usoProducto.label}</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder={FORMSTATICS.usoProducto.placeholder} />
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.usoProducto.required}></CustomFormDescription>
+                  <CustomFormDescription required={FORMSTATICS.staffId.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -349,44 +236,6 @@ export function CreateProductForm({
                   </FormControl>
                   <FormMessage />
                   <CustomFormDescription required={FORMSTATICS.description.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.observaciones.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>{FORMSTATICS.observaciones.label}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder={FORMSTATICS.observaciones.placeholder}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.observaciones.required}></CustomFormDescription>
-                  <FormMessage />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.condicionesAlmacenamiento.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>{FORMSTATICS.condicionesAlmacenamiento.label}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder={FORMSTATICS.condicionesAlmacenamiento.placeholder}
-                    />
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.condicionesAlmacenamiento.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -5,12 +5,6 @@ export const METADATA:PageMetadata = {
 	title: "Tipos de almacénes",
 	description: "Administra los tipos de almacén que tienes en tu empresa. Como Farmacia, Material Médico, Equipamiento, Material de Laboratorio, Suministros de Esterilización, Ropa e Indumentaria Médica, Almacén de Insumos Administrativos, etc.",
     Icon: HousePlus,
-	dataDependencies: [
-		{
-			dependencyName: "Tipos de Almacén",
-			dependencyUrl: "/storage/storage-types",
-		}
-	]
 } as const;
 
 // {

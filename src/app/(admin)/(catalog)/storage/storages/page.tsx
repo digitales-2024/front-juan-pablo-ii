@@ -4,7 +4,7 @@ import { ProductTable } from "./_components/ProductTable";
 import { PageHeader } from "@/components/PageHeader";
 // import { getBranches } from "./_actions/branch.actions";
 import { notFound } from "next/navigation";
-import { useProducts } from "./_hooks/useProduct";
+import { useProducts } from "./_hooks/useStorages";
 import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
 

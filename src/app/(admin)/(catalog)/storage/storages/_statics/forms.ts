@@ -1,5 +1,5 @@
 import { FormStatics } from "@/types/statics/forms";
-import { CreateProductInput, UpdateProductInput } from "../_interfaces/products.interface";
+import { CreateProductInput, UpdateProductInput } from "../_interfaces/storage.interface";
 // export const createProductSchema = z.object({
 //     categoriaId: z.string().min(1, "La categoría es requerida").uuid(),
 //     tipoProductoId: z.string().min(1, "El tipo de producto es requerido").uuid(),

@@ -1,7 +1,7 @@
 import { Table } from "@tanstack/react-table";
-import { DetailedProduct } from "../_interfaces/products.interface";
-import { CreateProductDialog } from "./CreateProductDialog";
-import { DeactivateProductDialog } from "./DeactivateProductDialog";
+import { DetailedProduct } from "../_interfaces/storageTypes.interface";
+import { CreateProductDialog } from "./CreateTypeStorageDialog";
+import { DeactivateProductDialog } from "./DeactivateStorageTypeDialog";
 import { ReactivateProductDialog } from "./ReactivateProductDialog";
 
 export interface ProductTableToolbarActionsProps {

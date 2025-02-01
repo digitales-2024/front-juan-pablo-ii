@@ -1,221 +1,77 @@
 import { FormStatics } from "@/types/statics/forms";
-import { CreateProductInput, UpdateProductInput } from "../_interfaces/products.interface";
-// export const createProductSchema = z.object({
-//     categoriaId: z.string().min(1, "La categoría es requerida").uuid(),
-//     tipoProductoId: z.string().min(1, "El tipo de producto es requerido").uuid(),
+import { CreateTypeStorageInput, UpdateTypeStorageInput } from "../_interfaces/storageTypes.interface";
+
+// export type FormFieldStatics<T> = {
+//     label: string;
+//     required: boolean;
+//     name : T; //El nombre es el mismo string de la validaciòn de zod
+//     placeholder: string;
+//     type: HTMLInputTypeAttribute;
+//     isNotEditable?: boolean;
+//     defaultValue?: string | number; //Change according to necessity
+//     description?: string;
+//     emptyMessage?: string; //In case of a search select
+// }
+// export type FormStatics<T> = Record<keyof T, FormFieldStatics<keyof T>>;
+
+// export const createTypeStorageSchema = z.object({
 //     name: z.string().min(1, "El nombre es requerido"),
-//     precio: z.coerce.number().min(0, "El precio no puede ser negativo"),
-//     unidadMedida: z.string().optional(),
-//     proveedor: z.string().optional(),
-//     uso: z.string().optional(),
-//     usoProducto: z.string().optional(),
 //     description: z.string().optional(),
-//     codigoProducto: z.string().optional(),
-//     descuento: z.coerce.number().optional(),
-//     observaciones: z.string().optional(),
-//     condicionesAlmacenamiento: z.string().optional(),
-//     imagenUrl: z.string().url().optional(),
-//   }) satisfies z.ZodType<CreateProductDto>;
-//   export const updateProductSchema = z.object({
-//     categoriaId: z.string().uuid().optional(),
-//     tipoProductoId: z.string().uuid().optional(),
-//     name: z.string().min(1, "El nombre es requerido").optional(),
-//     precio: z.number().min(0, "El precio no puede ser negativo").optional(),
-//     unidadMedida: z.string().optional(),
-//     proveedor: z.string().optional(),
-//     uso: z.string().optional(),
-//     usoProducto: z.string().optional(),
-//     description: z.string().optional(),
-//     codigoProducto: z.string().optional(),
-//     descuento: z.number().optional(),
-//     observaciones: z.string().optional(),
-//     condicionesAlmacenamiento: z.string().optional(),
-//     imagenUrl: z.string().url().optional(),
-//   }) satisfies z.ZodType<UpdateProductDto>;
-export const FORMSTATICS: FormStatics<CreateProductInput> = {
-    categoriaId: {
-        required: true,
-        label: "Categoría",
-        type: "radio",
-        placeholder: "Selecciona una categoría",
-        emptyMessage: "No se encontraron categorías",
-        name: "categoriaId",
-        defaultValue: "",
-    },
-    tipoProductoId: {
-        required: true,
-        label: "Subcategoría",
-        type: "radio",
-        placeholder: "Selecciona una subcategoría",
-        name: "tipoProductoId",
-        emptyMessage: "No se encontraron subcategorías",
-        defaultValue: "",
-    },
+//     branchId: z.string().uuid().optional(),
+//     staffId: z.string().uuid().optional(),
+//   }) satisfies z.ZodType<CreateTypeStorageDto>;
+//  export const updateTypeStorageSchema = z.object(
+//     {
+//       name: z.string().optional(),
+//       description: z.string().optional(),
+//       branchId: z.string().uuid().optional(),
+//       staffId: z.string().uuid().optional(),
+//     }
+//   ) satisfies z.ZodType<UpdateTypeStorageDto>;
+
+export const FORMSTATICS: FormStatics<CreateTypeStorageInput> = {
     name: {
         required: true,
         label: "Nombre",
+        defaultValue: "",
         type: "text",
-        placeholder: "Nombre del producto",
+        placeholder: "Nombre del tipo de almacenamiento",
         name: "name",
-        defaultValue: "",
-    },
-    precio: {
-        label: "Precio",
-        required: true,
-        type: "number",
-        placeholder: "Precio sin descuentos",
-        name: "precio",
-        defaultValue: 0,
-    },
-    unidadMedida: {
-        required: false,
-        label: "Unidad de medida",
-        type: "text",
-        placeholder: "Unidad de medida (ml, kg, caja, etc.)",
-        name: "unidadMedida",
-        defaultValue: "",
-    },
-    proveedor: {
-        required: false,
-        label: "Proveedor",
-        type: "text",
-        placeholder: "Proveedor",
-        name: "proveedor",
-        defaultValue: "",
-    },
-    uso: {
-        required: false,
-        label: "Uso",
-        type: "text",
-        placeholder: "Uso",
-        name: "uso",
-        defaultValue: "",
-    },
-    usoProducto: {
-        required: false,
-        label: "Ámbito de uso",
-        type: "text",
-        placeholder: "Venta, uso interno, etc.",
-        name: "usoProducto",
-        defaultValue: "",
     },
     description: {
         required: false,
         label: "Descripción",
+        defaultValue: "",
         type: "text",
         placeholder: "Descripción",
         name: "description",
-        defaultValue: "",
     },
-    codigoProducto: {
-        required: true,
-        label: "Código de producto",
-        type: "text",
-        placeholder: "Código de producto",
-        name: "codigoProducto",
-        defaultValue: "",
-    },
-    descuento: {
-        required:false,
-        label: "Descuento",
-        type: "number",
-        placeholder: "Descuento del producto",
-        name: "descuento",
-        defaultValue: 0,
-    },
-    observaciones: {
+    branchId: {
         required: false,
-        label: "Observaciones",
-        type: "text",
-        placeholder: "Observaciones",
-        name: "observaciones",
+        label: "Sucursal",
         defaultValue: "",
-    },
-    condicionesAlmacenamiento: {
-        required: false,
-        label: "Condiciones de almacenamiento",
         type: "text",
-        placeholder: "Condiciones de almacenamiento del producto",
-        name: "condicionesAlmacenamiento",
+        placeholder: "Sucursal",
+        name: "branchId",
+    },
+    staffId: {
+        required: false,
+        label: "Personal",
         defaultValue: "",
-    },
-    imagenUrl: {
-        required: false,
-        label: "URL de la imagen",
         type: "text",
-        placeholder: "URL de la imagen",
-        name: "imagenUrl",
-        defaultValue: "https://fakeimg.pl/600x400",
+        placeholder: "Personal",
+        name: "staffId",
     },
 }
 
-export const UPDATEFORMSTATICS: FormStatics<UpdateProductInput> = {
-    categoriaId: {
-        required: false,
-        isNotEditable: true,
-        label: "Categoría",
-        defaultValue: "",
-        type: "radio",
-        placeholder: "Selecciona una categoría",
-        emptyMessage: "No se encontraron categorías",
-        name: "categoriaId",
-    },
-    tipoProductoId: {
-        required: false,
-        label: "Subcategoría",
-        defaultValue: "",
-        type: "radio",
-        placeholder: "Selecciona una subcategoría",
-        name: "tipoProductoId",
-        emptyMessage: "No se encontraron subcategorías",
-    },
+export const UPDATEFORMSTATICS: FormStatics<UpdateTypeStorageInput> = {
     name: {
         required: false,
         label: "Nombre",
         defaultValue: "",
         type: "text",
-        placeholder: "Nombre del producto",
+        placeholder: "Nombre del tipo de almacenamiento",
         name: "name",
-    },
-    precio: {
-        required: false,
-        label: "Precio",
-        defaultValue: 0,
-        type: "number",
-        placeholder: "Precio sin descuentos",
-        name: "precio",
-    },
-    unidadMedida: {
-        required: false,
-        label: "Unidad de medida",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Unidad de medida (ml, kg, caja, etc.)",
-        name: "unidadMedida",
-    },
-    proveedor: {
-        required: false,
-        label: "Proveedor",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Proveedor",
-        name: "proveedor",
-    },
-    uso: {
-        required: false,
-        label: "Uso",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Uso",
-        name: "uso",
-    },
-    usoProducto: {
-        required: false,
-        label: "Ámbito de uso",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Venta, uso interno, etc.",
-        name: "usoProducto",
     },
     description: {
         required: false,
@@ -225,44 +81,20 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateProductInput> = {
         placeholder: "Descripción",
         name: "description",
     },
-    codigoProducto: {
+    branchId: {
         required: false,
-        label: "Código de producto",
+        label: "Sucursal",
         defaultValue: "",
         type: "text",
-        placeholder: "Código de producto",
-        name: "codigoProducto",
+        placeholder: "Sucursal",
+        name: "branchId",
     },
-    descuento: {
-        required:false,
-        label: "Descuento",
-        defaultValue: 0,
-        type: "number",
-        placeholder: "Descuento del producto",
-        name: "descuento",
-    },
-    observaciones: {
+    staffId: {
         required: false,
-        label: "Observaciones",
+        label: "Personal",
         defaultValue: "",
         type: "text",
-        placeholder: "Observaciones",
-        name: "observaciones",
-    },
-    condicionesAlmacenamiento: {
-        required: false,
-        label: "Condiciones de almacenamiento",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Condiciones de almacenamiento del producto",
-        name: "condicionesAlmacenamiento",
-    },
-    imagenUrl: {
-        required: false,
-        label: "URL de la imagen",
-        defaultValue: "https://fakeimg.pl/600x400",
-        type: "text",
-        placeholder: "URL de la imagen",
-        name: "imagenUrl",
+        placeholder: "Personal",
+        name: "staffId",
     },
 }

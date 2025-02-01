@@ -23,9 +23,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Product } from "../_interfaces/products.interface";
+import { Product } from "../_interfaces/storageTypes.interface";
 import { RefreshCcw, RefreshCcwDot } from "lucide-react";
-import { useProducts } from "../_hooks/useProduct";
+import { useProducts } from "../_hooks/useStorageTypes";
 import { ComponentPropsWithoutRef } from "react";
 
 interface ReactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {

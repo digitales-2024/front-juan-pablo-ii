@@ -4,10 +4,10 @@ import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from "./ProductTableColumns";
 import { ProductTableToolbarActions } from "./ProductTableToolbarActions";
 // import { ListCategoryResponse } from "../_actions/category.actions";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { TypeStorage } from "../_interfaces/storageTypes.interface";
 
 interface ProductTableProps {
-  data: DetailedProduct[];
+  data: TypeStorage[];
 }
 
 // name
@@ -29,20 +29,6 @@ export function ProductTable({ data }: ProductTableProps) {
       data={data}
       placeholder="Buscar por nombre ..."
       toolbarActions={(table) => <ProductTableToolbarActions table={table} />}
-      columnVisibilityConfig={{
-        name: true,
-        unidadMedida: false,
-        codigoProducto: true,
-        categoria: true,
-        tipoProducto: false,
-        precio: true,
-        descuento: false,
-        description: true,
-        observaciones: false,
-        condicionesAlmacenamiento: false,
-        usoProducto: true,
-        isActive: true,
-      }}
     />
   );
 }

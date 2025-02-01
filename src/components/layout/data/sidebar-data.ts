@@ -234,7 +234,7 @@ export const sidebarData: SidebarData = {
           icon: Warehouse,
           items: [
             {
-              title: "Almacénes",
+              title: "Almacenes",
               url: "/storage/storages",
               icon: Warehouse,
             },

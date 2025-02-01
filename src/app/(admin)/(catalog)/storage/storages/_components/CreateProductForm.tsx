@@ -1,7 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { CreateProductInput } from "../_interfaces/products.interface";
+import { CreateProductInput } from "../_interfaces/storage.interface";
 import {
   Form,
   FormControl,

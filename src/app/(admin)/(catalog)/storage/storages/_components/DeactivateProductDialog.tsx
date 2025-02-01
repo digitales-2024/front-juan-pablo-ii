@@ -23,9 +23,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Product } from "../_interfaces/products.interface";
+import { Product } from "../_interfaces/storage.interface";
 import { RefreshCcw, Trash } from "lucide-react";
-import { useProducts } from "../_hooks/useProduct";
+import { useProducts } from "../_hooks/useStorages";
 import { toast } from "sonner";
 import { ComponentPropsWithoutRef } from "react";
 
