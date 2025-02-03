@@ -28,6 +28,7 @@ import { RefreshCcw, Trash } from "lucide-react";
 import { useProducts } from "../_hooks/useProduct";
 import { toast } from "sonner";
 import { ComponentPropsWithoutRef } from "react";
+import { METADATA } from "../_statics/metadata";
 
 interface DeactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
   product?: Product;
@@ -54,8 +55,8 @@ export function DeactivateProductDialog({
       await mutateAsync({ ids });
       toast.success(
         items.length === 1
-          ? "Producto desactivado exitosamente"
-          : "Productos desactivados exitosamente"
+          ? `${METADATA.entityName} desactivado exitosamente`
+          : `${METADATA.entityPluralName} desactivados exitosamente`
       );
       onSuccess?.();
     } catch (error) {
@@ -80,7 +81,7 @@ export function DeactivateProductDialog({
             <AlertDialogDescription>
               Esta acción desactivará a
               <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? " producto" : " productos"}
+              {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -118,7 +119,7 @@ export function DeactivateProductDialog({
           <DrawerDescription>
             Esta acción desactivará a
             <span className="font-medium"> {items.length}</span>
-            {items.length === 1 ? " producto" : " productos"}
+            {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">

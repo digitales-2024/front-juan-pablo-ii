@@ -1,8 +1,8 @@
 "use client";
 
 import { DataTable } from "@/components/data-table/DataTable";
-import { columns } from "./ProductTableColumns";
-import { ProductTableToolbarActions } from "./ProductTableToolbarActions";
+import { columns } from "./StorageTypeTableColumns";
+import { TypeStorageTableToolbarActions } from "./ProductTableToolbarActions";
 // import { ListCategoryResponse } from "../_actions/category.actions";
 import { TypeStorage } from "../_interfaces/storageTypes.interface";
 
@@ -28,7 +28,7 @@ export function ProductTable({ data }: ProductTableProps) {
       columns={columns}
       data={data}
       placeholder="Buscar por nombre ..."
-      toolbarActions={(table) => <ProductTableToolbarActions table={table} />}
+      toolbarActions={(table) => <TypeStorageTableToolbarActions table={table} />}
     />
   );
 }

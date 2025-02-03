@@ -28,6 +28,7 @@ import { RefreshCcw, Trash } from "lucide-react";
 import { useTypeStorages } from "../_hooks/useStorageTypes";
 import { toast } from "sonner";
 import { ComponentPropsWithoutRef } from "react";
+import { METADATA } from "../_statics/metadata";
 
 interface DeactivateTypeStorageDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
   typeStorage?: TypeStorage;
@@ -54,8 +55,8 @@ export function DeactivateTypeStorageDialog({
       await mutateAsync({ ids });
       toast.success(
         items.length === 1
-          ? "Tipo de almacenamiento desactivado exitosamente"
-          : "Tipos de almacenamiento desactivados exitosamente"
+          ? `${METADATA.entityName} desactivado exitosamente`
+          : `${METADATA.entityPluralName} desactivados exitosamente`
       );
       onSuccess?.();
     } catch (error) {
@@ -80,7 +81,7 @@ export function DeactivateTypeStorageDialog({
             <AlertDialogDescription>
               Esta acción desactivará a
               <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? " tipo de almacenamiento" : " tipos de almacenamiento"}
+              {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -118,7 +119,7 @@ export function DeactivateTypeStorageDialog({
           <DrawerDescription>
             Esta acción desactivará a
             <span className="font-medium"> {items.length}</span>
-            {items.length === 1 ? " tipo de almacenamiento" : " tipos de almacenamiento"}
+            {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">

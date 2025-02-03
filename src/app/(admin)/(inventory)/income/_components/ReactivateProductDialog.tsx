@@ -27,6 +27,7 @@ import { Product } from "../_interfaces/products.interface";
 import { RefreshCcw, RefreshCcwDot } from "lucide-react";
 import { useProducts } from "../_hooks/useProduct";
 import { ComponentPropsWithoutRef } from "react";
+import { METADATA } from "../_statics/metadata";
 
 interface ReactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
   product?: Product;
@@ -74,7 +75,7 @@ export function ReactivateProductDialog({
             <AlertDialogDescription>
               Esta acción reactivará a
               <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? " producto" : " productos"}
+              {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -112,7 +113,7 @@ export function ReactivateProductDialog({
           <DrawerDescription>
             Esta acción reactivará a
             <span className="font-medium"> {items.length}</span>
-            {items.length === 1 ? " producto" : " productos"}
+            {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">

@@ -45,7 +45,28 @@ const getBranchesHandler = async () => {
   }
 }
 
+const getActiveBranchesHandler = async () => {
+  try {
+    const [branches, error] = await http.get<Branch[]>("/branch/active");
+
+    if (error) {
+      return { error: typeof error === 'object' && error !== null && 'message' in error 
+        ? String(error.message) 
+        : 'Error al obtener las sucursales' };
+    }
+
+    if (!Array.isArray(branches)) {
+      return { error: 'Respuesta inválida del servidor' };
+    }
+    return { data: branches };
+  } catch (error) {
+    console.error("💥 Error en getBranchesHandler:", error);
+    return { error: "Error al obtener las sucursales" };
+  }
+}
+
 export const getBranches = await createSafeAction(GetBranchesSchema, getBranchesHandler);
+export const getActiveBranches = await createSafeAction(GetBranchesSchema, getActiveBranchesHandler);
 
 export async function createBranch(
   data: CreateBranchDto

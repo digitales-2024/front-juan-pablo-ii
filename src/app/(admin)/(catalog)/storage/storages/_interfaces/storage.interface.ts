@@ -36,7 +36,7 @@ export const createStorageSchema = z.object({
 export const updateStorageSchema = z.object({
   name: z.string().optional(),
   location: z.string().optional(),
-  typeStorageId: z.string().uuid().optional(),
+  typeStorageId: z.string().optional(),
 }) satisfies z.ZodType<UpdateStorageDto>;
 
 export type CreateStorageInput = z.infer<typeof createStorageSchema>;

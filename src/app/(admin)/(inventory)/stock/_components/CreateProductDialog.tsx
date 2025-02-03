@@ -26,6 +26,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { METADATA } from "../_statics/metadata";
 
 const CREATE_PRODUCT_MESSAGES = {
   button: "Crear producto",
@@ -90,7 +91,7 @@ export function CreateProductDialog() {
           form.reset();
         },
         onError: (error) => {
-          console.error("Error al crear producto:", error);
+          console.error(`Error al crear ${METADATA.entityName.toLowerCase()}:`, error);
           if (error.message.includes("No autorizado")) {
             setTimeout(() => {
               form.reset();

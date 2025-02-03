@@ -2,11 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedProduct } from "../_interfaces/storageTypes.interface";
+import { TypeStorage } from "../_interfaces/storageTypes.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-import { UpdateProductSheet } from "./UpdateProductSheet";
+import { UpdateStorageTypeSheet } from "./UpdateStorageTypeSheet";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import {
@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-import { ReactivateProductDialog } from "./ReactivateProductDialog";
+import { ReactivateStorageTypeDialog } from "./ReactivateStorageTypeDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DeactivateProductDialog } from "./DeactivateStorageTypeDialog";
+import { DeactivateTypeStorageDialog } from "./DeactivateStorageTypeDialog";
 // import Image from "next/image";
 
-export const columns: ColumnDef<DetailedProduct>[] = [
+export const columns: ColumnDef<TypeStorage>[] = [
   {
     id: "select",
     size: 10,
@@ -56,94 +56,18 @@ export const columns: ColumnDef<DetailedProduct>[] = [
     enableHiding: false,
     enablePinning: true,
   },
+  //   type TypeStorage = {
+//     id: string;
+//     name: string;
+//     description: string;
+//     branchId: string;
+//     staffId: string;
+//     isActive: boolean;
+// }
   {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
-    ),
-  },
-  {
-    accessorKey: "unidadMedida",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Medida" />
-    ),
-  },
-  {
-    accessorKey: "codigoProducto",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
-    ),
-  },
-  // NO usamos por el momento
-  // {
-  //   accessorKey: "imagenUrl",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Imágen" />
-  //   ),
-  //   cell: ({ row }) => (
-  //     // <Image
-  //     //   src={row.original.imagenUrl}
-  //     //   alt={row.original.name}
-  //     //   width={24}
-  //     //   height={24}
-  //     //   className="w-6 h-6 rounded-md object-cover"
-  //     // />
-  //     <img src={row.original.imagenUrl}
-  //         alt={row.original.name}
-  //         className="w-6 h-6 rounded-md object-cover"
-  //       />
-  //   ),
-  // },
-  {
-    accessorKey: "categoria",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Categoría" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.categoria?.name || "Sin Categoría"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "tipoProducto",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Subcategoría" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.tipoProducto?.name || "Sin subcategoría"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "precio",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Precio" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.precio.toLocaleString("es-PE", {
-          style: "currency",
-          currency: "PEN",
-        })}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "descuento",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descuento" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {/* The discounts have been stored in the DB as a porcentage, so we need to convert it to a percentage by dividing by 100*/}
-        {(row.original.descuento / 100)?.toLocaleString("es-PE", {
-          style: "percent",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }) || "Sin descuento"}
-      </span>
     ),
   },
   {
@@ -153,21 +77,25 @@ export const columns: ColumnDef<DetailedProduct>[] = [
     ),
   },
   {
-    accessorKey: "observaciones",
+    accessorKey: "branchId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Observaciones" />
+      <DataTableColumnHeader column={column} title="ID Sucursal" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.branchId|| "Sin Sucursal asociada"}
+      </span>
     ),
   },
   {
-    accessorKey: "condicionesAlmacenamiento",
+    accessorKey: "staffId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Condiciones de almacenamiento" />
+      <DataTableColumnHeader column={column} title="ID Personal" />
     ),
-  },
-  {
-    accessorKey: "usoProducto",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ámbito de uso" />
+    cell: ({ row }) => (
+      <span>
+        {row.original.staffId || "Sin personal asociado"}
+      </span>
     ),
   },
   {
@@ -200,27 +128,27 @@ export const columns: ColumnDef<DetailedProduct>[] = [
       const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
       const [showEditSheet, setShowEditSheet] = useState(false);
-      const product = row.original;
-      const { isActive } = product;
+      const storageType = row.original;
+      const { isActive } = storageType;
       const isSuperAdmin = true;
 
       return (
         <div>
           <div>
-            <UpdateProductSheet
-              product={product}
+            <UpdateStorageTypeSheet
+              typeStorage={storageType}
               open={showEditSheet}
               onOpenChange={setShowEditSheet}
               showTrigger={false}
             />
-            <DeactivateProductDialog
-              product={product}
+            <DeactivateTypeStorageDialog
+              typeStorage={storageType}
               open={showDeleteDialog}
               onOpenChange={setShowDeleteDialog}
               showTrigger={false}
             />
-            <ReactivateProductDialog
-              product={product}
+            <ReactivateStorageTypeDialog
+              storageType={storageType}
               open={showReactivateDialog}
               onOpenChange={setShowReactivateDialog}
               showTrigger={false}

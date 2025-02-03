@@ -6,7 +6,7 @@ import { CreateTypeStorageInput, createTypeStorageSchema } from "../_interfaces/
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CreateProductForm } from "./CreateProductForm";
+import { CreateTypeStorageForm } from "./CreateStorageTypeForm";
 import { useTypeStorages } from "../_hooks/useStorageTypes";
 import {
   Dialog,
@@ -26,17 +26,19 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { METADATA } from "../_statics/metadata";
 
-const CREATE_PRODUCT_MESSAGES = {
-  button: "Crear producto",
-  title: "Registrar nuevo producto",
-  description: "Rellena los campos para crear un nuevo producto",
-  success: "Producto creado exitosamente",
-  submitButton: "Crear producto",
+const SUBJECT_ENTITYNAME = METADATA.entityName.toLowerCase();
+const CREATE_TYPE_STORAGE_MESSAGES = {
+  button: `Crear ${SUBJECT_ENTITYNAME}`,
+  title: `Registrar nuevo ${SUBJECT_ENTITYNAME}`,
+  description: `Rellena los campos para crear un nuevo ${SUBJECT_ENTITYNAME}`,
+  success: `${METADATA.entityName} creado exitosamente`,
+  submitButton: `Crear ${SUBJECT_ENTITYNAME}`,
   cancel: "Cancelar",
 } as const;
 
-export function CreateProductDialog() {
+export function CreateTypeStorageDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
@@ -70,7 +72,7 @@ export function CreateProductDialog() {
           form.reset();
         },
         onError: (error) => {
-          console.error("Error al crear producto:", error);
+          console.error(`Error al crear ${METADATA.entityName.toLowerCase()}:`, error);
           if (error.message.includes("No autorizado")) {
             setTimeout(() => {
               form.reset();
@@ -106,7 +108,7 @@ export function CreateProductDialog() {
             aria-hidden="true"
           />
         )}
-        {CREATE_PRODUCT_MESSAGES.submitButton}
+        {CREATE_TYPE_STORAGE_MESSAGES.submitButton}
       </Button>
       <Button
         type="button"
@@ -114,7 +116,7 @@ export function CreateProductDialog() {
         className="w-full"
         onClick={handleClose}
       >
-        {CREATE_PRODUCT_MESSAGES.cancel}
+        {CREATE_TYPE_STORAGE_MESSAGES.cancel}
       </Button>
     </div>
   );
@@ -126,7 +128,7 @@ export function CreateProductDialog() {
       size="sm"
     >
       <Plus className="size-4 mr-2" aria-hidden="true" />
-      {CREATE_PRODUCT_MESSAGES.button}
+      {CREATE_TYPE_STORAGE_MESSAGES.button}
     </Button>
   );
 
@@ -138,17 +140,17 @@ export function CreateProductDialog() {
         </DialogTrigger>
         <DialogContent className="max-w-xl max-h-[calc(100vh-4rem)]">
           <DialogHeader>
-            <DialogTitle>{CREATE_PRODUCT_MESSAGES.title}</DialogTitle>
+            <DialogTitle>{CREATE_TYPE_STORAGE_MESSAGES.title}</DialogTitle>
             <DialogDescription>
-              {CREATE_PRODUCT_MESSAGES.description}
+              {CREATE_TYPE_STORAGE_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <CreateProductForm form={form} onSubmit={handleSubmit}>
+          <CreateTypeStorageForm form={form} onSubmit={handleSubmit}>
             <DevelopmentZodError form={form} />
             <DialogFooter>
               <DialogFooterContent />
             </DialogFooter>
-          </CreateProductForm>
+          </CreateTypeStorageForm>
         </DialogContent>
       </Dialog>
     );
@@ -161,17 +163,17 @@ export function CreateProductDialog() {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{CREATE_PRODUCT_MESSAGES.title}</DrawerTitle>
+          <DrawerTitle>{CREATE_TYPE_STORAGE_MESSAGES.title}</DrawerTitle>
           <DrawerDescription>
-            {CREATE_PRODUCT_MESSAGES.description}
+            {CREATE_TYPE_STORAGE_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <CreateProductForm form={form} onSubmit={handleSubmit}>
+        <CreateTypeStorageForm form={form} onSubmit={handleSubmit}>
           <DevelopmentZodError form={form} />
           <DrawerFooter>
             <DialogFooterContent />
           </DrawerFooter>
-        </CreateProductForm>
+        </CreateTypeStorageForm>
       </DrawerContent>
     </Drawer>
   );

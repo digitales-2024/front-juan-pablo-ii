@@ -7,7 +7,8 @@ import {
   getTypeStorages,
   //getDetailedTypeStorages,
   getTypeStorageById,
-  TypeStorageResponse
+  TypeStorageResponse,
+  getActiveTypeStorages
 } from "../_actions/storageTypes.actions";
 import { toast } from "sonner";
 import {
@@ -39,6 +40,23 @@ export const useTypeStorages = () => {
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
+
+    // Query para obtener los tipos de almacenamiento activos
+    const activeTypeStoragesQuery = useQuery({
+      queryKey: ["active-typeStorages"],
+      queryFn: async () => {
+        const response = await getActiveTypeStorages({});
+        if (!response) {
+          throw new Error("No se recibió respuesta del servidor");
+        }
+  
+        if (response.error || !response.data) {
+          throw new Error(response.error ?? "Error desconocido");
+        }
+        return response.data;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
 
   // const detailedTypeStoragesQuery = useQuery({
   //   queryKey: ["detailed-typeStorages"],
@@ -211,6 +229,7 @@ export const useTypeStorages = () => {
 
   return {
     typeStoragesQuery,
+    activeTypeStoragesQuery,
     //detailedTypeStoragesQuery,
     typeStorages: typeStoragesQuery.data,
     oneTypeStorageQuery,

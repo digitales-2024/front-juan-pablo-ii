@@ -1,35 +1,35 @@
 import { Table } from "@tanstack/react-table";
-import { DetailedProduct } from "../_interfaces/storageTypes.interface";
-import { CreateProductDialog } from "./CreateTypeStorageDialog";
-import { DeactivateProductDialog } from "./DeactivateStorageTypeDialog";
-import { ReactivateProductDialog } from "./ReactivateProductDialog";
+import { TypeStorage } from "../_interfaces/storageTypes.interface";
+import { CreateTypeStorageDialog } from "./CreateStorageTypeDialog";
+import { DeactivateTypeStorageDialog } from "./DeactivateStorageTypeDialog";
+import { ReactivateStorageTypeDialog } from "./ReactivateStorageTypeDialog";
 
-export interface ProductTableToolbarActionsProps {
-  table?: Table<DetailedProduct>;
+export interface TypeStorageTableToolbarActionsProps {
+  table?: Table<TypeStorage>;
 }
 
-export function ProductTableToolbarActions({
+export function TypeStorageTableToolbarActions({
   table,
-}: ProductTableToolbarActionsProps) {
+}: TypeStorageTableToolbarActionsProps) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
         <>
-        <DeactivateProductDialog
-          products={table
+        <DeactivateTypeStorageDialog
+          typeStorages={table
           .getFilteredSelectedRowModel()
           .rows.map((row) => row.original)}
         onSuccess={() => table.toggleAllRowsSelected(false)}
       />
-      <ReactivateProductDialog
-      products={table
+      <ReactivateStorageTypeDialog
+      storageTypes={table
         .getFilteredSelectedRowModel()
         .rows.map((row) => row.original)}
       onSuccess={() => table.toggleAllRowsSelected(false)}
       />
       </>
       ) : null}
-      <CreateProductDialog />
+      <CreateTypeStorageDialog />
     </div>
   );
 }

@@ -31,28 +31,29 @@ import {
 import { PencilIcon, RefreshCcw } from "lucide-react";
 import { useTypeStorages } from "../_hooks/useStorageTypes";
 import { AutoComplete } from "@/components/ui/autocomplete";
-import { useCategories } from "@/app/(admin)/(catalog)/product/category/_hooks/useCategory";
-import { useTypeProducts } from "@/app/(admin)/(catalog)/product/product-types/_hooks/useType";
 import LoadingDialogForm from "./LoadingDialogForm";
 import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
 import { Textarea } from "@/components/ui/textarea";
 import { Option } from "@/types/statics/forms";
 import { UPDATEFORMSTATICS as FORMSTATICS} from "../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
+import { METADATA } from "../_statics/metadata";
+import { useStaff } from "@/app/(admin)/staff/_hooks/useStaff";
+import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 
-interface UpdateProductSheetProps {
+interface UpdateStorageTypeSheetProps {
   typeStorage: TypeStorage;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   showTrigger?: boolean;
 }
 
-export function UpdateProductSheet({
+export function UpdateStorageTypeSheet({
   typeStorage,
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
-}: UpdateProductSheetProps) {
+}: UpdateStorageTypeSheetProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const { updateMutation } = useTypeStorages();
 
@@ -106,7 +107,7 @@ export function UpdateProductSheet({
             form.reset();
           },
           onError: (error) => {
-            console.error("Error al actualizar producto:", error);
+            console.error("Error al actualizar tipo de almacén:", error);
             if (error.message.includes("No autorizado")) {
               setTimeout(() => {
                 form.reset();
@@ -121,51 +122,51 @@ export function UpdateProductSheet({
     }
   };
 
-  const { activeCategoriesQuery: responseCategories } = useCategories();
-  const responseTypeProducts = useTypeProducts();
-  if (responseCategories.isLoading && responseTypeProducts.activeIsLoading) {
+  const { activeStaffQuery: responseStaff } = useStaff();
+  const { activeBranchesQuery: responseBranches } = useBranches();
+  if (responseStaff.isLoading && responseBranches.isLoading) {
     return <LoadingDialogForm />;
   } else {
-    if (responseCategories.isError) {
+    if (responseStaff.isError) {
       return (
         <GeneralErrorMessage
-          error={responseCategories.error}
-          reset={responseCategories.refetch}
+          error={responseStaff.error}
+          reset={responseStaff.refetch}
         />
       );
     }
-    if (!responseCategories.data) {
+    if (!responseStaff.data) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron categorías")}
-          reset={responseCategories.refetch}
+          error={new Error("No se encontró personal asociado")}
+          reset={responseStaff.refetch}
         />
       );
     }
-    if (responseTypeProducts.activeIsError) {
-      return responseTypeProducts.activeError ? (
+    if (responseBranches.isError) {
+      return responseBranches.error ? (
         <GeneralErrorMessage
-          error={responseTypeProducts.activeError}
-          reset={responseTypeProducts.activeRefetch}
+          error={responseBranches.error}
+          reset={responseBranches.refetch}
         />
       ) : null;
     }
-    if (!responseTypeProducts.activeData) {
+    if (!responseBranches.data) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron subcategorías")}
-          reset={responseTypeProducts.activeRefetch}
+          error={new Error("No se encontraron sucursales")}
+          reset={responseBranches.refetch}
         />
       );
     }
   }
 
-  const categoryOptions: Option[] = responseCategories.data.map((category) => ({
+  const staffOptions: Option[] = responseStaff.data.map((category) => ({
     label: category.name,
     value: category.id,
   }));
 
-  const typeProductOptions: Option[] = responseTypeProducts.activeData.map(
+  const branchesOptions: Option[] = responseBranches.data.map(
     (typeProduct) => ({
       label: typeProduct.name,
       value: typeProduct.id,
@@ -183,9 +184,9 @@ export function UpdateProductSheet({
       )}
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Actualizar Producto</SheetTitle>
+          <SheetTitle>Actualizar {METADATA.entityName}</SheetTitle>
           <SheetDescription>
-            Actualiza la información del producto y guarda los cambios
+            Actualiza la información de este(a) {METADATA.entityName.toLowerCase()} y guarda los cambios
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">
@@ -220,26 +221,36 @@ export function UpdateProductSheet({
                     <FormItem className="col-span-2">
                       <FormLabel htmlFor={FORMSTATICS.branchId.name}>{FORMSTATICS.branchId.label}</FormLabel>
                       <FormControl>
-                        <AutoComplete
-                          options={categoryOptions}
+                        {
+                          branchesOptions.length>0 ? <AutoComplete
+                          options={branchesOptions}
                           placeholder={FORMSTATICS.branchId.placeholder}
                           emptyMessage={FORMSTATICS.branchId.emptyMessage!}
                           value={
-                            categoryOptions.find(
+                            branchesOptions.find(
                               (option) => option.value === field.value
                             ) ?? undefined
                           }
                           onValueChange={(option) => {
                             field.onChange(option?.value || "");
                           }}
-                        />
+                        /> : (
+                          <Input
+                            disabled={true}
+                            placeholder={FORMSTATICS.branchId.placeholder}
+                            type={FORMSTATICS.branchId.type}
+                          />
+                        )
+                        }
                       </FormControl>
-                      <CustomFormDescription required={FORMSTATICS.branchId.required}></CustomFormDescription>
+                      <CustomFormDescription required={FORMSTATICS.branchId.required}>
+                        { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas. Este campo es opcional</span>}
+                      </CustomFormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                {/* Campo de tipo de producto */}
+                {/* Campo de personal */}
                 <FormField
                   control={form.control}
                   name={FORMSTATICS.staffId.name}
@@ -249,21 +260,31 @@ export function UpdateProductSheet({
                         {FORMSTATICS.staffId.label}
                       </FormLabel>
                       <FormControl>
-                        <AutoComplete
-                          options={typeProductOptions}
+                        {
+                          staffOptions.length>0 ? <AutoComplete
+                          options={staffOptions}
                           placeholder={FORMSTATICS.staffId.placeholder}
                           emptyMessage={FORMSTATICS.staffId.emptyMessage!}
                           value={
-                            typeProductOptions.find(
+                            staffOptions.find(
                               (option) => option.value === field.value
                             ) ?? undefined
                           }
                           onValueChange={(option) => {
                             field.onChange(option?.value || "");
                           }}
-                        />
+                        /> : (
+                          <Input
+                            disabled={true}
+                            placeholder={FORMSTATICS.name.placeholder}
+                            type={FORMSTATICS.staffId.type}
+                          />
+                        )
+                        }
                       </FormControl>
-                      <CustomFormDescription required={FORMSTATICS.staffId.required}></CustomFormDescription>
+                      <CustomFormDescription required={FORMSTATICS.staffId.required}>
+                        { staffOptions.length===0 && <span>No hay personal disponible o activo. Este campo es opcional</span>}
+                      </CustomFormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -284,8 +305,7 @@ export function UpdateProductSheet({
                       <CustomFormDescription required={FORMSTATICS.description.required}></CustomFormDescription>
                       <FormMessage />
                     </FormItem>
-                  )}
-                />
+                  )}/>
               </div>
 
               <SheetFooter>

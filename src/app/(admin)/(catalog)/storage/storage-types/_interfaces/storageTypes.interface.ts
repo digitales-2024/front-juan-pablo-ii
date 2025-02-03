@@ -25,8 +25,8 @@ export interface TypeStorageTableItem extends TypeStorage {
 export const createTypeStorageSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   description: z.string().optional(),
-  branchId: z.string().uuid().optional(),
-  staffId: z.string().uuid().optional(),
+  branchId: z.string().optional(),
+  staffId: z.string().optional(),
 }) satisfies z.ZodType<CreateTypeStorageDto>;
 
 // type UpdateTypeStorageDto = {
@@ -40,8 +40,8 @@ export const updateTypeStorageSchema = z.object(
   {
     name: z.string().optional(),
     description: z.string().optional(),
-    branchId: z.string().uuid().optional(),
-    staffId: z.string().uuid().optional(),
+    branchId: z.string().optional(),
+    staffId: z.string().optional(),
   }
 ) satisfies z.ZodType<UpdateTypeStorageDto>;
 

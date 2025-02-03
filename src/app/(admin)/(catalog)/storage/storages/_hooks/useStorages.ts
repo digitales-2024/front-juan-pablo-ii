@@ -7,7 +7,8 @@ import {
   getStorages,
   getDetailedStorages,
   getStorageById,
-  StorageResponse
+  StorageResponse,
+  getActiveStorages
 } from "../_actions/storages.actions";
 import { toast } from "sonner";
 import {
@@ -41,6 +42,23 @@ export const useStorages = () => {
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
+  const activeStoragesQuery = useQuery({
+    queryKey: ["active-storages"],
+    queryFn: async () => {
+      const response = await getActiveStorages({});
+      if (!response) {
+        throw new Error("No se recibió respuesta del servidor");
+      }
+
+      if (response.error || !response.data) {
+        throw new Error(response.error ?? "Error desconocido");
+      }
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+
+  // Almacenes con detalled de su tipo de almacén
   const detailedStoragesQuery = useQuery({
     queryKey: ["detailed-storages"],
     queryFn: async () => {
@@ -208,6 +226,7 @@ export const useStorages = () => {
 
   return {
     storagesQuery,
+    activeStoragesQuery,
     detailedStoragesQuery,
     storages: storagesQuery.data,
     oneStorageQuery,

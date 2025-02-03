@@ -4,12 +4,12 @@ import { ProductTable } from "./_components/StorageTypeTable";
 import { PageHeader } from "@/components/PageHeader";
 // import { getBranches } from "./_actions/branch.actions";
 import { notFound } from "next/navigation";
-import { useProducts } from "./_hooks/useStorageTypes";
+import { useTypeStorages } from "./_hooks/useStorageTypes";
 import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
 
 export default function PageBranches() {
-  const {detailedProductsQuery: response} = useProducts();
+  const {typeStoragesQuery: response} = useTypeStorages();
 
   if (response.isLoading) {
     return <LoadingCategories />;

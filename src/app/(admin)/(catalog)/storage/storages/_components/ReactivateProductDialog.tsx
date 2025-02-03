@@ -23,29 +23,30 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Product } from "../_interfaces/storage.interface";
+import { Storage } from "../_interfaces/storage.interface";
 import { RefreshCcw, RefreshCcwDot } from "lucide-react";
-import { useProducts } from "../_hooks/useStorages";
+import { useStorages } from "../_hooks/useStorages";
 import { ComponentPropsWithoutRef } from "react";
+import { METADATA } from "../_statics/metadata";
 
-interface ReactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
-  product?: Product;
-  products?: Product[];
+interface ReactivateStorageDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+  storage?: Storage;
+  storages?: Storage[];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export function ReactivateProductDialog({
-  product,
-  products,
+export function ReactivateStorageDialog({
+  storage,
+  storages,
   showTrigger = true,
   onSuccess,
   ...props
-}: ReactivateProductDialogProps) {
+}: ReactivateStorageDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { reactivateMutation: { isPending, mutateAsync } } = useProducts();
+  const { reactivateMutation: { isPending, mutateAsync } } = useStorages();
 
-  const items = products ?? (product ? [product] : []);
+  const items = storages ?? (storage ? [storage] : []);
 
   async function onReactivate() {
     const ids = items.map((item) => item.id);
@@ -74,7 +75,7 @@ export function ReactivateProductDialog({
             <AlertDialogDescription>
               Esta acción reactivará a
               <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? " producto" : " productos"}
+              {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -112,7 +113,7 @@ export function ReactivateProductDialog({
           <DrawerDescription>
             Esta acción reactivará a
             <span className="font-medium"> {items.length}</span>
-            {items.length === 1 ? " producto" : " productos"}
+            {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">

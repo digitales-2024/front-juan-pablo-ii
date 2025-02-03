@@ -39,6 +39,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Option } from "@/types/statics/forms";
 import { UPDATEFORMSTATICS as FORMSTATICS} from "../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
+import { METADATA } from "../_statics/metadata";
 
 interface UpdateProductSheetProps {
   product: Product;
@@ -133,7 +134,7 @@ export function UpdateProductSheet({
             form.reset();
           },
           onError: (error) => {
-            console.error("Error al actualizar producto:", error);
+            console.error(`Error al actualizar ${METADATA.entityName.toLowerCase()}:`, error);
             if (error.message.includes("No autorizado")) {
               setTimeout(() => {
                 form.reset();
@@ -210,9 +211,9 @@ export function UpdateProductSheet({
       )}
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Actualizar Producto</SheetTitle>
+          <SheetTitle>Actualizar {METADATA.entityName.toLowerCase()}</SheetTitle>
           <SheetDescription>
-            Actualiza la información del producto y guarda los cambios
+            Actualiza la información de este(a) {METADATA.entityName.toLowerCase()} y guarda los cambios
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">

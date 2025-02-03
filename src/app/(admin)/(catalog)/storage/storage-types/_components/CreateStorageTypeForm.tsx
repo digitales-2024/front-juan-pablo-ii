@@ -15,92 +15,74 @@ import { Textarea } from "@/components/ui/textarea";
 import { AutoComplete } from "@/components/ui/autocomplete";
 import LoadingDialogForm from "./LoadingDialogForm";
 import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
-import { useCategories } from "@/app/(admin)/(catalog)/product/category/_hooks/useCategory";
-import { useTypeProducts } from "@/app/(admin)/(catalog)/product/product-types/_hooks/useType";
 import { FORMSTATICS as STATIC_FORM } from "../_statics/forms";
 import { Option } from "@/types/statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
 import { METADATA } from "../_statics/metadata";
 import { useMemo } from "react";
+import { useStaff } from "@/app/(admin)/staff/_hooks/useStaff";
+import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 
-interface CreateProductFormProps
+interface CreateTypeStorageFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
   form: UseFormReturn<CreateTypeStorageInput>;
   onSubmit: (data: CreateTypeStorageInput) => void;
 }
 
-// export const createProductSchema = z.object({
-//   categoriaId: z.string().min(1, "La categoría es requerida"),
-//   tipoProductoId: z.string().min(1, "El tipo de producto es requerido"),
-//   name: z.string().min(1, "El nombre es requerido"),
-//   precio: z.number().min(0, "El precio no puede ser negativo"),
-//   unidadMedida: z.string().optional(),
-//   proveedor: z.string().optional(),
-//   uso: z.string().optional(),
-//   usoProducto: z.string().optional(),
-//   description: z.string().optional(),
-//   codigoProducto: z.string().optional(),
-//   descuento: z.number().optional(),
-//   observaciones: z.string().optional(),
-//   condicionesAlmacenamiento: z.string().optional(),
-//   imagenUrl: z.string().optional(),
-// }) satisfies z.ZodType<CreateProductDto>;
-
-export function CreateProductForm({
+export function CreateTypeStorageForm({
   children,
   form,
   onSubmit,
-}: CreateProductFormProps) {
-  // const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
-  // const [typeProductOptions, setTypeProductOptions] = useState<Option[]>([]);
+}: CreateTypeStorageFormProps) {
 
-  const { activeCategoriesQuery: responseCategories } = useCategories();
-  const responseTypeProducts = useTypeProducts();
+  const { activeStaffQuery: responseStaff } = useStaff();
+  const { activeBranchesQuery: responseBranches } = useBranches();
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
-  if (responseCategories.isLoading && responseTypeProducts.activeIsLoading) {
+  if (responseStaff.isLoading && responseBranches.isLoading) {
     return <LoadingDialogForm />;
   } else {
-    if (responseCategories.isError) {
+    if (responseStaff.isError) {
       return (
         <GeneralErrorMessage
-          error={responseCategories.error}
-          reset={responseCategories.refetch}
+          error={responseStaff.error}
+          reset={responseStaff.refetch}
         />
       );
     }
-    if (!responseCategories.data) {
+    if (!responseStaff.data) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron categorías")}
-          reset={responseCategories.refetch}
+          error={new Error("No se encontró personal asociado")}
+          reset={responseStaff.refetch}
         />
       );
     }
-    if (responseTypeProducts.activeIsError) {
-      return responseTypeProducts.activeError ? (
+    if (responseBranches.isError) {
+      return responseBranches.error ? (
         <GeneralErrorMessage
-          error={responseTypeProducts.activeError}
-          reset={responseTypeProducts.activeRefetch}
+          error={responseBranches.error}
+          reset={responseBranches.refetch}
         />
       ) : null;
     }
-    if (!responseTypeProducts.activeData) {
+    if (!responseBranches.data) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron subcategorías")}
-          reset={responseTypeProducts.activeRefetch}
+          error={new Error("No se encontraron sucursales")}
+          reset={responseBranches.refetch}
         />
       );
     }
   }
 
+  // NO se ingresa a la siguiente alidaciòn porque la dependencia es opcional, pero podemos conservar por si en el futuro las dependencias son obligatorias
   if (
     METADATA.dataDependencies &&
-    (responseCategories.data.length === 0 ||
-      responseTypeProducts.activeData.length === 0)
+    (responseStaff.data.length === 0 ||
+      responseBranches.data.length === 0)
   ) {
     return (
       <DataDependencyErrorMessage
@@ -116,12 +98,12 @@ export function CreateProductForm({
     );
   }
 
-  const categoryOptions: Option[] = responseCategories.data.map((category) => ({
+  const staffOptions: Option[] = responseStaff.data.map((category) => ({
     label: category.name,
     value: category.id,
   }));
 
-  const typeProductOptions: Option[] = responseTypeProducts.activeData.map(
+  const branchesOptions: Option[] = responseBranches.data.map(
     (typeProduct) => ({
       label: typeProduct.name,
       value: typeProduct.id,
@@ -132,20 +114,6 @@ export function CreateProductForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-2 gap-4">
-          {/* <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ingresa el nombre" {...field}/>
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.name.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
           <FormField
             control={form.control}
             name={FORMSTATICS.name.name}
@@ -174,26 +142,36 @@ export function CreateProductForm({
                 <FormItem className="col-span-2">
                   <FormLabel htmlFor={FORMSTATICS.branchId.name}>{FORMSTATICS.branchId.label}</FormLabel>
                   <FormControl>
-                    <AutoComplete
-                      options={categoryOptions}
+                    {
+                      branchesOptions.length>0 ? <AutoComplete
+                      options={branchesOptions}
                       placeholder={FORMSTATICS.branchId.placeholder}
                       emptyMessage={FORMSTATICS.branchId.emptyMessage!}
                       value={
-                        categoryOptions.find(
+                        branchesOptions.find(
                           (option) => option.value === field.value
                         ) ?? undefined
                       }
                       onValueChange={(option) => {
                         field.onChange(option?.value || "");
                       }}
-                    />
+                    /> : (
+                      <Input
+                        disabled={true}
+                        placeholder={FORMSTATICS.branchId.placeholder}
+                        type={FORMSTATICS.branchId.type}
+                      />
+                    )
+                    }
                   </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.branchId.required}></CustomFormDescription>
+                  <CustomFormDescription required={FORMSTATICS.branchId.required}>
+                    { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas. Este campo es opcional</span>}
+                  </CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* Campo de tipo de producto */}
+            {/* Campo de personal */}
             <FormField
               control={form.control}
               name={FORMSTATICS.staffId.name}
@@ -203,21 +181,31 @@ export function CreateProductForm({
                     {FORMSTATICS.staffId.label}
                   </FormLabel>
                   <FormControl>
-                    <AutoComplete
-                      options={typeProductOptions}
+                    {
+                      staffOptions.length>0 ? <AutoComplete
+                      options={staffOptions}
                       placeholder={FORMSTATICS.staffId.placeholder}
                       emptyMessage={FORMSTATICS.staffId.emptyMessage!}
                       value={
-                        typeProductOptions.find(
+                        staffOptions.find(
                           (option) => option.value === field.value
                         ) ?? undefined
                       }
                       onValueChange={(option) => {
                         field.onChange(option?.value || "");
                       }}
-                    />
+                    /> : (
+                      <Input
+                        disabled={true}
+                        placeholder={FORMSTATICS.name.placeholder}
+                        type={FORMSTATICS.staffId.type}
+                      />
+                    )
+                    }
                   </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.staffId.required}></CustomFormDescription>
+                  <CustomFormDescription required={FORMSTATICS.staffId.required}>
+                    { staffOptions.length===0 && <span>No hay personal disponible o activo. Este campo es opcional</span>}
+                  </CustomFormDescription>
                   <FormMessage />
                 </FormItem>
               )}
