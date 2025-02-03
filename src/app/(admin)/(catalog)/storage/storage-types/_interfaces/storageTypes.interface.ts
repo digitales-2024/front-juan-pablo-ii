@@ -3,6 +3,7 @@ import { z } from "zod";
 
 // Tipos base de la API
 export type TypeStorage = components['schemas']['TypeStorage'];
+export type DetailedTypeStorage = components['schemas']['DetailedTypeStorage'];
 export type CreateTypeStorageDto = components['schemas']['CreateTypeStorageDto'];
 export type UpdateTypeStorageDto = components['schemas']['UpdateTypeStorageDto'];
 export type DeleteTypeStorageDto = components['schemas']['DeleteTypeStorageDto'];
@@ -11,7 +12,7 @@ export type DeleteTypeStorageDto = components['schemas']['DeleteTypeStorageDto']
 export type ReactivateTypeStorageDto = DeleteTypeStorageDto;
 
 // Interfaz para la tabla extendiendo el tipo base
-export interface TypeStorageTableItem extends TypeStorage {
+export interface TypeStorageTableItem extends DetailedTypeStorage {
   selected?: boolean;
 }
 

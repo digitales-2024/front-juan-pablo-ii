@@ -1,14 +1,15 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { TypeStorage, CreateTypeStorageDto, UpdateTypeStorageDto, DeleteTypeStorageDto } from "../_interfaces/storageTypes.interface";
+import { TypeStorage, CreateTypeStorageDto, UpdateTypeStorageDto, DeleteTypeStorageDto, DetailedTypeStorage } from "../_interfaces/storageTypes.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";
 
 export type TypeStorageResponse = BaseApiResponse<TypeStorage> | { error: string };
 export type ListTypeStorageResponse = TypeStorage[] | { error: string };
-// export type ListDetailedTypeStorageResponse = DetailedTypeStorage[] | { error: string };
+export type ListDetailedTypeStorageResponse = DetailedTypeStorage[] | { error: string };
+export type DetailedTypeStorageResponse = DetailedTypeStorage[] | { error: string };
 
 const GetTypeStorageSchema = z.object({});
 
@@ -43,7 +44,7 @@ const getTypeStoragesHandler = async () => {
 
 const getActiveTypeStoragesHandler = async () => {
   try {
-    const [typeStorages, error] = await http.get<ListTypeStorageResponse>("/type-storage");
+    const [typeStorages, error] = await http.get<ListTypeStorageResponse>("/type-storage/detailed");
     if (error) {
       return {
         error:
@@ -65,32 +66,50 @@ const getActiveTypeStoragesHandler = async () => {
 export const getTypeStorages = await createSafeAction(GetTypeStorageSchema, getTypeStoragesHandler);
 export const getActiveTypeStorages = await createSafeAction(GetTypeStorageSchema, getActiveTypeStoragesHandler);
 
-// const getDetailedTypeStoragesHandler = async () => {
-//   try {
-//     const [typeStorages, error] = await http.get<ListDetailedTypeStorageResponse>("/type-storage/detailed");
-//     if (error) {
-//       return {
-//         error:
-//           typeof error === "object" && error !== null && "message" in error
-//             ? String(error.message)
-//             : "Error al obtener los tipos de almacenamiento detallados",
-//       };
-//     }
-//     if (!Array.isArray(typeStorages)) {
-//       return { error: "Respuesta inválida del servidor" };
-//     }
-//     return { data: typeStorages };
-//   } catch (error) {
-//     if (error instanceof Error) return { error: error.message };
-//     return { error: "Error desconocido" };
-//   }
-// };
+const getDetailedTypeStoragesHandler = async () => {
+  try {
+    const [typeStorages, error] = await http.get<ListDetailedTypeStorageResponse>("/type-storage/detailed");
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener los tipos de almacenamiento detallados",
+      };
+    }
+    if (!Array.isArray(typeStorages)) {
+      return { error: "Respuesta inválida del servidor" };
+    }
+    return { data: typeStorages };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
 
-// export const getDetailedTypeStorages = await createSafeAction(GetTypeStorageSchema, getDetailedTypeStoragesHandler);
+export const getDetailedTypeStorages = await createSafeAction(GetTypeStorageSchema, getDetailedTypeStoragesHandler);
 
 export async function getTypeStorageById (id: string) : Promise<TypeStorageResponse> {
   try {
     const [typeStorage, error] = await http.get<TypeStorageResponse>(`/type-storage/${id}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el tipo de almacenamiento",
+      };
+    }
+    return typeStorage;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
+
+export async function getDetailedTypeStorageById (id: string) : Promise<DetailedTypeStorageResponse> {
+  try {
+    const [typeStorage, error] = await http.get<DetailedTypeStorageResponse>(`/type-storage/detailed/${id}`);
     if (error) {
       return {
         error:
