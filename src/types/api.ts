@@ -952,6 +952,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/branch/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las sucursales activas */
+        get: operations["BranchController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/branch/{id}": {
         parameters: {
             query?: never;
@@ -1231,6 +1248,40 @@ export interface paths {
         patch: operations["PacientController_reactivateAll"];
         trace?: never;
     };
+    "/api/v1/paciente/create-with-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crear nuevo paciente con imagen opcional */
+        post: operations["PacientController_createWithImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/paciente/{id}/update-with-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar paciente existente con imagen opcional */
+        patch: operations["PacientController_updateWithImage"];
+        trace?: never;
+    };
     "/api/v1/receta": {
         parameters: {
             query?: never;
@@ -1371,6 +1422,41 @@ export interface paths {
         patch: operations["UpdateHistoryController_reactivateAll"];
         trace?: never;
     };
+    "/api/v1/update-history/create-with-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crear actualización de historia médica con imágenes */
+        post: operations["UpdateHistoryController_createWithImages"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/update-history/{id}/with-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener historia médica con imágenes por ID */
+        get: operations["UpdateHistoryController_findOneWithImages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar historia médica con imágenes */
+        patch: operations["UpdateHistoryController_updateWithImages"];
+        trace?: never;
+    };
     "/api/v1/medical-history": {
         parameters: {
             query?: never;
@@ -1439,6 +1525,23 @@ export interface paths {
         head?: never;
         /** Reactivar múltiples historias médicas */
         patch: operations["MedicalHistoryController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/medical-history/{id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener historia médica completa por ID */
+        get: operations["MedicalHistoryController_findOneComplete"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/staff-type": {
@@ -1523,6 +1626,23 @@ export interface paths {
         put?: never;
         /** Crear nuevo personal */
         post: operations["StaffController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener Personal Activo */
+        get: operations["StaffController_findAllActive"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2081,6 +2201,40 @@ export interface paths {
         put?: never;
         /** Crear nuevo tipo de almacenamiento */
         post: operations["TypeStorageController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/type-storage/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los tipos de almacenamiento activos */
+        get: operations["TypeStorageController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/type-storage/detailed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los tipos de almacenamiento activos */
+        get: operations["TypeStorageController_findAllDetailed"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3546,7 +3700,7 @@ export interface components {
             birthDate: string;
             /**
              * @description Sexo del paciente (M/F)
-             * @example true
+             * @example Masculino Femenino
              */
             gender: string;
             /**
@@ -3563,23 +3717,7 @@ export interface components {
              * @description Correo electrónico del paciente
              * @example juan.perez@example.com
              */
-            correo?: string;
-            /**
-             * Format: date-time
-             * @description Fecha de registro del paciente
-             * @example 2023-01-01
-             */
-            fechaRegistro: string;
-            /**
-             * @description Alergias conocidas del paciente
-             * @example Polen, Maní
-             */
-            alergias?: string;
-            /**
-             * @description Medicamentos que el paciente está tomando
-             * @example Ibuprofeno, Paracetamol
-             */
-            medicamentosActuales?: string;
+            email?: string;
             /**
              * @description Nombre del contacto de emergencia
              * @example María Pérez
@@ -3632,7 +3770,7 @@ export interface components {
             notes?: string;
             /**
              * @description Imagen del paciente para identificación visual
-             * @example data:image/png;base64,...
+             * @example null
              */
             patientPhoto?: string;
         };
@@ -3642,30 +3780,23 @@ export interface components {
             lastName: string;
             dni: string;
             /** Format: date-time */
-            cumpleanos: string;
-            sexo: boolean;
-            direccion: string;
-            telefono: string;
-            correo: string;
-            /** Format: date-time */
-            fechaRegistro: string;
-            alergias: string;
-            medicamentosActuales: string;
-            contactoEmergencia: string;
-            telefonoEmergencia: string;
-            seguroMedico: string;
-            estadoCivil: string;
-            ocupacion: string;
-            lugarTrabajo: string;
-            tipoSangre: string;
-            antecedentesFamiliares: string;
-            habitosVida: string;
-            vacunas: string;
-            medicoCabecera: string;
-            idioma: string;
-            autorizacionTratamiento: string;
-            observaciones: string;
-            fotografiaPaciente: string;
+            birthDate: string;
+            gender: string;
+            address: string;
+            phone: string;
+            email: string;
+            emergencyContact: string;
+            emergencyPhone: string;
+            healthInsurance: string;
+            maritalStatus: string;
+            occupation: string;
+            workplace: string;
+            bloodType: string;
+            primaryDoctor: string;
+            language: string;
+            notes: string;
+            patientPhoto: string;
+            isActive: boolean;
         };
         UpdatePatientDto: {
             /**
@@ -3691,7 +3822,7 @@ export interface components {
             birthDate?: string;
             /**
              * @description Sexo del paciente (M/F)
-             * @example true
+             * @example Masculino Femenino
              */
             gender?: string;
             /**
@@ -3708,23 +3839,7 @@ export interface components {
              * @description Correo electrónico del paciente
              * @example juan.perez@example.com
              */
-            correo?: string;
-            /**
-             * Format: date-time
-             * @description Fecha de registro del paciente
-             * @example 2023-01-01
-             */
-            fechaRegistro?: string;
-            /**
-             * @description Alergias conocidas del paciente
-             * @example Polen, Maní
-             */
-            alergias?: string;
-            /**
-             * @description Medicamentos que el paciente está tomando
-             * @example Ibuprofeno, Paracetamol
-             */
-            medicamentosActuales?: string;
+            email?: string;
             /**
              * @description Nombre del contacto de emergencia
              * @example María Pérez
@@ -3777,7 +3892,7 @@ export interface components {
             notes?: string;
             /**
              * @description Imagen del paciente para identificación visual
-             * @example data:image/png;base64,...
+             * @example null
              */
             patientPhoto?: string;
         };
@@ -3906,6 +4021,11 @@ export interface components {
         };
         CreateUpdateHistoryDto: {
             /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId: string;
+            /**
              * @description ID del servicio
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
@@ -3981,6 +4101,7 @@ export interface components {
         };
         UpdateHistory: {
             id: string;
+            patientId: string;
             serviceId: string;
             staffId: string;
             branchId: string;
@@ -3999,6 +4120,11 @@ export interface components {
             isActive: boolean;
         };
         UpdateUpdateHistoryDto: {
+            /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId?: string;
             /**
              * @description ID del servicio
              * @example 123e4567-e89b-12d3-a456-426614174000
@@ -5024,6 +5150,16 @@ export interface components {
             branchId: string;
             staffId: string;
             isActive: boolean;
+        };
+        DetailedTypeStorage: {
+            id: string;
+            name: string;
+            description: string;
+            branchId: string;
+            staffId: string;
+            isActive: boolean;
+            Branch: components["schemas"]["Branch"];
+            Staff: components["schemas"]["Staff"];
         };
         UpdateTypeStorageDto: {
             /**
@@ -8576,6 +8712,40 @@ export interface operations {
             };
         };
     };
+    BranchController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las sucursales activas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Branch"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     BranchController_findOne: {
         parameters: {
             query?: never;
@@ -9454,7 +9624,179 @@ export interface operations {
             };
         };
     };
-    RecipeController_findAll: {
+    PacientController_createWithImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @example Juan Pérez */
+                    name?: string;
+                    /** @example González */
+                    lastName?: string;
+                    /** @example 12345678 */
+                    dni?: string;
+                    /**
+                     * Format: date
+                     * @example 1990-01-01
+                     */
+                    birthDate?: string;
+                    /** @example Masculino */
+                    gender?: string;
+                    /** @example Av. Principal 123 */
+                    address?: string;
+                    /** @example +51999999999 */
+                    phone?: string;
+                    /** @example juan.perez@example.com */
+                    email?: string;
+                    /** @example María Pérez */
+                    emergencyContact?: string;
+                    /** @example +51999999999 */
+                    emergencyPhone?: string;
+                    /** @example Seguro Salud */
+                    healthInsurance?: string;
+                    /** @example Soltero */
+                    maritalStatus?: string;
+                    /** @example Ingeniero */
+                    occupation?: string;
+                    /** @example Empresa XYZ, Av. Industrial 456 */
+                    workplace?: string;
+                    /** @example O+ */
+                    bloodType?: string;
+                    /** @example Dr. Juan Pérez, +51999999999 */
+                    primaryDoctor?: string;
+                    /** @example Español */
+                    language?: string;
+                    /** @example Paciente con antecedentes de alergias severas */
+                    notes?: string;
+                    /** @example null */
+                    patientPhoto?: string;
+                    /**
+                     * Format: binary
+                     * @description Imagen del paciente (opcional)
+                     */
+                    image?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Paciente creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PacientController_updateWithImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @example Juan Pérez */
+                    name?: string;
+                    /** @example González */
+                    lastName?: string;
+                    /** @example 12345678 */
+                    dni?: string;
+                    /**
+                     * Format: date
+                     * @example 1990-01-01
+                     */
+                    birthDate?: string;
+                    /** @example Masculino */
+                    gender?: string;
+                    /** @example Av. Principal 123 */
+                    address?: string;
+                    /** @example +51999999999 */
+                    phone?: string;
+                    /** @example juan.perez@example.com */
+                    email?: string;
+                    /** @example María Pérez */
+                    emergencyContact?: string;
+                    /** @example +51999999999 */
+                    emergencyPhone?: string;
+                    /** @example Seguro Salud */
+                    healthInsurance?: string;
+                    /** @example Soltero */
+                    maritalStatus?: string;
+                    /** @example Ingeniero */
+                    occupation?: string;
+                    /** @example Empresa XYZ, Av. Industrial 456 */
+                    workplace?: string;
+                    /** @example O+ */
+                    bloodType?: string;
+                    /** @example Dr. Juan Pérez, +51999999999 */
+                    primaryDoctor?: string;
+                    /** @example Español */
+                    language?: string;
+                    /** @example Paciente con antecedentes de alergias severas */
+                    notes?: string;
+                    /** @example null */
+                    patientPhoto?: string;
+                    /**
+                     * Format: binary
+                     * @description Imagen del paciente (opcional)
+                     */
+                    image?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Paciente actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PrescriptionController_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -9918,6 +10260,203 @@ export interface operations {
             };
         };
     };
+    UpdateHistoryController_createWithImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    patientId: string;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    serviceId: string;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    staffId: string;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    branchId: string;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    medicalHistoryId: string;
+                    /** @example false */
+                    prescription?: boolean;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    prescriptionId?: string;
+                    /** @example {
+                     *       "diagnostico": "Gripe común",
+                     *       "tratamiento": "Reposo y medicamentos",
+                     *       "observaciones": "Seguimiento en 7 días"
+                     *     } */
+                    updateHistory: Record<string, never>;
+                    /** @example Paciente presenta mejoría */
+                    description?: string;
+                    /** @example false */
+                    medicalLeave?: boolean;
+                    /**
+                     * Format: date-time
+                     * @example 2024-03-16T10:00:00Z
+                     */
+                    medicalLeaveStartDate?: string;
+                    /**
+                     * Format: date-time
+                     * @example 2024-03-19T10:00:00Z
+                     */
+                    medicalLeaveEndDate?: string;
+                    /** @example 3 */
+                    medicalLeaveDays?: number;
+                    /** @example Reposo por 3 días */
+                    leaveDescription?: string;
+                    /** @description Imágenes de la actualización (opcional) */
+                    images?: string[];
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateHistoryController_findOneWithImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Historia médica encontrada con sus imágenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateHistory"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateHistoryController_updateWithImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    patientId?: string;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    serviceId?: string;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    staffId?: string;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    branchId?: string;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    medicalHistoryId?: string;
+                    /** @example false */
+                    prescription?: boolean;
+                    /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                    prescriptionId?: string;
+                    /** @example {
+                     *       "diagnostico": "Gripe común actualizado",
+                     *       "tratamiento": "Reposo y medicamentos actualizados",
+                     *       "observaciones": "Seguimiento en 7 días actualizado"
+                     *     } */
+                    updateHistory?: Record<string, never>;
+                    /** @example Paciente presenta mejoría actualizada */
+                    description?: string;
+                    /** @example false */
+                    medicalLeave?: boolean;
+                    /**
+                     * Format: date-time
+                     * @example 2024-03-16T10:00:00Z
+                     */
+                    medicalLeaveStartDate?: string;
+                    /**
+                     * Format: date-time
+                     * @example 2024-03-19T10:00:00Z
+                     */
+                    medicalLeaveEndDate?: string;
+                    /** @example 3 */
+                    medicalLeaveDays?: number;
+                    /** @example Reposo por 3 días actualizado */
+                    leaveDescription?: string;
+                    /** @description Nuevas imágenes para agregar (opcional) */
+                    newImages?: string[];
+                    /** @description Imágenes existentes a actualizar (opcional) */
+                    imageUpdates?: {
+                        /** @example 123e4567-e89b-12d3-a456-426614174000 */
+                        imageId?: string;
+                        /** Format: binary */
+                        file?: string;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     MedicalHistoryController_findAll: {
         parameters: {
             query?: never;
@@ -10135,6 +10674,43 @@ export interface operations {
                 };
             };
             /** @description IDs inválidos o historias médicas no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MedicalHistoryController_findOneComplete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la historia médica */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Historia médica encontrada con actualizaciones e imágenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicalHistory"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10431,6 +11007,40 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o personal ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todo el personal activo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -12189,10 +12799,78 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeStorage"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o tipo de almacenamiento ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de almacenamiento activos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_findAllDetailed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de almacenamiento activos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedTypeStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -12226,7 +12904,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeStorage"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -12273,7 +12951,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeStorage"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -12311,7 +12989,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeStorage"][];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o tipos de almacenamiento no existen */
@@ -12349,7 +13027,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypeStorage"][];
+                    "application/json": components["schemas"]["BaseApiResponse"][];
                 };
             };
             /** @description IDs inválidos o tipos de almacenamiento no existen */
