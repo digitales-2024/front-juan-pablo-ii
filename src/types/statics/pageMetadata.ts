@@ -58,6 +58,8 @@ export type DataDependency = {
 export type PageMetadata = {
     title: string;
     description: string;
+    entityName: string;
+    entityPluralName: string;
     dataDependencies?: DataDependency[];
     keywords?: string[];
     author?: string;

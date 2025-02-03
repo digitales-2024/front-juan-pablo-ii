@@ -16,6 +16,7 @@ export default function PageBranches() {
   }
 
   if (response.isError) {
+    console.log(response)
     notFound();
   }
 

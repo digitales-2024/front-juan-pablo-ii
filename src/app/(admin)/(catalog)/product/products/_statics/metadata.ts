@@ -3,6 +3,8 @@ import { Box } from "lucide-react";
 
 export const METADATA:PageMetadata = {
 	title: "Productos",
+	entityName: "Producto",
+	entityPluralName: "Productos",
 	description: "Administra todos los productos de tu catálogo.",
     Icon: Box,
 	dataDependencies: [

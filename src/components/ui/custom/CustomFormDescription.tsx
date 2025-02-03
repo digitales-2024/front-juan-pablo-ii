@@ -24,7 +24,9 @@ export function CustomFormDescription({
           {description && <span className="block">{description}</span>}
         </FormDescription>
       )}
-      {children&&children}
+      {(!required && children) && <FormDescription className={className} {...props}>{children}
+        </FormDescription>}
+      {/* {children&&children} */}
     </>
   );
 }

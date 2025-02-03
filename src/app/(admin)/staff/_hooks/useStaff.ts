@@ -5,6 +5,7 @@ import {
   deleteStaff,
   getStaff,
   reactivateStaff,
+  getACtiveStaff,
 } from "../_actions/staff.actions";
 import { toast } from "sonner";
 import {
@@ -41,6 +42,25 @@ export const useStaff = () => {
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
+
+    // Query para obtener el personal activo
+    const activeStaffQuery = useQuery({
+      queryKey: ["active-staff"],
+      queryFn: async () => {
+        const response = await getACtiveStaff({});
+        
+        if (!response) {
+          throw new Error("No se recibió respuesta del servidor");
+        }
+  
+        if (response.error || !response.data) {
+          throw new Error(response.error ?? "Error desconocido");
+        }
+  
+        return response.data;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
 
   // Mutación para crear personal
   const createMutation = useMutation<BaseApiResponse<Staff>, Error, CreateStaffDto>({
@@ -165,6 +185,7 @@ export const useStaff = () => {
 
   return {
     staffQuery,
+    activeStaffQuery,
     staff: staffQuery.data,
     createMutation,
     updateMutation,

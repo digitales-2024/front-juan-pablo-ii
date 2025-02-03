@@ -1,36 +1,26 @@
 "use client";
 
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Category } from "../_interfaces/category.interface";
-import { RefreshCcw, RefreshCcwDot } from "lucide-react";
+import { RefreshCcwDot } from "lucide-react";
+import { useState } from "react";
 import { useCategories } from "../_hooks/useCategory";
-import { ComponentPropsWithoutRef } from "react";
 
-interface ReactivateCategoryDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+interface ReactivateCategoryDialogProps {
   category?: Category;
   categories?: Category[];
+  variant?: "default" | "outline";
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
@@ -38,98 +28,85 @@ interface ReactivateCategoryDialogProps extends ComponentPropsWithoutRef<typeof 
 export function ReactivateCategoryDialog({
   category,
   categories,
+  variant = "outline",
+  open: controlledOpen,
+  onOpenChange,
   showTrigger = true,
   onSuccess,
-  ...props
 }: ReactivateCategoryDialogProps) {
-  const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { reactivateMutation: { isPending, mutateAsync } } = useCategories();
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const {
+    reactivateMutation: { isPending, mutateAsync },
+  } = useCategories();
+
+  const isOpen = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
 
   const items = categories ?? (category ? [category] : []);
+  const title =
+    items.length === 1 ? "Reactivar Categoría" : "Reactivar Categorías";
+  const description =
+    items.length === 1
+      ? `¿Estás seguro de que deseas reactivar la categoría "${items[0].name}"?`
+      : `¿Estás seguro de que deseas reactivar ${items.length} categorías?`;
 
   async function onReactivate() {
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
+      setOpen(false);
       onSuccess?.();
     } catch (error) {
       console.log(error);
+
+      // El error ya es manejado por el hook
     }
   }
 
-  if (isDesktop) {
-    return (
-      <AlertDialog {...props}>
-        {showTrigger && (
-          <AlertDialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <RefreshCcwDot className="mr-2 size-4" aria-hidden="true" />
-              Reactivar ({items.length})
-            </Button>
-          </AlertDialogTrigger>
-        )}
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción reactivará a
-              <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? " categoría" : " categorías"}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2 sm:space-x-0">
-            <AlertDialogCancel asChild>
-              <Button variant="outline">Cancelar</Button>
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={onReactivate}
-              disabled={isPending}
-            >
-              {isPending && (
-                <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
-              )}
-              Reactivar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    );
-  }
-
   return (
-    <Drawer {...props}>
+    <Dialog open={isOpen} onOpenChange={setOpen}>
       {showTrigger && (
-        <DrawerTrigger asChild>
-          <Button variant="outline" size="sm">
-            <RefreshCcwDot className="mr-2 size-4" aria-hidden="true" />
-            Reactivar ({items.length})
-          </Button>
-        </DrawerTrigger>
-      )}
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
-          <DrawerDescription>
-            Esta acción reactivará a
-            <span className="font-medium"> {items.length}</span>
-            {items.length === 1 ? " categoría" : " categorías"}
-          </DrawerDescription>
-        </DrawerHeader>
-        <DrawerFooter className="gap-2 sm:space-x-0">
+        <DialogTrigger asChild>
           <Button
+            variant={variant}
+            size={variant === "outline" ? "sm" : "default"}
+          >
+            <RefreshCcwDot className="mr-2 size-4" aria-hidden="true" />
+            {items.length === 1 ? "Reactivar" : `Reactivar (${items.length})`}
+          </Button>
+        </DialogTrigger>
+      )}
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        {items.length === 1 && (
+          <div className="mb-4">
+            <p>
+              <strong>Nombre:</strong> {items[0].name}
+            </p>
+            {items[0].description && (
+              <p>
+                <strong>Descripción:</strong> {items[0].description}
+              </p>
+            )}
+          </div>
+        )}
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
+          <Button
+            variant="outline"
             onClick={onReactivate}
             disabled={isPending}
+            className="bg-green-500 hover:bg-green-600 hover:text-white"
           >
-            {isPending && (
-              <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
-            )}
-            Reactivar
+            {isPending ? "Reactivando..." : "Reactivar"}
           </Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Cancelar</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
