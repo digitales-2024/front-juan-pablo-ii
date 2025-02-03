@@ -1231,22 +1231,6 @@ export interface paths {
         patch: operations["PacientController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/paciente/upload/image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["PacientController_uploadImage"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/receta": {
         parameters: {
             query?: never;
@@ -2167,6 +2151,40 @@ export interface paths {
         put?: never;
         /** Crear nuevo almacén */
         post: operations["StorageController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/storage/detailed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los almacenes */
+        get: operations["StorageController_findAllWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/storage/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los almacenes */
+        get: operations["StorageController_findAllActive"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3528,7 +3546,7 @@ export interface components {
             birthDate: string;
             /**
              * @description Sexo del paciente (M/F)
-             * @example M
+             * @example true
              */
             gender: string;
             /**
@@ -3545,13 +3563,23 @@ export interface components {
              * @description Correo electrónico del paciente
              * @example juan.perez@example.com
              */
-            email?: string;
+            correo?: string;
             /**
              * Format: date-time
              * @description Fecha de registro del paciente
              * @example 2023-01-01
              */
-            registrationDate: string;
+            fechaRegistro: string;
+            /**
+             * @description Alergias conocidas del paciente
+             * @example Polen, Maní
+             */
+            alergias?: string;
+            /**
+             * @description Medicamentos que el paciente está tomando
+             * @example Ibuprofeno, Paracetamol
+             */
+            medicamentosActuales?: string;
             /**
              * @description Nombre del contacto de emergencia
              * @example María Pérez
@@ -3614,25 +3642,30 @@ export interface components {
             lastName: string;
             dni: string;
             /** Format: date-time */
-            birthDate: string;
-            gender: string;
-            address: string;
-            phone: string;
-            email: string;
+            cumpleanos: string;
+            sexo: boolean;
+            direccion: string;
+            telefono: string;
+            correo: string;
             /** Format: date-time */
-            registrationDate: string;
-            emergencyContact: string;
-            emergencyPhone: string;
-            healthInsurance: string;
-            maritalStatus: string;
-            occupation: string;
-            workplace: string;
-            bloodType: string;
-            primaryDoctor: string;
-            language: string;
-            notes: string;
-            patientPhoto: string;
-            isActive: boolean;
+            fechaRegistro: string;
+            alergias: string;
+            medicamentosActuales: string;
+            contactoEmergencia: string;
+            telefonoEmergencia: string;
+            seguroMedico: string;
+            estadoCivil: string;
+            ocupacion: string;
+            lugarTrabajo: string;
+            tipoSangre: string;
+            antecedentesFamiliares: string;
+            habitosVida: string;
+            vacunas: string;
+            medicoCabecera: string;
+            idioma: string;
+            autorizacionTratamiento: string;
+            observaciones: string;
+            fotografiaPaciente: string;
         };
         UpdatePatientDto: {
             /**
@@ -3658,7 +3691,7 @@ export interface components {
             birthDate?: string;
             /**
              * @description Sexo del paciente (M/F)
-             * @example M
+             * @example true
              */
             gender?: string;
             /**
@@ -3675,13 +3708,23 @@ export interface components {
              * @description Correo electrónico del paciente
              * @example juan.perez@example.com
              */
-            email?: string;
+            correo?: string;
             /**
              * Format: date-time
              * @description Fecha de registro del paciente
              * @example 2023-01-01
              */
-            registrationDate?: string;
+            fechaRegistro?: string;
+            /**
+             * @description Alergias conocidas del paciente
+             * @example Polen, Maní
+             */
+            alergias?: string;
+            /**
+             * @description Medicamentos que el paciente está tomando
+             * @example Ibuprofeno, Paracetamol
+             */
+            medicamentosActuales?: string;
             /**
              * @description Nombre del contacto de emergencia
              * @example María Pérez
@@ -4980,6 +5023,7 @@ export interface components {
             description: string;
             branchId: string;
             staffId: string;
+            isActive: boolean;
         };
         UpdateTypeStorageDto: {
             /**
@@ -5028,6 +5072,15 @@ export interface components {
             name: string;
             location: string;
             typeStorageId: string;
+            isActive: boolean;
+        };
+        DetailedStorage: {
+            id: string;
+            name: string;
+            location: string;
+            typeStorageId: string;
+            isActive: boolean;
+            TypeStorage: components["schemas"]["TypeStorage"];
         };
         UpdateStorageDto: {
             /**
@@ -5352,6 +5405,10 @@ export interface components {
              */
             movement: string[];
         };
+        IncomingCreateResponseData: {
+            incomingId: string;
+            movementTypeId: string;
+        };
         CreateOutgoingDto: {
             /**
              * @description Nombre de la salida
@@ -5477,6 +5534,27 @@ export interface components {
              *     ]
              */
             movement: string[];
+        };
+        OutgoingCreateResponseData: {
+            outgoingId: string;
+            movementTypeId: string;
+        };
+        ProductStockResponse: {
+            idProduct: string;
+            name: string;
+            unit: string;
+            price: number;
+            stock: number;
+            totalPrice: number;
+        };
+        StockByStorage: {
+            idStorage: string;
+            name: string;
+            location: string;
+            address: string;
+            staff: string;
+            description: string;
+            stock: components["schemas"]["ProductStockResponse"][];
         };
         CreateMedicalConsultationBillingDto: {
             /**
@@ -9376,55 +9454,7 @@ export interface operations {
             };
         };
     };
-    PacientController_uploadImage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": {
-                    /**
-                     * Format: binary
-                     * @description Archivo de imagen a subir
-                     */
-                    image?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Imagen subida exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        statusCode?: number;
-                        message?: string;
-                        data?: string;
-                    };
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PrescriptionController_findAll: {
+    RecipeController_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -12154,7 +12184,7 @@ export interface operations {
         };
         responses: {
             /** @description Tipo de almacenamiento creado exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -12395,6 +12425,74 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o almacén ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findAllWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -13082,7 +13180,7 @@ export interface operations {
         };
         responses: {
             /** @description Ingreso creado exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -13280,12 +13378,12 @@ export interface operations {
         };
         responses: {
             /** @description Ingreso a almacen creado exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Incoming"];
+                    "application/json": components["schemas"]["IncomingCreateResponseData"];
                 };
             };
             /** @description Datos de entrada inválidos o ingreso ya existe */
@@ -13352,7 +13450,7 @@ export interface operations {
         };
         responses: {
             /** @description Salida creada exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -13550,12 +13648,12 @@ export interface operations {
         };
         responses: {
             /** @description Salida de almacen creada exitosamente */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Outgoing"];
+                    "application/json": components["schemas"]["OutgoingCreateResponseData"];
                 };
             };
             /** @description Datos de salida inválidos o salida ya existe */
@@ -13586,11 +13684,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Stock de un producto en todos los almacenes */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
             };
         };
     };
@@ -13603,11 +13704,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Stock de todos los productos en todos los almacenes */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
             };
         };
     };
@@ -13623,11 +13727,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Stock de todos los productos en un almacén */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
             };
         };
     };
@@ -13645,11 +13752,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Stock de un producto en un almacén */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
             };
         };
     };

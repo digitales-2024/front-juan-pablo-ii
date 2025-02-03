@@ -5,6 +5,7 @@ import {
   deleteBranches,
   getBranches,
   reactivateBranches,
+  getActiveBranches,
 } from "../_actions/branch.actions";
 import { toast } from "sonner";
 import {
@@ -46,6 +47,22 @@ export const useBranches = () => {
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
+
+    // Query para obtener las branches activas
+    const activeBranchesQuery = useQuery({
+      queryKey: ["active-branches"],
+      queryFn: async () => {
+        const response = await getActiveBranches({});
+        if (!response) {
+          throw new Error("No se recibió respuesta del servidor");
+        }
+        if (response.error || !response.data) {
+          throw new Error(response.error ?? "Error desconocido");
+        }
+        return response.data;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
 
   // Mutación para crear sucursal
   const createMutation = useMutation<BaseApiResponse<Branch>, Error, CreateBranchDto>({
@@ -197,6 +214,7 @@ export const useBranches = () => {
 
   return {
     branchesQuery,
+    activeBranchesQuery,
     branches: branchesQuery.data,
     createMutation,
     updateMutation,
