@@ -37,6 +37,21 @@ export async function getTypeProducts(): Promise<GetTypeProductsResponse> {
     }
 }
 
+export async function getActiveTypeProducts(): Promise<GetTypeProductsResponse> {
+    try {
+        const [typeProducts, error] = await http.get<TypeProductResponse[]>("/type-product/active");
+
+        if (error) {
+            return { error: error.message };
+        }
+
+        return typeProducts;
+    } catch (error) {
+        if (error instanceof Error) return { error: error.message };
+        return { error: "Error desconocido" };
+    }
+}
+
 export async function createTypeProduct(
     data: CreateTypeProductDto
 ): Promise<CreateTypeProductResponse> {

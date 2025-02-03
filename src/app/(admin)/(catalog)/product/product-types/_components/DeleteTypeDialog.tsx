@@ -29,7 +29,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useTypeProducts } from "../hook/useType";
+import { useTypeProducts } from "../_hooks/useType";
 
 
 interface DeleteTypeDialogProps

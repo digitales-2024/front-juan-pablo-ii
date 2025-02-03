@@ -1827,6 +1827,23 @@ export interface paths {
         patch: operations["CategoryController_update"];
         trace?: never;
     };
+    "/api/v1/category/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las categorías activas */
+        get: operations["CategoryController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/category/remove/all": {
         parameters: {
             query?: never;
@@ -1873,6 +1890,23 @@ export interface paths {
         put?: never;
         /** Crear nuevo tipo de producto */
         post: operations["TypeProductController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/type-product/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los tipos de productos activos */
+        get: operations["TypeProductController_findAllActive"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4740,11 +4774,6 @@ export interface components {
              */
             description?: string;
         };
-        TypeProduct: {
-            id: string;
-            name: string;
-            description: string;
-        };
         TypeProductResponse: {
             id: string;
             name: string;
@@ -4752,6 +4781,11 @@ export interface components {
             isActive: boolean;
             /** Format: date-time */
             createdAt: string;
+        };
+        TypeProduct: {
+            id: string;
+            name: string;
+            description: string;
         };
         UpdateTypeProductDto: {
             /**
@@ -4856,6 +4890,31 @@ export interface components {
             observaciones: string;
             condicionesAlmacenamiento: string;
             imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        ProductWithRelations: {
+            id: string;
+            categoriaId: string;
+            tipoProductoId: string;
+            name: string;
+            precio: number;
+            unidadMedida: string;
+            proveedor: string;
+            uso: string;
+            usoProducto: string;
+            description: string;
+            codigoProducto: string;
+            descuento: number;
+            observaciones: string;
+            condicionesAlmacenamiento: string;
+            imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            categoria: Record<string, never>;
+            tipoProducto: Record<string, never>;
         };
         ProductWithRelations: {
             id: string;
@@ -11371,6 +11430,40 @@ export interface operations {
             };
         };
     };
+    CategoryController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las categorías activas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     CategoryController_deleteMany: {
         parameters: {
             query?: never;
@@ -11504,6 +11597,40 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o tipo de producto ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de productos activos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeProductResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;

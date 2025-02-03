@@ -23,30 +23,30 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Category } from "../_interfaces/category.interface";
+import { Product } from "../_interfaces/products.interface";
 import { RefreshCcw, Trash } from "lucide-react";
-import { useCategories } from "../_hooks/useCategory";
+import { useProducts } from "../_hooks/useProduct";
 import { toast } from "sonner";
 import { ComponentPropsWithoutRef } from "react";
 
-interface DeactivateCategoryDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
-  category?: Category;
-  categories?: Category[];
+interface DeactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+  product?: Product;
+  products?: Product[];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export function DeactivateCategoryDialog({
-  category,
-  categories,
+export function DeactivateProductDialog({
+  product,
+  products,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeactivateCategoryDialogProps) {
+}: DeactivateProductDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { deleteMutation: { isPending, mutateAsync } } = useCategories();
+  const { deleteMutation: { isPending, mutateAsync } } = useProducts();
 
-  const items = categories ?? (category ? [category] : []);
+  const items = products ?? (product ? [product] : []);
 
   async function onDelete() {
     const ids = items.map((item) => item.id);
@@ -54,8 +54,8 @@ export function DeactivateCategoryDialog({
       await mutateAsync({ ids });
       toast.success(
         items.length === 1
-          ? "Categoría desactivada exitosamente"
-          : "Categorías desactivadas exitosamente"
+          ? "Producto desactivado exitosamente"
+          : "Productos desactivados exitosamente"
       );
       onSuccess?.();
     } catch (error) {
@@ -80,7 +80,7 @@ export function DeactivateCategoryDialog({
             <AlertDialogDescription>
               Esta acción desactivará a
               <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? " categoría" : " categorías"}
+              {items.length === 1 ? " producto" : " productos"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -118,7 +118,7 @@ export function DeactivateCategoryDialog({
           <DrawerDescription>
             Esta acción desactivará a
             <span className="font-medium"> {items.length}</span>
-            {items.length === 1 ? " categoría" : " categorías"}
+            {items.length === 1 ? " producto" : " productos"}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">

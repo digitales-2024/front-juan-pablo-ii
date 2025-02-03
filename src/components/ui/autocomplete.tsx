@@ -8,6 +8,7 @@ import React, {
     type KeyboardEvent,
     forwardRef,
 } from "react";
+import type { Option } from "@/types/statics/forms";
 
 import { cn } from "@/lib/utils";
 
@@ -19,12 +20,6 @@ import {
 } from "./command";
 import { ScrollArea } from "./scroll-area";
 import { Skeleton } from "./skeleton";
-
-export type Option = {
-    value: string;
-    label: string;
-    [key: string]: string;
-};
 
 type AutoCompleteProps = {
     options: Option[];
@@ -150,7 +145,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(
                             isOpen ? "block" : "hidden",
                         )}
                     >
-                        <ScrollArea className="h-[10rem]">
+                        <ScrollArea className="h-fit max-h-44 overflow-auto">
                             <CommandList className="h-full rounded-lg capitalize ring-1 ring-slate-200">
                                 {isLoading && (
                                     <CommandPrimitive.Loading>
