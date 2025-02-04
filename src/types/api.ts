@@ -2120,6 +2120,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener producto por ID con informaciòn detallada anidada */
+        get: operations["ProductController_findOneWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/{id}": {
         parameters: {
             query?: never;
@@ -2136,23 +2153,6 @@ export interface paths {
         head?: never;
         /** Actualizar producto existente */
         patch: operations["ProductController_update"];
-        trace?: never;
-    };
-    "/api/v1/product/{id}/detailed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener producto por ID con informaciòn detallada anidada */
-        get: operations["ProductController_findOneWithRelations"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/api/v1/product/remove/all": {
@@ -2233,6 +2233,23 @@ export interface paths {
         };
         /** Obtener todos los tipos de almacenamiento activos */
         get: operations["TypeStorageController_findAllDetailed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/type-storage/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener tipo detallado de almacenamiento por ID */
+        get: operations["TypeStorageController_findOneWithRelations"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2337,6 +2354,23 @@ export interface paths {
         };
         /** Obtener todos los almacenes */
         get: operations["StorageController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/storage/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener almacén por ID */
+        get: operations["StorageController_findOneWithRelations"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2555,6 +2589,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/incoming/detailed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los ingresos */
+        get: operations["IncomingController_findAllWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/incoming/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener ingreso por ID */
+        get: operations["IncomingController_findOneWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/incoming/{id}": {
         parameters: {
             query?: never;
@@ -2636,6 +2704,40 @@ export interface paths {
         put?: never;
         /** Crear nueva salida */
         post: operations["OutgoingController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/outgoing/detailed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los ingresos */
+        get: operations["OutgoingController_findAllWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/outgoing/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener ingreso por ID */
+        get: operations["OutgoingController_findOneWithRelations"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5457,6 +5559,54 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isActive: boolean;
+        };
+        IncomingStorage: {
+            name: string;
+        };
+        IncomingStock: {
+            id: string;
+            storageId: string;
+            stock: number;
+            price: number;
+            isActive: boolean;
+            Storage: components["schemas"]["IncomingStorage"];
+        };
+        IncomingProduct: {
+            id: string;
+            categoriaId: string;
+            tipoProductoId: string;
+            name: string;
+            precio: number;
+            unidadMedida: string;
+            proveedor: string;
+            usoProducto: string;
+            description: string;
+            codigoProducto: string;
+            isActive: boolean;
+            Stock: components["schemas"]["IncomingStock"][];
+        };
+        IncomingMovement: {
+            id: string;
+            movementTypeId: string;
+            quantity: number;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            isActive: boolean;
+            Product: components["schemas"]["IncomingProduct"];
+        };
+        DetailedIncoming: {
+            id: string;
+            name: string;
+            description: string;
+            storageId: string;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            referenceId: string;
+            isActive: boolean;
+            Movement: components["schemas"]["IncomingMovement"][];
         };
         UpdateIncomingDto: {
             /**
@@ -5539,7 +5689,7 @@ export interface components {
              *       }
              *     ]
              */
-            movement: string[];
+            movement: components["schemas"]["Movement"][];
         };
         IncomingCreateResponseData: {
             incomingId: string;
@@ -5587,6 +5737,54 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isActive: boolean;
+        };
+        OutgoingStorage: {
+            name: string;
+        };
+        OutgoingStock: {
+            id: string;
+            storageId: string;
+            stock: number;
+            price: number;
+            isActive: boolean;
+            Storage: components["schemas"]["OutgoingStorage"];
+        };
+        OutgoingProduct: {
+            id: string;
+            categoriaId: string;
+            tipoProductoId: string;
+            name: string;
+            precio: number;
+            unidadMedida: string;
+            proveedor: string;
+            usoProducto: string;
+            description: string;
+            codigoProducto: string;
+            isActive: boolean;
+            Stock: components["schemas"]["OutgoingStock"][];
+        };
+        OutgoingMovement: {
+            id: string;
+            movementTypeId: string;
+            quantity: number;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            isActive: boolean;
+            Product: components["schemas"]["OutgoingProduct"];
+        };
+        DetailedOutgoing: {
+            id: string;
+            name: string;
+            description: string;
+            storageId: string;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            referenceId: string;
+            isActive: boolean;
+            Movement: components["schemas"]["OutgoingMovement"][];
         };
         UpdateOutgoingDto: {
             /**
@@ -5669,7 +5867,7 @@ export interface components {
              *       }
              *     ]
              */
-            movement: string[];
+            movement: components["schemas"]["Movement"][];
         };
         OutgoingCreateResponseData: {
             outgoingId: string;
@@ -12542,6 +12740,50 @@ export interface operations {
             };
         };
     };
+    ProductController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductWithRelations"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Producto no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ProductController_findOne: {
         parameters: {
             query?: never;
@@ -12619,50 +12861,6 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_findOneWithRelations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del producto */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Producto encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductWithRelations"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Producto no encontrado */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -12879,6 +13077,50 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del tipo de almacenamiento */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tipo de almacenamiento encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedTypeStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Tipo de almacenamiento no encontrado */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -13179,6 +13421,50 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del almacén */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Almacén encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Almacén no encontrado */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -13882,6 +14168,84 @@ export interface operations {
             };
         };
     };
+    IncomingController_findAllWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los ingresos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedIncoming"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IncomingController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del ingreso */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ingreso encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedIncoming"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Ingreso no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     IncomingController_findOne: {
         parameters: {
             query?: never;
@@ -14145,6 +14509,84 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_findAllWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los ingresos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOutgoing"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del ingreso */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ingreso encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOutgoing"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Ingreso no encontrado */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

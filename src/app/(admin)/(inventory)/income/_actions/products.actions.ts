@@ -1,13 +1,14 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { Product, DetailedProduct, CreateProductDto, UpdateProductDto, DeleteProductDto } from "../_interfaces/products.interface";
+import { Incoming, DetailedIncoming, DeleteIncomingDto, CreateIncomingDto, CreateResponse} from "../_interfaces/products.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";
 
-export type ProductResponse = BaseApiResponse<Product> | { error: string };
-export type DetailedProductResponse = BaseApiResponse<DetailedProduct> | { error: string };
+// export type ProductResponse = BaseApiResponse<Product> | { error: string };
+export type IncomingResponse = BaseApiResponse<CreateResponse> | { error: string };
+export type DetailedIncomingResponse = BaseApiResponse<DetailedIncoming> | { error: string };
 export type ListProductResponse = Product[] | { error: string };
 export type ListDetailedProductResponse = DetailedProduct[] | { error: string };
 
