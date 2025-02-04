@@ -89,7 +89,7 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Pacientes",
-              url: "/patients",
+              url: "/patient",
               icon: UserPlus,
             },
             {
