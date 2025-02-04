@@ -1021,59 +1021,6 @@ export interface paths {
         patch: operations["BranchController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/appointment-types": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los tipos de cita */
-        get: operations["AppointmentTypeController_findAll"];
-        put?: never;
-        /** Crear nuevo tipo de cita */
-        post: operations["AppointmentTypeController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/appointment-types/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener tipo de cita por ID */
-        get: operations["AppointmentTypeController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar tipo de cita */
-        patch: operations["AppointmentTypeController_update"];
-        trace?: never;
-    };
-    "/api/v1/appointment-types/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples tipos de citas */
-        delete: operations["AppointmentTypeController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/appointments": {
         parameters: {
             query?: never;
@@ -1176,372 +1123,6 @@ export interface paths {
         head?: never;
         /** Reactivar múltiples citas médicas */
         patch: operations["AppointmentController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/paciente": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los pacientes */
-        get: operations["PacientController_findAll"];
-        put?: never;
-        /** Crear nuevo paciente */
-        post: operations["PacientController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/paciente/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener paciente por ID */
-        get: operations["PacientController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar paciente existente */
-        patch: operations["PacientController_update"];
-        trace?: never;
-    };
-    "/api/v1/paciente/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples pacientes */
-        delete: operations["PacientController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/paciente/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples pacientes */
-        patch: operations["PacientController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/paciente/create-with-image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Crear nuevo paciente con imagen opcional */
-        post: operations["PacientController_createWithImage"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/paciente/{id}/update-with-image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar paciente existente con imagen opcional */
-        patch: operations["PacientController_updateWithImage"];
-        trace?: never;
-    };
-    "/api/v1/receta": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todas las recetas médicas */
-        get: operations["PrescriptionController_findAll"];
-        put?: never;
-        /** Crear nueva receta médica */
-        post: operations["PrescriptionController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/receta/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener receta médica por ID */
-        get: operations["PrescriptionController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar receta médica existente */
-        patch: operations["PrescriptionController_update"];
-        trace?: never;
-    };
-    "/api/v1/receta/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples recetas médicas */
-        delete: operations["PrescriptionController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/receta/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples recetas médicas */
-        patch: operations["PrescriptionController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/update-history": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todas las actualizaciones de historias médicas */
-        get: operations["UpdateHistoryController_findAll"];
-        put?: never;
-        /** Crear nueva actualización de historia médica */
-        post: operations["UpdateHistoryController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/update-history/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener actualización de historia médica por ID */
-        get: operations["UpdateHistoryController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar actualización de historia médica existente */
-        patch: operations["UpdateHistoryController_update"];
-        trace?: never;
-    };
-    "/api/v1/update-history/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples actualizaciones de historias médicas */
-        delete: operations["UpdateHistoryController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/update-history/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples actualizaciones de historias médicas */
-        patch: operations["UpdateHistoryController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/update-history/create-with-images": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Crear actualización de historia médica con imágenes */
-        post: operations["UpdateHistoryController_createWithImages"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/update-history/{id}/with-images": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener historia médica con imágenes por ID */
-        get: operations["UpdateHistoryController_findOneWithImages"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar historia médica con imágenes */
-        patch: operations["UpdateHistoryController_updateWithImages"];
-        trace?: never;
-    };
-    "/api/v1/medical-history": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todas las historias médicas */
-        get: operations["MedicalHistoryController_findAll"];
-        put?: never;
-        /** Crear nueva historia médica */
-        post: operations["MedicalHistoryController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/medical-history/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener historia médica por ID */
-        get: operations["MedicalHistoryController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar historia médica existente */
-        patch: operations["MedicalHistoryController_update"];
-        trace?: never;
-    };
-    "/api/v1/medical-history/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples historias médicas */
-        delete: operations["MedicalHistoryController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/medical-history/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples historias médicas */
-        patch: operations["MedicalHistoryController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/medical-history/{id}/complete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener historia médica completa por ID */
-        get: operations["MedicalHistoryController_findOneComplete"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/api/v1/staff-type": {
@@ -1699,216 +1280,6 @@ export interface paths {
         head?: never;
         /** Reactivar múltiple personal */
         patch: operations["StaffController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/calendario": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los calendarios */
-        get: operations["CalendarController_findAll"];
-        put?: never;
-        /** Crear nuevo calendario */
-        post: operations["CalendarController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/calendario/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener calendario por ID */
-        get: operations["CalendarController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar calendario existente */
-        patch: operations["CalendarController_update"];
-        trace?: never;
-    };
-    "/api/v1/calendario/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples calendarios */
-        delete: operations["CalendarController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/calendario/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples calendarios */
-        patch: operations["CalendarController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/evento": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los eventos */
-        get: operations["EventController_findAll"];
-        put?: never;
-        /** Crear nuevo evento */
-        post: operations["EventController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/evento/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener evento por ID */
-        get: operations["EventController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar evento existente */
-        patch: operations["EventController_update"];
-        trace?: never;
-    };
-    "/api/v1/evento/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples eventos */
-        delete: operations["EventController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/evento/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples eventos */
-        patch: operations["EventController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/recurrencia": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todas las recurrencias */
-        get: operations["RecurrenceController_findAll"];
-        put?: never;
-        /** Crear nueva recurrencia */
-        post: operations["RecurrenceController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/recurrencia/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener recurrencia por ID */
-        get: operations["RecurrenceController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar recurrencia existente */
-        patch: operations["RecurrenceController_update"];
-        trace?: never;
-    };
-    "/api/v1/recurrencia/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples recurrencias */
-        delete: operations["RecurrenceController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/recurrencia/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples recurrencias */
-        patch: operations["RecurrenceController_reactivateAll"];
         trace?: never;
     };
     "/api/v1/category": {
@@ -2241,6 +1612,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/type-storage/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener tipo detallado de almacenamiento por ID */
+        get: operations["TypeStorageController_findOneWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/type-storage/{id}": {
         parameters: {
             query?: never;
@@ -2337,6 +1725,23 @@ export interface paths {
         };
         /** Obtener todos los almacenes */
         get: operations["StorageController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/storage/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener almacén por ID */
+        get: operations["StorageController_findOneWithRelations"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2779,23 +2184,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/billing/medical-consultation": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create medical consultation order */
-        post: operations["BillingController_createMedicalConsultationOrder"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/billing/product-sale": {
         parameters: {
             query?: never;
@@ -2830,33 +2218,590 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/consulta": {
+    "/api/v1/events": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todas las consultas */
-        get: operations["ConsultationController_findAll"];
+        /** Obtener todos los eventos */
+        get: operations["EventController_findAll"];
         put?: never;
-        /** Crear nueva consulta */
-        post: operations["ConsultationController_create"];
+        /** Crear nuevo evento */
+        post: operations["EventController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/consulta/{id}": {
+    "/api/v1/events/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener consulta por ID */
-        get: operations["ConsultationController_findOne"];
+        /** Obtener evento por ID */
+        get: operations["EventController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar evento existente */
+        patch: operations["EventController_update"];
+        trace?: never;
+    };
+    "/api/v1/events/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples eventos */
+        delete: operations["EventController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/events/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples eventos */
+        patch: operations["EventController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/events/{id}/generate-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EventController_generateEvents"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los horarios */
+        get: operations["StaffScheduleController_findAll"];
+        put?: never;
+        /** Crear nuevo horario */
+        post: operations["StaffScheduleController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener horario por ID */
+        get: operations["StaffScheduleController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar horario existente */
+        patch: operations["StaffScheduleController_update"];
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples horarios */
+        delete: operations["StaffScheduleController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples horarios */
+        patch: operations["StaffScheduleController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/time-off": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las ausencias temporales */
+        get: operations["TimeOffController_findAll"];
+        put?: never;
+        /** Crear nueva ausencia temporal */
+        post: operations["TimeOffController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/time-off/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener ausencia temporal por ID */
+        get: operations["TimeOffController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar evento existente */
+        patch: operations["TimeOffController_update"];
+        trace?: never;
+    };
+    "/api/v1/time-off/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples eventos */
+        delete: operations["TimeOffController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/time-off/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples eventos */
+        patch: operations["TimeOffController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/paciente": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los pacientes */
+        get: operations["PacientController_findAll"];
+        put?: never;
+        /** Crear nuevo paciente */
+        post: operations["PacientController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/paciente/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener paciente por ID */
+        get: operations["PacientController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar paciente existente */
+        patch: operations["PacientController_update"];
+        trace?: never;
+    };
+    "/api/v1/paciente/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples pacientes */
+        delete: operations["PacientController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/paciente/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples pacientes */
+        patch: operations["PacientController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/paciente/create-with-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crear nuevo paciente con imagen opcional */
+        post: operations["PacientController_createWithImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/paciente/{id}/update-with-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar paciente existente con imagen opcional */
+        patch: operations["PacientController_updateWithImage"];
+        trace?: never;
+    };
+    "/api/v1/receta": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las recetas médicas */
+        get: operations["PrescriptionController_findAll"];
+        put?: never;
+        /** Crear nueva receta médica */
+        post: operations["PrescriptionController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receta/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener receta médica por ID */
+        get: operations["PrescriptionController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar receta médica existente */
+        patch: operations["PrescriptionController_update"];
+        trace?: never;
+    };
+    "/api/v1/receta/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples recetas médicas */
+        delete: operations["PrescriptionController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receta/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples recetas médicas */
+        patch: operations["PrescriptionController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/update-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las actualizaciones de historias médicas */
+        get: operations["UpdateHistoryController_findAll"];
+        put?: never;
+        /** Crear nueva actualización de historia médica */
+        post: operations["UpdateHistoryController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/update-history/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener actualización de historia médica por ID */
+        get: operations["UpdateHistoryController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar actualización de historia médica existente */
+        patch: operations["UpdateHistoryController_update"];
+        trace?: never;
+    };
+    "/api/v1/update-history/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples actualizaciones de historias médicas */
+        delete: operations["UpdateHistoryController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/update-history/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples actualizaciones de historias médicas */
+        patch: operations["UpdateHistoryController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/update-history/create-with-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crear actualización de historia médica con imágenes */
+        post: operations["UpdateHistoryController_createWithImages"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/update-history/{id}/with-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener historia médica con imágenes por ID */
+        get: operations["UpdateHistoryController_findOneWithImages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar historia médica con imágenes */
+        patch: operations["UpdateHistoryController_updateWithImages"];
+        trace?: never;
+    };
+    "/api/v1/medical-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las historias médicas */
+        get: operations["MedicalHistoryController_findAll"];
+        put?: never;
+        /** Crear nueva historia médica */
+        post: operations["MedicalHistoryController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/medical-history/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener historia médica por ID */
+        get: operations["MedicalHistoryController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar historia médica existente */
+        patch: operations["MedicalHistoryController_update"];
+        trace?: never;
+    };
+    "/api/v1/medical-history/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples historias médicas */
+        delete: operations["MedicalHistoryController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/medical-history/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples historias médicas */
+        patch: operations["MedicalHistoryController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/medical-history/{id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener historia médica completa por ID */
+        get: operations["MedicalHistoryController_findOneComplete"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3564,43 +3509,6 @@ export interface components {
         DeleteBranchesDto: {
             ids: string[];
         };
-        CreateAppointmentTypeDto: {
-            /**
-             * @description Nombre del tipo de cita
-             * @example Consulta General
-             */
-            name: string;
-            /**
-             * @description Descripción del tipo de cita
-             * @example Consulta médica general de rutina
-             */
-            description?: string;
-        };
-        AppointmentType: {
-            id: string;
-            name: string;
-            description?: string;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpdateAppointmentTypeDto: {
-            /**
-             * @description Nombre del tipo de cita
-             * @example Consulta General
-             */
-            name?: string;
-            /**
-             * @description Descripción del tipo de cita
-             * @example Consulta médica general de rutina
-             */
-            description?: string;
-        };
-        DeleteAppointmentTypesDto: {
-            /** @description Array of appointment type IDs to delete */
-            ids: string[];
-        };
         CreateAppointmentDto: {
             /**
              * @description ID del tipo de cita médica
@@ -3674,6 +3582,1489 @@ export interface components {
             description?: string;
         };
         DeleteAppointmentsDto: {
+            ids: string[];
+        };
+        CreateStaffTypeDto: {
+            /**
+             * @description Nombre de la especialidad
+             * @example Cardiología
+             */
+            name: string;
+            /**
+             * @description Descripción de la especialidad
+             * @example Especialidad enfocada en el sistema cardiovascular
+             */
+            description: string;
+        };
+        StaffType: {
+            /** @description ID único del tipo de personal */
+            id: string;
+            /** @description Nombre del tipo de personal */
+            name: string;
+            /** @description Descripción del tipo de personal */
+            description?: string;
+            /** @description Estado activo/inactivo del tipo de personal */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de creación del registro
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Fecha de última actualización
+             */
+            updatedAt: string;
+        };
+        UpdateStaffTypeDto: {
+            /**
+             * @description Nombre de la especialidad
+             * @example Cardiología
+             */
+            name?: string;
+            /**
+             * @description Descripción de la especialidad
+             * @example Especialidad enfocada en el sistema cardiovascular
+             */
+            description?: string;
+        };
+        DeleteStaffTypeDto: {
+            ids: string[];
+        };
+        CreateStaffDto: {
+            /**
+             * @description ID del tipo de personal
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            staffTypeId: string;
+            /**
+             * @description ID del usuario asociado al personal médico en el sistema
+             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
+             */
+            userId?: string;
+            /**
+             * @description Nombre del personal médico
+             * @example Carlos
+             */
+            name: string;
+            /**
+             * @description Apellido del personal médico
+             * @example Rodríguez
+             */
+            lastName: string;
+            /**
+             * @description Número de DNI del personal médico
+             * @example 40506070
+             */
+            dni: string;
+            /**
+             * Format: date-time
+             * @description Fecha de nacimiento del personal médico
+             * @example 1980-05-15
+             */
+            birth: string;
+            /**
+             * @description email
+             * @example personal1@correo.com
+             */
+            email: string;
+            /**
+             * @description numero de telefono
+             * @example 123456789
+             */
+            phone?: string;
+        };
+        Staff: {
+            /** @description ID único del personal */
+            id: string;
+            /** @description ID del tipo de personal */
+            staffTypeId: string;
+            /** @description ID del usuario asociado */
+            userId: string | null;
+            /** @description Nombre del personal */
+            name: string;
+            /** @description Correo electrónico */
+            email: string;
+            /** @description Número telefónico */
+            phone: string;
+            /** @description Apellido del personal */
+            lastName: string;
+            /** @description Documento Nacional de Identidad */
+            dni: string;
+            /**
+             * Format: date-time
+             * @description Fecha de nacimiento
+             */
+            birth: string;
+            /** @description Estado activo/inactivo del personal */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de creación del registro
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Fecha de última actualización
+             */
+            updatedAt: string;
+            /**
+             * @description Información del tipo de personal
+             * @example {
+             *       "name": "doctor"
+             *     }
+             */
+            staffType: {
+                /**
+                 * @description Nombre del tipo de personal
+                 * @example doctor
+                 */
+                name?: string;
+            };
+        };
+        UpdateStaffDto: {
+            /**
+             * @description ID del tipo de personal
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            staffTypeId?: string;
+            /**
+             * @description ID del usuario asociado al personal médico en el sistema
+             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
+             */
+            userId?: string;
+            /**
+             * @description Nombre del personal médico
+             * @example Carlos
+             */
+            name?: string;
+            /**
+             * @description Apellido del personal médico
+             * @example Rodríguez
+             */
+            lastName?: string;
+            /**
+             * @description Número de DNI del personal médico
+             * @example 40506070
+             */
+            dni?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de nacimiento del personal médico
+             * @example 1980-05-15
+             */
+            birth?: string;
+            /**
+             * @description email
+             * @example personal1@correo.com
+             */
+            email?: string;
+            /**
+             * @description numero de telefono
+             * @example 123456789
+             */
+            phone?: string;
+        };
+        DeleteStaffDto: {
+            ids: string[];
+        };
+        CreateCategoryDto: {
+            /**
+             * @description Nombre de la categoría
+             * @example Medicamentos, Cosméticos, Materiales
+             */
+            name: string;
+            /**
+             * @description Descripción de la categoría
+             * @example Descripción opcional que proporciona más detalles sobre la categoría
+             */
+            description?: string;
+        };
+        Category: {
+            id: string;
+            name: string;
+            description: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        UpdateCategoryDto: {
+            /**
+             * @description Nombre de la categoría
+             * @example Medicamentos, Cosméticos, Materiales
+             */
+            name?: string;
+            /**
+             * @description Descripción de la categoría
+             * @example Descripción opcional que proporciona más detalles sobre la categoría
+             */
+            description?: string;
+        };
+        DeleteCategoryDto: {
+            ids: string[];
+        };
+        CreateTypeProductDto: {
+            /**
+             * @description Nombre del tipo de producto
+             * @example Antibióticos, Bloqueadores solares, Gasas
+             */
+            name: string;
+            /**
+             * @description Descripción del tipo de producto
+             * @example Medicamentos para el tratamiento de infecciones bacterianas
+             */
+            description?: string;
+        };
+        TypeProductResponse: {
+            id: string;
+            name: string;
+            description: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        TypeProduct: {
+            id: string;
+            name: string;
+            description: string;
+        };
+        UpdateTypeProductDto: {
+            /**
+             * @description Nombre del tipo de producto
+             * @example Antibióticos, Bloqueadores solares, Gasas
+             */
+            name?: string;
+            /**
+             * @description Descripción del tipo de producto
+             * @example Medicamentos para el tratamiento de infecciones bacterianas
+             */
+            description?: string;
+        };
+        DeleteTypeProductDto: {
+            ids: string[];
+        };
+        CreateProductDto: {
+            /**
+             * @description ID de la categoría
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            categoriaId: string;
+            /**
+             * @description ID del tipo de producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            tipoProductoId: string;
+            /**
+             * @description Nombre del producto
+             * @example Paracetamol 500mg
+             */
+            name: string;
+            /**
+             * @description Precio del producto
+             * @example 15.5
+             */
+            precio: number;
+            /**
+             * @description Unidad de medida
+             * @example mg
+             */
+            unidadMedida?: string;
+            /**
+             * @description Proveedor o fabricante
+             * @example Laboratorios XYZ
+             */
+            proveedor?: string;
+            /**
+             * @description Uso del producto
+             * @example Paciente
+             */
+            uso?: string;
+            /**
+             * @description Uso específico del producto
+             * @example Venta
+             */
+            usoProducto?: string;
+            /**
+             * @description Descripción del producto
+             * @example Analgésico y antipirético para adultos
+             */
+            description?: string;
+            /**
+             * @description Código único del producto
+             * @example 7501234567890
+             */
+            codigoProducto?: string;
+            /**
+             * @description Descuento aplicado
+             * @example 10.5
+             */
+            descuento?: number;
+            /**
+             * @description Observaciones adicionales
+             * @example Mantener fuera del alcance de los niños
+             */
+            observaciones?: string;
+            /**
+             * @description Condiciones de almacenamiento
+             * @example Mantener en lugar fresco y seco
+             */
+            condicionesAlmacenamiento?: string;
+            /**
+             * @description URL de la imagen del producto
+             * @example https://ejemplo.com/imagen.jpg
+             */
+            imagenUrl?: string;
+        };
+        Product: {
+            id: string;
+            categoriaId: string;
+            tipoProductoId: string;
+            name: string;
+            precio: number;
+            unidadMedida: string;
+            proveedor: string;
+            uso: string;
+            usoProducto: string;
+            description: string;
+            codigoProducto: string;
+            descuento: number;
+            observaciones: string;
+            condicionesAlmacenamiento: string;
+            imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        ProductWithRelations: {
+            id: string;
+            categoriaId: string;
+            tipoProductoId: string;
+            name: string;
+            precio: number;
+            unidadMedida: string;
+            proveedor: string;
+            uso: string;
+            usoProducto: string;
+            description: string;
+            codigoProducto: string;
+            descuento: number;
+            observaciones: string;
+            condicionesAlmacenamiento: string;
+            imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            categoria: Record<string, never>;
+            tipoProducto: Record<string, never>;
+        };
+        UpdateProductDto: {
+            /**
+             * @description ID de la categoría
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            categoriaId?: string;
+            /**
+             * @description ID del tipo de producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            tipoProductoId?: string;
+            /**
+             * @description Nombre del producto
+             * @example Paracetamol 500mg
+             */
+            name?: string;
+            /**
+             * @description Precio del producto
+             * @example 15.5
+             */
+            precio?: number;
+            /**
+             * @description Unidad de medida
+             * @example mg
+             */
+            unidadMedida?: string;
+            /**
+             * @description Proveedor o fabricante
+             * @example Laboratorios XYZ
+             */
+            proveedor?: string;
+            /**
+             * @description Uso del producto
+             * @example Paciente
+             */
+            uso?: string;
+            /**
+             * @description Uso específico del producto
+             * @example Venta
+             */
+            usoProducto?: string;
+            /**
+             * @description Descripción del producto
+             * @example Analgésico y antipirético para adultos
+             */
+            description?: string;
+            /**
+             * @description Código único del producto
+             * @example 7501234567890
+             */
+            codigoProducto?: string;
+            /**
+             * @description Descuento aplicado
+             * @example 10.5
+             */
+            descuento?: number;
+            /**
+             * @description Observaciones adicionales
+             * @example Mantener fuera del alcance de los niños
+             */
+            observaciones?: string;
+            /**
+             * @description Condiciones de almacenamiento
+             * @example Mantener en lugar fresco y seco
+             */
+            condicionesAlmacenamiento?: string;
+            /**
+             * @description URL de la imagen del producto
+             * @example https://ejemplo.com/imagen.jpg
+             */
+            imagenUrl?: string;
+        };
+        DeleteProductDto: {
+            ids: string[];
+        };
+        CreateTypeStorageDto: {
+            /**
+             * @description Nombre del tipo de almacén
+             * @example almacen secos, almacen refrigerados
+             */
+            name: string;
+            /**
+             * @description Descripción del tipo de almacén
+             * @example Almacén destinado a productos listos para su distribución
+             */
+            description?: string;
+            /**
+             * @description ID de la sucursal si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal responsable si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
+        };
+        TypeStorage: {
+            id: string;
+            name: string;
+            description: string;
+            branchId: string;
+            staffId: string;
+            isActive: boolean;
+        };
+        DetailedTypeStorage: {
+            id: string;
+            name: string;
+            description: string;
+            branchId: string;
+            staffId: string;
+            isActive: boolean;
+            branch: components["schemas"]["Branch"];
+            staff: components["schemas"]["Staff"];
+        };
+        UpdateTypeStorageDto: {
+            /**
+             * @description Nombre del tipo de almacén
+             * @example almacen secos, almacen refrigerados
+             */
+            name?: string;
+            /**
+             * @description Descripción del tipo de almacén
+             * @example Almacén destinado a productos listos para su distribución
+             */
+            description?: string;
+            /**
+             * @description ID de la sucursal si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal responsable si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
+        };
+        DeleteTypeStorageDto: {
+            ids: string[];
+        };
+        CreateStorageDto: {
+            /**
+             * @description Nombre del almacén
+             * @example Almacén Central, Almacén 1, Alacen 2
+             */
+            name: string;
+            /**
+             * @description Ubicación física del almacén
+             * @example alacen 1, piso 2, pasillo 3
+             */
+            location?: string;
+            /**
+             * @description ID del tipo de almacenamiento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            typeStorageId: string;
+        };
+        Storage: {
+            id: string;
+            name: string;
+            location: string;
+            typeStorageId: string;
+            isActive: boolean;
+        };
+        DetailedStorage: {
+            id: string;
+            name: string;
+            location: string;
+            typeStorageId: string;
+            isActive: boolean;
+            TypeStorage: components["schemas"]["TypeStorage"];
+        };
+        UpdateStorageDto: {
+            /**
+             * @description Nombre del almacén
+             * @example Almacén Central, Almacén 1, Alacen 2
+             */
+            name?: string;
+            /**
+             * @description Ubicación física del almacén
+             * @example alacen 1, piso 2, pasillo 3
+             */
+            location?: string;
+            /**
+             * @description ID del tipo de almacenamiento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            typeStorageId?: string;
+        };
+        DeleteStorageDto: {
+            ids: string[];
+        };
+        CreateTypeMovementDto: {
+            /**
+             * @description ID opcional de la orden
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            orderId?: string;
+            /**
+             * @description ID opcional de referencia si fuera necesario de otra interaccion con  tipo de movimiento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description Nombre del tipo de movimiento este referencia aun ID opcional
+             * @example Venta, Compra, Devolución
+             */
+            name?: string;
+            /**
+             * @description Descripción del tipo de movimiento
+             * @example Descripción opcional del tipo de movimiento
+             */
+            description?: string;
+            /**
+             * @description Estado del tipo de movimiento booleano true = activo, false = inactivo
+             * @example false
+             */
+            state: boolean;
+            /**
+             * @description Identifica si es un "Ingreso" o "Salida" el campo es bolleano por defecto es null true=Ingreso, false=Salida
+             * @example null
+             */
+            isIncoming: boolean;
+            /**
+             * @description Tipo externo del movimiento
+             * @example Venta, Compra, Devolución
+             */
+            tipoExterno?: string;
+        };
+        TypeMovement: {
+            id: string;
+            orderId: string;
+            referenceId: string;
+            name: string;
+            description: string;
+            state: boolean;
+            isIncoming: boolean;
+            tipoExterno: string;
+        };
+        UpdateTypeMovementDto: {
+            /**
+             * @description ID opcional de la orden
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            orderId?: string;
+            /**
+             * @description ID opcional de referencia si fuera necesario de otra interaccion con  tipo de movimiento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description Nombre del tipo de movimiento este referencia aun ID opcional
+             * @example Venta, Compra, Devolución
+             */
+            name?: string;
+            /**
+             * @description Descripción del tipo de movimiento
+             * @example Descripción opcional del tipo de movimiento
+             */
+            description?: string;
+            /**
+             * @description Estado del tipo de movimiento booleano true = activo, false = inactivo
+             * @example false
+             */
+            state?: boolean;
+            /**
+             * @description Identifica si es un "Ingreso" o "Salida" el campo es bolleano por defecto es null true=Ingreso, false=Salida
+             * @example null
+             */
+            isIncoming?: boolean;
+            /**
+             * @description Tipo externo del movimiento
+             * @example Venta, Compra, Devolución
+             */
+            tipoExterno?: string;
+        };
+        DeleteTypeMovementDto: {
+            ids: string[];
+        };
+        CreateMovementDto: {
+            /**
+             * @description ID del tipo de movimiento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            movementTypeId?: string;
+            /**
+             * @description ID del ingreso
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            incomingId?: string;
+            /**
+             * @description ID de la salida
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            outgoingId?: string;
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId: string;
+            /**
+             * @description Cantidad de producto que se movió
+             * @example 100
+             */
+            quantity: number;
+            /**
+             * Format: date-time
+             * @description Fecha en que ocurrió el evento
+             * @example 2023-12-01T15:30:00Z
+             */
+            date: string;
+            /**
+             * @description Estado del movimiento
+             * @example false
+             */
+            state: boolean;
+        };
+        Movement: {
+            id: string;
+            movementTypeId: string;
+            incomingId: string;
+            outgoingId: string;
+            productId: string;
+            quantity: number;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+        };
+        UpdateMovementDto: {
+            /**
+             * @description ID del tipo de movimiento
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            movementTypeId?: string;
+            /**
+             * @description ID del ingreso
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            incomingId?: string;
+            /**
+             * @description ID de la salida
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            outgoingId?: string;
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId?: string;
+            /**
+             * @description Cantidad de producto que se movió
+             * @example 100
+             */
+            quantity?: number;
+            /**
+             * Format: date-time
+             * @description Fecha en que ocurrió el evento
+             * @example 2023-12-01T15:30:00Z
+             */
+            date?: string;
+            /**
+             * @description Estado del movimiento
+             * @example false
+             */
+            state?: boolean;
+        };
+        DeleteMovementDto: {
+            ids: string[];
+        };
+        CreateIncomingDto: {
+            /**
+             * @description Nombre del ingreso
+             * @example Ingreso de medicamentos, Compra, transferencia, regulacion de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción del ingreso
+             * @example Descripción opcional del ingreso
+             */
+            description?: string;
+            /**
+             * @description ID del almacén al que va ser ingresado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId: string;
+            /**
+             * Format: date-time
+             * @description Fecha del ingreso
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date: string;
+            /**
+             * @description Estado del ingreso
+             * @example false
+             */
+            state: boolean;
+            /**
+             * @description ID de referencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+        };
+        Incoming: {
+            id: string;
+            name: string;
+            description: string;
+            storageId: string;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            referenceId: string;
+        };
+        UpdateIncomingDto: {
+            /**
+             * @description Nombre del ingreso
+             * @example Ingreso de medicamentos, Compra, transferencia, regulacion de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción del ingreso
+             * @example Descripción opcional del ingreso
+             */
+            description?: string;
+            /**
+             * @description ID del almacén al que va ser ingresado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha del ingreso
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date?: string;
+            /**
+             * @description Estado del ingreso
+             * @example false
+             */
+            state?: boolean;
+            /**
+             * @description ID de referencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+        };
+        DeleteIncomingDto: {
+            ids: string[];
+        };
+        CreateIncomingDtoStorage: {
+            /**
+             * @description Nombre del ingreso a almacen
+             * @example Ingreso de regulacion , aumento de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción del ingreso
+             * @example Descripción opcional del ingreso a alamacen
+             */
+            description?: string;
+            /**
+             * @description ID del almacén al que va ser ingresado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId: string;
+            /**
+             * Format: date-time
+             * @description Fecha del ingreso
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date: string;
+            /**
+             * @description Estado del ingreso
+             * @example true
+             */
+            state: boolean;
+            /**
+             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description productos a ingresar al almacen y cantidad
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       },
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
+             *         "quantity": 10
+             *       }
+             *     ]
+             */
+            movement: string[];
+        };
+        IncomingCreateResponseData: {
+            incomingId: string;
+            movementTypeId: string;
+        };
+        CreateOutgoingDto: {
+            /**
+             * @description Nombre de la salida
+             * @example Salida de medicamentos
+             */
+            name?: string;
+            /**
+             * @description Descripción de la salida
+             * @example Descripción opcional de la salida
+             */
+            description?: string;
+            /**
+             * @description ID del almacén
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId: string;
+            /**
+             * Format: date-time
+             * @description Fecha de la salida
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date: string;
+            /**
+             * @description Estado de la salida
+             * @example false
+             */
+            state: boolean;
+            /**
+             * @description ID de referencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+        };
+        Outgoing: {
+            id: string;
+            name: string;
+            description: string;
+            storageId: string;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            referenceId: string;
+        };
+        UpdateOutgoingDto: {
+            /**
+             * @description Nombre de la salida
+             * @example Salida de medicamentos
+             */
+            name?: string;
+            /**
+             * @description Descripción de la salida
+             * @example Descripción opcional de la salida
+             */
+            description?: string;
+            /**
+             * @description ID del almacén
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de la salida
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date?: string;
+            /**
+             * @description Estado de la salida
+             * @example false
+             */
+            state?: boolean;
+            /**
+             * @description ID de referencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+        };
+        DeleteOutgoingDto: {
+            ids: string[];
+        };
+        CreateOutgoingDtoStorage: {
+            /**
+             * @description Nombre de la salida de almacen
+             * @example salida de transferencia , correcion de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción de salida
+             * @example Descripción opcional del salida de alamacen
+             */
+            description?: string;
+            /**
+             * @description ID del almacén del que va ser retirado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId: string;
+            /**
+             * Format: date-time
+             * @description Fecha de salida
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date: string;
+            /**
+             * @description Estado del salida
+             * @example true
+             */
+            state: boolean;
+            /**
+             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description productos a retirar del almacen y cantidad
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       },
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
+             *         "quantity": 10
+             *       }
+             *     ]
+             */
+            movement: string[];
+        };
+        OutgoingCreateResponseData: {
+            outgoingId: string;
+            movementTypeId: string;
+        };
+        ProductStockResponse: {
+            idProduct: string;
+            name: string;
+            unit: string;
+            price: number;
+            stock: number;
+            totalPrice: number;
+        };
+        StockByStorage: {
+            idStorage: string;
+            name: string;
+            location: string;
+            address: string;
+            staff: string;
+            description: string;
+            stock: components["schemas"]["ProductStockResponse"][];
+        };
+        ProductSaleItemDto: {
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId: string;
+            /**
+             * @description Cantidad del producto
+             * @example 5
+             */
+            quantity: number;
+        };
+        CreateProductSaleBillingDto: {
+            /**
+             * @description Lista de productos a vender
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       }
+             *     ]
+             */
+            products: components["schemas"]["ProductSaleItemDto"][];
+            /**
+             * @description ID del almacén de origen
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId: string;
+            /**
+             * @description ID de la sucursal
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId: string;
+            /**
+             * @description Ubicación en almacén
+             * @example Estante A-123
+             */
+            storageLocation?: string;
+            /**
+             * @description Número de lote
+             * @example LOT-2024-001
+             */
+            batchNumber?: string;
+            /**
+             * @description ID de referencia externa
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description Moneda (default: PEN)
+             * @default PEN
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Método de pago
+             * @default CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            /**
+             * @description Notas adicionales
+             * @example Venta de medicamentos para paciente
+             */
+            notes?: string;
+            /**
+             * @description Metadata adicional
+             * @example {
+             *       "customField": "value"
+             *     }
+             */
+            metadata?: Record<string, never>;
+        };
+        ProductPurchaseItemDto: {
+            /**
+             * @description ID del producto a comprar
+             * @example ece57703-3246-4c2d-8f82-825cd239237a
+             */
+            productId: string;
+            /**
+             * @description Cantidad a comprar
+             * @example 10
+             */
+            quantity: number;
+            /**
+             * @description Precio unitario del producto
+             * @example 100.5
+             */
+            unitPrice: number;
+        };
+        CreateProductPurchaseBillingDto: {
+            /**
+             * @description Lista de productos a comprar
+             * @example [
+             *       {
+             *         "productId": "ece57703-3246-4c2d-8f82-825cd239237a",
+             *         "quantity": 10,
+             *         "unitPrice": 100.5
+             *       }
+             *     ]
+             */
+            products: components["schemas"]["ProductPurchaseItemDto"][];
+            /**
+             * @description ID del almacén de destino
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            storageId: string;
+            /**
+             * @description ID del proveedor
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            supplierId: string;
+            /**
+             * @description ID de la sucursal
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId: string;
+            /**
+             * @description Ubicación en almacén
+             * @example Estante A-123
+             */
+            storageLocation?: string;
+            /**
+             * @description Número de lote o compra
+             * @example LOT-2024-001
+             */
+            batchNumber?: string;
+            /**
+             * @description ID de referencia externa
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description Moneda (default: PEN)
+             * @default PEN
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Método de pago
+             * @default CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            /**
+             * @description Notas adicionales
+             * @example Compra de medicamentos de inventario
+             */
+            notes?: string;
+            /**
+             * @description Metadata adicional
+             * @example {
+             *       "customField": "value"
+             *     }
+             */
+            metadata?: Record<string, never>;
+        };
+        CreateEventDto: {
+            /**
+             * @description Título del evento
+             * @example Turno Mañana
+             */
+            title: string;
+            /**
+             * @description Tipo de evento
+             * @example TURNO
+             * @enum {string}
+             */
+            type: "TURNO" | "CITA" | "OTRO";
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio del evento
+             * @example 2023-11-15T08:00:00Z
+             */
+            start: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin del evento
+             * @example 2023-11-15T11:00:00Z
+             */
+            end: string;
+            /**
+             * @description Motivo de cancelación (opcional)
+             * @example Vacaciones
+             */
+            cancellationReason?: string;
+            /**
+             * @description ID del horario del personal (opcional)
+             * @example uuid-del-horario
+             */
+            staffScheduleId?: string;
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId: string;
+        };
+        Event: Record<string, never>;
+        UpdateEventDto: {
+            /**
+             * @description Título del evento
+             * @example Turno Mañana
+             */
+            title?: string;
+            /**
+             * @description Tipo de evento
+             * @example TURNO
+             * @enum {string}
+             */
+            type?: "TURNO" | "CITA" | "OTRO";
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio del evento
+             * @example 2023-11-15T08:00:00Z
+             */
+            start?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin del evento
+             * @example 2023-11-15T11:00:00Z
+             */
+            end?: string;
+            /**
+             * @description Motivo de cancelación (opcional)
+             * @example Vacaciones
+             */
+            cancellationReason?: string;
+            /**
+             * @description ID del horario del personal (opcional)
+             * @example uuid-del-horario
+             */
+            staffScheduleId?: string;
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId?: string;
+        };
+        DeleteEventsDto: {
+            /** @description Array de IDs de eventos a eliminar */
+            ids: string[];
+        };
+        CreateStaffScheduleDto: {
+            /**
+             * @description ID del personal al que pertenece el horario
+             * @example user-1234
+             */
+            staffId: string;
+            /**
+             * @description ID de la sucursal a la que pertenece el horario
+             * @example branch-5678
+             */
+            branchId: string;
+            /**
+             * @description Título del horario
+             * @default Turno
+             * @example Turno Mañana
+             */
+            title: string;
+            /**
+             * @description Hora de inicio en formato HH:mm
+             * @example 08:00
+             */
+            startTime: string;
+            /**
+             * @description Hora de fin en formato HH:mm
+             * @example 17:00
+             */
+            endTime: string;
+            /**
+             * @description Días de la semana en los que es válido el horario
+             * @example [
+             *       "MONDAY",
+             *       "WEDNESDAY"
+             *     ]
+             */
+            daysOfWeek: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /**
+             * @description Configuración de recurrencia para el horario
+             * @example {
+             *       "frequency": "WEEKLY",
+             *       "interval": 1,
+             *       "until": "2024-12-31"
+             *     }
+             */
+            recurrence: Record<string, never>;
+            /**
+             * @description Fechas excluidas del horario
+             * @default []
+             */
+            exceptions: string[];
+        };
+        StaffSchedule: {
+            id: string;
+            staffId: string;
+            branchId: string;
+            /** @default Turno */
+            title: string;
+            /** @description Hora de inicio en formato HH:mm */
+            startTime: string;
+            /** @description Hora de fin en formato HH:mm */
+            endTime: string;
+            daysOfWeek: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /**
+             * @description Configuración de recurrencia
+             * @example {
+             *       "frequency": "WEEKLY",
+             *       "interval": 1,
+             *       "until": "2024-12-31"
+             *     }
+             */
+            recurrence: Record<string, never>;
+            /**
+             * @description Fechas excluidas del horario
+             * @default []
+             */
+            exceptions: string[];
+            /** @default true */
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateStaffScheduleDto: {
+            /**
+             * @description ID del personal al que pertenece el horario
+             * @example user-1234
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal a la que pertenece el horario
+             * @example branch-5678
+             */
+            branchId?: string;
+            /**
+             * @description Título del horario
+             * @default Turno
+             * @example Turno Mañana
+             */
+            title: string;
+            /**
+             * @description Hora de inicio en formato HH:mm
+             * @example 08:00
+             */
+            startTime?: string;
+            /**
+             * @description Hora de fin en formato HH:mm
+             * @example 17:00
+             */
+            endTime?: string;
+            /**
+             * @description Días de la semana en los que es válido el horario
+             * @example [
+             *       "MONDAY",
+             *       "WEDNESDAY"
+             *     ]
+             */
+            daysOfWeek?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /**
+             * @description Configuración de recurrencia para el horario
+             * @example {
+             *       "frequency": "WEEKLY",
+             *       "interval": 1,
+             *       "until": "2024-12-31"
+             *     }
+             */
+            recurrence?: Record<string, never>;
+            /**
+             * @description Fechas excluidas del horario
+             * @default []
+             */
+            exceptions: string[];
+        };
+        DeleteStaffSchedulesDto: {
+            ids: string[];
+        };
+        CreateTimeOffDto: {
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio de la ausencia
+             * @example 2023-11-20T00:00:00Z
+             */
+            start: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin de la ausencia
+             * @example 2023-11-25T23:59:00Z
+             */
+            end: string;
+            /**
+             * @description Motivo de la ausencia (opcional)
+             * @example Vacaciones
+             */
+            reason?: string;
+        };
+        TimeOff: {
+            id: string;
+            staffId: string;
+            branchId: string;
+            /** Format: date-time */
+            start: string;
+            /** Format: date-time */
+            end: string;
+            reason?: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateTimeOffDto: {
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio de la ausencia
+             * @example 2023-11-20T00:00:00Z
+             */
+            start?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin de la ausencia
+             * @example 2023-11-25T23:59:00Z
+             */
+            end?: string;
+            /**
+             * @description Motivo de la ausencia (opcional)
+             * @example Vacaciones
+             */
+            reason?: string;
+        };
+        DeleteTimeOffsDto: {
+            /** @description Array de IDs de ausencias temporales a eliminar */
             ids: string[];
         };
         CreatePatientDto: {
@@ -4263,1658 +5654,6 @@ export interface components {
         };
         DeleteMedicalHistoryDto: {
             ids: string[];
-        };
-        CreateStaffTypeDto: {
-            /**
-             * @description Nombre de la especialidad
-             * @example Cardiología
-             */
-            name: string;
-            /**
-             * @description Descripción de la especialidad
-             * @example Especialidad enfocada en el sistema cardiovascular
-             */
-            description: string;
-        };
-        StaffType: {
-            /** @description ID único del tipo de personal */
-            id: string;
-            /** @description Nombre del tipo de personal */
-            name: string;
-            /** @description Descripción del tipo de personal */
-            description?: string;
-            /** @description Estado activo/inactivo del tipo de personal */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @description Fecha de creación del registro
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Fecha de última actualización
-             */
-            updatedAt: string;
-        };
-        UpdateStaffTypeDto: {
-            /**
-             * @description Nombre de la especialidad
-             * @example Cardiología
-             */
-            name?: string;
-            /**
-             * @description Descripción de la especialidad
-             * @example Especialidad enfocada en el sistema cardiovascular
-             */
-            description?: string;
-        };
-        DeleteStaffTypeDto: {
-            ids: string[];
-        };
-        CreateStaffDto: {
-            /**
-             * @description ID del tipo de personal
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            staffTypeId: string;
-            /**
-             * @description ID del usuario asociado al personal médico en el sistema
-             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
-             */
-            userId?: string;
-            /**
-             * @description Nombre del personal médico
-             * @example Carlos
-             */
-            name: string;
-            /**
-             * @description Apellido del personal médico
-             * @example Rodríguez
-             */
-            lastName: string;
-            /**
-             * @description Número de DNI del personal médico
-             * @example 40506070
-             */
-            dni: string;
-            /**
-             * @description Fecha de nacimiento del personal médico
-             * @example 1980-05-15
-             */
-            birth: string;
-            /**
-             * @description email
-             * @example personal1@correo.com
-             */
-            email: string;
-            /**
-             * @description numero de telefono
-             * @example 123456789
-             */
-            phone?: string;
-        };
-        Staff: {
-            /** @description ID único del personal */
-            id: string;
-            /** @description ID del tipo de personal */
-            staffTypeId: string;
-            /** @description ID del usuario asociado */
-            userId: string | null;
-            /** @description Nombre del personal */
-            name: string;
-            /** @description Correo electrónico */
-            email: string;
-            /** @description Número telefónico */
-            phone: string;
-            /** @description Apellido del personal */
-            lastName: string;
-            /** @description Documento Nacional de Identidad */
-            dni: string;
-            /** @description Fecha de nacimiento */
-            birth: string;
-            /** @description Estado activo/inactivo del personal */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @description Fecha de creación del registro
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Fecha de última actualización
-             */
-            updatedAt: string;
-            /**
-             * @description Información del tipo de personal
-             * @example {
-             *       "name": "doctor"
-             *     }
-             */
-            staffType: {
-                /**
-                 * @description Nombre del tipo de personal
-                 * @example doctor
-                 */
-                name?: string;
-            };
-        };
-        UpdateStaffDto: {
-            /**
-             * @description ID del tipo de personal
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            staffTypeId?: string;
-            /**
-             * @description ID del usuario asociado al personal médico en el sistema
-             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
-             */
-            userId?: string;
-            /**
-             * @description Nombre del personal médico
-             * @example Carlos
-             */
-            name?: string;
-            /**
-             * @description Apellido del personal médico
-             * @example Rodríguez
-             */
-            lastName?: string;
-            /**
-             * @description Número de DNI del personal médico
-             * @example 40506070
-             */
-            dni?: string;
-            /**
-             * @description Fecha de nacimiento del personal médico
-             * @example 1980-05-15
-             */
-            birth?: string;
-            /**
-             * @description email
-             * @example personal1@correo.com
-             */
-            email?: string;
-            /**
-             * @description numero de telefono
-             * @example 123456789
-             */
-            phone?: string;
-        };
-        DeleteStaffDto: {
-            ids: string[];
-        };
-        CreateCalendarDto: {
-            /**
-             * @description Nombre del calendario
-             * @example Horario Normal
-             */
-            name: string;
-            /**
-             * @description Tipo de calendario
-             * @example PERSONAL, CITAS_MEDICAS o CONSULTAS_MEDICAS
-             */
-            type: Record<string, never>;
-            /**
-             * @description ID de la cita médica asociada al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            medicalAppointmentId?: string;
-            /**
-             * @description ID de la consulta médica asociada al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            medicalConsultationId?: string;
-            /**
-             * @description ID del personal asociado al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
-            /**
-             * @description ID de la sucursal asociada al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description Indica si el calendario está activo
-             * @example true
-             */
-            isActive: boolean;
-        };
-        Calendar: {
-            id: string;
-            name: string;
-            type: string;
-            medicalAppointmentId?: string;
-            medicalConsultationId?: string;
-            staffId?: string;
-            branchId?: string;
-            /** @default true */
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-        };
-        UpdateCalendarDto: {
-            /**
-             * @description Nombre del calendario
-             * @example Horario Normal
-             */
-            name?: string;
-            /**
-             * @description Tipo de calendario
-             * @example PERSONAL, CITAS_MEDICAS o CONSULTAS_MEDICAS
-             */
-            type?: Record<string, never>;
-            /**
-             * @description ID de la cita médica asociada al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            medicalAppointmentId?: string;
-            /**
-             * @description ID de la consulta médica asociada al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            medicalConsultationId?: string;
-            /**
-             * @description ID del personal asociado al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
-            /**
-             * @description ID de la sucursal asociada al calendario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description Indica si el calendario está activo
-             * @example true
-             */
-            isActive?: boolean;
-        };
-        DeleteCalendarDto: {
-            ids: string[];
-        };
-        CreateEventDto: {
-            /**
-             * @description ID del calendario al que pertenece el evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            calendarId: string;
-            /**
-             * @description Tipo de evento
-             * @example INGRESO
-             */
-            type: Record<string, never>;
-            /**
-             * @description Nombre del evento
-             * @example Ingreso turno mañana
-             */
-            name: string;
-            /**
-             * @description Descripción detallada del evento
-             * @example Ingreso del personal para el turno de la mañana
-             */
-            description?: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de inicio del evento
-             * @example 2024-03-15T08:00:00
-             */
-            startDate: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de fin del evento
-             * @example 2024-03-15T17:00:00
-             */
-            endDate: string;
-            /**
-             * @description Color para identificar visualmente el evento
-             * @example #FF0000
-             */
-            color?: string;
-            /**
-             * @description Tipo de permiso (si aplica)
-             * @example MEDICO
-             */
-            permissionType?: Record<string, never>;
-            /**
-             * @description Estado del permiso
-             * @example PENDIENTE
-             */
-            permissionStatus?: Record<string, never>;
-            /**
-             * @description Duración del evento en minutos
-             * @example 60
-             */
-            duration?: number;
-            /**
-             * @description ID del paciente asociado al evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            patientId?: string;
-            /**
-             * @description ID del personal asociado al evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
-            /**
-             * @description ID del personal asociado al evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            recurrenceId?: string;
-            /**
-             * @description Indica si el evento está activo
-             * @default true
-             * @example true
-             */
-            isActive: boolean;
-        };
-        Event: {
-            id: string;
-            calendarId: string;
-            type: string;
-            name: string;
-            description?: string;
-            /** Format: date-time */
-            startDate: string;
-            /** Format: date-time */
-            endDate: string;
-            color?: string;
-            permissionType?: string;
-            permissionStatus?: string;
-            duration?: number;
-            patientId?: string;
-            staffId?: string;
-            /** @default true */
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            recurrenceId?: string;
-        };
-        UpdateEventDto: {
-            /**
-             * @description ID del calendario al que pertenece el evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            calendarId?: string;
-            /**
-             * @description Tipo de evento
-             * @example INGRESO
-             */
-            type?: Record<string, never>;
-            /**
-             * @description Nombre del evento
-             * @example Ingreso turno mañana
-             */
-            name?: string;
-            /**
-             * @description Descripción detallada del evento
-             * @example Ingreso del personal para el turno de la mañana
-             */
-            description?: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de inicio del evento
-             * @example 2024-03-15T08:00:00
-             */
-            startDate?: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de fin del evento
-             * @example 2024-03-15T17:00:00
-             */
-            endDate?: string;
-            /**
-             * @description Color para identificar visualmente el evento
-             * @example #FF0000
-             */
-            color?: string;
-            /**
-             * @description Tipo de permiso (si aplica)
-             * @example MEDICO
-             */
-            permissionType?: Record<string, never>;
-            /**
-             * @description Estado del permiso
-             * @example PENDIENTE
-             */
-            permissionStatus?: Record<string, never>;
-            /**
-             * @description Duración del evento en minutos
-             * @example 60
-             */
-            duration?: number;
-            /**
-             * @description ID del paciente asociado al evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            patientId?: string;
-            /**
-             * @description ID del personal asociado al evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
-            /**
-             * @description ID del personal asociado al evento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            recurrenceId?: string;
-            /**
-             * @description Indica si el evento está activo
-             * @default true
-             * @example true
-             */
-            isActive: boolean;
-        };
-        DeleteEventDto: {
-            ids: string[];
-        };
-        CreateRecurrenceDto: {
-            /**
-             * @description Frecuencia de la recurrencia
-             * @example DIARIA
-             */
-            frequency: Record<string, never>;
-            /**
-             * @description Intervalo de repetición
-             * @example 1
-             */
-            interval: number;
-            /**
-             * @description Días específicos de la semana (opcional)
-             * @example [
-             *       "LUNES",
-             *       "MIERCOLES",
-             *       "VIERNES"
-             *     ]
-             */
-            daysOfWeek?: string[];
-            /**
-             * @description Fechas específicas a excluir
-             * @example [
-             *       "SABADO",
-             *       "DOMINGO"
-             *     ]
-             */
-            exceptions?: string[];
-            /**
-             * Format: date-time
-             * @description Fecha de inicio de la recurrencia
-             * @example 2024-03-15T00:00:00Z
-             */
-            startDate: string;
-            /**
-             * Format: date-time
-             * @description Fecha de fin de la recurrencia
-             * @example 2024-12-31T00:00:00Z
-             */
-            endDate?: string;
-            /**
-             * @description Indica si la recurrencia está activa
-             * @default true
-             */
-            isActive: boolean;
-        };
-        Recurrence: {
-            id: string;
-            /**
-             * @description Frecuencia de la recurrencia
-             * @example DIARIA
-             */
-            frequency: string;
-            /**
-             * @description Intervalo de repetición
-             * @example 1
-             */
-            interval: number;
-            /**
-             * @description Días específicos de la semana (opcional)
-             * @example [
-             *       "LUNES",
-             *       "MIERCOLES",
-             *       "VIERNES"
-             *     ]
-             */
-            daysOfWeek?: string[];
-            /**
-             * @description Fechas específicas a excluir
-             * @example [
-             *       "SABADO",
-             *       "DOMINGO"
-             *     ]
-             */
-            exceptions?: string[];
-            /**
-             * Format: date-time
-             * @description Fecha de inicio de la recurrencia
-             * @example 2024-03-15T00:00:00Z
-             */
-            startDate: string;
-            /**
-             * Format: date-time
-             * @description Fecha de fin de la recurrencia
-             * @example 2024-12-31T00:00:00Z
-             */
-            endDate?: string;
-            /**
-             * @description Indica si la recurrencia está activa
-             * @default true
-             * @example true
-             */
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpdateRecurrenceDto: {
-            /**
-             * @description Frecuencia de la recurrencia
-             * @example DIARIA
-             */
-            frequency?: Record<string, never>;
-            /**
-             * @description Intervalo de repetición
-             * @example 1
-             */
-            interval?: number;
-            /**
-             * @description Días específicos de la semana (opcional)
-             * @example [
-             *       "LUNES",
-             *       "MIERCOLES",
-             *       "VIERNES"
-             *     ]
-             */
-            daysOfWeek?: string[];
-            /**
-             * @description Fechas específicas a excluir
-             * @example [
-             *       "SABADO",
-             *       "DOMINGO"
-             *     ]
-             */
-            exceptions?: string[];
-            /**
-             * Format: date-time
-             * @description Fecha de inicio de la recurrencia
-             * @example 2024-03-15T00:00:00Z
-             */
-            startDate?: string;
-            /**
-             * Format: date-time
-             * @description Fecha de fin de la recurrencia
-             * @example 2024-12-31T00:00:00Z
-             */
-            endDate?: string;
-            /**
-             * @description Indica si la recurrencia está activa
-             * @default true
-             */
-            isActive: boolean;
-        };
-        DeleteRecurrenceDto: {
-            ids: string[];
-        };
-        CreateCategoryDto: {
-            /**
-             * @description Nombre de la categoría
-             * @example Medicamentos, Cosméticos, Materiales
-             */
-            name: string;
-            /**
-             * @description Descripción de la categoría
-             * @example Descripción opcional que proporciona más detalles sobre la categoría
-             */
-            description?: string;
-        };
-        Category: {
-            id: string;
-            name: string;
-            description: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-        };
-        UpdateCategoryDto: {
-            /**
-             * @description Nombre de la categoría
-             * @example Medicamentos, Cosméticos, Materiales
-             */
-            name?: string;
-            /**
-             * @description Descripción de la categoría
-             * @example Descripción opcional que proporciona más detalles sobre la categoría
-             */
-            description?: string;
-        };
-        DeleteCategoryDto: {
-            ids: string[];
-        };
-        CreateTypeProductDto: {
-            /**
-             * @description Nombre del tipo de producto
-             * @example Antibióticos, Bloqueadores solares, Gasas
-             */
-            name: string;
-            /**
-             * @description Descripción del tipo de producto
-             * @example Medicamentos para el tratamiento de infecciones bacterianas
-             */
-            description?: string;
-        };
-        TypeProductResponse: {
-            id: string;
-            name: string;
-            description: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-        };
-        TypeProduct: {
-            id: string;
-            name: string;
-            description: string;
-        };
-        UpdateTypeProductDto: {
-            /**
-             * @description Nombre del tipo de producto
-             * @example Antibióticos, Bloqueadores solares, Gasas
-             */
-            name?: string;
-            /**
-             * @description Descripción del tipo de producto
-             * @example Medicamentos para el tratamiento de infecciones bacterianas
-             */
-            description?: string;
-        };
-        DeleteTypeProductDto: {
-            ids: string[];
-        };
-        CreateProductDto: {
-            /**
-             * @description ID de la categoría
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            categoriaId: string;
-            /**
-             * @description ID del tipo de producto
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            tipoProductoId: string;
-            /**
-             * @description Nombre del producto
-             * @example Paracetamol 500mg
-             */
-            name: string;
-            /**
-             * @description Precio del producto
-             * @example 15.5
-             */
-            precio: number;
-            /**
-             * @description Unidad de medida
-             * @example mg
-             */
-            unidadMedida?: string;
-            /**
-             * @description Proveedor o fabricante
-             * @example Laboratorios XYZ
-             */
-            proveedor?: string;
-            /**
-             * @description Uso del producto
-             * @example Paciente
-             */
-            uso?: string;
-            /**
-             * @description Uso específico del producto
-             * @example Venta
-             */
-            usoProducto?: string;
-            /**
-             * @description Descripción del producto
-             * @example Analgésico y antipirético para adultos
-             */
-            description?: string;
-            /**
-             * @description Código único del producto
-             * @example 7501234567890
-             */
-            codigoProducto?: string;
-            /**
-             * @description Descuento aplicado
-             * @example 10.5
-             */
-            descuento?: number;
-            /**
-             * @description Observaciones adicionales
-             * @example Mantener fuera del alcance de los niños
-             */
-            observaciones?: string;
-            /**
-             * @description Condiciones de almacenamiento
-             * @example Mantener en lugar fresco y seco
-             */
-            condicionesAlmacenamiento?: string;
-            /**
-             * @description URL de la imagen del producto
-             * @example https://ejemplo.com/imagen.jpg
-             */
-            imagenUrl?: string;
-        };
-        Product: {
-            id: string;
-            categoriaId: string;
-            tipoProductoId: string;
-            name: string;
-            precio: number;
-            unidadMedida: string;
-            proveedor: string;
-            uso: string;
-            usoProducto: string;
-            description: string;
-            codigoProducto: string;
-            descuento: number;
-            observaciones: string;
-            condicionesAlmacenamiento: string;
-            imagenUrl: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-        };
-        ProductWithRelations: {
-            id: string;
-            categoriaId: string;
-            tipoProductoId: string;
-            name: string;
-            precio: number;
-            unidadMedida: string;
-            proveedor: string;
-            uso: string;
-            usoProducto: string;
-            description: string;
-            codigoProducto: string;
-            descuento: number;
-            observaciones: string;
-            condicionesAlmacenamiento: string;
-            imagenUrl: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            categoria: Record<string, never>;
-            tipoProducto: Record<string, never>;
-        };
-        UpdateProductDto: {
-            /**
-             * @description ID de la categoría
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            categoriaId?: string;
-            /**
-             * @description ID del tipo de producto
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            tipoProductoId?: string;
-            /**
-             * @description Nombre del producto
-             * @example Paracetamol 500mg
-             */
-            name?: string;
-            /**
-             * @description Precio del producto
-             * @example 15.5
-             */
-            precio?: number;
-            /**
-             * @description Unidad de medida
-             * @example mg
-             */
-            unidadMedida?: string;
-            /**
-             * @description Proveedor o fabricante
-             * @example Laboratorios XYZ
-             */
-            proveedor?: string;
-            /**
-             * @description Uso del producto
-             * @example Paciente
-             */
-            uso?: string;
-            /**
-             * @description Uso específico del producto
-             * @example Venta
-             */
-            usoProducto?: string;
-            /**
-             * @description Descripción del producto
-             * @example Analgésico y antipirético para adultos
-             */
-            description?: string;
-            /**
-             * @description Código único del producto
-             * @example 7501234567890
-             */
-            codigoProducto?: string;
-            /**
-             * @description Descuento aplicado
-             * @example 10.5
-             */
-            descuento?: number;
-            /**
-             * @description Observaciones adicionales
-             * @example Mantener fuera del alcance de los niños
-             */
-            observaciones?: string;
-            /**
-             * @description Condiciones de almacenamiento
-             * @example Mantener en lugar fresco y seco
-             */
-            condicionesAlmacenamiento?: string;
-            /**
-             * @description URL de la imagen del producto
-             * @example https://ejemplo.com/imagen.jpg
-             */
-            imagenUrl?: string;
-        };
-        DeleteProductDto: {
-            ids: string[];
-        };
-        CreateTypeStorageDto: {
-            /**
-             * @description Nombre del tipo de almacén
-             * @example almacen secos, almacen refrigerados
-             */
-            name: string;
-            /**
-             * @description Descripción del tipo de almacén
-             * @example Almacén destinado a productos listos para su distribución
-             */
-            description?: string;
-            /**
-             * @description ID de la sucursal si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description ID del personal responsable si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
-        };
-        TypeStorage: {
-            id: string;
-            name: string;
-            description: string;
-            branchId: string;
-            staffId: string;
-            isActive: boolean;
-        };
-        DetailedTypeStorage: {
-            id: string;
-            name: string;
-            description: string;
-            branchId: string;
-            staffId: string;
-            isActive: boolean;
-            Branch: components["schemas"]["Branch"];
-            Staff: components["schemas"]["Staff"];
-        };
-        UpdateTypeStorageDto: {
-            /**
-             * @description Nombre del tipo de almacén
-             * @example almacen secos, almacen refrigerados
-             */
-            name?: string;
-            /**
-             * @description Descripción del tipo de almacén
-             * @example Almacén destinado a productos listos para su distribución
-             */
-            description?: string;
-            /**
-             * @description ID de la sucursal si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description ID del personal responsable si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
-        };
-        DeleteTypeStorageDto: {
-            ids: string[];
-        };
-        CreateStorageDto: {
-            /**
-             * @description Nombre del almacén
-             * @example Almacén Central, Almacén 1, Alacen 2
-             */
-            name: string;
-            /**
-             * @description Ubicación física del almacén
-             * @example alacen 1, piso 2, pasillo 3
-             */
-            location?: string;
-            /**
-             * @description ID del tipo de almacenamiento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            typeStorageId: string;
-        };
-        Storage: {
-            id: string;
-            name: string;
-            location: string;
-            typeStorageId: string;
-            isActive: boolean;
-        };
-        DetailedStorage: {
-            id: string;
-            name: string;
-            location: string;
-            typeStorageId: string;
-            isActive: boolean;
-            TypeStorage: components["schemas"]["TypeStorage"];
-        };
-        UpdateStorageDto: {
-            /**
-             * @description Nombre del almacén
-             * @example Almacén Central, Almacén 1, Alacen 2
-             */
-            name?: string;
-            /**
-             * @description Ubicación física del almacén
-             * @example alacen 1, piso 2, pasillo 3
-             */
-            location?: string;
-            /**
-             * @description ID del tipo de almacenamiento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            typeStorageId?: string;
-        };
-        DeleteStorageDto: {
-            ids: string[];
-        };
-        CreateTypeMovementDto: {
-            /**
-             * @description ID opcional de la orden
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            orderId?: string;
-            /**
-             * @description ID opcional de referencia si fuera necesario de otra interaccion con  tipo de movimiento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-            /**
-             * @description Nombre del tipo de movimiento este referencia aun ID opcional
-             * @example Venta, Compra, Devolución
-             */
-            name?: string;
-            /**
-             * @description Descripción del tipo de movimiento
-             * @example Descripción opcional del tipo de movimiento
-             */
-            description?: string;
-            /**
-             * @description Estado del tipo de movimiento booleano true = activo, false = inactivo
-             * @example false
-             */
-            state: boolean;
-            /**
-             * @description Identifica si es un "Ingreso" o "Salida" el campo es bolleano por defecto es null true=Ingreso, false=Salida
-             * @example null
-             */
-            isIncoming: boolean;
-            /**
-             * @description Tipo externo del movimiento
-             * @example Venta, Compra, Devolución
-             */
-            tipoExterno?: string;
-        };
-        TypeMovement: {
-            id: string;
-            orderId: string;
-            referenceId: string;
-            name: string;
-            description: string;
-            state: boolean;
-            isIncoming: boolean;
-            tipoExterno: string;
-        };
-        UpdateTypeMovementDto: {
-            /**
-             * @description ID opcional de la orden
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            orderId?: string;
-            /**
-             * @description ID opcional de referencia si fuera necesario de otra interaccion con  tipo de movimiento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-            /**
-             * @description Nombre del tipo de movimiento este referencia aun ID opcional
-             * @example Venta, Compra, Devolución
-             */
-            name?: string;
-            /**
-             * @description Descripción del tipo de movimiento
-             * @example Descripción opcional del tipo de movimiento
-             */
-            description?: string;
-            /**
-             * @description Estado del tipo de movimiento booleano true = activo, false = inactivo
-             * @example false
-             */
-            state?: boolean;
-            /**
-             * @description Identifica si es un "Ingreso" o "Salida" el campo es bolleano por defecto es null true=Ingreso, false=Salida
-             * @example null
-             */
-            isIncoming?: boolean;
-            /**
-             * @description Tipo externo del movimiento
-             * @example Venta, Compra, Devolución
-             */
-            tipoExterno?: string;
-        };
-        DeleteTypeMovementDto: {
-            ids: string[];
-        };
-        CreateMovementDto: {
-            /**
-             * @description ID del tipo de movimiento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            movementTypeId?: string;
-            /**
-             * @description ID del ingreso
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            incomingId?: string;
-            /**
-             * @description ID de la salida
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            outgoingId?: string;
-            /**
-             * @description ID del producto
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            productId: string;
-            /**
-             * @description Cantidad de producto que se movió
-             * @example 100
-             */
-            quantity: number;
-            /**
-             * Format: date-time
-             * @description Fecha en que ocurrió el evento
-             * @example 2023-12-01T15:30:00Z
-             */
-            date: string;
-            /**
-             * @description Estado del movimiento
-             * @example false
-             */
-            state: boolean;
-        };
-        Movement: {
-            id: string;
-            movementTypeId: string;
-            incomingId: string;
-            outgoingId: string;
-            productId: string;
-            quantity: number;
-            /** Format: date-time */
-            date: string;
-            state: boolean;
-        };
-        UpdateMovementDto: {
-            /**
-             * @description ID del tipo de movimiento
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            movementTypeId?: string;
-            /**
-             * @description ID del ingreso
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            incomingId?: string;
-            /**
-             * @description ID de la salida
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            outgoingId?: string;
-            /**
-             * @description ID del producto
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            productId?: string;
-            /**
-             * @description Cantidad de producto que se movió
-             * @example 100
-             */
-            quantity?: number;
-            /**
-             * Format: date-time
-             * @description Fecha en que ocurrió el evento
-             * @example 2023-12-01T15:30:00Z
-             */
-            date?: string;
-            /**
-             * @description Estado del movimiento
-             * @example false
-             */
-            state?: boolean;
-        };
-        DeleteMovementDto: {
-            ids: string[];
-        };
-        CreateIncomingDto: {
-            /**
-             * @description Nombre del ingreso
-             * @example Ingreso de medicamentos, Compra, transferencia, regulacion de stock, etc.
-             */
-            name?: string;
-            /**
-             * @description Descripción del ingreso
-             * @example Descripción opcional del ingreso
-             */
-            description?: string;
-            /**
-             * @description ID del almacén al que va ser ingresado
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId: string;
-            /**
-             * Format: date-time
-             * @description Fecha del ingreso
-             * @example 2023-10-01T00:00:00.000Z
-             */
-            date: string;
-            /**
-             * @description Estado del ingreso
-             * @example false
-             */
-            state: boolean;
-            /**
-             * @description ID de referencia
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-        };
-        Incoming: {
-            id: string;
-            name: string;
-            description: string;
-            storageId: string;
-            /** Format: date-time */
-            date: string;
-            state: boolean;
-            referenceId: string;
-        };
-        UpdateIncomingDto: {
-            /**
-             * @description Nombre del ingreso
-             * @example Ingreso de medicamentos, Compra, transferencia, regulacion de stock, etc.
-             */
-            name?: string;
-            /**
-             * @description Descripción del ingreso
-             * @example Descripción opcional del ingreso
-             */
-            description?: string;
-            /**
-             * @description ID del almacén al que va ser ingresado
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId?: string;
-            /**
-             * Format: date-time
-             * @description Fecha del ingreso
-             * @example 2023-10-01T00:00:00.000Z
-             */
-            date?: string;
-            /**
-             * @description Estado del ingreso
-             * @example false
-             */
-            state?: boolean;
-            /**
-             * @description ID de referencia
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-        };
-        DeleteIncomingDto: {
-            ids: string[];
-        };
-        CreateIncomingDtoStorage: {
-            /**
-             * @description Nombre del ingreso a almacen
-             * @example Ingreso de regulacion , aumento de stock, etc.
-             */
-            name?: string;
-            /**
-             * @description Descripción del ingreso
-             * @example Descripción opcional del ingreso a alamacen
-             */
-            description?: string;
-            /**
-             * @description ID del almacén al que va ser ingresado
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId: string;
-            /**
-             * Format: date-time
-             * @description Fecha del ingreso
-             * @example 2023-10-01T00:00:00.000Z
-             */
-            date: string;
-            /**
-             * @description Estado del ingreso
-             * @example true
-             */
-            state: boolean;
-            /**
-             * @description ID de referencia puede ser un traslado, compra, etc.
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-            /**
-             * @description productos a ingresar al almacen y cantidad
-             * @example [
-             *       {
-             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
-             *         "quantity": 5
-             *       },
-             *       {
-             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
-             *         "quantity": 10
-             *       }
-             *     ]
-             */
-            movement: string[];
-        };
-        IncomingCreateResponseData: {
-            incomingId: string;
-            movementTypeId: string;
-        };
-        CreateOutgoingDto: {
-            /**
-             * @description Nombre de la salida
-             * @example Salida de medicamentos
-             */
-            name?: string;
-            /**
-             * @description Descripción de la salida
-             * @example Descripción opcional de la salida
-             */
-            description?: string;
-            /**
-             * @description ID del almacén
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId: string;
-            /**
-             * Format: date-time
-             * @description Fecha de la salida
-             * @example 2023-10-01T00:00:00.000Z
-             */
-            date: string;
-            /**
-             * @description Estado de la salida
-             * @example false
-             */
-            state: boolean;
-            /**
-             * @description ID de referencia
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-        };
-        Outgoing: {
-            id: string;
-            name: string;
-            description: string;
-            storageId: string;
-            /** Format: date-time */
-            date: string;
-            state: boolean;
-            referenceId: string;
-        };
-        UpdateOutgoingDto: {
-            /**
-             * @description Nombre de la salida
-             * @example Salida de medicamentos
-             */
-            name?: string;
-            /**
-             * @description Descripción de la salida
-             * @example Descripción opcional de la salida
-             */
-            description?: string;
-            /**
-             * @description ID del almacén
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId?: string;
-            /**
-             * Format: date-time
-             * @description Fecha de la salida
-             * @example 2023-10-01T00:00:00.000Z
-             */
-            date?: string;
-            /**
-             * @description Estado de la salida
-             * @example false
-             */
-            state?: boolean;
-            /**
-             * @description ID de referencia
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-        };
-        DeleteOutgoingDto: {
-            ids: string[];
-        };
-        CreateOutgoingDtoStorage: {
-            /**
-             * @description Nombre de la salida de almacen
-             * @example salida de transferencia , correcion de stock, etc.
-             */
-            name?: string;
-            /**
-             * @description Descripción de salida
-             * @example Descripción opcional del salida de alamacen
-             */
-            description?: string;
-            /**
-             * @description ID del almacén del que va ser retirado
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId: string;
-            /**
-             * Format: date-time
-             * @description Fecha de salida
-             * @example 2023-10-01T00:00:00.000Z
-             */
-            date: string;
-            /**
-             * @description Estado del salida
-             * @example true
-             */
-            state: boolean;
-            /**
-             * @description ID de referencia puede ser un traslado, compra, etc.
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-            /**
-             * @description productos a retirar del almacen y cantidad
-             * @example [
-             *       {
-             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
-             *         "quantity": 5
-             *       },
-             *       {
-             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
-             *         "quantity": 10
-             *       }
-             *     ]
-             */
-            movement: string[];
-        };
-        OutgoingCreateResponseData: {
-            outgoingId: string;
-            movementTypeId: string;
-        };
-        ProductStockResponse: {
-            idProduct: string;
-            name: string;
-            unit: string;
-            price: number;
-            stock: number;
-            totalPrice: number;
-        };
-        StockByStorage: {
-            idStorage: string;
-            name: string;
-            location: string;
-            address: string;
-            staff: string;
-            description: string;
-            stock: components["schemas"]["ProductStockResponse"][];
-        };
-        CreateMedicalConsultationBillingDto: {
-            /**
-             * @description ID de la consulta médica
-             * @example 29c5e5b8-1835-42f9-ae34-217a3791ba22
-             */
-            consultaId: string;
-            /**
-             * @description Método de pago a utilizar
-             * @default CASH
-             * @enum {string}
-             */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
-            /**
-             * @description Moneda de la transacción
-             * @default PEN
-             */
-            currency: string;
-            /** @description Notas adicionales sobre la consulta */
-            notes?: string;
-            /**
-             * @description Metadata adicional para la orden
-             * @example {
-             *       "additionalNotes": "Paciente requiere atención especial",
-             *       "preferences": {
-             *         "language": "español",
-             *         "communicationMethod": "email"
-             *       }
-             *     }
-             */
-            metadata?: Record<string, never>;
-        };
-        ProductSaleItemDto: {
-            /**
-             * @description ID del producto
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            productId: string;
-            /**
-             * @description Cantidad del producto
-             * @example 5
-             */
-            quantity: number;
-        };
-        CreateProductSaleBillingDto: {
-            /**
-             * @description Lista de productos a vender
-             * @example [
-             *       {
-             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
-             *         "quantity": 5
-             *       }
-             *     ]
-             */
-            products: components["schemas"]["ProductSaleItemDto"][];
-            /**
-             * @description ID del almacén de origen
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId: string;
-            /**
-             * @description ID de la sucursal
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId: string;
-            /**
-             * @description Ubicación en almacén
-             * @example Estante A-123
-             */
-            storageLocation?: string;
-            /**
-             * @description Número de lote
-             * @example LOT-2024-001
-             */
-            batchNumber?: string;
-            /**
-             * @description ID de referencia externa
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-            /**
-             * @description Moneda (default: PEN)
-             * @default PEN
-             * @example PEN
-             */
-            currency: string;
-            /**
-             * @description Método de pago
-             * @default CASH
-             * @enum {string}
-             */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
-            /**
-             * @description Notas adicionales
-             * @example Venta de medicamentos para paciente
-             */
-            notes?: string;
-            /**
-             * @description Metadata adicional
-             * @example {
-             *       "customField": "value"
-             *     }
-             */
-            metadata?: Record<string, never>;
-        };
-        ProductPurchaseItemDto: {
-            /**
-             * @description ID del producto a comprar
-             * @example ece57703-3246-4c2d-8f82-825cd239237a
-             */
-            productId: string;
-            /**
-             * @description Cantidad a comprar
-             * @example 10
-             */
-            quantity: number;
-            /**
-             * @description Precio unitario del producto
-             * @example 100.5
-             */
-            unitPrice: number;
-        };
-        CreateProductPurchaseBillingDto: {
-            /**
-             * @description Lista de productos a comprar
-             * @example [
-             *       {
-             *         "productId": "ece57703-3246-4c2d-8f82-825cd239237a",
-             *         "quantity": 10,
-             *         "unitPrice": 100.5
-             *       }
-             *     ]
-             */
-            products: components["schemas"]["ProductPurchaseItemDto"][];
-            /**
-             * @description ID del almacén de destino
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            storageId: string;
-            /**
-             * @description ID del proveedor
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            supplierId: string;
-            /**
-             * @description ID de la sucursal
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId: string;
-            /**
-             * @description Ubicación en almacén
-             * @example Estante A-123
-             */
-            storageLocation?: string;
-            /**
-             * @description Número de lote o compra
-             * @example LOT-2024-001
-             */
-            batchNumber?: string;
-            /**
-             * @description ID de referencia externa
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            referenceId?: string;
-            /**
-             * @description Moneda (default: PEN)
-             * @default PEN
-             * @example PEN
-             */
-            currency: string;
-            /**
-             * @description Método de pago
-             * @default CASH
-             * @enum {string}
-             */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
-            /**
-             * @description Notas adicionales
-             * @example Compra de medicamentos de inventario
-             */
-            notes?: string;
-            /**
-             * @description Metadata adicional
-             * @example {
-             *       "customField": "value"
-             *     }
-             */
-            metadata?: Record<string, never>;
-        };
-        CreateConsultationDto: {
-            /**
-             * @description ID del Servicio
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            serviceId: string;
-            /**
-             * @description ID del Paciente
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            pacienteId?: string;
-            /**
-             * @description ID del Sucursal
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            sucursalId: string;
-            /**
-             * @description Descripción de la consulta
-             * @example Consulta médica para cirugía... etc
-             */
-            descripcion: string;
-            /**
-             * @description Fecha de la consulta
-             * @example 2023-10-01T10:00:00Z
-             */
-            date: string;
-        };
-        Consultation: {
-            id: string;
-            serviceId: string;
-            pacienteId: string;
-            sucursalId: string;
-            description: string;
-            /** Format: date-time */
-            date: string;
         };
     };
     responses: never;
@@ -8906,191 +8645,6 @@ export interface operations {
             };
         };
     };
-    AppointmentTypeController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de cita */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppointmentType"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AppointmentTypeController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateAppointmentTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de cita creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppointmentType"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AppointmentTypeController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppointmentType"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AppointmentTypeController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateAppointmentTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de cita actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppointmentType"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AppointmentTypeController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteAppointmentTypesDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de citas desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppointmentType"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de citas no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     AppointmentController_findAll: {
         parameters: {
             query?: {
@@ -9377,6 +8931,3913 @@ export interface operations {
                 };
             };
             /** @description IDs inválidos o citas médicas no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de personal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStaffTypeDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de personal creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"];
+                };
+            };
+            /** @description Datos de entrada inválidos o tipo de personal ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tipo de personal encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStaffTypeDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de personal actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffTypeDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de personal eliminados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de personal no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffTypeDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de personal reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de personal no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todo el personal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Personal creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"];
+                };
+            };
+            /** @description Datos de entrada inválidos o personal ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todo el personal activo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Personal encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Personal actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Personal eliminado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description IDs inválidos o personal no existentes */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Personal reactivado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description IDs inválidos o personal no existentes */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las categorías */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCategoryDto"];
+            };
+        };
+        responses: {
+            /** @description Categoría creada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Datos de entrada inválidos o categoría ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las categorías activas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la categoría */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Categoría encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Category"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Categoría no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCategoryDto"];
+            };
+        };
+        responses: {
+            /** @description Categoría actualizada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteCategoryDto"];
+            };
+        };
+        responses: {
+            /** @description Categorías desactivadas exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description IDs inválidos o categorías no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteCategoryDto"];
+            };
+        };
+        responses: {
+            /** @description Categorías reactivadas exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description IDs inválidos o categorías no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de productos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeProductResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTypeProductDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de producto creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Datos de entrada inválidos o tipo de producto ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de productos activos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeProductResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del tipo de producto */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tipo de producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeProduct"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Tipo de producto no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTypeProductDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de producto actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTypeProductDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de productos desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de productos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeProductController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTypeProductDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de productos reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de productos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los productos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Product"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateProductDto"];
+            };
+        };
+        responses: {
+            /** @description Producto creado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Product"];
+                };
+            };
+            /** @description Datos de entrada inválidos o producto ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_findAllWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los productos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductWithRelations"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Product"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Producto no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateProductDto"];
+            };
+        };
+        responses: {
+            /** @description Producto actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Product"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductWithRelations"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Producto no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteProductDto"];
+            };
+        };
+        responses: {
+            /** @description Productos desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Product"][];
+                };
+            };
+            /** @description IDs inválidos o productos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteProductDto"];
+            };
+        };
+        responses: {
+            /** @description Productos reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Product"][];
+                };
+            };
+            /** @description IDs inválidos o productos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de almacenamiento */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTypeStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de almacenamiento creado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Datos de entrada inválidos o tipo de almacenamiento ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de almacenamiento activos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_findAllDetailed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de almacenamiento activos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedTypeStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del tipo de almacenamiento */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tipo de almacenamiento encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedTypeStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Tipo de almacenamiento no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del tipo de almacenamiento */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tipo de almacenamiento encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Tipo de almacenamiento no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTypeStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de almacenamiento actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTypeStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de almacenamiento desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description IDs inválidos o tipos de almacenamiento no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeStorageController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTypeStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de almacenamiento reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de almacenamiento no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Almacén creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"];
+                };
+            };
+            /** @description Datos de entrada inválidos o almacén ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findAllWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findOneWithRelations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del almacén */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Almacén encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Almacén no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del almacén */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Almacén encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Almacén no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Almacén actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Almacenes desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"][];
+                };
+            };
+            /** @description IDs inválidos o almacenes no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Almacenes reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"][];
+                };
+            };
+            /** @description IDs inválidos o almacenes no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeMovementController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de movimiento */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeMovement"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeMovementController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTypeMovementDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de movimiento creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeMovement"];
+                };
+            };
+            /** @description Datos de entrada inválidos o tipo de movimiento ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeMovementController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del tipo de movimiento */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tipo de movimiento encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeMovement"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Tipo de movimiento no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeMovementController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTypeMovementDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de movimiento actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeMovement"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeMovementController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTypeMovementDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de movimiento desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeMovement"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de movimiento no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TypeMovementController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTypeMovementDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de movimiento reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeMovement"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de movimiento no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MovementController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los movimientos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Movement"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MovementController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMovementDto"];
+            };
+        };
+        responses: {
+            /** @description Movimiento creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Movement"];
+                };
+            };
+            /** @description Datos de entrada inválidos o movimiento ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MovementController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del movimiento */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Movimiento encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Movement"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Movimiento no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MovementController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMovementDto"];
+            };
+        };
+        responses: {
+            /** @description Movimiento actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Movement"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MovementController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteMovementDto"];
+            };
+        };
+        responses: {
+            /** @description Movimientos desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Movement"][];
+                };
+            };
+            /** @description IDs inválidos o movimientos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MovementController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteMovementDto"];
+            };
+        };
+        responses: {
+            /** @description Movimientos reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Movement"][];
+                };
+            };
+            /** @description IDs inválidos o movimientos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IncomingController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los ingresos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Incoming"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IncomingController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateIncomingDto"];
+            };
+        };
+        responses: {
+            /** @description Ingreso creado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Incoming"];
+                };
+            };
+            /** @description Datos de entrada inválidos o ingreso ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IncomingController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del ingreso */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ingreso encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Incoming"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Ingreso no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IncomingController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateIncomingDto"];
+            };
+        };
+        responses: {
+            /** @description Ingreso actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Incoming"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IncomingController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteIncomingDto"];
+            };
+        };
+        responses: {
+            /** @description Ingresos desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Incoming"][];
+                };
+            };
+            /** @description IDs inválidos o ingresos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IncomingController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteIncomingDto"];
+            };
+        };
+        responses: {
+            /** @description Ingresos reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Incoming"][];
+                };
+            };
+            /** @description IDs inválidos o ingresos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IncomingController_createIncoming: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateIncomingDtoStorage"];
+            };
+        };
+        responses: {
+            /** @description Ingreso a almacen creado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncomingCreateResponseData"];
+                };
+            };
+            /** @description Datos de entrada inválidos o ingreso ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las salidas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Outgoing"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOutgoingDto"];
+            };
+        };
+        responses: {
+            /** @description Salida creada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Outgoing"];
+                };
+            };
+            /** @description Datos de entrada inválidos o salida ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la salida */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Salida encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Outgoing"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Salida no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateOutgoingDto"];
+            };
+        };
+        responses: {
+            /** @description Salida actualizada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Outgoing"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteOutgoingDto"];
+            };
+        };
+        responses: {
+            /** @description Salidas desactivadas exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Outgoing"][];
+                };
+            };
+            /** @description IDs inválidos o salidas no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteOutgoingDto"];
+            };
+        };
+        responses: {
+            /** @description Salidas reactivadas exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Outgoing"][];
+                };
+            };
+            /** @description IDs inválidos o salidas no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_createOutgoing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOutgoingDtoStorage"];
+            };
+        };
+        responses: {
+            /** @description Salida de almacen creada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutgoingCreateResponseData"];
+                };
+            };
+            /** @description Datos de salida inválidos o salida ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StockController_getStockByProduct: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Stock de un producto en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
+            };
+        };
+    };
+    StockController_getStockForAllStorages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Stock de todos los productos en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
+            };
+        };
+    };
+    StockController_getStockByStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del almacén */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Stock de todos los productos en un almacén */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
+            };
+        };
+    };
+    StockController_getStockByStorageProduct: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del almacén */
+                storageId: string;
+                /** @description ID del producto */
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Stock de un producto en un almacén */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
+            };
+        };
+    };
+    BillingController_createProductSaleOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateProductSaleBillingDto"];
+            };
+        };
+        responses: {
+            /** @description Product sale order created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BillingController_createProductPurchaseOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateProductPurchaseBillingDto"];
+            };
+        };
+        responses: {
+            /** @description Product purchase order created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los eventos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateEventDto"];
+            };
+        };
+        responses: {
+            /** @description Evento creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            /** @description Datos de entrada inválidos o evento ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del evento */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Evento encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Evento no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del evento a actualizar */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEventDto"];
+            };
+        };
+        responses: {
+            /** @description Evento actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            /** @description Datos de entrada inválidos o evento no existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteEventsDto"];
+            };
+        };
+        responses: {
+            /** @description Eventos desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description IDs inválidos o eventos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteEventsDto"];
+            };
+        };
+        responses: {
+            /** @description Eventos reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description IDs inválidos o eventos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_generateEvents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los horarios */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStaffScheduleDto"];
+            };
+        };
+        responses: {
+            /** @description Horario creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del horario */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Horario encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStaffScheduleDto"];
+            };
+        };
+        responses: {
+            /** @description Horario actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffSchedulesDto"];
+            };
+        };
+        responses: {
+            /** @description Horarios desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
+                };
+            };
+            /** @description IDs inválidos o horarios no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffSchedulesDto"];
+            };
+        };
+        responses: {
+            /** @description Horarios reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
+                };
+            };
+            /** @description IDs inválidos o horarios no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las ausencias temporales */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeOff"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTimeOffDto"];
+            };
+        };
+        responses: {
+            /** @description Ausencia temporal creada exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeOff"];
+                };
+            };
+            /** @description Datos de entrada inválidos o ausencia ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la ausencia temporal */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ausencia temporal encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeOff"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Ausencia temporal no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del evento a actualizar */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTimeOffDto"];
+            };
+        };
+        responses: {
+            /** @description Evento actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            /** @description Datos de entrada inválidos o evento no existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTimeOffsDto"];
+            };
+        };
+        responses: {
+            /** @description Eventos desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description IDs inválidos o eventos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTimeOffsDto"];
+            };
+        };
+        responses: {
+            /** @description Eventos reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description IDs inválidos o eventos no existen */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10719,3951 +14180,6 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de personal */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateStaffTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de personal creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"];
-                };
-            };
-            /** @description Datos de entrada inválidos o tipo de personal ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tipo de personal encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateStaffTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de personal actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de personal eliminados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de personal no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de personal reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de personal no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todo el personal */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateStaffDto"];
-            };
-        };
-        responses: {
-            /** @description Personal creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"];
-                };
-            };
-            /** @description Datos de entrada inválidos o personal ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_findAllActive: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todo el personal activo */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Personal encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateStaffDto"];
-            };
-        };
-        responses: {
-            /** @description Personal actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffDto"];
-            };
-        };
-        responses: {
-            /** @description Personal eliminado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"][];
-                };
-            };
-            /** @description IDs inválidos o personal no existentes */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffDto"];
-            };
-        };
-        responses: {
-            /** @description Personal reactivado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"][];
-                };
-            };
-            /** @description IDs inválidos o personal no existentes */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CalendarController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los calendarios */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Calendar"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CalendarController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCalendarDto"];
-            };
-        };
-        responses: {
-            /** @description Calendario creado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Datos de entrada inválidos o calendario ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CalendarController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del calendario */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Calendario encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Calendar"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Calendario no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CalendarController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCalendarDto"];
-            };
-        };
-        responses: {
-            /** @description Calendario actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CalendarController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteCalendarDto"];
-            };
-        };
-        responses: {
-            /** @description Calendarios desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o calendarios no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CalendarController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteCalendarDto"];
-            };
-        };
-        responses: {
-            /** @description Calendarios reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o calendarios no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los eventos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateEventDto"];
-            };
-        };
-        responses: {
-            /** @description Evento creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Datos de entrada inválidos o evento ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del evento */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Evento encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Evento no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateEventDto"];
-            };
-        };
-        responses: {
-            /** @description Evento actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteEventDto"];
-            };
-        };
-        responses: {
-            /** @description Eventos desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o eventos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteEventDto"];
-            };
-        };
-        responses: {
-            /** @description Eventos reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o eventos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    RecurrenceController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todas las recurrencias */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Recurrence"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    RecurrenceController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateRecurrenceDto"];
-            };
-        };
-        responses: {
-            /** @description Recurrencia creada exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Datos de entrada inválidos o recurrencia ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    RecurrenceController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID de la recurrencia */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Recurrencia encontrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Recurrence"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Recurrencia no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    RecurrenceController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateRecurrenceDto"];
-            };
-        };
-        responses: {
-            /** @description Recurrencia actualizada exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    RecurrenceController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteRecurrenceDto"];
-            };
-        };
-        responses: {
-            /** @description Recurrencias desactivadas exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o recurrencias no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    RecurrenceController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteRecurrenceDto"];
-            };
-        };
-        responses: {
-            /** @description Recurrencias reactivadas exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o recurrencias no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todas las categorías */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCategoryDto"];
-            };
-        };
-        responses: {
-            /** @description Categoría creada exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Datos de entrada inválidos o categoría ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_findAllActive: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todas las categorías activas */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID de la categoría */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Categoría encontrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Category"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Categoría no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCategoryDto"];
-            };
-        };
-        responses: {
-            /** @description Categoría actualizada exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteCategoryDto"];
-            };
-        };
-        responses: {
-            /** @description Categorías desactivadas exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description IDs inválidos o categorías no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteCategoryDto"];
-            };
-        };
-        responses: {
-            /** @description Categorías reactivadas exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description IDs inválidos o categorías no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeProductController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de productos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeProductResponse"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeProductController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateTypeProductDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de producto creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Datos de entrada inválidos o tipo de producto ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeProductController_findAllActive: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de productos activos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeProductResponse"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeProductController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del tipo de producto */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tipo de producto encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeProduct"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Tipo de producto no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeProductController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTypeProductDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de producto actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeProductController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTypeProductDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de productos desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de productos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeProductController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTypeProductDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de productos reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de productos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los productos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Product"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProductDto"];
-            };
-        };
-        responses: {
-            /** @description Producto creado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Product"];
-                };
-            };
-            /** @description Datos de entrada inválidos o producto ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_findAllWithRelations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los productos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductWithRelations"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del producto */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Producto encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Product"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Producto no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateProductDto"];
-            };
-        };
-        responses: {
-            /** @description Producto actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Product"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_findOneWithRelations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del producto */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Producto encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductWithRelations"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Producto no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteProductDto"];
-            };
-        };
-        responses: {
-            /** @description Productos desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Product"][];
-                };
-            };
-            /** @description IDs inválidos o productos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteProductDto"];
-            };
-        };
-        responses: {
-            /** @description Productos reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Product"][];
-                };
-            };
-            /** @description IDs inválidos o productos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de almacenamiento */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateTypeStorageDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de almacenamiento creado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Datos de entrada inválidos o tipo de almacenamiento ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_findAllActive: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de almacenamiento activos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_findAllDetailed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de almacenamiento activos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DetailedTypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del tipo de almacenamiento */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tipo de almacenamiento encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Tipo de almacenamiento no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTypeStorageDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de almacenamiento actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTypeStorageDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de almacenamiento desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description IDs inválidos o tipos de almacenamiento no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTypeStorageDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de almacenamiento reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de almacenamiento no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StorageController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los almacenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Storage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StorageController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateStorageDto"];
-            };
-        };
-        responses: {
-            /** @description Almacén creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Storage"];
-                };
-            };
-            /** @description Datos de entrada inválidos o almacén ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StorageController_findAllWithRelations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los almacenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DetailedStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StorageController_findAllActive: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los almacenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Storage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StorageController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del almacén */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Almacén encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Storage"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Almacén no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StorageController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateStorageDto"];
-            };
-        };
-        responses: {
-            /** @description Almacén actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Storage"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StorageController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStorageDto"];
-            };
-        };
-        responses: {
-            /** @description Almacenes desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Storage"][];
-                };
-            };
-            /** @description IDs inválidos o almacenes no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StorageController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStorageDto"];
-            };
-        };
-        responses: {
-            /** @description Almacenes reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Storage"][];
-                };
-            };
-            /** @description IDs inválidos o almacenes no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeMovementController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de movimiento */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeMovement"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeMovementController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateTypeMovementDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de movimiento creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeMovement"];
-                };
-            };
-            /** @description Datos de entrada inválidos o tipo de movimiento ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeMovementController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del tipo de movimiento */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tipo de movimiento encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeMovement"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Tipo de movimiento no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeMovementController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTypeMovementDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de movimiento actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeMovement"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeMovementController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTypeMovementDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de movimiento desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeMovement"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de movimiento no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeMovementController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTypeMovementDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de movimiento reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypeMovement"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de movimiento no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MovementController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los movimientos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Movement"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MovementController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateMovementDto"];
-            };
-        };
-        responses: {
-            /** @description Movimiento creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Movement"];
-                };
-            };
-            /** @description Datos de entrada inválidos o movimiento ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MovementController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del movimiento */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Movimiento encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Movement"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Movimiento no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MovementController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateMovementDto"];
-            };
-        };
-        responses: {
-            /** @description Movimiento actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Movement"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MovementController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteMovementDto"];
-            };
-        };
-        responses: {
-            /** @description Movimientos desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Movement"][];
-                };
-            };
-            /** @description IDs inválidos o movimientos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MovementController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteMovementDto"];
-            };
-        };
-        responses: {
-            /** @description Movimientos reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Movement"][];
-                };
-            };
-            /** @description IDs inválidos o movimientos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    IncomingController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los ingresos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Incoming"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    IncomingController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateIncomingDto"];
-            };
-        };
-        responses: {
-            /** @description Ingreso creado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Incoming"];
-                };
-            };
-            /** @description Datos de entrada inválidos o ingreso ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    IncomingController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del ingreso */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Ingreso encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Incoming"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Ingreso no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    IncomingController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateIncomingDto"];
-            };
-        };
-        responses: {
-            /** @description Ingreso actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Incoming"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    IncomingController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteIncomingDto"];
-            };
-        };
-        responses: {
-            /** @description Ingresos desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Incoming"][];
-                };
-            };
-            /** @description IDs inválidos o ingresos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    IncomingController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteIncomingDto"];
-            };
-        };
-        responses: {
-            /** @description Ingresos reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Incoming"][];
-                };
-            };
-            /** @description IDs inválidos o ingresos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    IncomingController_createIncoming: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateIncomingDtoStorage"];
-            };
-        };
-        responses: {
-            /** @description Ingreso a almacen creado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IncomingCreateResponseData"];
-                };
-            };
-            /** @description Datos de entrada inválidos o ingreso ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OutgoingController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todas las salidas */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Outgoing"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OutgoingController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateOutgoingDto"];
-            };
-        };
-        responses: {
-            /** @description Salida creada exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Outgoing"];
-                };
-            };
-            /** @description Datos de entrada inválidos o salida ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OutgoingController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID de la salida */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Salida encontrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Outgoing"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Salida no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OutgoingController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateOutgoingDto"];
-            };
-        };
-        responses: {
-            /** @description Salida actualizada exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Outgoing"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OutgoingController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteOutgoingDto"];
-            };
-        };
-        responses: {
-            /** @description Salidas desactivadas exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Outgoing"][];
-                };
-            };
-            /** @description IDs inválidos o salidas no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OutgoingController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteOutgoingDto"];
-            };
-        };
-        responses: {
-            /** @description Salidas reactivadas exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Outgoing"][];
-                };
-            };
-            /** @description IDs inválidos o salidas no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OutgoingController_createOutgoing: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateOutgoingDtoStorage"];
-            };
-        };
-        responses: {
-            /** @description Salida de almacen creada exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OutgoingCreateResponseData"];
-                };
-            };
-            /** @description Datos de salida inválidos o salida ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StockController_getStockByProduct: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del producto */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Stock de un producto en todos los almacenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StockByStorage"][];
-                };
-            };
-        };
-    };
-    StockController_getStockForAllStorages: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Stock de todos los productos en todos los almacenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StockByStorage"][];
-                };
-            };
-        };
-    };
-    StockController_getStockByStorage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del almacén */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Stock de todos los productos en un almacén */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StockByStorage"][];
-                };
-            };
-        };
-    };
-    StockController_getStockByStorageProduct: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del almacén */
-                storageId: string;
-                /** @description ID del producto */
-                productId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Stock de un producto en un almacén */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StockByStorage"][];
-                };
-            };
-        };
-    };
-    BillingController_createMedicalConsultationOrder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateMedicalConsultationBillingDto"];
-            };
-        };
-        responses: {
-            /** @description Medical consultation order created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    BillingController_createProductSaleOrder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProductSaleBillingDto"];
-            };
-        };
-        responses: {
-            /** @description Product sale order created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    BillingController_createProductPurchaseOrder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProductPurchaseBillingDto"];
-            };
-        };
-        responses: {
-            /** @description Product purchase order created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ConsultationController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todas las consultas */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Consultation"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ConsultationController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateConsultationDto"];
-            };
-        };
-        responses: {
-            /** @description Consulta creada exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Consultation"];
-                };
-            };
-            /** @description Datos de entrada inválidos o consulta ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ConsultationController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID de la consulta */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Consulta encontrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Consultation"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Consulta no encontrada */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };
