@@ -85,6 +85,24 @@ export async function getProductById (id: string) : Promise<ProductResponse> {
   }
 };
 
+export async function getDetailedProductById (id: string) : Promise<ListDetailedProductResponse> {
+  try {
+    const [product, error] = await http.get<ListDetailedProductResponse>(`/product/detailed/${id}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el producto",
+      };
+    }
+    return product;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
+
 /**
  * Crea un nuevo producto en el catálogo.
  *

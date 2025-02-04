@@ -7,7 +7,8 @@ import {
   getProducts,
   getDetailedProducts,
   getProductById,
-  ProductResponse
+  ProductResponse,
+  getDetailedProductById
 } from "../_actions/products.actions";
 import { toast } from "sonner";
 import {
@@ -90,11 +91,15 @@ export const useProducts = () => {
       // Retornamos directamente la respuesta ya que viene en el formato correcto
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
+      const detailedProduct = await getDetailedProductById(res.data.id);
+        if ("error" in detailedProduct) {
+          throw new Error(detailedProduct.error);
+        }
       queryClient.setQueryData<DetailedProduct[] | undefined>(
         ["detailed-products"], (oldProducts) => {
-          if (!oldProducts) return [res.data as DetailedProduct];
-          return [...oldProducts, res.data as DetailedProduct];
+          if (!oldProducts) return detailedProduct;
+          return [...oldProducts, ...detailedProduct];
       });
       toast.success(res.message);
     },
@@ -112,11 +117,15 @@ export const useProducts = () => {
       }
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: async(res) => {
+      const detailedProduct = await getDetailedProductById(res.data.id);
+      if ("error" in detailedProduct) {
+        throw new Error(detailedProduct.error);
+      }
       queryClient.setQueryData<DetailedProduct[] | undefined>(["detailed-products"], (oldProducts) => {
         if (!oldProducts) return undefined;
         return oldProducts.map((product) =>
-          product.id === res.data.id ? {...product, ...res.data} : product
+          product.id === res.data.id ? {...product, ...detailedProduct[0]} : product
         );
       });
       toast.success("Producto actualizado exitosamente");
