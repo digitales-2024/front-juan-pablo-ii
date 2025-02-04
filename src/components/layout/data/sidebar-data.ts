@@ -223,7 +223,7 @@ export const sidebarData: SidebarData = {
               icon: Tag,
             },
             {
-              title: "Tipos",
+              title: "Subcategorías",
               url: "/product/product-types",
               icon: Boxes,
             },

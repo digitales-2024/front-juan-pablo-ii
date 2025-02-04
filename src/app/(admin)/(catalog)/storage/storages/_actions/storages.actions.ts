@@ -105,6 +105,24 @@ export async function getStorageById (id: string) : Promise<StorageResponse> {
   }
 };
 
+export async function getDetailedStorageById (id: string) : Promise<ListDetailedStorageResponse> {
+  try {
+    const [storage, error] = await http.get<ListDetailedStorageResponse>(`/storage/detailed/${id}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el almacén",
+      };
+    }
+    return storage;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
+
 /**
  * Crea un nuevo almacén en el catálogo.
  *
