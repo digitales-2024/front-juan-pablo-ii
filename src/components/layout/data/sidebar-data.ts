@@ -190,15 +190,11 @@ export const sidebarData: SidebarData = {
               icon: UserPen,
             },
             {
-              title: "Cronograma",
-              url: "/timetable",
+              title: "Turnos",
+              url: "/staff-schedules",
               icon: CalendarRange,
             },
-            {
-              title: "Turnos",
-              url: "/schedules",
-              icon: Clock,
-            },
+           
           ],
         },
       ],
