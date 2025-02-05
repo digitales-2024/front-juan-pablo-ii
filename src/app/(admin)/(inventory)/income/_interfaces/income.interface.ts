@@ -3,9 +3,9 @@ import { z } from "zod";
 
 // Tipos base de la API
 export type Incoming = components['schemas']['Incoming'];
+export type Movement = components['schemas']['OutgoingIncomingMovementDto'];
 export type DetailedIncoming = components['schemas']['DetailedIncoming'];
-export type CreateResponse = components['schemas']['IncomingCreateResponseData'];
-export type CreateIncomingDto = components['schemas']['CreateIncomingDto'];
+export type CreateIncomingDto = components['schemas']['CreateIncomingDtoStorage'];
 export type UpdateIncomingDto = components['schemas']['UpdateIncomingDto'];
 export type DeleteIncomingDto = components['schemas']['DeleteIncomingDto'];
 
@@ -26,13 +26,28 @@ export interface ProductTableItem extends DetailedIncoming {
 //   state: boolean;
 //   referenceId?: string;
 // }
-export const createProductSchema = z.object({
-  name: z.string().min(1, "El nombre es requerido"),
+
+// OutgoingIncomingMovementDto: {
+  // productId: string;
+  // quantity: number;
+  // date?: string;
+  // state?: boolean;
+// }
+export const createIncomeSchema = z.object({
+  name: z.string().min(1, "El nombre es requerido"), //En el back es opcional, pero considero que debe ser requerido
   description: z.string().optional(),
   storageId: z.string().min(1, "El tipo de almacenamiento es requerido"),
-  date: z.string().min(1, "La fecha es requerida"),
+  date: z.string().date("La fecha es requerida"),
   state: z.boolean(),
   referenceId: z.string().optional(),
+  movement: z.array(
+    z.object({
+      productId: z.string().min(1, "El producto es requerido"),
+      quantity: z.number().min(1, "La cantidad debe ser mayor a 0"),
+      date: z.string().optional(),
+      state: z.boolean().optional(),
+    })
+  ),
 }) satisfies z.ZodType<CreateIncomingDto>;
 
 // UpdateIncomingDto: {
@@ -43,8 +58,8 @@ export const createProductSchema = z.object({
 //   state?: boolean;
 //   referenceId?: string;
 // }
-export const updateProductSchema = z.object({
-  name: z.string().min(1, "El nombre es requerido").optional(),
+export const updateIncomeSchema = z.object({
+  name: z.string().optional(),
   description: z.string().optional(),
   storageId: z.string().optional(),
   date: z.string().optional(),
@@ -52,5 +67,5 @@ export const updateProductSchema = z.object({
   referenceId: z.string().optional(),
 }) satisfies z.ZodType<UpdateIncomingDto>;
 
-export type CreateProductInput = z.infer<typeof createProductSchema>;
-export type UpdateProductInput = z.infer<typeof updateProductSchema>;
+export type CreateIncomeInput = z.infer<typeof createIncomeSchema>;
+export type UpdateIncomeInput = z.infer<typeof updateIncomeSchema>;

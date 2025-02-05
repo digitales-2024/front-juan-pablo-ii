@@ -1,19 +1,19 @@
 import { Table } from "@tanstack/react-table";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { DetailedIncoming } from "../_interfaces/income.interface";
 import { CreateProductDialog } from "./CreateProductDialog";
-import { DeactivateProductDialog } from "./DeactivateProductDialog";
-import { ReactivateProductDialog } from "./ReactivateProductDialog";
+import { DeactivateProductDialog } from "./DeactivateIncomingDialog";
+import { ReactivateProductDialog } from "./ReactivateIncomingDialog";
 
 export interface ProductTableToolbarActionsProps {
-  table?: Table<DetailedProduct>;
+  table?: Table<DetailedIncoming>;
 }
 
-export function ProductTableToolbarActions({
+export function IncomingTableToolbarActions({
   table,
 }: ProductTableToolbarActionsProps) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
+      {/* {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
         <>
         <DeactivateProductDialog
           products={table
@@ -28,8 +28,8 @@ export function ProductTableToolbarActions({
       onSuccess={() => table.toggleAllRowsSelected(false)}
       />
       </>
-      ) : null}
-      <CreateProductDialog />
+      ) : null} */}
+      {/* <CreateProductDialog /> */}
     </div>
   );
 }

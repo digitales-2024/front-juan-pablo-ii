@@ -2103,6 +2103,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los productos activos con informaciòn detallada relevante */
+        get: operations["ProductController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/detailed": {
         parameters: {
             query?: never;
@@ -2583,6 +2600,23 @@ export interface paths {
         put?: never;
         /** Crear nuevo ingreso */
         post: operations["IncomingController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/incoming/storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los ingresos con detalles de almacen */
+        get: operations["IncomingController_findAllWithStorage"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5126,6 +5160,23 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
+        ActiveProductCategory: {
+            name: string;
+            isActive: boolean;
+        };
+        ActiveProductTypeProduct: {
+            name: string;
+            isActive: boolean;
+        };
+        ActiveProduct: {
+            id: string;
+            name: string;
+            precio: number;
+            categoriaId: string;
+            tipoProductoId: string;
+            categoria: components["schemas"]["ActiveProductCategory"];
+            tipoProducto: components["schemas"]["ActiveProductTypeProduct"];
+        };
         ProductWithRelations: {
             id: string;
             categoriaId: string;
@@ -5564,11 +5615,15 @@ export interface components {
         IncomingStorage: {
             name: string;
         };
-        IncomingStock: {
+        IncomingWithStorage: {
             id: string;
+            name: string;
+            description: string;
             storageId: string;
-            stock: number;
-            price: number;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            referenceId: string;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
         };
@@ -5584,7 +5639,6 @@ export interface components {
             description: string;
             codigoProducto: string;
             isActive: boolean;
-            Stock: components["schemas"]["IncomingStock"][];
         };
         IncomingMovement: {
             id: string;
@@ -5606,6 +5660,7 @@ export interface components {
             state: boolean;
             referenceId: string;
             isActive: boolean;
+            Storage: components["schemas"]["IncomingStorage"];
             Movement: components["schemas"]["IncomingMovement"][];
         };
         UpdateIncomingDto: {
@@ -5643,6 +5698,29 @@ export interface components {
         };
         DeleteIncomingDto: {
             ids: string[];
+        };
+        OutgoingIncomingMovementDto: {
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId: string;
+            /**
+             * @description Cantidad de producto que se movió
+             * @example 100
+             */
+            quantity: number;
+            /**
+             * Format: date-time
+             * @description Fecha en que ocurrió el evento
+             * @example 2023-12-01T15:30:00Z
+             */
+            date?: string;
+            /**
+             * @description Estado del movimiento
+             * @example false
+             */
+            state?: boolean;
         };
         CreateIncomingDtoStorage: {
             /**
@@ -5689,11 +5767,7 @@ export interface components {
              *       }
              *     ]
              */
-            movement: components["schemas"]["Movement"][];
-        };
-        IncomingCreateResponseData: {
-            incomingId: string;
-            movementTypeId: string;
+            movement: components["schemas"]["OutgoingIncomingMovementDto"][];
         };
         CreateOutgoingDto: {
             /**
@@ -5742,14 +5816,6 @@ export interface components {
         OutgoingStorage: {
             name: string;
         };
-        OutgoingStock: {
-            id: string;
-            storageId: string;
-            stock: number;
-            price: number;
-            isActive: boolean;
-            Storage: components["schemas"]["OutgoingStorage"];
-        };
         OutgoingProduct: {
             id: string;
             categoriaId: string;
@@ -5762,7 +5828,6 @@ export interface components {
             description: string;
             codigoProducto: string;
             isActive: boolean;
-            Stock: components["schemas"]["OutgoingStock"][];
         };
         OutgoingMovement: {
             id: string;
@@ -5784,6 +5849,7 @@ export interface components {
             state: boolean;
             referenceId: string;
             isActive: boolean;
+            Storage: components["schemas"]["OutgoingStorage"];
             Movement: components["schemas"]["OutgoingMovement"][];
         };
         UpdateOutgoingDto: {
@@ -5867,11 +5933,7 @@ export interface components {
              *       }
              *     ]
              */
-            movement: components["schemas"]["Movement"][];
-        };
-        OutgoingCreateResponseData: {
-            outgoingId: string;
-            movementTypeId: string;
+            movement: components["schemas"]["OutgoingIncomingMovementDto"][];
         };
         ProductStockResponse: {
             idProduct: string;
@@ -12706,6 +12768,40 @@ export interface operations {
             };
         };
     };
+    ProductController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los productos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActiveProduct"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ProductController_findAllWithRelations: {
         parameters: {
             query?: never;
@@ -14168,6 +14264,40 @@ export interface operations {
             };
         };
     };
+    IncomingController_findAllWithStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los ingresos con detalles de almacen */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncomingWithStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     IncomingController_findAllWithRelations: {
         parameters: {
             query?: never;
@@ -14311,7 +14441,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Incoming"];
+                    "application/json": components["schemas"]["DetailedIncoming"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -14349,7 +14479,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Incoming"][];
+                    "application/json": components["schemas"]["DetailedIncoming"][];
                 };
             };
             /** @description IDs inválidos o ingresos no existen */
@@ -14387,7 +14517,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Incoming"][];
+                    "application/json": components["schemas"]["DetailedIncoming"][];
                 };
             };
             /** @description IDs inválidos o ingresos no existen */
@@ -14425,7 +14555,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["IncomingCreateResponseData"];
+                    "application/json": components["schemas"]["DetailedIncoming"];
                 };
             };
             /** @description Datos de entrada inválidos o ingreso ya existe */
@@ -14659,7 +14789,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Outgoing"];
+                    "application/json": components["schemas"]["DetailedOutgoing"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -14697,7 +14827,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Outgoing"][];
+                    "application/json": components["schemas"]["DetailedOutgoing"][];
                 };
             };
             /** @description IDs inválidos o salidas no existen */
@@ -14735,7 +14865,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Outgoing"][];
+                    "application/json": components["schemas"]["DetailedOutgoing"][];
                 };
             };
             /** @description IDs inválidos o salidas no existen */
@@ -14773,7 +14903,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OutgoingCreateResponseData"];
+                    "application/json": components["schemas"]["DetailedOutgoing"];
                 };
             };
             /** @description Datos de salida inválidos o salida ya existe */

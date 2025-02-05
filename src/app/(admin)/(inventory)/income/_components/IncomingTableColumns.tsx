@@ -2,10 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { DetailedIncoming } from "../_interfaces/income.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
+import { es } from "date-fns/locale";
 import { UpdateProductSheet } from "./UpdateProductSheet";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
@@ -18,12 +19,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-import { ReactivateProductDialog } from "./ReactivateProductDialog";
+import { ReactivateIncomingDialog } from "./ReactivateIncomingDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DeactivateProductDialog } from "./DeactivateProductDialog";
+import { DeactivateIncomingDialog } from "./DeactivateIncomingDialog";
+import { format } from "date-fns";
 // import Image from "next/image";
 
-export const columns: ColumnDef<DetailedProduct>[] = [
+//   name        String?
+//   description String?
+//   Storage.name Storage  @relation(fields: [storageId], references: [id])
+//   date        DateTime @default(now()) @db.Timestamptz(6)
+//   state       Boolean  @default(false) // Estado que indica si el ingreso es concreto (true) o está en proceso (false)
+//   isActive    Boolean  @default(true) // Campo para controlar si está activo o no
+//   createdAt   DateTime @default(now()) @db.Timestamptz(6)
+const STATE_OPTIONS = {
+  true: "Concreto",
+  false: "En proceso",
+}
+export const columns: ColumnDef<DetailedIncoming>[] = [
   {
     id: "select",
     size: 10,
@@ -63,15 +76,36 @@ export const columns: ColumnDef<DetailedProduct>[] = [
     ),
   },
   {
-    accessorKey: "unidadMedida",
+    accessorKey: "description",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Medida" />
+      <DataTableColumnHeader column={column} title="Descripción" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.description || "Sin descripción"}
+      </span>
     ),
   },
   {
-    accessorKey: "codigoProducto",
+    accessorKey: "storageId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
+      <DataTableColumnHeader column={column} title="Almacén" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {(row.original.Storage as { name: string })?.name ?? "Sin Almacen"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "date",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fecha de ingreso" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.date ? format(new Date(row.original.date), "PPp", { locale: es }) : "Fecha no disponible"}
+      </span>
     ),
   },
   // NO usamos por el momento
@@ -95,79 +129,17 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   //   ),
   // },
   {
-    accessorKey: "categoria",
+    accessorKey: "state",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Categoría" />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => (
-      <span>
-        {row.original.categoria?.name || "Sin Categoría"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "tipoProducto",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Subcategoría" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.tipoProducto?.name || "Sin subcategoría"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "precio",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Precio" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.precio.toLocaleString("es-PE", {
-          style: "currency",
-          currency: "PEN",
-        })}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "descuento",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descuento" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {/* The discounts have been stored in the DB as a porcentage, so we need to convert it to a percentage by dividing by 100*/}
-        {(row.original.descuento / 100)?.toLocaleString("es-PE", {
-          style: "percent",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }) || "Sin descuento"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "description",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
-    ),
-  },
-  {
-    accessorKey: "observaciones",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Observaciones" />
-    ),
-  },
-  {
-    accessorKey: "condicionesAlmacenamiento",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Condiciones de almacenamiento" />
-    ),
-  },
-  {
-    accessorKey: "usoProducto",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ámbito de uso" />
+      // <span>
+      //   {row.original.state}
+      // </span>
+      <Badge variant={row.original.state ? "default" : "secondary"}>
+        {row.original.state? STATE_OPTIONS.true : STATE_OPTIONS.false}
+      </Badge>
     ),
   },
   {
@@ -207,13 +179,13 @@ export const columns: ColumnDef<DetailedProduct>[] = [
       return (
         <div>
           <div>
-            <UpdateProductSheet
+            {/* <UpdateProductSheet
               product={product}
               open={showEditSheet}
               onOpenChange={setShowEditSheet}
               showTrigger={false}
-            />
-            <DeactivateProductDialog
+            /> */}
+            {/* <DeactivateProductDialog
               product={product}
               open={showDeleteDialog}
               onOpenChange={setShowDeleteDialog}
@@ -224,7 +196,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
               open={showReactivateDialog}
               onOpenChange={setShowReactivateDialog}
               showTrigger={false}
-            />
+            /> */}
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

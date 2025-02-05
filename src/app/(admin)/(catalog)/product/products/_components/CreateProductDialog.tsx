@@ -27,6 +27,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { METADATA } from "../_statics/metadata";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const CREATE_PRODUCT_MESSAGES = {
   button: "Crear producto",
@@ -187,12 +188,14 @@ export function CreateProductDialog() {
             {CREATE_PRODUCT_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <CreateProductForm form={form} onSubmit={handleSubmit}>
-          <DevelopmentZodError form={form} />
-          <DrawerFooter>
-            <DialogFooterContent />
-          </DrawerFooter>
-        </CreateProductForm>
+        <ScrollArea className="max-h-[calc(100dvh-16rem)] p-4 overflow-auto">
+          <CreateProductForm form={form} onSubmit={handleSubmit}>
+            <DevelopmentZodError form={form} />
+            <DrawerFooter>
+              <DialogFooterContent />
+            </DrawerFooter>
+          </CreateProductForm>
+        </ScrollArea>
       </DrawerContent>
     </Drawer>
   );

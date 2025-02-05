@@ -8,7 +8,8 @@ import {
   getDetailedProducts,
   getProductById,
   ProductResponse,
-  getDetailedProductById
+  getDetailedProductById,
+  getActiveProducts
 } from "../_actions/products.actions";
 import { toast } from "sonner";
 import {
@@ -46,6 +47,22 @@ export const useProducts = () => {
     queryKey: ["detailed-products"],
     queryFn: async () => {
       const response = await getDetailedProducts({});
+      if (!response) {
+        throw new Error("No se recibió respuesta del servidor");
+      }
+
+      if (response.error || !response.data) {
+        throw new Error(response.error ?? "Error desconocido");
+      }
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+
+  const activeProductsQuery = useQuery({
+    queryKey: ["active-products"],
+    queryFn: async () => {
+      const response = await getActiveProducts({});
       if (!response) {
         throw new Error("No se recibió respuesta del servidor");
       }
@@ -222,6 +239,7 @@ export const useProducts = () => {
   return {
     productsQuery,
     detailedProductsQuery,
+    activeProductsQuery,
     products: productsQuery.data,
     oneProductQuery,
     createMutation,

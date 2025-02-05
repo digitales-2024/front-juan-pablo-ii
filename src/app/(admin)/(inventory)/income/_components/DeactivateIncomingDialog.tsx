@@ -23,35 +23,41 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Product } from "../_interfaces/products.interface";
-import { RefreshCcw, RefreshCcwDot } from "lucide-react";
-import { useProducts } from "../_hooks/useProduct";
+import { Incoming } from "../_interfaces/income.interface";
+import { RefreshCcw, Trash } from "lucide-react";
+import { useIncoming } from "../_hooks/useIncoming";
+import { toast } from "sonner";
 import { ComponentPropsWithoutRef } from "react";
 import { METADATA } from "../_statics/metadata";
 
-interface ReactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
-  product?: Product;
-  products?: Product[];
+interface DeactivateIncomingDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+  incoming?: Incoming;
+  incomings?: Incoming[];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export function ReactivateProductDialog({
-  product,
-  products,
+export function DeactivateIncomingDialog({
+  incoming,
+  incomings,
   showTrigger = true,
   onSuccess,
   ...props
-}: ReactivateProductDialogProps) {
+}: DeactivateIncomingDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { reactivateMutation: { isPending, mutateAsync } } = useProducts();
+  const { deleteMutation: { isPending, mutateAsync } } = useIncoming();
 
-  const items = products ?? (product ? [product] : []);
+  const items = incomings ?? (incoming ? [incoming] : []);
 
-  async function onReactivate() {
+  async function onDelete() {
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
+      toast.success(
+        items.length === 1
+          ? `${METADATA.entityName} desactivado exitosamente`
+          : `${METADATA.entityPluralName} desactivados exitosamente`
+      );
       onSuccess?.();
     } catch (error) {
       console.log(error);
@@ -64,8 +70,8 @@ export function ReactivateProductDialog({
         {showTrigger && (
           <AlertDialogTrigger asChild>
             <Button variant="outline" size="sm">
-              <RefreshCcwDot className="mr-2 size-4" aria-hidden="true" />
-              Reactivar ({items.length})
+              <Trash className="mr-2 size-4" aria-hidden="true" />
+              Desactivar ({items.length})
             </Button>
           </AlertDialogTrigger>
         )}
@@ -73,7 +79,7 @@ export function ReactivateProductDialog({
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción reactivará a
+              Esta acción desactivará a
               <span className="font-medium"> {items.length}</span>
               {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
             </AlertDialogDescription>
@@ -83,13 +89,13 @@ export function ReactivateProductDialog({
               <Button variant="outline">Cancelar</Button>
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={onReactivate}
+              onClick={onDelete}
               disabled={isPending}
             >
               {isPending && (
                 <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
               )}
-              Reactivar
+              Desactivar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -102,8 +108,8 @@ export function ReactivateProductDialog({
       {showTrigger && (
         <DrawerTrigger asChild>
           <Button variant="outline" size="sm">
-            <RefreshCcwDot className="mr-2 size-4" aria-hidden="true" />
-            Reactivar ({items.length})
+            <Trash className="mr-2 size-4" aria-hidden="true" />
+            Desactivar ({items.length})
           </Button>
         </DrawerTrigger>
       )}
@@ -111,20 +117,20 @@ export function ReactivateProductDialog({
         <DrawerHeader>
           <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
           <DrawerDescription>
-            Esta acción reactivará a
+            Esta acción desactivará a
             <span className="font-medium"> {items.length}</span>
             {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
           <Button
-            onClick={onReactivate}
+            onClick={onDelete}
             disabled={isPending}
           >
             {isPending && (
               <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
             )}
-            Reactivar
+            Desactivar
           </Button>
           <DrawerClose asChild>
             <Button variant="outline">Cancelar</Button>

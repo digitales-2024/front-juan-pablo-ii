@@ -42,7 +42,7 @@ interface DataTableProps<TData, TValue> {
   viewOptions?: boolean;
   getSubRows?: (row: TData) => TData[] | undefined;
   //TODO: Add type for columnVisibilityConfig keys
-  columnVisibilityConfig?: Record<string, boolean>;
+  columnVisibilityConfig?: Partial<Record<keyof TData, boolean>>;
 }
 
 export function DataTable<TData, TValue>({
@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    columnVisibilityConfig?columnVisibilityConfig:{}
+    columnVisibilityConfig as VisibilityState ?? {} //OJO: When defining visibility, at least 1 field must be present
   );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);

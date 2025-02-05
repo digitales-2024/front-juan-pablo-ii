@@ -2,12 +2,12 @@
 import { useEffect, useState, useTransition } from "react";
 import { FieldErrors, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateProductInput, createProductSchema } from "../_interfaces/products.interface";
+import { CreateProductInput, createProductSchema } from "../_interfaces/income.interface";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CreateProductForm } from "./CreateProductForm";
-import { useProducts } from "../_hooks/useProduct";
+import { CreateProductForm } from "./CreateIncomingForm";
+import { useIncoming } from "../_hooks/useIncoming";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/drawer";
 import { METADATA } from "../_statics/metadata";
 
-const CREATE_PRODUCT_MESSAGES = {
+const CREATE_INCOMING_MESSAGES = {
   button: "Crear producto",
   title: "Registrar nuevo producto",
   description: "Rellena los campos para crear un nuevo producto",
@@ -41,7 +41,7 @@ export function CreateProductDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { createMutation } = useProducts();
+  const { createMutation } = useIncoming();
 
   // export const createProductSchema = z.object({
   //   categoriaId: z.string().min(1, "La categoría es requerida").uuid(),
@@ -127,7 +127,7 @@ export function CreateProductDialog() {
             aria-hidden="true"
           />
         )}
-        {CREATE_PRODUCT_MESSAGES.submitButton}
+        {CREATE_INCOMING_MESSAGES.submitButton}
       </Button>
       <Button
         type="button"
@@ -135,7 +135,7 @@ export function CreateProductDialog() {
         className="w-full"
         onClick={handleClose}
       >
-        {CREATE_PRODUCT_MESSAGES.cancel}
+        {CREATE_INCOMING_MESSAGES.cancel}
       </Button>
     </div>
   );
@@ -147,7 +147,7 @@ export function CreateProductDialog() {
       size="sm"
     >
       <Plus className="size-4 mr-2" aria-hidden="true" />
-      {CREATE_PRODUCT_MESSAGES.button}
+      {CREATE_INCOMING_MESSAGES.button}
     </Button>
   );
 
@@ -159,9 +159,9 @@ export function CreateProductDialog() {
         </DialogTrigger>
         <DialogContent className="max-w-xl max-h-[calc(100vh-4rem)]">
           <DialogHeader>
-            <DialogTitle>{CREATE_PRODUCT_MESSAGES.title}</DialogTitle>
+            <DialogTitle>{CREATE_INCOMING_MESSAGES.title}</DialogTitle>
             <DialogDescription>
-              {CREATE_PRODUCT_MESSAGES.description}
+              {CREATE_INCOMING_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
           <CreateProductForm form={form} onSubmit={handleSubmit}>
@@ -182,9 +182,9 @@ export function CreateProductDialog() {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{CREATE_PRODUCT_MESSAGES.title}</DrawerTitle>
+          <DrawerTitle>{CREATE_INCOMING_MESSAGES.title}</DrawerTitle>
           <DrawerDescription>
-            {CREATE_PRODUCT_MESSAGES.description}
+            {CREATE_INCOMING_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
         <CreateProductForm form={form} onSubmit={handleSubmit}>
