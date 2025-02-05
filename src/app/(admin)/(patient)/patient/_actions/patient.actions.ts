@@ -4,8 +4,7 @@ import { http } from "@/utils/serverFetch";
 import {
   Patient,
   DeletePatientDto,
-  CreatePatientWithImage,
-  UpdatePatientWithImage,
+  CreatePatientFormData,
 } from "../_interfaces/patient.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
@@ -67,37 +66,76 @@ export async function getPatientById(id: string): Promise<PatientResponse> {
   }
 }
 
+/* export type PatientResponse = BaseApiResponse<Patient> | { error: string }; */
 /**
  * Crea un nuevo paciente con imagen opcional.
  *
  * @param data - Datos del paciente e imagen opcional
  * @returns Respuesta con el paciente creado o error
  */
+
+/* FormData: FormData {
+  name: 'alx',
+  lastName: 'xxzvzxvsdaf',
+  dni: '78945641',
+  birthDate: '2025-02-05',
+  gender: 'Masculino',
+  address: '',
+  phone: '',
+  email: '',
+  emergencyContact: '',
+  emergencyPhone: '',
+  healthInsurance: '',
+  maritalStatus: '',
+  occupation: '',
+  workplace: '',
+  bloodType: '',
+  primaryDoctor: '',
+  language: '',
+  notes: '',
+  image: File {
+    size: 3239,
+    type: 'image/png',
+    name: 'usuarioFoto.png',
+    lastModified: 1738787505222
+  }
+} */
+/**
+ * Crea un nuevo paciente con imagen opcional.
+ *
+ * @param formData - Datos del paciente e imagen opcional
+ * @returns Respuesta con el paciente creado o error
+ */
 export async function createPatient(
-  data: CreatePatientWithImage
+  formData: CreatePatientFormData
 ): Promise<PatientResponse> {
   try {
-    const formData = new FormData();
+    const serverFormData = new FormData();
 
-    // Procesamos la imagen si existe
-    if (data.image instanceof File) {
-      formData.append("image", data.image);
-    }
-
-    // Procesamos el resto de datos, excluyendo la imagen
-    const { image, ...patientData } = data;
-    console.log("patientData", image);
-    Object.entries(patientData).forEach(([key, value]) => {
+    // Procesar los datos del paciente
+    Object.entries(formData.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        formData.append(key, String(value));
+        serverFormData.append(key, String(value));
+      } else {
+        serverFormData.append(key, ""); // Asegurarse de que los campos vacíos se envíen como cadenas vacías
       }
     });
 
-    const [responseData, error] = await http.post<PatientResponse>(
+    // Procesar la imagen si existe
+    if (formData.image instanceof File) {
+      serverFormData.append("image", formData.image);
+    }
+
+    // Log para verificar los datos antes de enviarlos
+    console.log("Datos enviados al servidor:", Object.fromEntries(serverFormData.entries()));
+
+    const [response, error] = await http.post<PatientResponse>(
       "/paciente/create-with-image",
-      formData,
+      serverFormData,
       {
         headers: {
+          // Para FormData, no establecemos Content-Type
+          // El navegador lo establecerá automáticamente con el boundary correcto
           Accept: "multipart/form-data",
         },
       }
@@ -107,7 +145,7 @@ export async function createPatient(
       return { error: error.message };
     }
 
-    return responseData;
+    return response;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido al crear el paciente" };
@@ -123,28 +161,36 @@ export async function createPatient(
  */
 export async function updatePatient(
   id: string,
-  data: UpdatePatientWithImage
+  formData: CreatePatientFormData
 ): Promise<PatientResponse> {
   try {
-    const formData = new FormData();
+    const serverFormData = new FormData();
 
-    if (data.image instanceof File) {
-      formData.append("image", data.image);
-    }
-
-    const { image, ...patientData } = data;
-    console.log("patientData", image);
-    Object.entries(patientData).forEach(([key, value]) => {
+    // Procesar los datos del paciente
+    Object.entries(formData.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        formData.append(key, String(value));
+        if (value instanceof File) {
+          serverFormData.append(key, value);
+        } else if (typeof value === 'object') {
+          serverFormData.append(key, JSON.stringify(value));
+        } else {
+          serverFormData.append(key, String(value));
+        }
       }
     });
 
-    const [responseData, error] = await http.patch<PatientResponse>(
-      `/paciente/${id}/update-with-image`,
-      formData,
+    // Procesar la imagen si existe
+    if (formData.image instanceof File) {
+      serverFormData.append("image", formData.image);
+    }
+
+    const [response, error] = await http.post<PatientResponse>(
+      "/paciente/create-with-image",
+      serverFormData,
       {
         headers: {
+          // Para FormData, no establecemos Content-Type
+          // El navegador lo establecerá automáticamente con el boundary correcto
           Accept: "multipart/form-data",
         },
       }
@@ -154,10 +200,10 @@ export async function updatePatient(
       return { error: error.message };
     }
 
-    return responseData;
+    return response;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido al actualizar el paciente" };
+    return { error: "Error desconocido al crear el paciente" };
   }
 }
 
