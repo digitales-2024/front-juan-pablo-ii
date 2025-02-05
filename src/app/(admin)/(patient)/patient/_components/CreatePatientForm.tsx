@@ -1,7 +1,7 @@
 "use client";
 
-import { UseFormReturn } from "react-hook-form";
-import { CreatePatientFormData } from "../_interfaces/patient.interface";
+import { UseFormReturn, SubmitHandler } from "react-hook-form";
+import { CreatePatientInput } from "../_interfaces/patient.interface";
 import {
   Form,
   FormControl,
@@ -36,9 +36,9 @@ interface CreatePatientFormProps
   /* botones de envio de formulario */
   children: React.ReactNode;
   /* hook de formulario */
-  form: UseFormReturn<CreatePatientFormData>;
+  form: UseFormReturn<CreatePatientInput>;
   /* funcion de envio de formulario */
-  onSubmit: (data: CreatePatientFormData) => void;
+  onSubmit: SubmitHandler<CreatePatientInput>
 }
 
 export function CreatePatientForm({
@@ -67,7 +67,7 @@ export function CreatePatientForm({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      form.setValue("image", file);
+      form.setValue("patientPhoto", file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
@@ -79,7 +79,7 @@ export function CreatePatientForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-6">
           <div className="relative">
             {/* se debe de enviar un file de imagen */}
             <Avatar className="w-32 h-32">
@@ -110,7 +110,7 @@ export function CreatePatientForm({
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="data.name"
+            name="name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.name.label}</FormLabel>
@@ -131,7 +131,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.lastName"
+            name="lastName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.lastName.label}</FormLabel>
@@ -152,7 +152,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.dni"
+            name="dni"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.dni.label}</FormLabel>
@@ -173,7 +173,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.birthDate"
+            name="birthDate"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.birthDate.label}</FormLabel>
@@ -194,7 +194,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.gender"
+            name="gender"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.gender.label}</FormLabel>
@@ -218,7 +218,7 @@ export function CreatePatientForm({
         <div>
           <FormField
             control={form.control}
-            name="data.address"
+            name="address"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.address.label}</FormLabel>
@@ -242,7 +242,7 @@ export function CreatePatientForm({
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="data.phone"
+            name="phone"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.phone.label}</FormLabel>
@@ -263,7 +263,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.email"
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.email.label}</FormLabel>
@@ -287,7 +287,7 @@ export function CreatePatientForm({
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="data.emergencyContact"
+            name="emergencyContact"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.emergencyContact.label}</FormLabel>
@@ -308,7 +308,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.emergencyPhone"
+            name="emergencyPhone"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.emergencyPhone.label}</FormLabel>
@@ -332,7 +332,7 @@ export function CreatePatientForm({
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="data.healthInsurance"
+            name="healthInsurance"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.healthInsurance.label}</FormLabel>
@@ -353,7 +353,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.maritalStatus"
+            name="maritalStatus"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.maritalStatus.label}</FormLabel>
@@ -377,7 +377,7 @@ export function CreatePatientForm({
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="data.occupation"
+            name="occupation"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.occupation.label}</FormLabel>
@@ -398,7 +398,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.workplace"
+            name="workplace"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.workplace.label}</FormLabel>
@@ -421,7 +421,7 @@ export function CreatePatientForm({
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="data.bloodType"
+            name="bloodType"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.bloodType.label}</FormLabel>
@@ -442,7 +442,7 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="data.primaryDoctor"
+            name="primaryDoctor"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.primaryDoctor.label}</FormLabel>
@@ -466,7 +466,7 @@ export function CreatePatientForm({
         <div>
           <FormField
             control={form.control}
-            name="data.language"
+            name="language"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.language.label}</FormLabel>
@@ -490,7 +490,7 @@ export function CreatePatientForm({
         <div>
           <FormField
             control={form.control}
-            name="data.notes"
+            name="notes"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{FORMSTATICS.notes.label}</FormLabel>
