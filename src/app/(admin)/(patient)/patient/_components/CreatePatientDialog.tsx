@@ -50,44 +50,46 @@ export function CreatePatientDialog() {
   //mutation hook
   const { createMutation } = usePatients();
 
-  const form = useForm<CreatePatientFormData>({
+  const form = useForm<CreatePatientInput>({
     resolver: zodResolver(createPatientSchema),
     defaultValues: {
-      data: {
-        name: "",
-        lastName: "",
-        dni: "",
-        birthDate: "",
-        gender: "",
-        address: "",
-        phone: "",
-        email: "",
-        emergencyContact: "",
-        emergencyPhone: "",
-        healthInsurance: "",
-        maritalStatus: "",
-        occupation: "",
-        workplace: "",
-        bloodType: "",
-        primaryDoctor: "",
-        language: "",
-        notes: "",
-        patientPhoto: "", // Este campo se mantiene vacío
-      },
-      image: null, // Inicializamos el campo de imagen como null
+      name: "",
+      lastName: "",
+      dni: "",
+      birthDate: "",
+      gender: "",
+      address: "",
+      phone: "",
+      email: "",
+      emergencyContact: "",
+      emergencyPhone: "",
+      healthInsurance: "",
+      maritalStatus: "",
+      occupation: "",
+      workplace: "",
+      bloodType: "",
+      primaryDoctor: "",
+      language: "",
+      notes: "",
+      patientPhoto: undefined,
     },
   });
 
-  function handleSubmit({ data, image }: CreatePatientFormData) {
+  function handleSubmit(data: CreatePatientInput) {
     if (createMutation.isPending || isCreatePending) return;
 
-    const input: CreatePatientInput = {
-      ...data,
-      patientPhoto: image ? URL.createObjectURL(image) : "", // Convertimos el archivo de imagen a una URL si existe
+    // Separar patientPhoto y convertirlo a null si es necesario
+    const { patientPhoto, ...rest } = data;
+    const formData: CreatePatientFormData = {
+      data: { ...rest, patientPhoto: undefined },
+      image: patientPhoto ?? null,
     };
 
+    // Ver los datos antes de pasarlos a la mutación
+    console.log("Datos validados:", formData);
+
     startCreateTransition(() => {
-      createMutation.mutate(input, {
+      createMutation.mutate(formData, {
         onSuccess: () => {
           setOpen(false);
           form.reset();
@@ -181,7 +183,7 @@ export function CreatePatientDialog() {
             {CREATE_PATIENT_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <ScrollArea className="max-h-[calc(100vh-16rem)] p-4">
+        <ScrollArea className="max-h-[calc(100vh-16rem)] p-4 overflow-auto">
           <CreatePatientForm form={form} onSubmit={handleSubmit}>
             <DevelopmentZodError form={form} />
             <DrawerFooter>
