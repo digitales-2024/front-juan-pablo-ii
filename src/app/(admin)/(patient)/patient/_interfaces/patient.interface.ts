@@ -11,18 +11,27 @@ export type DeletePatientDto = { ids: string[] };
 export type ReactivatePatientDto = DeletePatientDto;
 
 // Interfaces extendidas para manejar imágenes
-export interface CreatePatientWithImage extends CreatePatientDto {
-  image?: File | null;
-}
+type CreatePatientWithImage = Omit<CreatePatientDto, "patientPhoto"> & {
+  patientPhoto?: File;
+};
+type UpdatePatientWithImage = Omit<UpdatePatientDto, "patientPhoto"> & {
+  patientPhoto?: File;
+};
 
-export interface UpdatePatientWithImage extends UpdatePatientDto {
-  image?: File | null;
-}
+// Crear un custom type para File
+const fileSchema = z
+  .custom<File>((file) => {
+    return file instanceof File;
+  }, "El archivo debe ser una imagen válida")
+  .refine((file) => {
+    if (!file) return true; // Permite que sea opcional
+    return file instanceof File && file.type.startsWith("image/");
+  }, "El archivo debe ser una imagen válida (PNG, JPG, etc.)");
 
 // Schema de validación para crear paciente
 export const createPatientSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
-  lastName: z.string().optional(),
+  lastName: z.string().min(1, "El apellido es requerido").optional(),
   dni: z.string().min(8, "El DNI debe tener 8 caracteres"),
   birthDate: z.string().min(1, "La fecha de nacimiento es requerida"),
   gender: z.string().min(1, "El género es requerido"),
@@ -39,9 +48,8 @@ export const createPatientSchema = z.object({
   primaryDoctor: z.string().optional(),
   language: z.string().optional(),
   notes: z.string().optional(),
-  patientPhoto: z.string().optional(),
-  // No incluimos image en el schema porque Zod no maneja bien File
-}) satisfies z.ZodType<Omit<CreatePatientWithImage, 'image'>>;
+  patientPhoto: fileSchema.optional(), // Usar el esquema personalizado para validar archivos
+}) satisfies z.ZodType<CreatePatientWithImage>;
 
 // Schema de validación para actualizar paciente
 export const updatePatientSchema = z.object({
@@ -63,13 +71,12 @@ export const updatePatientSchema = z.object({
   primaryDoctor: z.string().optional(),
   language: z.string().optional(),
   notes: z.string().optional(),
-  patientPhoto: z.string().optional(),
-  // No incluimos image en el schema porque Zod no maneja bien File
-}) satisfies z.ZodType<Omit<UpdatePatientWithImage, 'image'>>;
+  patientPhoto: fileSchema.optional(), // Usar el esquema personalizado para validar archivos
+}) satisfies z.ZodType<UpdatePatientWithImage>;
 
 // Tipos inferidos de los schemas más el campo image
-export type CreatePatientInput = z.infer<typeof createPatientSchema>
-export type UpdatePatientInput = z.infer<typeof updatePatientSchema>
+export type CreatePatientInput = z.infer<typeof createPatientSchema>;
+export type UpdatePatientInput = z.infer<typeof updatePatientSchema>;
 
 // Tipos para manejar la creación y actualización con imagen
 export interface CreatePatientFormData {
