@@ -152,19 +152,12 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
   patientPhoto: {
     required: false,
     label: "Foto del Paciente",
-    type: "text",
+    type: "file",
     placeholder: "URL de la foto del paciente",
     name: "patientPhoto",
     defaultValue: "",
   },
-  image: {
-    required: false,
-    label: "Imagen",
-    type: "file",
-    placeholder: "Subir imagen del paciente",
-    name: "image",
-    defaultValue: "",
-  },
+
 };
 
 
@@ -322,12 +315,5 @@ export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
     name: "patientPhoto",
     defaultValue: "",
   },
-  image: {
-    required: false,
-    label: "Imagen",
-    type: "file",
-    placeholder: "Subir imagen del paciente",
-    name: "image",
-    defaultValue: "",
-  },
+
 };
