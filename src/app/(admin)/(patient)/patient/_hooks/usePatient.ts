@@ -10,9 +10,10 @@ import {
 import { toast } from "sonner";
 import {
   Patient,
-  CreatePatientWithImage,
+ 
   UpdatePatientWithImage,
   DeletePatientDto,
+  CreatePatientFormData,
 } from "../_interfaces/patient.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
@@ -52,28 +53,91 @@ export const usePatients = () => {
       enabled: !!id,
     });
 
+
   // Mutación para crear paciente
+  // Schema de validación para crear paciente
+/* tipado del backen */
+/*   type CreatePatientWithImage = CreatePatientDto; */
+
+/* export const createPatientSchema = z.object({
+  name: z.string().min(1, "El nombre es requerido"),
+  lastName: z.string().optional(),
+  dni: z.string().min(8, "El DNI debe tener 8 caracteres"),
+  birthDate: z.string().min(1, "La fecha de nacimiento es requerida"),
+  gender: z.string().min(1, "El género es requerido"),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().optional(),
+  emergencyContact: z.string().optional(),
+  emergencyPhone: z.string().optional(),
+  healthInsurance: z.string().optional(),
+  maritalStatus: z.string().optional(),
+  occupation: z.string().optional(),
+  workplace: z.string().optional(),
+  bloodType: z.string().optional(),
+  primaryDoctor: z.string().optional(),
+  language: z.string().optional(),
+  notes: z.string().optional(),
+  patientPhoto: z.string().optional(),
+  // No incluimos image en el schema porque Zod no maneja bien File
+}) satisfies z.ZodType<CreatePatientWithImage>;*/
+ 
+// Tipos inferidos de los schemas más el campo image
+/* export type CreatePatientInput = z.infer<typeof createPatientSchema> */
+
+// Tipos para manejar la creación y actualización con imagen
+/* export interface CreatePatientFormData {
+  data: CreatePatientInput;
+  image?: File | null;
+}
+ */
+/* datos del formulario  que se enviar por el dialog para crear un paciente  */
+/* const form = useForm<CreatePatientFormData>({
+    resolver: zodResolver(createPatientSchema),
+    defaultValues: {
+      data: {
+        name: "",
+        lastName: "",
+        dni: "",
+        birthDate: "",
+        gender: "",
+        address: "",
+        phone: "",
+        email: "",
+        emergencyContact: "",
+        emergencyPhone: "",
+        healthInsurance: "",
+        maritalStatus: "",
+        occupation: "",
+        workplace: "",
+        bloodType: "",
+        primaryDoctor: "",
+        language: "",
+        notes: "",
+        patientPhoto: "", // Este campo se mantiene vacío
+      },
+      image: null, // Inicializamos el campo de imagen como null
+    },
+  }); */
   const createMutation = useMutation<
     BaseApiResponse<Patient>,
     Error,
-    CreatePatientWithImage
+    CreatePatientFormData
   >({
-    mutationFn: async (data) => {
-      const response = await createPatient(data);
+    mutationFn: async (formData) => {
+      // Ver los datos antes de pasarlos a la función createPatient
+      console.log("Datos pasados a la mutación:", formData);
+      const response = await createPatient(formData);
       if ("error" in response) {
         throw new Error(response.error);
       }
       return response;
     },
     onSuccess: (res) => {
-      queryClient.setQueryData<Patient[] | undefined>(
-        ["patients"],
-        (oldPatients) => {
-          if (!oldPatients) return [res.data];
-          return [...oldPatients, res.data];
-        }
-      );
-      toast.success(res.message || "Paciente creado exitosamente");
+      queryClient.setQueryData<Patient[]>(["patients"], (old) => {
+        return old ? [...old, res.data] : [res.data];
+      });
+      toast.success("Paciente creado exitosamente");
     },
     onError: (error) => {
       toast.error(error.message || "Error al crear el paciente");
