@@ -3,6 +3,7 @@ import { useEffect, useState, useTransition } from "react";
 import { FieldErrors, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  CreatePatientFormData,
   CreatePatientInput,
   createPatientSchema,
 } from "../_interfaces/patient.interface";
@@ -46,35 +47,44 @@ export function CreatePatientDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
+  //mutation hook
   const { createMutation } = usePatients();
 
-  const form = useForm<CreatePatientInput>({
+  const form = useForm<CreatePatientFormData>({
     resolver: zodResolver(createPatientSchema),
     defaultValues: {
-      name: "",
-      lastName: "",
-      dni: "",
-      birthDate: "",
-      gender: "",
-      address: "",
-      phone: "",
-      email: "",
-      emergencyContact: "",
-      emergencyPhone: "",
-      healthInsurance: "",
-      maritalStatus: "",
-      occupation: "",
-      workplace: "",
-      bloodType: "",
-      primaryDoctor: "",
-      language: "",
-      notes: "",
-      patientPhoto: "",
+      data: {
+        name: "",
+        lastName: "",
+        dni: "",
+        birthDate: "",
+        gender: "",
+        address: "",
+        phone: "",
+        email: "",
+        emergencyContact: "",
+        emergencyPhone: "",
+        healthInsurance: "",
+        maritalStatus: "",
+        occupation: "",
+        workplace: "",
+        bloodType: "",
+        primaryDoctor: "",
+        language: "",
+        notes: "",
+        patientPhoto: "", // Este campo se mantiene vacío
+      },
+      image: null, // Inicializamos el campo de imagen como null
     },
   });
 
-  function handleSubmit(input: CreatePatientInput) {
+  function handleSubmit({ data, image }: CreatePatientFormData) {
     if (createMutation.isPending || isCreatePending) return;
+
+    const input: CreatePatientInput = {
+      ...data,
+      patientPhoto: image ? URL.createObjectURL(image) : "", // Convertimos el archivo de imagen a una URL si existe
+    };
 
     startCreateTransition(() => {
       createMutation.mutate(input, {
@@ -164,19 +174,21 @@ export function CreatePatientDialog() {
       <DrawerTrigger asChild>
         <TriggerButton />
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="w-full max-w-lg">
         <DrawerHeader>
           <DrawerTitle>{CREATE_PATIENT_MESSAGES.title}</DrawerTitle>
           <DrawerDescription>
             {CREATE_PATIENT_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <CreatePatientForm form={form} onSubmit={handleSubmit}>
-          <DevelopmentZodError form={form} />
-          <DrawerFooter>
-            <DialogFooterContent />
-          </DrawerFooter>
-        </CreatePatientForm>
+        <ScrollArea className="max-h-[calc(100vh-16rem)] p-4">
+          <CreatePatientForm form={form} onSubmit={handleSubmit}>
+            <DevelopmentZodError form={form} />
+            <DrawerFooter>
+              <DialogFooterContent />
+            </DrawerFooter>
+          </CreatePatientForm>
+        </ScrollArea>
       </DrawerContent>
     </Drawer>
   );

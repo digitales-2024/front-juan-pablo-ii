@@ -92,11 +92,11 @@ export const sidebarData: SidebarData = {
               url: "/patient",
               icon: UserPlus,
             },
-            {
+/*             {
               title: "Clientes",
               url: "/clients",
               icon: UserRound,
-            },
+            }, */
             {
               title: "Historias Clinicas",
               url: "/medical-records",
