@@ -969,6 +969,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/branch/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las sucursales activas */
+        get: operations["BranchController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/branch/{id}": {
         parameters: {
             query?: never;
@@ -3828,6 +3845,11 @@ export interface components {
             name: string;
             description: string;
         };
+        TypeProduct: {
+            id: string;
+            name: string;
+            description: string;
+        };
         UpdateTypeProductDto: {
             /**
              * @description Nombre del tipo de producto
@@ -3934,6 +3956,9 @@ export interface components {
             isActive: boolean;
             /** Format: date-time */
             createdAt: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
         };
         ProductWithRelations: {
             id: string;
@@ -3951,6 +3976,9 @@ export interface components {
             observaciones: string;
             condicionesAlmacenamiento: string;
             imagenUrl: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
             isActive: boolean;
             /** Format: date-time */
             createdAt: string;
@@ -4071,6 +4099,17 @@ export interface components {
             isActive: boolean;
             branch: components["schemas"]["Branch"];
             staff: components["schemas"]["Staff"];
+            isActive: boolean;
+        };
+        DetailedTypeStorage: {
+            id: string;
+            name: string;
+            description: string;
+            branchId: string;
+            staffId: string;
+            isActive: boolean;
+            branch: components["schemas"]["Branch"];
+            staff: components["schemas"]["Staff"];
         };
         UpdateTypeStorageDto: {
             /**
@@ -4119,6 +4158,15 @@ export interface components {
             name: string;
             location: string;
             typeStorageId: string;
+            isActive: boolean;
+        };
+        DetailedStorage: {
+            id: string;
+            name: string;
+            location: string;
+            typeStorageId: string;
+            isActive: boolean;
+            TypeStorage: components["schemas"]["TypeStorage"];
             isActive: boolean;
         };
         DetailedStorage: {
@@ -4451,6 +4499,10 @@ export interface components {
              *     ]
              */
             movement: string[];
+        };
+        IncomingCreateResponseData: {
+            incomingId: string;
+            movementTypeId: string;
         };
         IncomingCreateResponseData: {
             incomingId: string;
@@ -8494,6 +8546,40 @@ export interface operations {
             };
         };
     };
+    BranchController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las sucursales activas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Branch"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     BranchController_findOne: {
         parameters: {
             query?: never;
@@ -9491,6 +9577,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BaseApiResponse"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Datos de entrada inválidos o categoría ya existe */
@@ -9609,6 +9696,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BaseApiResponse"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -9647,6 +9735,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BaseApiResponse"];
+                    "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
             /** @description IDs inválidos o categorías no existen */
@@ -9684,6 +9773,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
                     "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
@@ -9756,6 +9846,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
                     "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
@@ -9874,6 +9965,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
                     "application/json": components["schemas"]["BaseApiResponse"];
                 };
             };
@@ -13905,7 +13997,17 @@ export interface operations {
             };
         };
         responses: {
+            /** @description Stock de todos los productos en un almacén */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockByStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };

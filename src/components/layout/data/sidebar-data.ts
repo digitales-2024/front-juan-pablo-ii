@@ -11,6 +11,7 @@ import {
   Handshake,
   Home,
   Hospital,
+  HousePlus,
   KeyRound,
   Package,
   PackageMinus,
@@ -27,6 +28,7 @@ import {
   UserPlus,
   UserRound,
   UserRoundSearch,
+  Warehouse,
 } from "lucide-react";
 import { type SidebarData } from "../types";
 
@@ -160,12 +162,12 @@ export const sidebarData: SidebarData = {
             },
             {
               title: "Entradas",
-              url: "/entries",
+              url: "/income",
               icon: PackagePlus,
             },
             {
               title: "Salidas",
-              url: "/exits",
+              url: "/outgoing",
               icon: PackageMinus,
             },
           ],
@@ -217,13 +219,28 @@ export const sidebarData: SidebarData = {
               icon: Tag,
             },
             {
-              title: "Tipos",
+              title: "Subcategorías",
               url: "/product/product-types",
               icon: Boxes,
             },
           ],
         },
-
+        {
+          title: "Almacenamiento",
+          icon: Warehouse,
+          items: [
+            {
+              title: "Almacenes",
+              url: "/storage/storages",
+              icon: Warehouse,
+            },
+            {
+              title: "Tipos de Almacén",
+              url: "/storage/storage-types",
+              icon: HousePlus,
+            },
+          ],
+        },
         {
           title: "Servicios",
           icon: Stethoscope,

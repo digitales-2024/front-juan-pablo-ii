@@ -41,6 +41,8 @@ interface DataTableProps<TData, TValue> {
   toolbarActions?: (table: TableType<TData>) => ReactElement | undefined;
   viewOptions?: boolean;
   getSubRows?: (row: TData) => TData[] | undefined;
+  //TODO: Add type for columnVisibilityConfig keys
+  columnVisibilityConfig?: Record<string, boolean>;
 }
 
 export function DataTable<TData, TValue>({
@@ -50,10 +52,13 @@ export function DataTable<TData, TValue>({
   toolbarActions,
   viewOptions,
   getSubRows,
+  columnVisibilityConfig,
 }: DataTableProps<TData, TValue>) {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    columnVisibilityConfig?columnVisibilityConfig:{}
+  );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");

@@ -4,7 +4,8 @@ import {
   updateCategory,
   deleteCategory,
   reactivateCategory,
-  getCategories
+  getCategories,
+  getActiveCategories
 } from "../_actions/category.actions";
 import { toast } from "sonner";
 import {
@@ -25,6 +26,22 @@ export const useCategories = () => {
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await getCategories({});
+      if (!response) {
+        throw new Error("No se recibió respuesta del servidor");
+      }
+
+      if (response.error || !response.data) {
+        throw new Error(response.error ?? "Error desconocido");
+      }
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+
+  const activeCategoriesQuery = useQuery({
+    queryKey: ["activeCategories"],
+    queryFn: async () => {
+      const response = await getActiveCategories({});
       if (!response) {
         throw new Error("No se recibió respuesta del servidor");
       }
@@ -169,6 +186,7 @@ export const useCategories = () => {
   return {
     categoriesQuery,
     categories: categoriesQuery.data,
+    activeCategoriesQuery,
     createMutation,
     updateMutation,
     deleteMutation,
