@@ -65,4 +65,21 @@ export const colorOptions = [
 			dark: "dark:bg-emerald-700 dark:border-emerald-700 bg-emerald-700/10 text-emerald-700",
 		},
 	},
+	{
+		value: "sky",
+		label: "Sky",
+		class: {
+			base: "bg-sky-500 border-sky-500 bg-sky-500/10 hover:bg-sky-500/20 text-sky-500",
+			light: "bg-sky-300 border-sky-300 bg-sky-300/10 text-sky-300",
+			dark: "dark:bg-sky-700 dark:border-sky-700 bg-sky-700/10 text-sky-700",
+		},
+	},
 ];
+
+// orange
+// blue
+// pink
+// red
+// amber
+// emerald
+// sky
