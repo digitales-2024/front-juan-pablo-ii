@@ -43,6 +43,7 @@ interface UpdateStaffSheetProps {
   showTrigger?: boolean;
 }
 
+
 export function UpdateStaffSheet({ 
   staff, 
   open: controlledOpen, 

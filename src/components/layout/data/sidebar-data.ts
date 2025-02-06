@@ -192,15 +192,11 @@ export const sidebarData: SidebarData = {
               icon: UserPen,
             },
             {
-              title: "Cronograma",
-              url: "/timetable",
+              title: "Turnos",
+              url: "/staff-schedules",
               icon: CalendarRange,
             },
-            {
-              title: "Turnos",
-              url: "/schedules",
-              icon: Clock,
-            },
+           
           ],
         },
       ],
@@ -223,7 +219,7 @@ export const sidebarData: SidebarData = {
               icon: Tag,
             },
             {
-              title: "Tipos",
+              title: "Subcategorías",
               url: "/product/product-types",
               icon: Boxes,
             },
