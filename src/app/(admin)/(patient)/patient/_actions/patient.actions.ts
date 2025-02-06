@@ -129,16 +129,9 @@ export async function createPatient(
     // Log para verificar los datos antes de enviarlos
     console.log("Datos enviados al servidor:", Object.fromEntries(serverFormData.entries()));
 
-    const [response, error] = await http.post<PatientResponse>(
+    const [response, error] = await http.multipartPost<PatientResponse>(
       "/paciente/create-with-image",
       serverFormData,
-      {
-        headers: {
-          // Para FormData, no establecemos Content-Type
-          // El navegador lo establecerá automáticamente con el boundary correcto
-          Accept: "multipart/form-data",
-        },
-      }
     );
 
     if (error) {

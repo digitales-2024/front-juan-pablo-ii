@@ -21,7 +21,7 @@ import {
   Mail,
   Phone,
   MapPin,
-  Calendar,
+  Calendar as CalendarIcon,
   Briefcase,
   Heart,
   Globe,
@@ -30,6 +30,16 @@ import {
   PhoneIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format, toDate } from "date-fns-tz";
+import { cn } from "@/lib/utils";
+
+const TIME_ZONE = "America/Lima";
 
 interface CreatePatientFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -38,7 +48,7 @@ interface CreatePatientFormProps
   /* hook de formulario */
   form: UseFormReturn<CreatePatientInput>;
   /* funcion de envio de formulario */
-  onSubmit: SubmitHandler<CreatePatientInput>
+  onSubmit: SubmitHandler<CreatePatientInput>;
 }
 
 export function CreatePatientForm({
@@ -79,7 +89,7 @@ export function CreatePatientForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-      <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-6">
           <div className="relative">
             {/* se debe de enviar un file de imagen */}
             <Avatar className="w-32 h-32">
@@ -175,19 +185,44 @@ export function CreatePatientForm({
             control={form.control}
             name="birthDate"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>{FORMSTATICS.birthDate.label}</FormLabel>
-                <FormControl>
-                  <InputWithIcon
-                    {...field}
-                    placeholder={FORMSTATICS.birthDate.placeholder}
-                    type={FORMSTATICS.birthDate.type}
-                    icon={<Calendar className="w-4 h-4" />}
-                  />
-                </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.birthDate.required}
-                ></CustomFormDescription>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                        type="button"
+                      >
+                        {field.value ? (
+                          format(toDate(field.value, { timeZone: TIME_ZONE }), "dd/MM/yyyy", { timeZone: TIME_ZONE })
+                        ) : (
+                          <span>Seleccione fecha de nacimiento</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value ? toDate(field.value, { timeZone: TIME_ZONE }) : undefined}
+                      onSelect={(date) => {
+                        if (!date) return;
+                        field.onChange(format(date, 'yyyy-MM-dd', { timeZone: TIME_ZONE }));
+                      }}
+                      disabled={(date) => {
+                        const now = new Date();
+                        return date > now; // Deshabilita fechas futuras
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}

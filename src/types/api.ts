@@ -4836,7 +4836,597 @@ export interface components {
              */
             cancellationReason?: string;
             /**
-             * @description ID del Servicio
+             * @description ID del horario del personal (opcional)
+             * @example uuid-del-horario
+             */
+            staffScheduleId?: string;
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId?: string;
+        };
+        DeleteEventsDto: {
+            /** @description Array de IDs de eventos a eliminar */
+            ids: string[];
+        };
+        RecurrenceDto: {
+            /**
+             * @description Frecuencia de recurrencia
+             * @example WEEKLY
+             * @enum {string}
+             */
+            frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+            /**
+             * @description Intervalo de repetición
+             * @example 1
+             */
+            interval: number;
+            /**
+             * @description Fecha límite de recurrencia en formato YYYY-MM-DD
+             * @example 2024-12-31
+             */
+            until: string;
+        };
+        CreateStaffScheduleDto: {
+            /**
+             * @description ID del personal al que pertenece el horario
+             * @example user-1234
+             */
+            staffId: string;
+            /**
+             * @description ID de la sucursal a la que pertenece el horario
+             * @example branch-5678
+             */
+            branchId: string;
+            /**
+             * @description Título del horario
+             * @default Turno
+             * @example Turno Mañana
+             */
+            title: string;
+            /**
+             * @description Hora de inicio en formato HH:mm
+             * @example 08:00
+             */
+            startTime: string;
+            /**
+             * @description Hora de fin en formato HH:mm
+             * @example 17:00
+             */
+            endTime: string;
+            /**
+             * @description Días de la semana en los que es válido el horario
+             * @example [
+             *       "MONDAY",
+             *       "WEDNESDAY"
+             *     ]
+             */
+            daysOfWeek: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /** @description Configuración de recurrencia para el horario */
+            recurrence: components["schemas"]["RecurrenceDto"];
+            /**
+             * @description Fechas excluidas en formato YYYY-MM-DD
+             * @example [
+             *       "2024-05-01"
+             *     ]
+             */
+            exceptions: string[];
+        };
+        StaffSchedule: {
+            id: string;
+            staffId: string;
+            branchId: string;
+            /** @default Turno */
+            title: string;
+            /** @description Hora de inicio en formato HH:mm */
+            startTime: string;
+            /** @description Hora de fin en formato HH:mm */
+            endTime: string;
+            daysOfWeek: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /**
+             * @description Configuración de recurrencia
+             * @example {
+             *       "frequency": "WEEKLY",
+             *       "interval": 1,
+             *       "until": "2024-12-31"
+             *     }
+             */
+            recurrence: Record<string, never>;
+            /**
+             * @description Fechas excluidas en formato YYYY-MM-DD
+             * @example [
+             *       "2024-05-01"
+             *     ]
+             */
+            exceptions: string[];
+            /** @default true */
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateStaffScheduleDto: {
+            /**
+             * @description ID del personal al que pertenece el horario
+             * @example user-1234
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal a la que pertenece el horario
+             * @example branch-5678
+             */
+            branchId?: string;
+            /**
+             * @description Hora de inicio en formato HH:mm
+             * @example 08:00
+             */
+            startTime?: string;
+            /**
+             * @description Hora de fin en formato HH:mm
+             * @example 17:00
+             */
+            endTime?: string;
+            /**
+             * @description Días de la semana en los que es válido el horario
+             * @example [
+             *       "MONDAY",
+             *       "WEDNESDAY"
+             *     ]
+             */
+            daysOfWeek?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /** @description Configuración de recurrencia para el horario */
+            recurrence?: components["schemas"]["RecurrenceDto"];
+            /**
+             * @description Fechas excluidas en formato YYYY-MM-DD
+             * @example [
+             *       "2024-05-01"
+             *     ]
+             */
+            exceptions?: string[];
+            /**
+             * @description Título del horario (requerido)
+             * @example Turno Mañana
+             */
+            title: string;
+        };
+        DeleteStaffSchedulesDto: {
+            ids: string[];
+        };
+        CreateTimeOffDto: {
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio de la ausencia
+             * @example 2023-11-20T00:00:00Z
+             */
+            start: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin de la ausencia
+             * @example 2023-11-25T23:59:00Z
+             */
+            end: string;
+            /**
+             * @description Motivo de la ausencia (opcional)
+             * @example Vacaciones
+             */
+            reason?: string;
+        };
+        TimeOff: {
+            id: string;
+            staffId: string;
+            branchId: string;
+            /** Format: date-time */
+            start: string;
+            /** Format: date-time */
+            end: string;
+            reason?: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateTimeOffDto: {
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio de la ausencia
+             * @example 2023-11-20T00:00:00Z
+             */
+            start?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin de la ausencia
+             * @example 2023-11-25T23:59:00Z
+             */
+            end?: string;
+            /**
+             * @description Motivo de la ausencia (opcional)
+             * @example Vacaciones
+             */
+            reason?: string;
+        };
+        DeleteTimeOffsDto: {
+            /** @description Array de IDs de ausencias temporales a eliminar */
+            ids: string[];
+        };
+        CreatePatientDto: {
+            /**
+             * @description Nombre completo del paciente
+             * @example Juan Pérez
+             */
+            name: string;
+            /**
+             * @description Apellido del paciente
+             * @example González
+             */
+            lastName?: string;
+            /**
+             * @description DNI del paciente
+             * @example 12345678
+             */
+            dni: string;
+            /**
+             * Format: date-time
+             * @description Fecha de nacimiento del paciente
+             * @example 1990-01-01
+             */
+            birthDate: string;
+            /**
+             * @description Sexo del paciente (M/F)
+             * @example Masculino Femenino
+             */
+            gender: string;
+            /**
+             * @description Dirección del paciente
+             * @example Av. Principal 123
+             */
+            address?: string;
+            /**
+             * @description Número de teléfono del paciente
+             * @example +51999999999
+             */
+            phone?: string;
+            /**
+             * @description Correo electrónico del paciente
+             * @example juan.perez@example.com
+             */
+            email?: string;
+            /**
+             * @description Nombre del contacto de emergencia
+             * @example María Pérez
+             */
+            emergencyContact?: string;
+            /**
+             * @description Teléfono del contacto de emergencia
+             * @example +51999999999
+             */
+            emergencyPhone?: string;
+            /**
+             * @description Nombre de la compañía de seguro médico
+             * @example Seguro Salud
+             */
+            healthInsurance?: string;
+            /**
+             * @description Estado civil del paciente
+             * @example Soltero
+             */
+            maritalStatus?: string;
+            /**
+             * @description Profesión del paciente
+             * @example Ingeniero
+             */
+            occupation?: string;
+            /**
+             * @description Nombre y dirección del lugar de trabajo
+             * @example Empresa XYZ, Av. Industrial 456
+             */
+            workplace?: string;
+            /**
+             * @description Grupo sanguíneo del paciente
+             * @example O+
+             */
+            bloodType?: string;
+            /**
+             * @description Nombre y contacto del médico principal
+             * @example Dr. Juan Pérez, +51999999999
+             */
+            primaryDoctor?: string;
+            /**
+             * @description Idioma preferido del paciente
+             * @example Español
+             */
+            language?: string;
+            /**
+             * @description Cualquier otra observación relevante
+             * @example Paciente con antecedentes de alergias severas
+             */
+            notes?: string;
+            /**
+             * @description Imagen del paciente para identificación visual
+             * @example null
+             */
+            patientPhoto?: string;
+        };
+        Patient: {
+            id: string;
+            name: string;
+            lastName: string;
+            dni: string;
+            /** Format: date-time */
+            birthDate: string;
+            gender: string;
+            address: string;
+            phone: string;
+            email: string;
+            emergencyContact: string;
+            emergencyPhone: string;
+            healthInsurance: string;
+            maritalStatus: string;
+            occupation: string;
+            workplace: string;
+            bloodType: string;
+            primaryDoctor: string;
+            language: string;
+            notes: string;
+            patientPhoto: string;
+            isActive: boolean;
+        };
+        UpdatePatientDto: {
+            /**
+             * @description Nombre completo del paciente
+             * @example Juan Pérez
+             */
+            name?: string;
+            /**
+             * @description Apellido del paciente
+             * @example González
+             */
+            lastName?: string;
+            /**
+             * @description DNI del paciente
+             * @example 12345678
+             */
+            dni?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de nacimiento del paciente
+             * @example 1990-01-01
+             */
+            birthDate?: string;
+            /**
+             * @description Sexo del paciente (M/F)
+             * @example Masculino Femenino
+             */
+            gender?: string;
+            /**
+             * @description Dirección del paciente
+             * @example Av. Principal 123
+             */
+            address?: string;
+            /**
+             * @description Número de teléfono del paciente
+             * @example +51999999999
+             */
+            phone?: string;
+            /**
+             * @description Correo electrónico del paciente
+             * @example juan.perez@example.com
+             */
+            email?: string;
+            /**
+             * @description Nombre del contacto de emergencia
+             * @example María Pérez
+             */
+            emergencyContact?: string;
+            /**
+             * @description Teléfono del contacto de emergencia
+             * @example +51999999999
+             */
+            emergencyPhone?: string;
+            /**
+             * @description Nombre de la compañía de seguro médico
+             * @example Seguro Salud
+             */
+            healthInsurance?: string;
+            /**
+             * @description Estado civil del paciente
+             * @example Soltero
+             */
+            maritalStatus?: string;
+            /**
+             * @description Profesión del paciente
+             * @example Ingeniero
+             */
+            occupation?: string;
+            /**
+             * @description Nombre y dirección del lugar de trabajo
+             * @example Empresa XYZ, Av. Industrial 456
+             */
+            workplace?: string;
+            /**
+             * @description Grupo sanguíneo del paciente
+             * @example O+
+             */
+            bloodType?: string;
+            /**
+             * @description Nombre y contacto del médico principal
+             * @example Dr. Juan Pérez, +51999999999
+             */
+            primaryDoctor?: string;
+            /**
+             * @description Idioma preferido del paciente
+             * @example Español
+             */
+            language?: string;
+            /**
+             * @description Cualquier otra observación relevante
+             * @example Paciente con antecedentes de alergias severas
+             */
+            notes?: string;
+            /**
+             * @description Imagen del paciente para identificación visual
+             * @example null
+             */
+            patientPhoto?: string;
+        };
+        DeletePatientDto: {
+            ids: string[];
+        };
+        CreatePrescriptionDto: {
+            /**
+             * @description ID de la actualización de historia médica
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            updateHistoryId: string;
+            /**
+             * @description ID de la sucursal donde se emite la receta
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId: string;
+            /**
+             * @description ID del personal médico que emite la receta
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId: string;
+            /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId: string;
+            /**
+             * Format: date-time
+             * @description Fecha de emisión de la receta
+             * @example 2024-03-15T10:00:00Z
+             */
+            registrationDate: string;
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example {
+             *       "medicamentos": [
+             *         {
+             *           "nombre": "Paracetamol",
+             *           "dosis": "500mg",
+             *           "frecuencia": "Cada 8 horas",
+             *           "duracion": "5 días"
+             *         }
+             *       ]
+             *     }
+             */
+            prescription: Record<string, never>;
+            /**
+             * @description Descripción o notas adicionales
+             * @example Tomar después de las comidas
+             */
+            description?: string;
+            /**
+             * @description ID de la orden de compra asociada
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            purchaseOrderId?: string;
+        };
+        Prescription: {
+            id: string;
+            updateHistoryId: string;
+            branchId: string;
+            staffId: string;
+            patientId: string;
+            /** Format: date-time */
+            registrationDate: string;
+            prescription: string;
+            description: string;
+            purchaseOrderId: string;
+            isActive: boolean;
+        };
+        UpdatePrescriptionDto: {
+            /**
+             * @description ID de la actualización de historia médica
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            updateHistoryId?: string;
+            /**
+             * @description ID de la sucursal donde se emite la receta
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal médico que emite la receta
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
+            /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de emisión de la receta
+             * @example 2024-03-15T10:00:00Z
+             */
+            registrationDate?: string;
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example {
+             *       "medicamentos": [
+             *         {
+             *           "nombre": "Paracetamol",
+             *           "dosis": "500mg",
+             *           "frecuencia": "Cada 8 horas",
+             *           "duracion": "5 días"
+             *         }
+             *       ]
+             *     }
+             */
+            prescription?: Record<string, never>;
+            /**
+             * @description Descripción o notas adicionales
+             * @example Tomar después de las comidas
+             */
+            description?: string;
+            /**
+             * @description ID de la orden de compra asociada
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            purchaseOrderId?: string;
+        };
+        DeletePrescriptionDto: {
+            ids: string[];
+        };
+        CreateUpdateHistoryDto: {
+            /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId: string;
+            /**
+             * @description ID del servicio
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             serviceId: string;
