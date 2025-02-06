@@ -55,7 +55,7 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
   },
   phone: {
     required: false,
-    label: "Teléfono",
+    label: "Celular",
     type: "text",
     placeholder: "Teléfono del paciente",
     name: "phone",
@@ -213,7 +213,7 @@ export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
   },
   phone: {
     required: false,
-    label: "Teléfono",
+    label: "Celular",
     type: "text",
     placeholder: "Teléfono del paciente",
     name: "phone",
