@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,13 +27,22 @@ import {
   updatePatientSchema,
   UpdatePatientInput,
   Patient,
+  UpdatePatientFormData,
 } from "../_interfaces/patient.interface";
-import { PencilIcon, RefreshCcw } from "lucide-react";
+import { PencilIcon, RefreshCcw, UserPlus, User } from "lucide-react";
 import { usePatients } from "../_hooks/usePatient";
 import { Textarea } from "@/components/ui/textarea";
 import { UPDATEFORMSTATICS as FORMSTATICS } from "../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import { METADATA } from "../_statics/metadata";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface UpdatePatientSheetProps {
   patient: Patient;
@@ -48,8 +57,17 @@ export function UpdatePatientSheet({
   onOpenChange,
   showTrigger = true,
 }: UpdatePatientSheetProps) {
+  console.log(patient);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const { updateMutation } = usePatients();
+  // const {
+
+  // } = patientsQuery
+  //const index = patients?.findIndex((p) => p.id === patient.id);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [preview, setPreview] = useState<string | null>(
+    patient.patientPhoto ?? null
+  );
 
   // Use controlled state if props are provided, otherwise use internal state
   const isOpen = controlledOpen ?? uncontrolledOpen;
@@ -66,28 +84,75 @@ export function UpdatePatientSheet({
       address: patient.address ?? FORMSTATICS.address.defaultValue,
       phone: patient.phone ?? FORMSTATICS.phone.defaultValue,
       email: patient.email ?? FORMSTATICS.email.defaultValue,
-      emergencyContact: patient.emergencyContact ?? FORMSTATICS.emergencyContact.defaultValue,
-      emergencyPhone: patient.emergencyPhone ?? FORMSTATICS.emergencyPhone.defaultValue,
-      healthInsurance: patient.healthInsurance ?? FORMSTATICS.healthInsurance.defaultValue,
-      maritalStatus: patient.maritalStatus ?? FORMSTATICS.maritalStatus.defaultValue,
+      emergencyContact:
+        patient.emergencyContact ?? FORMSTATICS.emergencyContact.defaultValue,
+      emergencyPhone:
+        patient.emergencyPhone ?? FORMSTATICS.emergencyPhone.defaultValue,
+      healthInsurance:
+        patient.healthInsurance ?? FORMSTATICS.healthInsurance.defaultValue,
+      maritalStatus:
+        patient.maritalStatus ?? FORMSTATICS.maritalStatus.defaultValue,
       occupation: patient.occupation ?? FORMSTATICS.occupation.defaultValue,
       workplace: patient.workplace ?? FORMSTATICS.workplace.defaultValue,
       bloodType: patient.bloodType ?? FORMSTATICS.bloodType.defaultValue,
-      primaryDoctor: patient.primaryDoctor ?? FORMSTATICS.primaryDoctor.defaultValue,
+      primaryDoctor:
+        patient.primaryDoctor ?? FORMSTATICS.primaryDoctor.defaultValue,
       language: patient.language ?? FORMSTATICS.language.defaultValue,
       notes: patient.notes ?? FORMSTATICS.notes.defaultValue,
-      patientPhoto: patient.patientPhoto ?? FORMSTATICS.patientPhoto.defaultValue,
+      patientPhoto:
+        patient.patientPhoto ?? FORMSTATICS.patientPhoto.defaultValue,
     },
   });
 
+  console.log(form.watch());
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      console.log("Archivo seleccionado:", file);
+      form.setValue("image", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  /**
+   * Maneja la presentación del formulario de Actualización del paciente.
+   *
+   * @Param Data: los datos de formulario validados para actualizar al paciente.
+   *
+   * Esta función verifica si una mutación de actualización ya está pendiente para evitar presentaciones duplicadas.
+   * Prepara los datos del formulario con los detalles del paciente y la imagen opcional, luego intenta actualizar la información del paciente.
+   * Sobre el éxito, cierra el formulario y lo restablece.En un error, registra el error y restablece el formulario si no está autorizado.
+   */
   const onSubmit = async (data: UpdatePatientInput) => {
     if (updateMutation.isPending) return;
+
+    // Log para verificar el contenido de patientPhoto antes de usarlo
+    console.log(
+      "Contenido de patientPhoto antes de procesar:",
+      data.patientPhoto
+    );
+
+    const formData: UpdatePatientFormData = {
+      data: {
+        ...data,
+      },
+      image: data.image instanceof File ? data.image : null,
+      id: patient.id,
+    };
+
+    // Log para verificar los datos al crear el objeto UpdatePatientFormData
+    console.log("Datos creados para UpdatePatientFormData:", formData);
 
     try {
       await updateMutation.mutateAsync(
         {
           id: patient.id,
-          data,
+          formData,
         },
         {
           onSuccess: () => {
@@ -95,7 +160,10 @@ export function UpdatePatientSheet({
             form.reset();
           },
           onError: (error) => {
-            console.error(`Error al actualizar ${METADATA.entityName.toLowerCase()}:`, error);
+            console.error(
+              `Error al actualizar ${METADATA.entityName.toLowerCase()}:`,
+              error
+            );
             if (error.message.includes("No autorizado")) {
               setTimeout(() => {
                 form.reset();
@@ -121,18 +189,47 @@ export function UpdatePatientSheet({
       )}
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Actualizar {METADATA.entityName.toLowerCase()}</SheetTitle>
+          <SheetTitle>
+            Actualizar {METADATA.entityName.toLowerCase()}
+          </SheetTitle>
           <SheetDescription>
-            Actualiza la información de este(a) {METADATA.entityName.toLowerCase()} y guarda los cambios
+            Actualiza la información de este(a){" "}
+            {METADATA.entityName.toLowerCase()} y guarda los cambios
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-2 gap-4">
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <Avatar className="w-32 h-32">
+                    <AvatarImage src={preview ?? ""} />
+                    <AvatarFallback>
+                      <User className="w-16 h-16" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="absolute bottom-0 right-0 rounded-full"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+              <div className="p-2 sm:p-1 overflow-auto h-[calc(80dvh-10rem)]  grid md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.name.name}
+                  name="name"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.name.label}</FormLabel>
@@ -152,7 +249,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.lastName.name}
+                  name="lastName"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.lastName.label}</FormLabel>
@@ -172,7 +269,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.dni.name}
+                  name="dni"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.dni.label}</FormLabel>
@@ -192,7 +289,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.birthDate.name}
+                  name="birthDate"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.birthDate.label}</FormLabel>
@@ -212,16 +309,25 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.gender.name}
+                  name="gender"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.gender.label}</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.gender.placeholder}
-                          type={FORMSTATICS.gender.type}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={FORMSTATICS.gender.placeholder}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Femenino">Femenino</SelectItem>
+                            <SelectItem value="Masculino">Masculino</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <CustomFormDescription
                         required={FORMSTATICS.gender.required}
@@ -232,7 +338,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.address.name}
+                  name="address"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.address.label}</FormLabel>
@@ -252,7 +358,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.phone.name}
+                  name="phone"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.phone.label}</FormLabel>
@@ -272,7 +378,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.email.name}
+                  name="email"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.email.label}</FormLabel>
@@ -292,10 +398,12 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.emergencyContact.name}
+                  name="emergencyContact"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.emergencyContact.label}</FormLabel>
+                      <FormLabel>
+                        {FORMSTATICS.emergencyContact.label}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -312,7 +420,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.emergencyPhone.name}
+                  name="emergencyPhone"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.emergencyPhone.label}</FormLabel>
@@ -332,16 +440,28 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.healthInsurance.name}
+                  name="healthInsurance"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.healthInsurance.label}</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.healthInsurance.placeholder}
-                          type={FORMSTATICS.healthInsurance.type}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={
+                                FORMSTATICS.healthInsurance.placeholder
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Privado">Privado</SelectItem>
+                            <SelectItem value="Público">Público</SelectItem>
+                            <SelectItem value="No">No</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <CustomFormDescription
                         required={FORMSTATICS.healthInsurance.required}
@@ -352,16 +472,31 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.maritalStatus.name}
+                  name="maritalStatus"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.maritalStatus.label}</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.maritalStatus.placeholder}
-                          type={FORMSTATICS.maritalStatus.type}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={
+                                FORMSTATICS.maritalStatus.placeholder
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Soltero">Soltero</SelectItem>
+                            <SelectItem value="Casado">Casado</SelectItem>
+                            <SelectItem value="Divorciado">
+                              Divorciado
+                            </SelectItem>
+                            <SelectItem value="Viudo">Viudo</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <CustomFormDescription
                         required={FORMSTATICS.maritalStatus.required}
@@ -372,7 +507,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.occupation.name}
+                  name="occupation"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.occupation.label}</FormLabel>
@@ -392,7 +527,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.workplace.name}
+                  name="workplace"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.workplace.label}</FormLabel>
@@ -412,16 +547,31 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.bloodType.name}
+                  name="bloodType"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.bloodType.label}</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.bloodType.placeholder}
-                          type={FORMSTATICS.bloodType.type}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={FORMSTATICS.bloodType.placeholder}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="A+">A+</SelectItem>
+                            <SelectItem value="A-">A-</SelectItem>
+                            <SelectItem value="B+">B+</SelectItem>
+                            <SelectItem value="B-">B-</SelectItem>
+                            <SelectItem value="AB+">AB+</SelectItem>
+                            <SelectItem value="AB-">AB-</SelectItem>
+                            <SelectItem value="O+">O+</SelectItem>
+                            <SelectItem value="O-">O-</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <CustomFormDescription
                         required={FORMSTATICS.bloodType.required}
@@ -432,7 +582,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.primaryDoctor.name}
+                  name="primaryDoctor"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.primaryDoctor.label}</FormLabel>
@@ -452,16 +602,27 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.language.name}
+                  name="language"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.language.label}</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.language.placeholder}
-                          type={FORMSTATICS.language.type}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={FORMSTATICS.language.placeholder}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Español">Español</SelectItem>
+                            <SelectItem value="Inglés">Inglés</SelectItem>
+                            <SelectItem value="Quechua">Quechua</SelectItem>
+                            <SelectItem value="Otro">Otro</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <CustomFormDescription
                         required={FORMSTATICS.language.required}
@@ -472,7 +633,7 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.notes.name}
+                  name="notes"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.notes.label}</FormLabel>
@@ -490,49 +651,6 @@ export function UpdatePatientSheet({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.patientPhoto.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.patientPhoto.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.patientPhoto.placeholder}
-                          type={FORMSTATICS.patientPhoto.type}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <CustomFormDescription
-                        required={FORMSTATICS.patientPhoto.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* <FormField
-                  control={form.control}
-                  name={FORMSTATICS.image.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.image.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.image.placeholder}
-                          type={FORMSTATICS.image.type}
-                          onChange={(e) => field.onChange(e.target.files?.[0] || null)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <CustomFormDescription
-                        required={FORMSTATICS.image.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
               </div>
 
               <SheetFooter>

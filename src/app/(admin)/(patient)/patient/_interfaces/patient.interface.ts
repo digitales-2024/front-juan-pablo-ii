@@ -14,9 +14,8 @@ export type ReactivatePatientDto = DeletePatientDto;
 type CreatePatientWithImage = Omit<CreatePatientDto, "patientPhoto"> & {
   patientPhoto?: File;
 };
-type UpdatePatientWithImage = Omit<UpdatePatientDto, "patientPhoto"> & {
-  patientPhoto?: File;
-};
+type UpdatePatientWithImage = UpdatePatientDto;
+  
 
 // Crear un custom type para File
 const fileSchema = z
@@ -60,7 +59,7 @@ export const updatePatientSchema = z.object({
   gender: z.string().optional(),
   address: z.string().optional(),
   phone: z.string().optional(),
-  email: z.string().email("Email inválido").optional(),
+  email: z.string().optional(),
   emergencyContact: z.string().optional(),
   emergencyPhone: z.string().optional(),
   healthInsurance: z.string().optional(),
@@ -71,7 +70,8 @@ export const updatePatientSchema = z.object({
   primaryDoctor: z.string().optional(),
   language: z.string().optional(),
   notes: z.string().optional(),
-  patientPhoto: fileSchema.optional(), // Usar el esquema personalizado para validar archivos
+  patientPhoto: z.string().optional(), // Usar el esquema personalizado para validar archivos
+  image: fileSchema.optional(), // Usar el esquema personalizado para validar archivos
 }) satisfies z.ZodType<UpdatePatientWithImage>;
 
 // Tipos inferidos de los schemas más el campo image
@@ -85,6 +85,7 @@ export interface CreatePatientFormData {
 }
 
 export interface UpdatePatientFormData {
+  id: string;
   data: UpdatePatientInput;
-  image?: File | null;
+  image?: File | null | string;
 }

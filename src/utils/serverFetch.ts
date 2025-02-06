@@ -243,6 +243,18 @@ export const http = {
     },
   });
 },
+
+multipartPatch<T>(url: string, body?: FormData, config?: RequestInit) {
+  return serverFetch<T>(url, {
+    ...config,
+    method: "PATCH",
+    body: body,
+    headers: {
+      // No establecer Content-Type para multipart/form-data
+      ...config?.headers,
+    },
+  });
+},
 };
 
 /**

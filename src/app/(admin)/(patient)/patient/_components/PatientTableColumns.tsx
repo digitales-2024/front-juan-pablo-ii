@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ReactivatePatientDialog } from "./ReactivatePatientDialog";
@@ -195,27 +195,37 @@ export const columns: ColumnDef<Patient>[] = [
       const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
       const [showEditSheet, setShowEditSheet] = useState(false);
-      const patient = row.original;
-      const { isActive } = patient;
+      // const [patient, setPatient] = useState<Patient >(row.original);
+      // useEffect(() => {
+      //   setPatient(row.original);
+      //   console.log('paciente dentro usefect', patient)
+      // }, [row]);
+      // console.log('paciente fiuera', row.original)
+      // // const patient = row.original;
+      // const { isActive } = patient;
+      //const patient = row.original;
       const isSuperAdmin = true;
 
       return (
         <div>
           <div>
-            <UpdatePatientSheet
-              patient={patient}
-              open={showEditSheet}
-              onOpenChange={setShowEditSheet}
-              showTrigger={false}
-            />
+            {/* //actualizar paciente */}
+            {showEditSheet && (
+              <UpdatePatientSheet
+                patient={row.original}
+                open={showEditSheet}
+                onOpenChange={setShowEditSheet}
+                showTrigger={false}
+              />
+            )}
             <DeactivatePatientDialog
-              patient={patient}
+              patient={row.original}
               open={showDeleteDialog}
               onOpenChange={setShowDeleteDialog}
               showTrigger={false}
             />
             <ReactivatePatientDialog
-              patient={patient}
+              patient={row.original}
               open={showReactivateDialog}
               onOpenChange={setShowReactivateDialog}
               showTrigger={false}
@@ -234,7 +244,7 @@ export const columns: ColumnDef<Patient>[] = [
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem
                 onSelect={() => setShowEditSheet(true)}
-                disabled={!isActive}
+                disabled={!row.original.isActive}
               >
                 Editar
               </DropdownMenuItem>
@@ -242,7 +252,7 @@ export const columns: ColumnDef<Patient>[] = [
               {isSuperAdmin && (
                 <DropdownMenuItem
                   onSelect={() => setShowReactivateDialog(true)}
-                  disabled={isActive}
+                  disabled={!row.original.isActive}
                 >
                   Reactivar
                   <DropdownMenuShortcut>
@@ -252,7 +262,7 @@ export const columns: ColumnDef<Patient>[] = [
               )}
               <DropdownMenuItem
                 onSelect={() => setShowDeleteDialog(true)}
-                disabled={!isActive}
+                disabled={!row.original.isActive}
               >
                 Eliminar
                 <DropdownMenuShortcut>
