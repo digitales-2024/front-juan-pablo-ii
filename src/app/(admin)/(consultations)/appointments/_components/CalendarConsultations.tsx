@@ -1,8 +1,30 @@
 "use client";
 import { useState, useEffect } from "react";
-import { generateMockEvents } from "../_libs/mock-calendar-events";
 import { CalendarEvent, Mode } from "../_types/CalendarTypes";
 import Calendar from "./calendar/Calendar";
+import { generateMockEvents } from "../_libs/mock-calendar-events";
+
+// Define el tipo de datos que entrega la API
+// interface ApiCalendarEvent {
+// 	id: string;
+// 	title: string;
+// 	type: "TURNO" | string;
+// 	start: string;
+// 	end: string;
+// 	color?: string;
+// 	status: string;
+// 	isActive: boolean;
+// 	isCancelled: boolean;
+// 	isBaseEvent: boolean;
+// 	branchId: string;
+// 	staffId: string;
+// 	staffScheduleId: string;
+// 	recurrence?: string | null;
+// 	exceptionDates?: any[];
+// 	cancellationReason?: string | null;
+// 	createdAt: string;
+// 	updatedAt: string;
+// }
 
 export default function CalendarConsultations() {
 	const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -10,7 +32,13 @@ export default function CalendarConsultations() {
 	const [date, setDate] = useState<Date>(new Date("2024-01-01"));
 
 	useEffect(() => {
-		setEvents(generateMockEvents());
+		// Cargar datos mock temporalmente
+		console.log("[DEBUG] Cargando eventos mock...");
+		
+		const mockData = generateMockEvents();
+		console.log("[DEBUG] Eventos mock cargados:", mockData);
+		
+		setEvents(mockData);
 		setDate(new Date());
 	}, []);
 
