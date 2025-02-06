@@ -1,6 +1,6 @@
 import { Table } from "@tanstack/react-table";
 import { DetailedIncoming } from "../_interfaces/income.interface";
-import { CreateProductDialog } from "./CreateProductDialog";
+import { CreateIncomingDialog } from "./CreateIncomingDialog";
 import { DeactivateProductDialog } from "./DeactivateIncomingDialog";
 import { ReactivateProductDialog } from "./ReactivateIncomingDialog";
 
@@ -29,7 +29,7 @@ export function IncomingTableToolbarActions({
       />
       </>
       ) : null} */}
-      {/* <CreateProductDialog /> */}
+      <CreateIncomingDialog />
     </div>
   );
 }

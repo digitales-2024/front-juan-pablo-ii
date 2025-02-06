@@ -2,11 +2,11 @@
 import { useEffect, useState, useTransition } from "react";
 import { FieldErrors, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateProductInput, createProductSchema } from "../_interfaces/income.interface";
+import { CreateIncomeInput, createIncomeSchema} from "../_interfaces/income.interface";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CreateProductForm } from "./CreateIncomingForm";
+import { CreateIncomingForm } from "./CreateIncomingForm";
 import { useIncoming } from "../_hooks/useIncoming";
 import {
   Dialog,
@@ -29,58 +29,40 @@ import {
 import { METADATA } from "../_statics/metadata";
 
 const CREATE_INCOMING_MESSAGES = {
-  button: "Crear producto",
-  title: "Registrar nuevo producto",
-  description: "Rellena los campos para crear un nuevo producto",
-  success: "Producto creado exitosamente",
-  submitButton: "Crear producto",
+  button: "Crear entrada",
+  title: "Registrar nueva entrada",
+  description: "Rellena los campos para crear una nueva entrada",
+  success: "Entrada creada exitosamente",
+  submitButton: "Crear entrada",
   cancel: "Cancelar",
 } as const;
 
-export function CreateProductDialog() {
+export function CreateIncomingDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { createMutation } = useIncoming();
 
-  // export const createProductSchema = z.object({
-  //   categoriaId: z.string().min(1, "La categoría es requerida").uuid(),
-  //   tipoProductoId: z.string().min(1, "El tipo de producto es requerido").uuid(),
-  //   name: z.string().min(1, "El nombre es requerido"),
-  //   precio: z.number().min(0, "El precio no puede ser negativo"),
-  //   unidadMedida: z.string().optional(),
-  //   proveedor: z.string().optional(),
-  //   uso: z.string().optional(),
-  //   usoProducto: z.string().optional(),
-  //   description: z.string().optional(),
-  //   codigoProducto: z.string().optional(),
-  //   descuento: z.number().optional(),
-  //   observaciones: z.string().optional(),
-  //   condicionesAlmacenamiento: z.string().optional(),
-  //   imagenUrl: z.string().url().optional(),
-  // }) satisfies z.ZodType<CreateProductDto>;
+  // name: string;
+  // storageId: string;
+  // date: string;
+  // state: string;
+  // description?: string | undefined;
+  // referenceId?: string | undefined;
 
-  const form = useForm<CreateProductInput>({
-    resolver: zodResolver(createProductSchema),
+  const form = useForm<CreateIncomeInput>({
+    resolver: zodResolver(createIncomeSchema),
     defaultValues: {
-      categoriaId: "",
-      tipoProductoId: "",
       name: "",
-      precio: 0,
-      unidadMedida: "",
-      proveedor: "",
-      uso: "",
-      usoProducto: "",
+      storageId: "",
+      date: "",
+      state: "false",
       description: "",
-      codigoProducto: "",
-      descuento: 0,
-      observaciones: "",
-      condicionesAlmacenamiento: "",
-      imagenUrl: "https://fakeimg.pl/600x400"
+      referenceId: "",
     },
   });
 
-  function handleSubmit(input: CreateProductInput) {
+  function handleSubmit(input: CreateIncomeInput) {
     console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
     if (createMutation.isPending || isCreatePending) return;
 
@@ -157,19 +139,19 @@ export function CreateProductDialog() {
         <DialogTrigger asChild>
           <TriggerButton />
         </DialogTrigger>
-        <DialogContent className="max-w-xl max-h-[calc(100vh-4rem)]">
+        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)]">
           <DialogHeader>
             <DialogTitle>{CREATE_INCOMING_MESSAGES.title}</DialogTitle>
             <DialogDescription>
               {CREATE_INCOMING_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <CreateProductForm form={form} onSubmit={handleSubmit}>
+          <CreateIncomingForm form={form} onSubmit={handleSubmit}>
             <DevelopmentZodError form={form} />
             <DialogFooter>
               <DialogFooterContent />
             </DialogFooter>
-          </CreateProductForm>
+          </CreateIncomingForm>
         </DialogContent>
       </Dialog>
     );
@@ -187,22 +169,22 @@ export function CreateProductDialog() {
             {CREATE_INCOMING_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <CreateProductForm form={form} onSubmit={handleSubmit}>
+        <CreateIncomingForm form={form} onSubmit={handleSubmit}>
           <DevelopmentZodError form={form} />
           <DrawerFooter>
             <DialogFooterContent />
           </DrawerFooter>
-        </CreateProductForm>
+        </CreateIncomingForm>
       </DrawerContent>
     </Drawer>
   );
 }
 
 
-function DevelopmentZodError({ form }: { form: UseFormReturn<CreateProductInput> }) {
+function DevelopmentZodError({ form }: { form: UseFormReturn<CreateIncomeInput> }) {
   console.log('Ingresando a DevelopmentZodError', process.env.NEXT_PUBLIC_ENV);
   if (process.env.NEXT_PUBLIC_ENV !== "development") return null;
-  const [errors, setErrors] = useState<FieldErrors<CreateProductInput>>({});
+  const [errors, setErrors] = useState<FieldErrors<CreateIncomeInput>>({});
   useEffect(() => {
     if (form.formState.errors) {
       setErrors(form.formState.errors);
@@ -214,7 +196,7 @@ function DevelopmentZodError({ form }: { form: UseFormReturn<CreateProductInput>
         {
           Object.keys(errors).map((key) => (
             <p key={key}>
-              {key}: {errors[key as keyof CreateProductInput]?.message}
+              {key}: {errors[key as keyof CreateIncomeInput]?.message}
             </p>
           ))
         }

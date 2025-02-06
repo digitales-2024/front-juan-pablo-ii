@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { es } from "date-fns/locale";
 import { UpdateProductSheet } from "./UpdateProductSheet";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
+import { Ellipsis, RefreshCcwDot, TableProperties, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +23,7 @@ import { ReactivateIncomingDialog } from "./ReactivateIncomingDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateIncomingDialog } from "./DeactivateIncomingDialog";
 import { format } from "date-fns";
+import { ShowMovementsDialog } from "./Movements/ShowMovementsDialog";
 // import Image from "next/image";
 
 //   name        String?
@@ -33,7 +34,7 @@ import { format } from "date-fns";
 //   isActive    Boolean  @default(true) // Campo para controlar si está activo o no
 //   createdAt   DateTime @default(now()) @db.Timestamptz(6)
 const STATE_OPTIONS = {
-  true: "Concreto",
+  true: "Concretado",
   false: "En proceso",
 }
 export const columns: ColumnDef<DetailedIncoming>[] = [
@@ -71,12 +72,19 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   },
   {
     accessorKey: "name",
+    id: "Nombre",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {!row.original.name || (row.original.name.length == 0)? "" : row.original.name}
+      </span>
     ),
   },
   {
     accessorKey: "description",
+    id: "Descripción",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
@@ -88,6 +96,7 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   },
   {
     accessorKey: "storageId",
+    id: "Almacén",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Almacén" />
     ),
@@ -99,6 +108,7 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   },
   {
     accessorKey: "date",
+    id: "Fecha de ingreso",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha de ingreso" />
     ),
@@ -130,8 +140,9 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   // },
   {
     accessorKey: "state",
+    id: "Consumación",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title="Consumación" />
     ),
     cell: ({ row }) => (
       // <span>
@@ -161,6 +172,19 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   //   cell: ({ row }) =>
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
+  {
+    id: "Movimientos",
+    accessorKey: "movements",
+    size: 10,
+    header: () => (
+      <div>Movimientos</div>
+    ),
+    cell: ({ row }) => (
+      <div>
+        <ShowMovementsDialog data={row.original.Movement} incomingName={row.original.name??row.original.id}></ShowMovementsDialog>
+      </div>
+    ),
+  },
   {
     id: "Acciones",
     accessorKey: "actions",

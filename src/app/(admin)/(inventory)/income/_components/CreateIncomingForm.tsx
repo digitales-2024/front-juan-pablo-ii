@@ -23,6 +23,7 @@ import { useMemo } from "react";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { CreateIncomeInput } from "../_interfaces/income.interface";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -55,7 +56,18 @@ export function CreateIncomingForm({
 }: CreateProductFormProps) {
   // const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
   // const [productOptions, setproductOptions] = useState<Option[]>([]);
-
+  const STATEPROP_OPTIONS = useMemo(() => {
+    return [
+      {
+        label: "En Proceso",
+        value: "false",
+      },
+      {
+        label: "Concretado",
+        value: "true",
+      },
+    ];
+  }, []);
   const { activeStoragesQuery: responseStorage } = useStorages();
   const { activeProductsQuery: reponseProducts } = useProducts();
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
@@ -99,8 +111,7 @@ export function CreateIncomingForm({
 
   if (
     METADATA.dataDependencies &&
-    (responseStorage.data.length === 0 ||
-      reponseProducts.data.length === 0)
+    (responseStorage.data.length === 0 || reponseProducts.data.length === 0)
   ) {
     return (
       <DataDependencyErrorMessage
@@ -121,26 +132,24 @@ export function CreateIncomingForm({
     value: category.id,
   }));
 
-  const productOptions: Option[] = reponseProducts.data.map(
-    (typeProduct) => ({
-      label: typeProduct.name,
-      value: typeProduct.id,
-    })
-  );
+  const productOptions: Option[] = reponseProducts.data.map((typeProduct) => ({
+    label: typeProduct.name,
+    value: typeProduct.id,
+  }));
 
-// name
-// description
-// storageId
-// date
-// state
-// referenceId
-// movement
-// {
-// productId
-// quantity
-// date
-// state
-// }
+  // name
+  // description
+  // storageId
+  // date
+  // state
+  // referenceId
+  // movement
+  // {
+  // productId
+  // quantity
+  // date
+  // state
+  // }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -165,60 +174,97 @@ export function CreateIncomingForm({
               </FormItem>
             )}
           />
-          {/* Campo de categoría */}
+          {/* Campo de Almacén */}
           <FormField
-              control={form.control}
-              name={FORMSTATICS.storageId.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel htmlFor={FORMSTATICS.storageId.name}>{FORMSTATICS.storageId.label}</FormLabel>
-                  <FormControl>
-                    <AutoComplete
-                      options={storageOptions}
-                      placeholder={FORMSTATICS.storageId.placeholder}
-                      emptyMessage={FORMSTATICS.storageId.emptyMessage!}
-                      value={
-                        storageOptions.find(
-                          (option) => option.value === field.value
-                        ) ?? undefined
-                      }
-                      onValueChange={(option) => {
-                        field.onChange(option?.value || "");
-                      }}
-                    />
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.storageId.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          {/* Campo de categoría */}
+            control={form.control}
+            name={FORMSTATICS.storageId.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel htmlFor={FORMSTATICS.storageId.name}>
+                  {FORMSTATICS.storageId.label}
+                </FormLabel>
+                <FormControl>
+                  <AutoComplete
+                    options={storageOptions}
+                    placeholder={FORMSTATICS.storageId.placeholder}
+                    emptyMessage={FORMSTATICS.storageId.emptyMessage!}
+                    value={
+                      storageOptions.find(
+                        (option) => option.value === field.value
+                      ) ?? undefined
+                    }
+                    onValueChange={(option) => {
+                      field.onChange(option?.value || "");
+                    }}
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.storageId.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Campo de movimientos */}
+          {/* <FormField
+            control={form.control}
+            name={FORMSTATICS.movement.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel htmlFor={FORMSTATICS.storageId.name}>
+                  {FORMSTATICS.storageId.label}
+                </FormLabel>
+                <FormControl>
+                  <AutoComplete
+                    options={storageOptions}
+                    placeholder={FORMSTATICS.storageId.placeholder}
+                    emptyMessage={FORMSTATICS.storageId.emptyMessage!}
+                    value={
+                      storageOptions.find(
+                        (option) => option.value === field.value
+                      ) ?? undefined
+                    }
+                    onValueChange={(option) => {
+                      field.onChange(option?.value || "");
+                    }}
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.storageId.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
           <FormField
-              control={form.control}
-              name={FORMSTATICS.movement.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel htmlFor={FORMSTATICS.storageId.name}>{FORMSTATICS.storageId.label}</FormLabel>
-                  <FormControl>
-                    <AutoComplete
-                      options={storageOptions}
-                      placeholder={FORMSTATICS.storageId.placeholder}
-                      emptyMessage={FORMSTATICS.storageId.emptyMessage!}
-                      value={
-                        storageOptions.find(
-                          (option) => option.value === field.value
-                        ) ?? undefined
-                      }
-                      onValueChange={(option) => {
-                        field.onChange(option?.value || "");
-                      }}
-                    />
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.storageId.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            control={form.control}
+            name={FORMSTATICS.state.name}
+            render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormLabel className="overflow-hidden text-ellipsis">{FORMSTATICS.state.label}</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex flex-col space-y-1"
+                  >
+                    {STATEPROP_OPTIONS.map(({label, value}, idx) => (
+                      <FormItem
+                        key={idx}
+                        className="flex items-center space-x-3 space-y-0"
+                      >
+                        <FormControl>
+                          <RadioGroupItem value={value} />
+                        </FormControl>
+                        <FormLabel className="font-normal">{label}</FormLabel>
+                      </FormItem>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          ></FormField>
           <FormField
             control={form.control}
             name={FORMSTATICS.date.name}
@@ -262,41 +308,26 @@ export function CreateIncomingForm({
               </FormItem>
             )}
           /> */}
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.state.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{FORMSTATICS.state.label}</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={FORMSTATICS.state.placeholder}
-                      type={FORMSTATICS.state.type}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.state.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.description.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>{FORMSTATICS.description.label}</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} placeholder={FORMSTATICS.description.placeholder}/>
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.description.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.description.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>{FORMSTATICS.description.label}</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder={FORMSTATICS.description.placeholder}
+                  />
+                </FormControl>
+                <FormMessage />
+                <CustomFormDescription
+                  required={FORMSTATICS.description.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         {children}
       </form>

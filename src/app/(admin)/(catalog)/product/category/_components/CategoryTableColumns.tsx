@@ -57,18 +57,21 @@ export const columns: ColumnDef<Category>[] = [
   },
   {
     accessorKey: "name",
+    id: "Nombre",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
   },
   {
     accessorKey: "description",
+    id: "Descripción",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
   },
   {
     accessorKey: "isActive",
+    id: "Estado",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
@@ -80,6 +83,7 @@ export const columns: ColumnDef<Category>[] = [
   },
   {
     accessorKey: "createdAt",
+    id: "Fecha de creación",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha de creación" />
     ),

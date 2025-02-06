@@ -1,5 +1,5 @@
 import { ComplexFormStatics, FormStatics } from "@/types/statics/forms";
-import { CreateIncomeInput, Movement, UpdateIncomeInput } from "../_interfaces/income.interface";
+import { CreateIncomeInput, MovementDto, UpdateIncomeInput } from "../_interfaces/income.interface";
 // export const createProductSchema = z.object({
 //   name: z.string().min(1, "El nombre es requerido"), //En el back es opcional, pero considero que debe ser requerido
 //   description: z.string().optional(),
@@ -17,7 +17,7 @@ import { CreateIncomeInput, Movement, UpdateIncomeInput } from "../_interfaces/i
 //   ),
 // }) satisfies z.ZodType<CreateIncomingDto>;
 
-export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, Movement> = {
+export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, MovementDto> = {
     name: {
         required: true,
         label: "Nombre",
@@ -52,7 +52,7 @@ export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, Movement> = {
     },
     state: {
         required: false,
-        label: "Estado",
+        label: "Estado de consumación de ingreso",
         defaultValue: undefined,
         type: "checkbox",
         placeholder: "Estado",
@@ -66,48 +66,48 @@ export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, Movement> = {
         placeholder: "Referencia",
         name: "referenceId",
     },
-    movement: {
-        required: true,
-        label: "Movimientos",
-        type: "array",
-        placeholder: "Movimientos",
-        name: "movement",
-        subFields: {
-            productId: {
-                required: true,
-                label: "Producto",
-                defaultValue: "",
-                type: "select",
-                placeholder: "Selecciona un producto",
-                emptyMessage: "No se encontraron productos",
-                name: "productId",
-            },
-            quantity: {
-                required: true,
-                label: "Cantidad",
-                defaultValue: 0,
-                type: "number",
-                placeholder: "Cantidad",
-                name: "quantity",
-            },
-            date: {
-                required: false,
-                label: "Fecha",
-                defaultValue: undefined,//new Date().toISOString().split("T")[0],
-                type: "date",
-                placeholder: "Fecha",
-                name: "date",
-            },
-            state: {
-                required: false,
-                label: "Estado",
-                defaultValue: undefined,
-                type: "checkbox",
-                placeholder: "Estado",
-                name: "state",
-            },
-        },
-    },
+    // movement: {
+    //     required: true,
+    //     label: "Movimientos",
+    //     type: "array",
+    //     placeholder: "Movimientos",
+    //     name: "movement",
+    //     subFields: {
+    //         productId: {
+    //             required: true,
+    //             label: "Producto",
+    //             defaultValue: "",
+    //             type: "select",
+    //             placeholder: "Selecciona un producto",
+    //             emptyMessage: "No se encontraron productos",
+    //             name: "productId",
+    //         },
+    //         quantity: {
+    //             required: true,
+    //             label: "Cantidad",
+    //             defaultValue: 0,
+    //             type: "number",
+    //             placeholder: "Cantidad",
+    //             name: "quantity",
+    //         },
+    //         date: {
+    //             required: false,
+    //             label: "Fecha",
+    //             defaultValue: undefined,//new Date().toISOString().split("T")[0],
+    //             type: "date",
+    //             placeholder: "Fecha",
+    //             name: "date",
+    //         },
+    //         state: {
+    //             required: false,
+    //             label: "Estado",
+    //             defaultValue: undefined,
+    //             type: "checkbox",
+    //             placeholder: "Estado",
+    //             name: "state",
+    //         },
+    //     },
+    // },
 }
 
 // export const updateProductSchema = z.object({

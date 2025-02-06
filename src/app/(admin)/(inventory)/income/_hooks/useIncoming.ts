@@ -83,32 +83,63 @@ export const useIncoming = () => {
 
   // Mutación para crear producto
   const createMutation = useMutation<
-    BaseApiResponse<DetailedIncoming>,
+    {data: Omit<CreateIncomingDto, "movement" | "state">&{state:string}, message: string},
     Error,
-    CreateIncomingDto
+    Omit<CreateIncomingDto, "movement" | "state">&{state:string}
   >({
     mutationFn: async (data) => {
-      const response = await createIncoming(data);
-      if ("error" in response) {
-        throw new Error(response.error);
-      }
-      // Retornamos directamente la respuesta ya que viene en el formato correcto
-      return response;
+      return new Promise<{ data: Omit<CreateIncomingDto, "movement" | "state">&{state:string}; message: string }>((resolve) => {
+        setTimeout(() => {
+          resolve({
+            data,
+            message: "Producto creado exitosamente",
+          });
+        }, 2000);
+      });
     },
     onSuccess: (res) => {
-      queryClient.setQueryData<DetailedIncoming[] | undefined>(
-        ["detailed-products"],
-        (oldProducts) => {
-          if (!oldProducts) return [res.data];
-          return [...oldProducts, res.data];
-        }
-      );
+      // queryClient.setQueryData<DetailedIncoming[] | undefined>(
+      //   ["detailed-products"],
+      //   (oldProducts) => {
+      //     if (!oldProducts) return [res.data];
+      //     return [...oldProducts, res.data];
+      //   }
+      // );
       toast.success(res.message);
     },
     onError: (error) => {
       toast.error(error.message);
     },
   });
+
+  // Mutación para crear producto
+  const originalCreateMutation = useMutation<
+  BaseApiResponse<DetailedIncoming>,
+  Error,
+  CreateIncomingDto
+>({
+  mutationFn: async (data) => {
+    const response = await createIncoming(data);
+    if ("error" in response) {
+      throw new Error(response.error);
+    }
+    // Retornamos directamente la respuesta ya que viene en el formato correcto
+    return response;
+  },
+  onSuccess: (res) => {
+    queryClient.setQueryData<DetailedIncoming[] | undefined>(
+      ["detailed-products"],
+      (oldProducts) => {
+        if (!oldProducts) return [res.data];
+        return [...oldProducts, res.data];
+      }
+    );
+    toast.success(res.message);
+  },
+  onError: (error) => {
+    toast.error(error.message);
+  },
+});
 
   // Mutación para actualizar producto
   const updateMutation = useMutation<
@@ -250,6 +281,7 @@ export const useIncoming = () => {
   return {
     detailedIncomingsQuery,
     incomingsQuery,
+    originalCreateMutation,
     // products: productsQuery.data,
     // oneProductQuery,
     createMutation,

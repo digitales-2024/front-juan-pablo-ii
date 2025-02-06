@@ -55,7 +55,7 @@ export function UpdateProductSheet({
   showTrigger = true,
 }: UpdateProductSheetProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const { updateMutation } = useProducts();
+  const  = useProducts();
 
   // Use controlled state if props are provided, otherwise use internal state
   const isOpen = controlledOpen ?? uncontrolledOpen;
