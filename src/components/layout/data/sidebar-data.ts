@@ -89,14 +89,14 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Pacientes",
-              url: "/patients",
+              url: "/patient",
               icon: UserPlus,
             },
-            {
+/*             {
               title: "Clientes",
               url: "/clients",
               icon: UserRound,
-            },
+            }, */
             {
               title: "Historias Clinicas",
               url: "/medical-records",

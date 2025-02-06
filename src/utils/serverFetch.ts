@@ -3,7 +3,8 @@ import { Result } from "./result";
 
 // Configuración extendida para las peticiones
 interface ServerFetchConfig extends RequestInit {
-  body?: BodyInit;
+  body?: BodyInit | FormData;
+  contentType?: string;
   params?: Record<string, string | number>;
   headers?: Record<string, string>;
   maxRetries?: number;
@@ -139,7 +140,7 @@ export const http = {
    * const [newUser, err] = await http.post<User>("/users", { name: "Linus" });
    * ```
    */
-  post<T>(url: string, body?: BodyInit | object, config?: RequestInit) {
+  post<T>(url: string, body?: BodyInit | object, config?: RequestInit, ) {
     return serverFetch<T>(url, {
       ...config,
       method: "POST",
@@ -219,6 +220,29 @@ export const http = {
       },
     });
   },
+
+ /**
+   * Realiza una petición POST para enviar un multipart/form-data
+   * @param url - La URL a la que se realizará la petición
+   * @param body - El cuerpo de la petición, debe ser un FormData
+   * @param config - Configuración opcional para la petición fetch
+   * @returns Una promesa que resuelve con los datos de tipo T, o un error
+   * @example
+   * ```ts
+   * const [newUser, err] = await http.multipartPost<User>("/users", formData);
+   * ```
+   */
+ multipartPost<T>(url: string, body?: FormData, config?: RequestInit) {
+  return serverFetch<T>(url, {
+    ...config,
+    method: "POST",
+    body: body,
+    headers: {
+      // No establecer Content-Type para multipart/form-data
+      ...config?.headers,
+    },
+  });
+},
 };
 
 /**
@@ -233,6 +257,7 @@ function processBody(
     body instanceof FormData ||
     body instanceof URLSearchParams ||
     body instanceof ReadableStream
+    
   ) {
     return body;
   } else {
