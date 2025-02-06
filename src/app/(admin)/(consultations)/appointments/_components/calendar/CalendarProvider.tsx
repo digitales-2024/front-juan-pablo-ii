@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CalendarEvent, Mode } from "../../_types/CalendarTypes";
 import { CalendarContext } from "./CalendarContext";
 import CalendarNewEventDialog from "./dialog/CalendarNewEventDialog";
@@ -29,6 +29,10 @@ export default function CalendarProvider({
 	const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
 		null
 	);
+
+	useEffect(() => {
+		console.log("[DEBUG] Eventos en el Provider:", events);
+	}, [events]);
 
 	return (
 		<CalendarContext.Provider
