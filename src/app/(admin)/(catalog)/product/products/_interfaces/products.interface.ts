@@ -17,6 +17,8 @@ export type ActiveProduct = {
   precio: number;
   categoriaId: string;
   tipoProductoId: string;
+  codigoProducto: string;
+  unidadMedida: string;
   categoria: ActiveProductCategory;
   tipoProducto: ActiveProductType;
 }

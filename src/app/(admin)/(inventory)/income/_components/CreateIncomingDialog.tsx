@@ -51,7 +51,9 @@ export function CreateIncomingDialog() {
   // referenceId?: string | undefined;
 
   const form = useForm<CreateIncomeInput>({
-    resolver: zodResolver(createIncomeSchema),
+    resolver: zodResolver(createIncomeSchema, undefined, {
+      raw: true,
+    }),
     defaultValues: {
       name: "",
       storageId: "",

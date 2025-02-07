@@ -25,8 +25,9 @@ import { DeactivateStorageDialog } from "./DeactivateStorageDialog";
 
 export const columns: ColumnDef<DetailedStorage>[] = [
   {
-    id: "select",
+    accessorKey: "select",
     size: 10,
+    meta: { title: "Select" },
     header: ({ table }) => (
       <div className="px-2">
         <Checkbox
@@ -58,18 +59,21 @@ export const columns: ColumnDef<DetailedStorage>[] = [
   },
   {
     accessorKey: "name",
+    meta: { title: "Nombre" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
   },
   {
     accessorKey: "location",
+    meta: { title: "Ubicación" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ubicación" />
     ),
   },
   {
     accessorKey: "TypeStorage",
+    meta: { title: "Tipo de almacén" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tipo de almacén" />
     ),
@@ -81,6 +85,7 @@ export const columns: ColumnDef<DetailedStorage>[] = [
   },
   {
     accessorKey: "isActive",
+    meta: { title: "Estado" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
@@ -92,6 +97,7 @@ export const columns: ColumnDef<DetailedStorage>[] = [
   },
   // {
   //   accessorKey: "createdAt",
+  //   meta: { title: "Fecha de creación" },
   //   header: ({ column }) => (
   //     <DataTableColumnHeader column={column} title="Fecha de creación" />
   //   ),
@@ -99,9 +105,9 @@ export const columns: ColumnDef<DetailedStorage>[] = [
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
   {
-    id: "Acciones",
     accessorKey: "actions",
     size: 10,
+    meta: { title: "Acciones" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
     ),

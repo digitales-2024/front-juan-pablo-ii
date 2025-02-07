@@ -1,9 +1,8 @@
 "use client";
 
-import { UseFormReturn } from "react-hook-form";
+import { useFieldArray, UseFormReturn } from "react-hook-form";
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +23,8 @@ import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/use
 import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { CreateIncomeInput } from "../_interfaces/income.interface";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { SelectProductDialog } from "./Movements/FormComponents/SelectMovementDialog";
+import { Button } from "@/components/ui/button";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -54,6 +55,14 @@ export function CreateIncomingForm({
   form,
   onSubmit,
 }: CreateProductFormProps) {
+  const { register, control } = form;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "movement",
+    rules: {
+      minLength: 1
+    }
+  });
   // const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
   // const [productOptions, setproductOptions] = useState<Option[]>([]);
   const STATEPROP_OPTIONS = useMemo(() => {
@@ -132,10 +141,10 @@ export function CreateIncomingForm({
     value: category.id,
   }));
 
-  const productOptions: Option[] = reponseProducts.data.map((typeProduct) => ({
-    label: typeProduct.name,
-    value: typeProduct.id,
-  }));
+  // const productOptions: Option[] = reponseProducts.data.map((typeProduct) => ({
+  //   label: typeProduct.name,
+  //   value: typeProduct.id,
+  // }));
 
   // name
   // description
@@ -154,89 +163,122 @@ export function CreateIncomingForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-2 gap-4">
+          {/* Campo Nombre */}
+          <div className="col-span-2">
+            <FormItem>
+              <FormLabel>{FORMSTATICS.name.label}</FormLabel>
+              <Input
+                {...register(FORMSTATICS.name.name)}
+                placeholder={FORMSTATICS.name.placeholder}
+                type={FORMSTATICS.name.type}
+              />
+              <CustomFormDescription required={FORMSTATICS.name.required} />
+              <FormMessage />
+            </FormItem>
+          </div>
+
+          {/* Campo Storage - Mantener como controlled porque es un AutoComplete */}
           <FormField
-            control={form.control}
-            name={FORMSTATICS.name.name}
-            render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel>{FORMSTATICS.name.label}</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder={FORMSTATICS.name.placeholder}
-                    type={FORMSTATICS.name.type}
-                  />
-                </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.name.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* Campo de Almacén */}
-          <FormField
-            control={form.control}
+            control={control}
             name={FORMSTATICS.storageId.name}
             render={({ field }) => (
               <FormItem className="col-span-2">
-                <FormLabel htmlFor={FORMSTATICS.storageId.name}>
-                  {FORMSTATICS.storageId.label}
-                </FormLabel>
-                <FormControl>
-                  <AutoComplete
-                    options={storageOptions}
-                    placeholder={FORMSTATICS.storageId.placeholder}
-                    emptyMessage={FORMSTATICS.storageId.emptyMessage!}
-                    value={
-                      storageOptions.find(
-                        (option) => option.value === field.value
-                      ) ?? undefined
-                    }
-                    onValueChange={(option) => {
-                      field.onChange(option?.value || "");
-                    }}
-                  />
-                </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.storageId.required}
-                ></CustomFormDescription>
+                <FormLabel>{FORMSTATICS.storageId.label}</FormLabel>
+                <AutoComplete
+                  options={storageOptions}
+                  placeholder={FORMSTATICS.storageId.placeholder}
+                  emptyMessage={FORMSTATICS.storageId.emptyMessage!}
+                  value={storageOptions.find((option) => option.value === field.value)}
+                  onValueChange={(option) => field.onChange(option?.value || "")}
+                />
+                <CustomFormDescription required={FORMSTATICS.storageId.required} />
                 <FormMessage />
               </FormItem>
             )}
           />
-          {/* Campo de movimientos */}
-          {/* <FormField
-            control={form.control}
-            name={FORMSTATICS.movement.name}
-            render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel htmlFor={FORMSTATICS.storageId.name}>
-                  {FORMSTATICS.storageId.label}
-                </FormLabel>
-                <FormControl>
-                  <AutoComplete
-                    options={storageOptions}
-                    placeholder={FORMSTATICS.storageId.placeholder}
-                    emptyMessage={FORMSTATICS.storageId.emptyMessage!}
-                    value={
-                      storageOptions.find(
-                        (option) => option.value === field.value
-                      ) ?? undefined
-                    }
-                    onValueChange={(option) => {
-                      field.onChange(option?.value || "");
-                    }}
+
+          {/* Movements Section */}
+          <div className="col-span-2 w-full flex flex-col gap-2 justify-center items-center py-4">
+            <SelectProductDialog data={reponseProducts.data}>
+            </SelectProductDialog>
+            <CustomFormDescription
+              required={true}
+            ></CustomFormDescription>
+          </div>
+          <div className="col-span-2">
+            {fields.map((field, index) => (
+              <div key={field.id} className="flex gap-4 mb-4">
+                <FormItem>
+                  <FormLabel>Producto</FormLabel>
+                  <Input
+                    disabled
+                    {...register(`movement.${index}.productId`)}
+                    type="text"
                   />
-                </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.storageId.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-          <FormField
+                  <FormMessage />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>Cantidad</FormLabel>
+                  <Input
+                    {...register(`movement.${index}.quantity`, {
+                      valueAsNumber: true
+                    })}
+                    type="number"
+                  />
+                  <FormMessage />
+                </FormItem>
+                <div>
+                  <FormLabel>Precio</FormLabel>
+                  <span>{}</span>
+                </div>
+                <div>
+                  <FormLabel>Total</FormLabel>
+                  <span>{}</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => remove(index)}
+                >
+                  Eliminar
+                </Button>
+              </div>
+            ))}
+            
+            <Button
+              type="button"
+              onClick={() => append({ 
+                productId: '', 
+                quantity: 0 
+              })}
+            >
+              Agregar Movimiento
+            </Button>
+          </div>
+
+          {/* Estado */}
+          <div>
+            <FormItem className="space-y-3">
+              <FormLabel>{FORMSTATICS.state.label}</FormLabel>
+              <RadioGroup className="flex flex-col space-y-1">
+                {STATEPROP_OPTIONS.map(({label, value}, idx) => (
+                  <div key={idx} className="flex items-center space-x-3">
+                    <RadioGroupItem
+                      {...register(FORMSTATICS.state.name)}
+                      value={value}
+                      id={`state-${value}`}
+                    />
+                    <FormLabel htmlFor={`state-${value}`}>{label}</FormLabel>
+                  </div>
+                ))}
+              </RadioGroup>
+              <CustomFormDescription required={FORMSTATICS.state.required} />
+              <FormMessage />
+            </FormItem>
+          </div>
+
+          {/* <FormField
             control={form.control}
             name={FORMSTATICS.state.name}
             render={({ field }) => (
@@ -264,70 +306,34 @@ export function CreateIncomingForm({
                 <FormMessage />
               </FormItem>
             )}
-          ></FormField>
-          <FormField
-            control={form.control}
-            name={FORMSTATICS.date.name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{FORMSTATICS.date.label}</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder={FORMSTATICS.date.placeholder}
-                    type="date"
-                  />
-                </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.date.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* <FormField
-            control={form.control}
-            name={FORMSTATICS.state.name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{FORMSTATICS.state.label}</FormLabel>
-                <div className="flex items-center space-x-2">
-                  <div className="text-muted-foreground">S/.</div>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={FORMSTATICS.state.placeholder}
-                      type={FORMSTATICS.state.type}
-                    />
-                  </FormControl>
-                </div>
-                <CustomFormDescription
-                  required={FORMSTATICS.state.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-          <FormField
-            control={form.control}
-            name={FORMSTATICS.description.name}
-            render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel>{FORMSTATICS.description.label}</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder={FORMSTATICS.description.placeholder}
-                  />
-                </FormControl>
-                <FormMessage />
-                <CustomFormDescription
-                  required={FORMSTATICS.description.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          ></FormField> */}
+
+          {/* Fecha */}
+          <div>
+            <FormItem>
+              <FormLabel>{FORMSTATICS.date.label}</FormLabel>
+              <Input
+                {...register(FORMSTATICS.date.name)}
+                type="date"
+                placeholder={FORMSTATICS.date.placeholder}
+              />
+              <CustomFormDescription required={FORMSTATICS.date.required} />
+              <FormMessage />
+            </FormItem>
+          </div>
+
+          {/* Descripción */}
+          <div className="col-span-2">
+            <FormItem>
+              <FormLabel>{FORMSTATICS.description.label}</FormLabel>
+              <Textarea
+                {...register(FORMSTATICS.description.name)}
+                placeholder={FORMSTATICS.description.placeholder}
+              />
+              <CustomFormDescription required={FORMSTATICS.description.required} />
+              <FormMessage />
+            </FormItem>
+          </div>
         </div>
         {children}
       </form>

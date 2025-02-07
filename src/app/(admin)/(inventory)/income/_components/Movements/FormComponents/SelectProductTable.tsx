@@ -1,10 +1,12 @@
 import React from 'react'
-import { IncomingMovement } from '../../_interfaces/income.interface';
 import { DataTable } from '@/components/data-table/DataTable';
 import { ActiveProduct } from '@/app/(admin)/(catalog)/product/products/_interfaces/products.interface';
+import { columns } from './SelectProductTableColumns';
 interface SelectProductsTableProps {
   data: ActiveProduct[];
+  onSelection: (selected: ActiveProduct[]) => void;
 }
+
 export function SelectProductsTable({ data }: SelectProductsTableProps) {
   return (
     <DataTable

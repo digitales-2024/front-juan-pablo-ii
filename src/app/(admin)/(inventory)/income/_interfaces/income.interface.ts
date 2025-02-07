@@ -75,7 +75,7 @@ export const createIncomeSchema = z.object({
   date: z.string().min(1,"La fecha es requerida"),
   state: z.string().min(1,"Debe selecionar una opción"),
   referenceId: z.string().optional(),
-  //movement: movementArrayIncomeSchema,
+  movement: movementArrayIncomeSchema,
 });
 
 // UpdateIncomingDto: {

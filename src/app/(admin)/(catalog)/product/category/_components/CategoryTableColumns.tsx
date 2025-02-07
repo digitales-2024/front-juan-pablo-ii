@@ -57,21 +57,21 @@ export const columns: ColumnDef<Category>[] = [
   },
   {
     accessorKey: "name",
-    id: "Nombre",
+    meta: { title: "Nombre" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
   },
   {
     accessorKey: "description",
-    id: "Descripción",
+    meta: { title: "Descripción" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
   },
   {
     accessorKey: "isActive",
-    id: "Estado",
+    meta: { title: "Estado" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
@@ -83,7 +83,7 @@ export const columns: ColumnDef<Category>[] = [
   },
   {
     accessorKey: "createdAt",
-    id: "Fecha de creación",
+    meta: { title: "Fecha de creación" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha de creación" />
     ),
@@ -94,6 +94,7 @@ export const columns: ColumnDef<Category>[] = [
     id: "Acciones",
     accessorKey: "actions",
     size: 10,
+    meta: { title: "Acciones" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
     ),

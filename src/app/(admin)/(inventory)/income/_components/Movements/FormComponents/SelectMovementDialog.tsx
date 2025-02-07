@@ -1,13 +1,8 @@
 "use client";
-import { useEffect, useState, useTransition } from "react";
-import { FieldErrors, useForm, UseFormReturn } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateProductInput, createProductSchema } from "../_interfaces/product.interface";
+import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { Plus, RefreshCcw } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CreateProductForm } from "./CreateProductForm";
-import { useProduct } from "../_hooks/useProduct";
 import {
     Dialog,
     DialogContent,
@@ -26,8 +21,10 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
-import { METADATA } from "../_statics/metadata";
-import { useSelectProductDispatch } from "../../../_hooks/useSelectProducts";
+import { useSelectedProducts, useSelectProductDispatch } from "../../../_hooks/useSelectProducts";
+import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
+import { DataTable } from "@/components/data-table/DataTable";
+import { columns } from './SelectProductTableColumns';
 
 const CREATE_PRODUCT_MESSAGES = {
     button: "Seleccionar producto(s)",
@@ -38,47 +35,35 @@ const CREATE_PRODUCT_MESSAGES = {
     cancel: "Cancelar",
 } as const;
 
-export function CreateProductDialog() {
+interface SelectProductDialogProps extends React.HTMLAttributes<HTMLButtonElement> {
+    data: ActiveProduct[];
+    className?: string;
+}
+export function SelectProductDialog({data, className, ...rest}: SelectProductDialogProps) {
     const [open, setOpen] = useState(false);
+    const [localSelectRows, setLocalSelectRows] = useState<ActiveProduct[]>([]);
     //const [isCreatePending, startCreateTransition] = useTransition();
+    // const { activeProductsQuery: activeProductsResponse } = useProducts();
+    const selectedProductsTanstack = useSelectedProducts();
     const dispatch = useSelectProductDispatch()
     const isDesktop = useMediaQuery("(min-width: 640px)");
-    
-    // const { createMutation } = useProduct();
 
-    // const form = useForm<CreateProductInput>({
-    //     resolver: zodResolver(createProductSchema),
-    //     defaultValues: {
-    //         name: "",
-    //         storageId: "",
-    //         date: "",
-    //         state: "false",
-    //         description: "",
-    //         referenceId: "",
-    //     },
-    // });
-
-    // function handleSubmit(input: CreateProductInput) {
-    //     console.log('Ingresando a handle submit', createMutation.isPending, isCreatePending);
-    //     if (createMutation.isPending || isCreatePending) return;
-
-    //     startCreateTransition(() => {
-    //         createMutation.mutate(input, {
-    //             onSuccess: () => {
-    //                 setOpen(false);
-    //                 form.reset();
-    //             },
-    //             onError: (error) => {
-    //                 console.error(`Error al crear ${METADATA.entityName.toLowerCase()}:`, error);
-    //                 if (error.message.includes("No autorizado")) {
-    //                     setTimeout(() => {
-    //                         form.reset();
-    //                     }, 1000);
-    //                 }
-    //             },
-    //         });
+    // const handleDelete = () => {
+    //     const selectedRows = table.getSelectedRowModel().rows;
+    //     selectedRows.forEach(row => {
+    //       // Assuming you have a delete function defined
+    //       deleteRow(row.id);
     //     });
-    // }
+    //     // Optionally, refresh the table data after deletion
+    //     refreshTableData();
+    //   };
+
+    const handleSave = (selectedRows: ActiveProduct[]) => {
+        console.log('oldStateTanstack', selectedProductsTanstack);
+        console.log('handleSave', selectedRows);
+        dispatch({type: "append", payload: selectedRows});
+        setOpen(false);
+    }
 
     const handleClose = () => {
         //form.reset();
@@ -88,8 +73,9 @@ export function CreateProductDialog() {
     const DialogFooterContent = () => (
         <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
             <Button 
-                type="submit" 
+                type="button" 
                 //disabled={isCreatePending || createMutation.isPending}
+                onClick={() => handleSave(localSelectRows)}
                 className="w-full"
             >
                 {/* {(isCreatePending || createMutation.isPending) && (
@@ -116,6 +102,8 @@ export function CreateProductDialog() {
             onClick={() => setOpen(true)}
             variant="outline" 
             size="sm"
+            className={className}
+            {...rest}
         >
             <Plus className="size-4 mr-2" aria-hidden="true" />
             {CREATE_PRODUCT_MESSAGES.button}
@@ -135,13 +123,18 @@ export function CreateProductDialog() {
                             {CREATE_PRODUCT_MESSAGES.description}
                         </DialogDescription>
                     </DialogHeader>
-                    {/* <CreateProductForm form={form} onSubmit={handleSubmit}>
-                        <DevelopmentZodError form={form} />
-                        <DialogFooter>
-                            <DialogFooterContent />
-                        </DialogFooter>
-                    </CreateProductForm> */}
-
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            onRowSelectionChange={(selectedRows)=>{
+                                //dispatch({type: 'SET_SELECTED_PRODUCTS', payload: table.getSelectedRowModel().rows});
+                                // console.log('outer', selectedRows);
+                                setLocalSelectRows(()=>[...selectedRows]);
+                            }}
+                            />
+                    <DialogFooter>
+                        <DialogFooterContent />
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         );
@@ -165,6 +158,9 @@ export function CreateProductDialog() {
                         <DialogFooterContent />
                     </DrawerFooter>
                 </CreateProductForm> */}
+                <DrawerFooter>
+                    <DialogFooterContent />
+                </DrawerFooter>
             </DrawerContent>
         </Drawer>
     );

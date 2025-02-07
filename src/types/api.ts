@@ -4049,6 +4049,8 @@ export interface components {
             id: string;
             name: string;
             precio: number;
+            codigoProducto: string;
+            unidadMedida: string;
             categoriaId: string;
             tipoProductoId: string;
             categoria: components["schemas"]["ActiveProductCategory"];
