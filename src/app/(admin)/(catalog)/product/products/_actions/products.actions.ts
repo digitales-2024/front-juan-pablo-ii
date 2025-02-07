@@ -1,7 +1,7 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { Product, DetailedProduct, CreateProductDto, UpdateProductDto, DeleteProductDto } from "../_interfaces/products.interface";
+import { Product, DetailedProduct, CreateProductDto, UpdateProductDto, DeleteProductDto, ActiveProduct } from "../_interfaces/products.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";
@@ -10,6 +10,7 @@ export type ProductResponse = BaseApiResponse<Product> | { error: string };
 export type DetailedProductResponse = BaseApiResponse<DetailedProduct> | { error: string };
 export type ListProductResponse = Product[] | { error: string };
 export type ListDetailedProductResponse = DetailedProduct[] | { error: string };
+export type ListActiveProducts = ActiveProduct[] | { error: string };
 
 const GetProductSchema = z.object({});
 
@@ -67,9 +68,50 @@ const getDetailedProductsHandler = async () => {
 
 export const getDetailedProducts = await createSafeAction(GetProductSchema, getDetailedProductsHandler);
 
+const  getActiveProductsHandler = async () => {
+  try {
+    const [products, error] = await http.get<ListActiveProducts>("/product/active");
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener los productos activos",
+      };
+    }
+    if (!Array.isArray(products)) {
+      return { error: "Respuesta inválida del servidor" };
+    }
+    return { data: products };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export const getActiveProducts = await createSafeAction(GetProductSchema, getActiveProductsHandler);
+
 export async function getProductById (id: string) : Promise<ProductResponse> {
   try {
     const [product, error] = await http.get<ProductResponse>(`/product/${id}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el producto",
+      };
+    }
+    return product;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
+
+export async function getDetailedProductById (id: string) : Promise<ListDetailedProductResponse> {
+  try {
+    const [product, error] = await http.get<ListDetailedProductResponse>(`/product/detailed/${id}`);
     if (error) {
       return {
         error:

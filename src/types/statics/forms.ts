@@ -25,9 +25,22 @@ export type FormFieldStatics<T> = {
     placeholder: string;
     type: HTMLInputTypeAttribute;
     isNotEditable?: boolean;
-    defaultValue?: string | number; //Change according to necessity
+    defaultValue?: string | number | boolean ; //Change according to necessity
     description?: string;
     emptyMessage?: string; //In case of a search select
+}
+
+export type ComplexFormFieldStatics<T, V> = {
+    label: string;
+    required: boolean;
+    name : T; //El nombre es el mismo string de la validaciòn de zod
+    placeholder: string;
+    type: HTMLInputTypeAttribute;
+    isNotEditable?: boolean;
+    defaultValue?: string | number | boolean ; //Change according to necessity
+    description?: string;
+    emptyMessage?: string; //In case of a search select
+    subFields?: FormStatics<V>;
 }
 
 /**
@@ -36,5 +49,6 @@ export type FormFieldStatics<T> = {
  * @template T - El tipo del objeto cuyas claves se utilizarán para el mapeo.
  */
 export type FormStatics<T> = Record<keyof T, FormFieldStatics<keyof T>>;
+export type ComplexFormStatics<T, V> = Record<keyof T, ComplexFormFieldStatics<keyof T, V>>;
 
 export const REQUIRED_MESSAGE = "Este campo es requerido";

@@ -25,8 +25,9 @@ import { DeactivateTypeStorageDialog } from "./DeactivateStorageTypeDialog";
 
 export const columns: ColumnDef<DetailedTypeStorage>[] = [
   {
-    id: "select",
+    accessorKey: "select",
     size: 10,
+    meta: { title: "Select" },
     header: ({ table }) => (
       <div className="px-2">
         <Checkbox
@@ -56,28 +57,23 @@ export const columns: ColumnDef<DetailedTypeStorage>[] = [
     enableHiding: false,
     enablePinning: true,
   },
-  //   type TypeStorage = {
-//     id: string;
-//     name: string;
-//     description: string;
-//     branchId: string;
-//     staffId: string;
-//     isActive: boolean;
-// }
   {
     accessorKey: "name",
+    meta: { title: "Nombre" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
   },
   {
     accessorKey: "description",
+    meta: { title: "Descripción" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
   },
   {
     accessorKey: "branch",
+    meta: { title: "Sucursal" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sucursal" />
     ),
@@ -89,6 +85,7 @@ export const columns: ColumnDef<DetailedTypeStorage>[] = [
   },
   {
     accessorKey: "staff",
+    meta: { title: "Personal" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Personal" />
     ),
@@ -100,6 +97,7 @@ export const columns: ColumnDef<DetailedTypeStorage>[] = [
   },
   {
     accessorKey: "isActive",
+    meta: { title: "Estado" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
@@ -118,9 +116,9 @@ export const columns: ColumnDef<DetailedTypeStorage>[] = [
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
   {
-    id: "Acciones",
     accessorKey: "actions",
     size: 10,
+    meta: { title: "Acciones" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
     ),

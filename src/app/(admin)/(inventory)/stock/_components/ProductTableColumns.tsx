@@ -58,18 +58,21 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "name",
+    id: "Nombre",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
   },
   {
     accessorKey: "unidadMedida",
+    id: "Unidad de Medida",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Medida" />
     ),
   },
   {
     accessorKey: "codigoProducto",
+    id: "Código",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
     ),
@@ -96,6 +99,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   // },
   {
     accessorKey: "categoria",
+    id: "Categoría",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Categoría" />
     ),
@@ -107,6 +111,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "tipoProducto",
+    id: "Subcategoría",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Subcategoría" />
     ),
@@ -118,6 +123,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "precio",
+    id: "Precio",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Precio" />
     ),
@@ -132,6 +138,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "descuento",
+    id: "Descuento",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descuento" />
     ),
@@ -148,30 +155,35 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "description",
+    id: "Descripción",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
   },
   {
     accessorKey: "observaciones",
+    id: "Observaciones",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Observaciones" />
     ),
   },
   {
     accessorKey: "condicionesAlmacenamiento",
+    id: "Condiciones de almacenamiento",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Condiciones de almacenamiento" />
     ),
   },
   {
     accessorKey: "usoProducto",
+    id: "Uso",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ámbito de uso" />
     ),
   },
   {
     accessorKey: "isActive",
+    id: "Estado",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
@@ -190,8 +202,8 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
   {
-    id: "Acciones",
     accessorKey: "actions",
+    id: "Acciones",
     size: 10,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
