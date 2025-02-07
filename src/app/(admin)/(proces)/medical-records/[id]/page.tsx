@@ -660,7 +660,7 @@ export default function PacienteHistoria() {
                         Cancelar
                       </Button>
                     </DialogClose>
-                    <Button type="submit">Guardar Servicio</Button>
+                    <Button type="submit">Registrar Historia </Button>
                   </DialogFooter>
                 </form>
               </ScrollArea>
@@ -783,11 +783,11 @@ export default function PacienteHistoria() {
           {selectedPrescription && (
             <div className="space-y-6 p-4">
               <div className="grid grid-cols-2 gap-4 border-b pb-4">
-                <div className="flex items-start space-x-4">
+                             <div className="flex items-start space-x-4">
                   <img
-                    src="/logo-hospital.png"
+                    src="https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/1fb4f92d-ff2d-4b39-a3da-9c3139a9c2d0.webp"
                     alt="Logo Hospital"
-                    className="w-16 h-16 object-contain"
+                    className="w-32 h-32 object-contain"
                   />
                   <div>
                     <h3 className="font-bold text-lg">Juan Pablo II</h3>
