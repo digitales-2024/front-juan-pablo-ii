@@ -11,7 +11,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { Eye } from "lucide-react"
+import { ClipboardPlus} from "lucide-react"
 
 interface Paciente {
   id: string
@@ -19,7 +19,7 @@ interface Paciente {
   apellido: string
   dni: string
   telefono: string
-  correo: string
+  cita: string
 }
 
 const columns: ColumnDef<Paciente>[] = [
@@ -40,18 +40,19 @@ const columns: ColumnDef<Paciente>[] = [
     header: "Teléfono",
   },
   {
-    accessorKey: "correo",
-    header: "Correo",
+    accessorKey: "cita",
+    header: "Cita / Consulta",
   },
   {
     id: "actions",
     cell: ({ row }) => {
       const router = useRouter()
       return (
-        <Button variant="ghost" onClick={() => router.push(`/medical-records/${row.original.id}`)}>
-          <Eye className="h-4 w-4 mr-2" />
-          Ver Historia
-        </Button>
+        <Button onClick={() => router.push(`/medical-records/${row.original.id}`)} className="flex items-center gap-2">
+        <ClipboardPlus className="h-4 w-4" />
+        Inicar Cita / Consulta
+      </Button>
+        
       )
     },
   },
@@ -65,7 +66,7 @@ export function PacientesTable() {
       apellido: "Pérez",
       dni: "12345678",
       telefono: "123-456-7890",
-      correo: "juan@example.com",
+      cita: "6 feb 2025, 09:14",
     },
     {
       id: "2",
@@ -73,7 +74,7 @@ export function PacientesTable() {
       apellido: "González",
       dni: "87654321",
       telefono: "098-765-4321",
-      correo: "maria@example.com",
+      cita: "10 feb 2025, 10:14",
     },
   ])
     //

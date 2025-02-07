@@ -34,6 +34,7 @@ import {
   AlertTriangle,
   Plus,
   Printer,
+  X,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DialogClose } from "@radix-ui/react-dialog";
@@ -78,6 +79,15 @@ interface HistorialItem {
   contenido: string;
 }
 
+const SERVICIOS_OPCIONES = [
+  "Tratamiento Dermatológico",
+  "Consulta General",
+  "Tratamiento Dental",
+];
+
+const PERSONAL_MEDICO = "Alex Flores Valdez DR001";
+const SUCURSAL = "Sede Central";
+
 export default function PacienteHistoria() {
   const { id } = useParams();
   const [paciente, _setPaciente] = useState<Paciente>({
@@ -100,9 +110,9 @@ export default function PacienteHistoria() {
 
   const [servicios, setServicios] = useState<Servicio[]>([
     {
-      serviceId: "1",
-      staffId: "DR001",
-      branchId: "B001",
+      serviceId: ": Tratamiento Dermatologico",
+      staffId: "Alex Flores Valdez DR001",
+      branchId: "Sede Central",
       prescription: true,
       prescriptionId: "RX001",
       prescriptionTitle: "Tratamiento para hipertensión",
@@ -112,7 +122,7 @@ export default function PacienteHistoria() {
         { nombre: "Losartan", dosis: "50mg", frecuencia: "Una vez al día" },
         { nombre: "Amlodipino", dosis: "5mg", frecuencia: "Una vez al día" },
       ],
-      description: "Consulta general",
+      description: "el pacciente presenta una erupcion en la piel en la zona de la espalda y cuello se le receta un tratamiento dermatologico para tratar la erupcion en la piel en la zona de la espalda y cuello  ", 
       medicalLeave: false,
       newImages: [
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxbgoMzx7izKzehJBf1248szuAVwH8-F-crA&s",
@@ -123,8 +133,8 @@ export default function PacienteHistoria() {
 
   const [nuevoServicio, setNuevoServicio] = useState<Servicio>({
     serviceId: "",
-    staffId: "",
-    branchId: "",
+    staffId: PERSONAL_MEDICO,
+    branchId: SUCURSAL,
     prescription: false,
     prescriptionId: "",
     prescriptionTitle: "",
@@ -148,6 +158,7 @@ export default function PacienteHistoria() {
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
   const [selectedPrescription, setSelectedPrescription] =
     useState<Servicio | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleAddHistorialItem = () => {
     setHistorialMedico([...historialMedico, nuevoHistorial]);
@@ -160,8 +171,8 @@ export default function PacienteHistoria() {
     setServicios([...servicios, nuevoServicio]);
     setNuevoServicio({
       serviceId: "",
-      staffId: "",
-      branchId: "",
+      staffId: PERSONAL_MEDICO,
+      branchId: SUCURSAL,
       prescription: false,
       prescriptionId: "",
       prescriptionTitle: "",
@@ -246,9 +257,9 @@ export default function PacienteHistoria() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Historial Médico</CardTitle>
+          <CardTitle>Historial de Antecedentes Médicos</CardTitle>
           <Button onClick={() => setIsHistorialModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Agregar Historial
+            <Plus className="w-4 h-4 mr-2" /> Agregar Antecedente Médico
           </Button>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -271,7 +282,7 @@ export default function PacienteHistoria() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Agregar Nuevo Historial</DialogTitle>
+            <DialogTitle>Agregar Antecendetes Medicos</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -307,17 +318,17 @@ export default function PacienteHistoria() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Servicios y Tratamientos</CardTitle>
+          <CardTitle>Historial Medico de Consutlas, Servicios y Tratamientos</CardTitle>
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="w-4 h-4 mr-2" /> Agregar Servicio
+                <Plus className="w-4 h-4 mr-2" /> Agregar Historia
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[80vh] h-full">
               <ScrollArea className="max-h-[calc(100vh-6rem)]">
                 <DialogHeader>
-                  <DialogTitle>Agregar Nuevo Servicio</DialogTitle>
+                  <DialogTitle>Agregar Historia Médica</DialogTitle>
                 </DialogHeader>
                 <form
                   onSubmit={handleAddServicio}
@@ -326,8 +337,8 @@ export default function PacienteHistoria() {
                   <div className="h-full space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="serviceId">ID del Servicio</Label>
-                        <Input
+                        <Label htmlFor="serviceId">Servicio</Label>
+                        <select
                           id="serviceId"
                           value={nuevoServicio.serviceId}
                           onChange={(e) =>
@@ -336,38 +347,192 @@ export default function PacienteHistoria() {
                               serviceId: e.target.value,
                             })
                           }
+                          className="w-full p-2 border rounded-md"
                           required
-                        />
+                        >
+                          <option value="">Seleccione un servicio</option>
+                          {SERVICIOS_OPCIONES.map((servicio) => (
+                            <option key={servicio} value={servicio}>
+                              {servicio}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div>
-                        <Label htmlFor="staffId">ID del Personal</Label>
+                        <Label htmlFor="staffId">Personal</Label>
                         <Input
                           id="staffId"
-                          value={nuevoServicio.staffId}
-                          onChange={(e) =>
-                            setNuevoServicio({
-                              ...nuevoServicio,
-                              staffId: e.target.value,
-                            })
-                          }
-                          required
+                          value={PERSONAL_MEDICO}
+                          disabled
+                          className="bg-gray-100 text-gray-900 font-medium"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="branchId">ID de la Sucursal</Label>
+                        <Label htmlFor="branchId">Sucursal</Label>
                         <Input
                           id="branchId"
-                          value={nuevoServicio.branchId}
-                          onChange={(e) =>
-                            setNuevoServicio({
-                              ...nuevoServicio,
-                              branchId: e.target.value,
-                            })
-                          }
-                          required
+                          value={SUCURSAL}
+                          disabled
+                          className="bg-gray-100 text-gray-900 font-medium"
                         />
                       </div>
+                      
+                    </div>
+
+                    <div>
+                      <Label htmlFor="description">Descripción</Label>
+                      <Textarea
+                        id="description"
+                        value={nuevoServicio.description}
+                        onChange={(e) =>
+                          setNuevoServicio({
+                            ...nuevoServicio,
+                            description: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="medicalLeave"
+                        checked={nuevoServicio.medicalLeave}
+                        onCheckedChange={(checked) =>
+                          setNuevoServicio({
+                            ...nuevoServicio,
+                            medicalLeave: checked,
+                            medicalLeaveDays: 0,
+                            medicalLeaveStartDate: "",
+                            medicalLeaveEndDate: "",
+                          })
+                        }
+                      />
+                      <Label htmlFor="medicalLeave">Descanso Médico</Label>
+                    </div>
+                    {nuevoServicio.medicalLeave && (
+                      <div className="border rounded-lg p-4 bg-gray-50 space-y-4">
+                        <h3 className="font-semibold text-lg mb-2">Detalles del Descanso Médico</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="medicalLeaveStartDate">Fecha de Inicio</Label>
+                            <Input
+                              id="medicalLeaveStartDate"
+                              type="date"
+                              value={nuevoServicio.medicalLeaveStartDate}
+                              onChange={(e) => {
+                                const startDate = e.target.value;
+                                const endDate = nuevoServicio.medicalLeaveEndDate;
+                                setNuevoServicio({
+                                  ...nuevoServicio,
+                                  medicalLeaveStartDate: startDate,
+                                  medicalLeaveDays: endDate 
+                                    ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1
+                                    : 0
+                                });
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="medicalLeaveEndDate">Fecha de Fin</Label>
+                            <Input
+                              id="medicalLeaveEndDate"
+                              type="date"
+                              value={nuevoServicio.medicalLeaveEndDate}
+                              onChange={(e) => {
+                                const endDate = e.target.value;
+                                const startDate = nuevoServicio.medicalLeaveStartDate;
+                                setNuevoServicio({
+                                  ...nuevoServicio,
+                                  medicalLeaveEndDate: endDate,
+                                  medicalLeaveDays: startDate 
+                                    ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1
+                                    : 0
+                                });
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="medicalLeaveDays">Días de Descanso</Label>
+                            <Input
+                              id="medicalLeaveDays"
+                              type="number"
+                              value={nuevoServicio.medicalLeaveDays}
+                              disabled
+                              className="bg-gray-100 text-gray-900 font-medium"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <Label htmlFor="leaveDescription">Descripción del Descanso Médico</Label>
+                          <Textarea
+                            id="leaveDescription"
+                            value={nuevoServicio.leaveDescription}
+                            onChange={(e) =>
+                              setNuevoServicio({
+                                ...nuevoServicio,
+                                leaveDescription: e.target.value,
+                              })
+                            }
+                            className="min-h-[120px]"
+                            placeholder="Ingrese la descripción detallada del descanso médico..."
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <div className="space-y-4">
                       <div className="flex items-center space-x-2">
+                        <Label htmlFor="newImages" className="flex items-center cursor-pointer hover:text-blue-500">
+                          <Plus className="w-5 h-5 mr-2" />
+                          Agregar Imágenes
+                        </Label>
+                        <Input
+                          id="newImages"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const imageUrl = URL.createObjectURL(file);
+                              setNuevoServicio((prev) => ({
+                                ...prev,
+                                newImages: [...prev.newImages, imageUrl],
+                              }));
+                            }
+                          }}
+                        />
+                      </div>
+
+                      {nuevoServicio.newImages.length > 0 && (
+                        <div>
+                          <Label className="block mb-2">Imágenes Seleccionadas:</Label>
+                          <div className="grid grid-cols-3 gap-4">
+                            {nuevoServicio.newImages.map((imageUrl, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={imageUrl}
+                                  alt={`Imagen ${index + 1}`}
+                                  className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                                />
+                                <button
+                                  onClick={() => {
+                                    setNuevoServicio((prev) => ({
+                                      ...prev,
+                                      newImages: prev.newImages.filter((_, i) => i !== index),
+                                    }));
+                                  }}
+                                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 
+                                             opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center space-x-2">
                         <Switch
                           id="prescription"
                           checked={nuevoServicio.prescription}
@@ -380,9 +545,9 @@ export default function PacienteHistoria() {
                         />
                         <Label htmlFor="prescription">Receta Médica</Label>
                       </div>
-                    </div>
-                    {nuevoServicio.prescription && (
-                      <div className="space-y-4">
+                      {nuevoServicio.prescription && (
+                      <div className="border rounded-lg p-4 bg-gray-50 space-y-4">
+                        <h3 className="font-semibold text-lg mb-2">Detalles de Receta Médica</h3>
                         <div>
                           <Label htmlFor="prescriptionTitle">
                             Título de la Receta
@@ -415,11 +580,11 @@ export default function PacienteHistoria() {
                         </div>
                         <div>
                           <Label>Medicamentos</Label>
-                          {nuevoServicio.prescriptionItems.map(
-                            (item, index) => (
+                          <div className="space-y-2">
+                            {nuevoServicio.prescriptionItems.map((item, index) => (
                               <div
                                 key={index}
-                                className="grid grid-cols-3 gap-2 mt-2"
+                                className="grid grid-cols-3 gap-2 relative group"
                               >
                                 <Input
                                   placeholder="Nombre"
@@ -443,176 +608,49 @@ export default function PacienteHistoria() {
                                     )
                                   }
                                 />
-                                <Input
-                                  placeholder="Frecuencia"
-                                  value={item.frecuencia}
-                                  onChange={(e) =>
-                                    handlePrescriptionItemChange(
-                                      index,
-                                      "frecuencia",
-                                      e.target.value
-                                    )
-                                  }
-                                />
+                                <div className="flex gap-2">
+                                  <Input
+                                    placeholder="Frecuencia"
+                                    value={item.frecuencia}
+                                    onChange={(e) =>
+                                      handlePrescriptionItemChange(
+                                        index,
+                                        "frecuencia",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    onClick={() => {
+                                      const updatedItems = nuevoServicio.prescriptionItems.filter(
+                                        (_, i) => i !== index
+                                      );
+                                      setNuevoServicio({
+                                        ...nuevoServicio,
+                                        prescriptionItems: updatedItems,
+                                      });
+                                    }}
+                                    className="h-10 w-10"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </div>
-                            )
-                          )}
-                          <Button
-                            type="button"
-                            onClick={handleAddPrescriptionItem}
-                            className="mt-2"
-                          >
-                            <Plus className="w-4 h-4 mr-2" /> Agregar
-                            Medicamento
-                          </Button>
+                            ))}
+                          </div>
+                          <div className="sticky bottom-0 bg-gray-50 pt-2">
+                            <Button
+                              type="button"
+                              onClick={handleAddPrescriptionItem}
+                              className="w-full"
+                            >
+                              <Plus className="w-4 h-4 mr-2" /> Agregar Medicamento
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    <div>
-                      <Label htmlFor="description">Descripción</Label>
-                      <Textarea
-                        id="description"
-                        value={nuevoServicio.description}
-                        onChange={(e) =>
-                          setNuevoServicio({
-                            ...nuevoServicio,
-                            description: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        id="medicalLeave"
-                        checked={nuevoServicio.medicalLeave}
-                        onCheckedChange={(checked) =>
-                          setNuevoServicio({
-                            ...nuevoServicio,
-                            medicalLeave: checked,
-                          })
-                        }
-                      />
-                      <Label htmlFor="medicalLeave">Licencia Médica</Label>
-                    </div>
-                    {nuevoServicio.medicalLeave && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="medicalLeaveStartDate">
-                            Fecha de Inicio
-                          </Label>
-                          <Input
-                            id="medicalLeaveStartDate"
-                            type="date"
-                            value={nuevoServicio.medicalLeaveStartDate}
-                            onChange={(e) =>
-                              setNuevoServicio({
-                                ...nuevoServicio,
-                                medicalLeaveStartDate: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="medicalLeaveEndDate">
-                            Fecha de Fin
-                          </Label>
-                          <Input
-                            id="medicalLeaveEndDate"
-                            type="date"
-                            value={nuevoServicio.medicalLeaveEndDate}
-                            onChange={(e) =>
-                              setNuevoServicio({
-                                ...nuevoServicio,
-                                medicalLeaveEndDate: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="medicalLeaveDays">
-                            Días de Licencia
-                          </Label>
-                          <Input
-                            id="medicalLeaveDays"
-                            type="number"
-                            value={nuevoServicio.medicalLeaveDays}
-                            onChange={(e) =>
-                              setNuevoServicio({
-                                ...nuevoServicio,
-                                medicalLeaveDays: Number.parseInt(
-                                  e.target.value
-                                ),
-                              })
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="leaveDescription">
-                            Descripción de la Licencia
-                          </Label>
-                          <Input
-                            id="leaveDescription"
-                            value={nuevoServicio.leaveDescription}
-                            onChange={(e) =>
-                              setNuevoServicio({
-                                ...nuevoServicio,
-                                leaveDescription: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                    )}
-                    <div>
-                      <Label htmlFor="newImages">Nuevas Imágenes</Label>
-                      {nuevoServicio.newImages.length > 0 && (
-                        <div className="mt-2 mb-4">
-                          <img
-                            src={
-                              nuevoServicio.newImages[0] || "/placeholder.svg"
-                            }
-                            alt="Imagen seleccionada"
-                            className="w-full max-w-xs h-auto"
-                          />
-                        </div>
-                      )}
-                      <Input
-                        id="newImages"
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const imageUrl = URL.createObjectURL(file);
-                            setNuevoServicio((prev) => ({
-                              ...prev,
-                              newImages: [imageUrl, ...prev.newImages],
-                            }));
-                          }
-                        }}
-                      />
-                    </div>
-                    {nuevoServicio.newImages.length > 0 && (
-                      <div className="mt-4">
-                        <Label htmlFor="additionalImages">
-                          Imágenes Adicionales
-                        </Label>
-                        <Input
-                          id="additionalImages"
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              const imageUrl = URL.createObjectURL(file);
-                              setNuevoServicio((prev) => ({
-                                ...prev,
-                                newImages: [...prev.newImages, imageUrl],
-                              }));
-                            }
-                          }}
-                        />
                       </div>
                     )}
                   </div>
@@ -633,26 +671,29 @@ export default function PacienteHistoria() {
           {servicios.map((servicio, index) => (
             <Card key={index} className="mb-4">
               <CardHeader>
-                <CardTitle>Servicio {servicio.serviceId}</CardTitle>
+                <CardTitle>Servicio/ Consulta {servicio.serviceId}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center space-x-2">
                     <User className="w-5 h-5 text-gray-500" />
                     <span>
-                      <strong>Personal:</strong> {servicio.staffId}
+                      <strong>Medico:</strong> {servicio.staffId}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <MapPin className="w-5 h-5 text-gray-500" />
                     <span>
-                      <strong>Sucursal:</strong> {servicio.branchId}
+                      <strong>Sucursal de Atencion:</strong> {servicio.branchId}
                     </span>
                   </div>
-                  <div className="col-span-2 flex items-start space-x-2">
+                                   <div className="col-span-2 flex items-start space-x-2">
                     <FileText className="w-5 h-5 text-gray-500 mt-1" />
                     <span>
-                      <strong>Descripción:</strong> {servicio.description}
+                      <strong>Descripción de la Consulta/ Servicio:</strong>
+                      <div className="mt-2 p-2 bg-gray-100 border border-gray-300 rounded">
+                        {servicio.description}
+                      </div>
                     </span>
                   </div>
                 </div>
@@ -702,17 +743,20 @@ export default function PacienteHistoria() {
                 )}
                 {servicio.newImages && servicio.newImages.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="font-semibold mb-2">Imágenes:</h4>
+                    <h4 className="font-semibold mb-2">Evidencia medica Fotografica:</h4>
                     <div className="flex items-center justify-center">
-                      <Carousel className="w-full max-w-xs">
-                        <CarouselContent>
+                      <Carousel className="w-full max-w-5xl">
+                        <CarouselContent className="-ml-1">
                           {servicio.newImages.map((image, imageIndex) => (
-                            <CarouselItem key={imageIndex}>
-                              <img
-                                src={image || "/placeholder.svg"}
-                                alt={`Imagen ${imageIndex + 1}`}
-                                className="w-full h-auto"
-                              />
+                            <CarouselItem key={imageIndex} className="pl-1 basis-1/3">
+                              <div className="p-1">
+                                <img
+                                  src={image || "/placeholder.svg"}
+                                  alt={`Imagen ${imageIndex + 1}`}
+                                  className="w-full h-48 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                                  onClick={() => setSelectedImage(image)}
+                                />
+                              </div>
                             </CarouselItem>
                           ))}
                         </CarouselContent>
@@ -732,32 +776,124 @@ export default function PacienteHistoria() {
         open={isPrescriptionModalOpen}
         onOpenChange={setIsPrescriptionModalOpen}
       >
-        <DialogContent>
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Receta Médica</DialogTitle>
           </DialogHeader>
           {selectedPrescription && (
-            <div className="space-y-4">
-              <h3 className="font-bold text-lg">
-                {selectedPrescription.prescriptionTitle}
-              </h3>
-              <p>{selectedPrescription.prescriptionDescription}</p>
-              <div className="space-y-2">
-                <h4 className="font-semibold">Medicamentos:</h4>
-                {selectedPrescription.prescriptionItems.map((item, index) => (
-                  <div key={index} className="flex justify-between">
-                    <span>{item.nombre}</span>
-                    <span>{item.dosis}</span>
-                    <span>{item.frecuencia}</span>
+            <div className="space-y-6 p-4">
+              <div className="grid grid-cols-2 gap-4 border-b pb-4">
+                <div className="flex items-start space-x-4">
+                  <img
+                    src="/logo-hospital.png"
+                    alt="Logo Hospital"
+                    className="w-16 h-16 object-contain"
+                  />
+                  <div>
+                    <h3 className="font-bold text-lg">Juan Pablo II</h3>
+                    <p className="text-sm text-gray-600">Av. Principal 123, Lima</p>
+                    <p className="text-sm text-gray-600">Tel: (01) 123-4567</p>
+                    <p className="text-sm text-gray-600">Email: contacto@juanpablo.com</p>
                   </div>
-                ))}
+                </div>
+                <div className="text-right">
+                  <h4 className="font-semibold">Médico Tratante</h4>
+                  <p className="text-sm">Dr. Alex Flores Valdez</p>
+                  <p className="text-sm text-gray-600">Especialidad: Dermatología</p>
+                  <p className="text-sm text-gray-600">CMP: 12345</p>
+                  <p className="text-sm text-gray-600">Código: DR001</p>
+                </div>
               </div>
-              <Button
-                onClick={() => handlePrintPrescription(selectedPrescription)}
-              >
-                <Printer className="w-4 h-4 mr-2" /> Imprimir Receta
-              </Button>
+
+              <div className="border-b pb-4">
+                <h4 className="font-semibold mb-2">Datos del Paciente</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm">
+                      <span className="font-medium">Nombre: </span>
+                      {paciente.nombre} {paciente.apellido}
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-medium">DNI: </span>
+                      {paciente.dni}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm">
+                      <span className="font-medium">Teléfono: </span>
+                      {paciente.telefono}
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-medium">Dirección: </span>
+                      {paciente.direccion}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Diagnóstico</h4>
+                  <p className="text-sm bg-gray-50 p-3 rounded">
+                    {selectedPrescription.prescriptionDescription}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-2">Medicamentos Recetados</h4>
+                  <div className="bg-gray-50 p-3 rounded">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-sm text-gray-600 border-b">
+                          <th className="text-left py-2">Medicamento</th>
+                          <th className="text-left py-2">Dosis</th>
+                          <th className="text-left py-2">Frecuencia</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedPrescription.prescriptionItems.map((item, index) => (
+                          <tr key={index} className="border-b last:border-0">
+                            <td className="py-2">{item.nombre}</td>
+                            <td className="py-2">{item.dosis}</td>
+                            <td className="py-2">{item.frecuencia}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-gray-600">
+                    Fecha de emisión: {new Date().toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button
+                  onClick={() => handlePrintPrescription(selectedPrescription)}
+                  className="w-full sm:w-auto"
+                >
+                  <Printer className="w-4 h-4 mr-2" /> Imprimir Receta
+                </Button>
+              </DialogFooter>
             </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Vista Detallada</DialogTitle>
+          </DialogHeader>
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Vista detallada"
+              className="w-full object-contain max-h-[70vh] rounded-lg"
+            />
           )}
         </DialogContent>
       </Dialog>

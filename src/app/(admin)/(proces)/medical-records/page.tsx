@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { RegistroPacienteModal } from './_components/RegistroPacienteModal';
-import { UserPlus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+/* import { UserPlus } from 'lucide-react';
+import { Button } from '@/components/ui/button'; */
 import { PacientesTable } from './_components/pacientes-table';
 
 
@@ -16,16 +16,16 @@ export default function PatientPage() {
       <div className="flex justify-between items-center">
       <div>
               <h2 className="text-2xl font-bold tracking-tight">
-              Pacientes
+              Procedimietos Médicos Activos
               </h2>
               <p className="text-muted-foreground">
-                Lista de pacientes registrados en el sistema.
+                Lista de todos los procedimientos médicos activos
               </p>
             </div>
-        <Button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2">
+{/*         <Button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2">
           <UserPlus className="w-5 h-5" />
           Registrar Paciente
-        </Button>
+        </Button> */}
       </div>
       <PacientesTable />
       <RegistroPacienteModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
