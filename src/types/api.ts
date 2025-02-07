@@ -5003,6 +5003,7 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
+        Event: Record<string, never>;
         CreateEventDto: {
             /**
              * @description Título del evento
@@ -12583,6 +12584,49 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_findEventsByFilter: {
+        parameters: {
+            query?: {
+                /** @description ID del personal para filtrar eventos */
+                staffId?: string;
+                /** @description Tipo del evento (TURNO, CITA, OTRO) */
+                type?: "TURNO" | "CITA" | "OTRO";
+                /** @description ID de la sucursal para filtrar eventos */
+                branchId?: string;
+                /** @description Estado del evento (PENDING, CONFIRMED, CANCELLED, COMPLETED, NO_SHOW) */
+                status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de eventos filtrados */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
