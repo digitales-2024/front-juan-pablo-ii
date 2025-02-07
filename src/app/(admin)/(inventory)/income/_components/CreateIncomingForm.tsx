@@ -18,13 +18,14 @@ import { Option } from "@/types/statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
 import { METADATA } from "../_statics/metadata";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { CreateIncomeInput } from "../_interfaces/income.interface";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SelectProductDialog } from "./Movements/FormComponents/SelectMovementDialog";
 import { Button } from "@/components/ui/button";
+import { useSelectedProducts, useSelectProductDispatch } from "../_hooks/useSelectProducts";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -55,7 +56,7 @@ export function CreateIncomingForm({
   form,
   onSubmit,
 }: CreateProductFormProps) {
-  const { register, control } = form;
+  const { register, control, watch } = form;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "movement",
@@ -63,8 +64,38 @@ export function CreateIncomingForm({
       minLength: 1
     }
   });
+  const watchFieldArray = watch("movement");
+  const controlledFields = fields.map((field, index) => {
+    return {
+      ...field,
+      ...watchFieldArray[index]
+    };
+  });
   // const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
   // const [productOptions, setproductOptions] = useState<Option[]>([]);
+  const { activeStoragesQuery: responseStorage } = useStorages();
+  const { activeProductsQuery: reponseProducts } = useProducts();
+  const selectedProducts = useSelectedProducts();
+  const dispatch = useSelectProductDispatch();
+
+  const syncProducts = useCallback(() => {
+    // Limpiar fields existentes
+    remove();
+    
+    // Agregar nuevos productos
+    selectedProducts.forEach(product => {
+      append({
+        productId: product.id,
+        quantity: 1,
+      });
+    });
+  }, [selectedProducts, append, remove]);
+
+  useEffect(() => {
+    syncProducts();
+  }, [syncProducts]);
+
+  const FORMSTATICS = useMemo(() => STATIC_FORM, []);
   const STATEPROP_OPTIONS = useMemo(() => {
     return [
       {
@@ -77,9 +108,6 @@ export function CreateIncomingForm({
       },
     ];
   }, []);
-  const { activeStoragesQuery: responseStorage } = useStorages();
-  const { activeProductsQuery: reponseProducts } = useProducts();
-  const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
   if (responseStorage.isLoading && reponseProducts.isLoading) {
     return <LoadingDialogForm />;
@@ -136,10 +164,23 @@ export function CreateIncomingForm({
     );
   }
 
+
   const storageOptions: Option[] = responseStorage.data.map((category) => ({
     label: category.name,
     value: category.id,
   }));
+
+  const handleRemoveProduct = (index: number) => {
+    dispatch(
+      {
+        type: "remove",
+        payload: {
+          productId: fields[index].productId
+        }
+      }
+    )
+    remove(index);
+  }
 
   // const productOptions: Option[] = reponseProducts.data.map((typeProduct) => ({
   //   label: typeProduct.name,
@@ -159,6 +200,36 @@ export function CreateIncomingForm({
   // date
   // state
   // }
+
+  // function totalCal(results) {
+  //   let totalValue = 0
+  
+  //   for (const key in results) {
+  //     for (const value in results[key]) {
+  //       if (typeof results[key][value] === "string") {
+  //         const output = parseInt(results[key][value], 10)
+  //         totalValue = totalValue + (Number.isNaN(output) ? 0 : output)
+  //       } else {
+  //         totalValue = totalValue + totalCal(results[key][value], totalValue)
+  //       }
+  //     }
+  //   }
+  
+  //   return totalValue
+  // }
+  
+  // const Calc = ({ control, setValue }) => {
+  //   const results = useWatch({ control, name: "test" })
+  //   const output = totalCal(results)
+  
+  //   // isolated re-render to calc the result with Field Array
+  //   console.log(results)
+  
+  //   setValue("total", output)
+  
+  //   return <p>{output}</p>
+  // }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -205,22 +276,44 @@ export function CreateIncomingForm({
               required={true}
             ></CustomFormDescription>
           </div>
+          <div>
+            {
+              selectedProducts.map((product) => {
+                // const data = selectedProducts.find((p) => p.id === product.id);
+                return <div key={product.id} className="flex gap-4">
+                  <span>{product.name}</span>
+                  <span>{product.precio.toLocaleString(
+                    "es-PE",
+                    {
+                      style: "currency",
+                      currency: "PEN"
+                    }
+                  )}</span>
+                </div>
+              })
+            }
+          </div>
           <div className="col-span-2">
-            {fields.map((field, index) => (
-              <div key={field.id} className="flex gap-4 mb-4">
+            {controlledFields.map((field, index) => {
+              const data = selectedProducts.find((p) => p.id === field.productId);
+              return <div key={field.id} className="flex gap-4 mb-4">
                 <FormItem>
-                  <FormLabel>Producto</FormLabel>
+                  {/* <FormLabel>Producto</FormLabel> */}
+                  <div>
+                    <FormLabel>Nombre</FormLabel>
+                    <span>{data?.name}</span>
+                  </div>
                   <Input
                     disabled
-                    {...register(`movement.${index}.productId`)}
-                    type="text"
+                    {...register(`movement.${index}.productId` as const)}
+                    type="hidden"
                   />
                   <FormMessage />
                 </FormItem>
                 <FormItem>
                   <FormLabel>Cantidad</FormLabel>
                   <Input
-                    {...register(`movement.${index}.quantity`, {
+                    {...register(`movement.${index}.quantity` as const, {
                       valueAsNumber: true
                     })}
                     type="number"
@@ -229,24 +322,35 @@ export function CreateIncomingForm({
                 </FormItem>
                 <div>
                   <FormLabel>Precio</FormLabel>
-                  <span>{}</span>
+                  <span>{data?.precio.toLocaleString("es-PE",
+                    {
+                      style: "currency",
+                      currency: "PEN"
+                    })}</span>
                 </div>
                 <div>
                   <FormLabel>Total</FormLabel>
-                  <span>{}</span>
+                  <span>{
+                    isNaN(data!.precio * watchFieldArray[index].quantity) ? "S/ 0.00" : (data!.precio * watchFieldArray[index].quantity).toLocaleString("es-PE",
+                                          {
+                                            style: "currency",
+                                            currency: "PEN"
+                                          })
+                    }
+                  </span>
                 </div>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => remove(index)}
+                  onClick={()=>handleRemoveProduct(index)}
                 >
                   Eliminar
                 </Button>
               </div>
-            ))}
+            })}
             
-            <Button
+            {/* <Button
               type="button"
               onClick={() => append({ 
                 productId: '', 
@@ -254,7 +358,7 @@ export function CreateIncomingForm({
               })}
             >
               Agregar Movimiento
-            </Button>
+            </Button> */}
           </div>
 
           {/* Estado */}
