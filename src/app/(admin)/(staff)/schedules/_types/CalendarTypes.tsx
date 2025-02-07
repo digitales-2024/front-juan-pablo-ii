@@ -50,6 +50,6 @@ export interface CalendarEvent {
 	createdAt: Date;
 	updatedAt: Date;
 }
-
-export const calendarModes = ["dia", "semana", "mes"] as const;
+//TODO: Cambiar a "dia", "semana", "mes"
+export const calendarModes = ["mes"] as const;
 export type Mode = (typeof calendarModes)[number];

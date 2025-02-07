@@ -28,15 +28,15 @@ import { useEvents, type EventFilterParams } from "../_hooks/useEvents";
 
 // Definir tipo explícito para los filtros
 const filters: EventFilterParams = {
-	staffId: "e474ce76-090e-4e21-9355-6fa867da716a",
+	staffId: "86438925-75c1-4239-ac91-15004527fe5a",
 	type: "TURNO",
-	branchId: "d7b0f2a1-809f-419d-9f66-98b7ed8812fb",
+	branchId: "5ed6ea70-3419-4c70-a761-0067b440b753",
 	status: "CONFIRMED",
 };
 
 export default function CalendarConsultations() {
 	const [mode, setMode] = useState<Mode>("mes");
-	const [date, setDate] = useState<Date>(new Date("2025-01-01"));
+	const [date, setDate] = useState<Date>(new Date("2025-02-07"));
 	
 	const { eventsQuery: { data: events, isLoading, error } } = useEvents(filters);
 
