@@ -17,14 +17,14 @@ export type CalendarContextType = CalendarProps & {
 	setSelectedEvent: (event: CalendarEvent | null) => void;
 };
 
-type ColorType = "blue" | "indigo" | "pink" | "red" | "orange" | "amber" | "emerald" | "sky";
+export type ColorType = "blue" | "indigo" | "pink" | "red" | "orange" | "amber" | "emerald" | "sky";
 
-export type CalendarEvent = {
+export interface CalendarEvent {
 	id: string;
 	title: string;
 	start: Date;
 	end: Date;
-	color: ColorType;
+	color?: string;
 	staff: {
 		name: string;
 		lastName: string;
@@ -33,19 +33,23 @@ export type CalendarEvent = {
 		name: string;
 	  };
 	type: "TURNO" | "CITA" | "OTRO";
-	status: "CONFIRMED" | "PENDING" | "CANCELLED" | string;
+	status: "CONFIRMED" | "PENDING" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
 	isActive: boolean;
 	isCancelled: boolean;
 	isBaseEvent: boolean;
 	branchId: string;
 	staffId: string;
 	staffScheduleId: string;
-	recurrence?: string | null;
+	recurrence: {
+		frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+		interval: number;
+		until: string;
+	};
 	exceptionDates?: Date[];
 	cancellationReason?: string | null;
 	createdAt: Date;
 	updatedAt: Date;
-};
-
-export const calendarModes = ["dia", "semana", "mes"] as const;
+}
+//TODO: Cambiar a "dia", "semana", "mes"
+export const calendarModes = ["mes"] as const;
 export type Mode = (typeof calendarModes)[number];

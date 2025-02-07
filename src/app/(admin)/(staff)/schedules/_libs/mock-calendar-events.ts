@@ -86,12 +86,12 @@ export function generateMockEvents(): CalendarEvent[] {
 			}
 		},
 		{
-			id: "af468340-5776-4535-a245-b6caa8070469",
+			id: "4af39ec7-06fa-4449-9f08-bb69d4a52899",
 			title: "HORARIO B",
 			type: "TURNO",
-			start: new Date("2025-02-17T09:00:00"),
-			end: new Date("2025-02-17T18:00:00"),
-			color: "emerald",
+			start: new Date("2025-02-19T09:00:00"),
+			end: new Date("2025-02-19T18:00:00"),
+			color: "sky",
 			status: "CONFIRMED",
 			isActive: true,
 			isCancelled: false,
@@ -102,16 +102,15 @@ export function generateMockEvents(): CalendarEvent[] {
 			staffScheduleId: "41fe1608-97d5-4b0a-ba84-6ac8f42d69db",
 			staffId: "e474ce76-090e-4e21-9355-6fa867da716a",
 			branchId: "d7b0f2a1-809f-419d-9f66-98b7ed8812fb",
-			createdAt: new Date("2025-02-06T10:48:47"),
-			updatedAt: new Date("2025-02-06T10:48:47"),
+			createdAt: new Date("2025-02-06T16:28:26"),
+			updatedAt: new Date("2025-02-06T16:28:26"),
 			staff: {
-				name: "Juan",
-				lastName: "Pérez"
+				name: "josueeryyaaaa",
+				lastName: "medina"
 			},
 			branch: {
-				name: "Sucursal Central"
+				name: "sede 1"
 			}
-		},
-		
+		}
 	];
 }

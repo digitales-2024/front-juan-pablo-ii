@@ -5003,7 +5003,7 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
-        EventResponseDto: Record<string, never>;
+        Event: Record<string, never>;
         CreateEventDto: {
             /**
              * @description Título del evento
@@ -5049,7 +5049,6 @@ export interface components {
              */
             branchId: string;
         };
-        Event: Record<string, never>;
         UpdateEventDto: {
             /**
              * @description Título del evento
@@ -12627,7 +12626,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EventResponseDto"][];
+                    "application/json": components["schemas"]["Event"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */

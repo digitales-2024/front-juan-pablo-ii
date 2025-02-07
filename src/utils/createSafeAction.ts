@@ -28,11 +28,11 @@ export async function createSafeAction<TInput, TOutput>(
   handler: (validatedData: TInput) => Promise<ActionResponse<TOutput>>
 ) {
   return async (data: TInput): Promise<ActionResponse<TOutput>> => {
-    // Validamos los datos de entrada usando el schema de Zod
+    console.log("🔒 Validando datos con Zod:", data);
     const validationResult = schema.safeParse(data);
 
-    // Si la validación falla, devolvemos los errores de validación
     if (!validationResult.success) {
+      console.error("❌ Validación fallida:", validationResult.error.flatten());
       const fieldErrors = validationResult.error.flatten().fieldErrors;
       return {
         validationErrors: Object.fromEntries(
@@ -42,9 +42,10 @@ export async function createSafeAction<TInput, TOutput>(
     }
 
     try {
-      // Si la validación es exitosa, ejecutamos el handler con los datos validados
+      console.log("🚀 Ejecutando handler con datos validados");
       return await handler(validationResult.data);
     } catch (error) {
+      console.error("💥 Error no manejado en createSafeAction:", error);
       console.log(error);
 
       // Capturamos cualquier error no manejado y devolvemos un mensaje genérico

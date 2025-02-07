@@ -21,6 +21,8 @@ import { format } from "date-fns";
 import { useCalendarContext } from "../CalendarContext";
 import { DateTimePicker } from "../../form/DateTimePicker";
 import { ColorPicker } from "../../form/ColorPicker";
+import { CalendarEvent } from "../../../_types/CalendarTypes";
+import { ColorType } from "../../../_types/CalendarTypes";
 
 const formSchema = z
 	.object({
@@ -61,12 +63,34 @@ export default function CalendarNewEventDialog() {
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		const newEvent = {
+		const newEvent: CalendarEvent = {
 			id: crypto.randomUUID(),
 			title: values.title,
 			start: new Date(values.start),
 			end: new Date(values.end),
-			color: values.color,
+			color: values.color as ColorType,
+			type: "CITA" as const,
+			status: "CONFIRMED" as const,
+			staff: {
+				name: "Staff Temporal",
+				lastName: ""
+			},
+			branch: {
+				name: "Sucursal Temporal"
+			},
+			recurrence: {
+				frequency: "DAILY",
+				interval: 1,
+				until: "2025-01-01"
+			},
+			isActive: true,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			isCancelled: false,
+			isBaseEvent: false,
+			branchId: "temp-branch-id",
+			staffId: "temp-staff-id",
+			staffScheduleId: "temp-schedule-id"
 		};
 
 		setEvents([...events, newEvent]);
