@@ -2320,6 +2320,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/events/filter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos filtrados */
+        get: operations["EventController_findEventsByFilter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/events": {
         parameters: {
             query?: never;
@@ -4988,6 +5005,7 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
+        Event: Record<string, never>;
         CreateEventDto: {
             /**
              * @description Título del evento
@@ -5033,7 +5051,6 @@ export interface components {
              */
             branchId: string;
         };
-        Event: Record<string, never>;
         UpdateEventDto: {
             /**
              * @description Título del evento
@@ -5321,7 +5338,6 @@ export interface components {
              */
             dni: string;
             /**
-             * Format: date-time
              * @description Fecha de nacimiento del paciente
              * @example 1990-01-01
              */
@@ -5407,7 +5423,6 @@ export interface components {
             name: string;
             lastName: string;
             dni: string;
-            /** Format: date-time */
             birthDate: string;
             gender: string;
             address: string;
@@ -5443,7 +5458,6 @@ export interface components {
              */
             dni?: string;
             /**
-             * Format: date-time
              * @description Fecha de nacimiento del paciente
              * @example 1990-01-01
              */
@@ -12572,6 +12586,49 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_findEventsByFilter: {
+        parameters: {
+            query?: {
+                /** @description ID del personal para filtrar eventos */
+                staffId?: string;
+                /** @description Tipo del evento (TURNO, CITA, OTRO) */
+                type?: "TURNO" | "CITA" | "OTRO";
+                /** @description ID de la sucursal para filtrar eventos */
+                branchId?: string;
+                /** @description Estado del evento (PENDING, CONFIRMED, CANCELLED, COMPLETED, NO_SHOW) */
+                status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de eventos filtrados */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
