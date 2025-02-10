@@ -89,14 +89,14 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Pacientes",
-              url: "/patients",
+              url: "/patient",
               icon: UserPlus,
             },
-            {
+/*             {
               title: "Clientes",
               url: "/clients",
               icon: UserRound,
-            },
+            }, */
             {
               title: "Historias Clinicas",
               url: "/medical-records",
@@ -193,14 +193,16 @@ export const sidebarData: SidebarData = {
             },
             {
               title: "Cronograma",
-              url: "/timetable",
+              url: "/schedules",
               icon: CalendarRange,
             },
             {
               title: "Turnos",
-              url: "/schedules",
+              url: "/staff-schedules",
               icon: Clock,
             },
+            
+           
           ],
         },
       ],
@@ -223,7 +225,7 @@ export const sidebarData: SidebarData = {
               icon: Tag,
             },
             {
-              title: "Tipos",
+              title: "Subcategorías",
               url: "/product/product-types",
               icon: Boxes,
             },

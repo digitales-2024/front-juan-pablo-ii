@@ -1,0 +1,208 @@
+"use client";
+import { useEffect, useState, useTransition } from "react";
+import { FieldErrors, useForm, UseFormReturn } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CreateIncomeInput, createIncomeSchema} from "../_interfaces/income.interface";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Plus, RefreshCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CreateIncomingForm } from "./CreateIncomingForm";
+import { useIncoming } from "../_hooks/useIncoming";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { METADATA } from "../_statics/metadata";
+
+const CREATE_INCOMING_MESSAGES = {
+  button: "Crear entrada",
+  title: "Registrar nueva entrada",
+  description: "Rellena los campos para crear una nueva entrada",
+  success: "Entrada creada exitosamente",
+  submitButton: "Crear entrada",
+  cancel: "Cancelar",
+} as const;
+
+export function CreateIncomingDialog() {
+  const [open, setOpen] = useState(false);
+  const [isCreatePending, startCreateTransition] = useTransition();
+  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const { createMutation } = useIncoming();
+
+  // name: string;
+  // storageId: string;
+  // date: string;
+  // state: string;
+  // description?: string | undefined;
+  // referenceId?: string | undefined;
+
+  const form = useForm<CreateIncomeInput>({
+    resolver: zodResolver(createIncomeSchema, undefined, {
+      raw: true,
+    }),
+    defaultValues: {
+      name: "",
+      storageId: "",
+      date: "",
+      state: "false",
+      description: "",
+      referenceId: "",
+    },
+  });
+
+  function handleSubmit(input: CreateIncomeInput) {
+    console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
+    if (createMutation.isPending || isCreatePending) return;
+
+    startCreateTransition(() => {
+      createMutation.mutate(input, {
+        onSuccess: () => {
+          setOpen(false);
+          form.reset();
+        },
+        onError: (error) => {
+          console.error(`Error al crear ${METADATA.entityName.toLowerCase()}:`, error);
+          if (error.message.includes("No autorizado")) {
+            setTimeout(() => {
+              form.reset();
+            }, 1000);
+          }
+        },
+      });
+    });
+  }
+
+  const handleClose = () => {
+    form.reset();
+    setOpen(false);
+  };
+
+  //ACtivate only when form errors
+  // useEffect(() => {
+  //   if (form.formState.errors) {
+  //     console.log("Errores en el formulario", form.formState.errors);
+  //   }
+  // }, [form.formState.errors]);
+
+  const DialogFooterContent = () => (
+    <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
+      <Button 
+        type="submit" 
+        disabled={isCreatePending || createMutation.isPending}
+        className="w-full"
+      >
+        {(isCreatePending || createMutation.isPending) && (
+          <RefreshCcw
+            className="mr-2 size-4 animate-spin"
+            aria-hidden="true"
+          />
+        )}
+        {CREATE_INCOMING_MESSAGES.submitButton}
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={handleClose}
+      >
+        {CREATE_INCOMING_MESSAGES.cancel}
+      </Button>
+    </div>
+  );
+
+  const TriggerButton = () => (
+    <Button 
+      onClick={() => setOpen(true)}
+      variant="outline" 
+      size="sm"
+    >
+      <Plus className="size-4 mr-2" aria-hidden="true" />
+      {CREATE_INCOMING_MESSAGES.button}
+    </Button>
+  );
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <TriggerButton />
+        </DialogTrigger>
+        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)]">
+          <DialogHeader>
+            <DialogTitle>{CREATE_INCOMING_MESSAGES.title}</DialogTitle>
+            <DialogDescription>
+              {CREATE_INCOMING_MESSAGES.description}
+            </DialogDescription>
+          </DialogHeader>
+          <CreateIncomingForm form={form} onSubmit={handleSubmit}>
+            <DevelopmentZodError form={form} />
+            <DialogFooter>
+              <DialogFooterContent />
+            </DialogFooter>
+          </CreateIncomingForm>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <TriggerButton />
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>{CREATE_INCOMING_MESSAGES.title}</DrawerTitle>
+          <DrawerDescription>
+            {CREATE_INCOMING_MESSAGES.description}
+          </DrawerDescription>
+        </DrawerHeader>
+        <CreateIncomingForm form={form} onSubmit={handleSubmit}>
+          <DevelopmentZodError form={form} />
+          <DrawerFooter>
+            <DialogFooterContent />
+          </DrawerFooter>
+        </CreateIncomingForm>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+
+function DevelopmentZodError({ form }: { form: UseFormReturn<CreateIncomeInput> }) {
+  console.log('Ingresando a DevelopmentZodError', process.env.NEXT_PUBLIC_ENV);
+  if (process.env.NEXT_PUBLIC_ENV !== "development") return null;
+  const [errors, setErrors] = useState<FieldErrors<CreateIncomeInput>>({});
+  useEffect(() => {
+    if (form.formState.errors) {
+      setErrors(form.formState.errors);
+    }
+  }, [form.formState.errors]);
+  return  (
+    <div>
+      <div>
+        {
+          Object.keys(errors).map((key) => (
+            <p key={key}>
+              {key}: {errors[key as keyof CreateIncomeInput]?.message}
+            </p>
+          ))
+        }
+      </div>
+    </div>
+  )
+}

@@ -71,7 +71,7 @@ export const FORMSTATICS: FormStatics<CreateProductInput> = {
         required: false,
         label: "Unidad de medida",
         type: "text",
-        placeholder: "Unidad de medida (ml, kg, caja, etc.)",
+        placeholder: "Unidad de medida (kg, caja, blister, unidad, etc.)",
         name: "unidadMedida",
         defaultValue: "",
     },
@@ -190,7 +190,7 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateProductInput> = {
         label: "Unidad de medida",
         defaultValue: "",
         type: "text",
-        placeholder: "Unidad de medida (ml, kg, caja, etc.)",
+        placeholder: "Unidad de medida (kg, caja, blister, unidad, etc.)",
         name: "unidadMedida",
     },
     proveedor: {

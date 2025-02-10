@@ -8,7 +8,8 @@ import {
   getDetailedStorages,
   getStorageById,
   StorageResponse,
-  getActiveStorages
+  getActiveStorages,
+  getDetailedStorageById
 } from "../_actions/storages.actions";
 import { toast } from "sonner";
 import {
@@ -108,11 +109,15 @@ export const useStorages = () => {
       // Retornamos directamente la respuesta ya que viene en el formato correcto
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
+      const detailedStorage = await getDetailedStorageById(res.data.id);
+        if ("error" in detailedStorage) {
+          throw new Error(detailedStorage.error);
+        }
       queryClient.setQueryData<DetailedStorage[] | undefined>(
         ["detailed-storages"], (oldStorages) => {
-          if (!oldStorages) return [res.data as DetailedStorage];
-          return [...oldStorages, res.data as DetailedStorage];
+          if (!oldStorages) return detailedStorage;
+          return [...oldStorages, ...detailedStorage];
       });
       toast.success(res.message);
     },
@@ -130,11 +135,16 @@ export const useStorages = () => {
       }
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: async(res) => {
+      //Actualiza los datos con las relaciones que tenga
+      const detailedStorage = await getDetailedStorageById(res.data.id);
+        if ("error" in detailedStorage) {
+          throw new Error(detailedStorage.error);
+        }
       queryClient.setQueryData<DetailedStorage[] | undefined>(["detailed-storages"], (oldStorages) => {
         if (!oldStorages) return undefined;
         return oldStorages.map((storage) =>
-          storage.id === res.data.id ? {...storage, ...res.data} : storage
+          storage.id === res.data.id ? {...storage, ...detailedStorage[0]} : storage
         );
       });
       toast.success("Almacén actualizado exitosamente");

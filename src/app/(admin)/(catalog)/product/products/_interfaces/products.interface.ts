@@ -7,6 +7,23 @@ export type DetailedProduct = components['schemas']['ProductWithRelations'];
 export type CreateProductDto = components['schemas']['CreateProductDto'];
 export type UpdateProductDto = components['schemas']['UpdateProductDto'];
 export type DeleteProductDto = components['schemas']['DeleteProductDto'];
+export type ActiveProductPrototype = components['schemas']['ActiveProduct'];
+export type ActiveProductCategory = components['schemas']['ActiveProductCategory'];
+export type ActiveProductType = components['schemas']['ActiveProductTypeProduct'];
+//Es necesario crear tipos explicitos para tipos anidados autogenerados para evitar errores de compilación y errores en tiempo de ejecución
+export type ActiveProduct = {
+  id: string;
+  name: string;
+  precio: number;
+  categoriaId: string;
+  tipoProductoId: string;
+  codigoProducto: string;
+  unidadMedida: string;
+  categoria: ActiveProductCategory;
+  tipoProducto: ActiveProductType;
+}
+
+
 
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateProductDto = DeleteProductDto;

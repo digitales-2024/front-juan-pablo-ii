@@ -9,7 +9,7 @@ import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
 
 export default function PageBranches() {
-  const {typeStoragesQuery: response} = useTypeStorages();
+  const {detailedTypeStoragesQuery: response} = useTypeStorages();
 
   if (response.isLoading) {
     return <LoadingCategories />;
