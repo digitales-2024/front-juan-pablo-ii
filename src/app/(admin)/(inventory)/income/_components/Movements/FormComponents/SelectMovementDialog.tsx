@@ -27,7 +27,7 @@ import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from './SelectProductTableColumns';
 
 const CREATE_PRODUCT_MESSAGES = {
-    button: "Seleccionar producto(s)",
+    button: "Añadir producto(s)",
     title: "Seleccionar productos para lista de movimientos",
     description: "Selecciona uno o varios productos para añadir a la lista de movimientos.",
     success: "Productos guardados exitosamente",

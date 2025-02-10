@@ -17,7 +17,7 @@ import {
 } from "../_interfaces/income.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
-interface UpdateProductVariables {
+interface UpdateIncomingVariables {
   id: string;
   data: UpdateIncomingDto;
 }
@@ -25,7 +25,7 @@ interface UpdateProductVariables {
 export const useIncoming = () => {
   const queryClient = useQueryClient();
 
-  // Query para obtener los productos
+  // Query para obtener los ingresos detallados
   const detailedIncomingsQuery = useQuery({
     queryKey: ["detailed-incomings"],
     queryFn: async () => {
@@ -42,6 +42,7 @@ export const useIncoming = () => {
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
+  // Query para obtener los ingresos
   const incomingsQuery = useQuery({
     queryKey: ["incomings"],
     queryFn: async () => {
@@ -58,53 +59,28 @@ export const useIncoming = () => {
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
-  // const oneProductQuery = useQuery({
-  //   queryKey: ["product", "some-product-id"], // replace "some-product-id" with the actual product id
-  //   queryFn: async ({ queryKey }) => {
-  //     const [, id] = queryKey;
-  //     try {
-  //       const response: ProductResponse = await getProductById(id);
-  //       if (!response) {
-  //         throw new Error("No se recibió respuesta del servidor");
-  //       }
-  //       if ("error" in response) {
-  //         throw new Error(response.error);
-  //       }
-  //       if ("data" in response) {
-  //         return response.data;
-  //       }
-  //     } catch (error) {
-  //       if (error instanceof Error) return { error: error.message };
-  //       return { error: "Error desconocido" };
-  //     }
-  //   },
-  //   staleTime: 1000 * 60 * 5, // 5 minutos
-  // });
-
-  // Mutación para crear producto
+  // Mutación para crear ingreso
   const createMutation = useMutation<
-    {data: Omit<CreateIncomingDto, "movement" | "state">&{state:string}, message: string},
+    BaseApiResponse<DetailedIncoming>,
     Error,
-    Omit<CreateIncomingDto, "movement" | "state">&{state:string}
+    CreateIncomingDto
   >({
     mutationFn: async (data) => {
-      return new Promise<{ data: Omit<CreateIncomingDto, "movement" | "state">&{state:string}; message: string }>((resolve) => {
-        setTimeout(() => {
-          resolve({
-            data,
-            message: "Producto creado exitosamente",
-          });
-        }, 2000);
-      });
+      const response = await createIncoming(data);
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      // Retornamos directamente la respuesta ya que viene en el formato correcto
+      return response;
     },
     onSuccess: (res) => {
-      // queryClient.setQueryData<DetailedIncoming[] | undefined>(
-      //   ["detailed-products"],
-      //   (oldProducts) => {
-      //     if (!oldProducts) return [res.data];
-      //     return [...oldProducts, res.data];
-      //   }
-      // );
+      queryClient.setQueryData<DetailedIncoming[] | undefined>(
+        ["detailed-incomings"],
+        (oldIncomings) => {
+          if (!oldIncomings) return [res.data];
+          return [...oldIncomings, res.data];
+        }
+      );
       toast.success(res.message);
     },
     onError: (error) => {
@@ -112,40 +88,11 @@ export const useIncoming = () => {
     },
   });
 
-  // Mutación para crear producto
-  const originalCreateMutation = useMutation<
-  BaseApiResponse<DetailedIncoming>,
-  Error,
-  CreateIncomingDto
->({
-  mutationFn: async (data) => {
-    const response = await createIncoming(data);
-    if ("error" in response) {
-      throw new Error(response.error);
-    }
-    // Retornamos directamente la respuesta ya que viene en el formato correcto
-    return response;
-  },
-  onSuccess: (res) => {
-    queryClient.setQueryData<DetailedIncoming[] | undefined>(
-      ["detailed-products"],
-      (oldProducts) => {
-        if (!oldProducts) return [res.data];
-        return [...oldProducts, res.data];
-      }
-    );
-    toast.success(res.message);
-  },
-  onError: (error) => {
-    toast.error(error.message);
-  },
-});
-
-  // Mutación para actualizar producto
+  // Mutación para actualizar ingreso
   const updateMutation = useMutation<
     BaseApiResponse<DetailedIncoming>,
     Error,
-    UpdateProductVariables
+    UpdateIncomingVariables
   >({
     mutationFn: async ({ id, data }) => {
       const response = await updateIncoming(id, data);
@@ -156,15 +103,15 @@ export const useIncoming = () => {
     },
     onSuccess: (res) => {
       queryClient.setQueryData<DetailedIncoming[] | undefined>(
-        ["detailed-products"],
-        (oldProducts) => {
-          if (!oldProducts) return undefined;
-          return oldProducts.map((product) =>
-            product.id === res.data.id ? { ...product, ...res.data } : product
+        ["detailed-incomings"],
+        (oldIncomings) => {
+          if (!oldIncomings) return undefined;
+          return oldIncomings.map((incoming) =>
+            incoming.id === res.data.id ? { ...incoming, ...res.data } : incoming
           );
         }
       );
-      toast.success("Producto actualizado exitosamente");
+      toast.success("Ingreso actualizado exitosamente");
     },
     onError: (error) => {
       if (
@@ -173,12 +120,12 @@ export const useIncoming = () => {
       ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
-        toast.error(error.message || "Error al actualizar el producto");
+        toast.error(error.message || "Error al actualizar el ingreso");
       }
     },
   });
 
-  // Mutación para eliminar productos
+  // Mutación para eliminar ingresos
   const deleteMutation = useMutation<
     ListUpdatedDetailedIncomingResponse,
     Error,
@@ -193,44 +140,40 @@ export const useIncoming = () => {
     },
     onSuccess: (res, variables) => {
       queryClient.setQueryData<DetailedIncoming[]>(
-        ["detailed-products"],
-        (oldProducts) => {
-          console.log("🔄 Cache actual:", oldProducts);
-          if (!oldProducts) {
-            console.log("⚠️ No hay productos en caché");
+        ["detailed-incomings"],
+        (oldIncomings) => {
+          if (!oldIncomings) {
             return [];
           }
-          const updatedProducts = oldProducts.map((product) => {
-            if (variables.ids.includes(product.id)) {
-              return { ...product, isActive: false };
+          const updatedIncomings = oldIncomings.map((incoming) => {
+            if (variables.ids.includes(incoming.id)) {
+              return { ...incoming, isActive: false };
             }
-            return product;
+            return incoming;
           });
-          console.log("📦 Nueva caché:", updatedProducts);
-          return updatedProducts;
+          return updatedIncomings;
         }
       );
 
       toast.success(
         variables.ids.length === 1
-          ? "Producto desactivado exitosamente"
-          : "Productos desactivados exitosamente"
+          ? "Ingreso desactivado exitosamente"
+          : "Ingresos desactivados exitosamente"
       );
     },
     onError: (error) => {
-      console.error("💥 Error en la mutación:", error);
       if (
         error.message.includes("No autorizado") ||
         error.message.includes("Unauthorized")
       ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
-        toast.error(error.message || "Error al desactivar el/los producto(s)");
+        toast.error(error.message || "Error al desactivar el/los ingreso(s)");
       }
     },
   });
 
-  // Mutación para reactivar productos
+  // Mutación para reactivar ingresos
   const reactivateMutation = useMutation<
     ListUpdatedDetailedIncomingResponse,
     Error,
@@ -245,25 +188,25 @@ export const useIncoming = () => {
     },
     onSuccess: (res, variables) => {
       queryClient.setQueryData<DetailedIncoming[]>(
-        ["detailed-products"],
-        (oldProducts) => {
-          if (!oldProducts) {
+        ["detailed-incomings"],
+        (oldIncomings) => {
+          if (!oldIncomings) {
             return [];
           }
-          const updatedProducts = oldProducts.map((product) => {
-            if (variables.ids.includes(product.id)) {
-              return { ...product, isActive: true };
+          const updatedIncomings = oldIncomings.map((incoming) => {
+            if (variables.ids.includes(incoming.id)) {
+              return { ...incoming, isActive: true };
             }
-            return product;
+            return incoming;
           });
-          return updatedProducts;
+          return updatedIncomings;
         }
       );
 
       toast.success(
         variables.ids.length === 1
-          ? "Producto reactivado exitosamente"
-          : "Productos reactivados exitosamente"
+          ? "Ingreso reactivado exitosamente"
+          : "Ingresos reactivados exitosamente"
       );
     },
     onError: (error) => {
@@ -273,7 +216,7 @@ export const useIncoming = () => {
       ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
-        toast.error(error.message || "Error al reactivar el/los producto(s)");
+        toast.error(error.message || "Error al reactivar el/los ingreso(s)");
       }
     },
   });
@@ -281,9 +224,6 @@ export const useIncoming = () => {
   return {
     detailedIncomingsQuery,
     incomingsQuery,
-    originalCreateMutation,
-    // products: productsQuery.data,
-    // oneProductQuery,
     createMutation,
     updateMutation,
     deleteMutation,

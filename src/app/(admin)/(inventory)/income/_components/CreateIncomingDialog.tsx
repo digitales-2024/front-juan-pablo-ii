@@ -52,21 +52,42 @@ export function CreateIncomingDialog() {
 
   const form = useForm<CreateIncomeInput>({
     resolver: zodResolver(createIncomeSchema, undefined, {
-      raw: true,
+      raw: true, //to be able to use useFIeldArray
     }),
     defaultValues: {
       name: "",
       storageId: "",
       date: "",
-      state: "false",
+      //state: "false",
+      state: false,
       description: "",
       referenceId: "",
     },
   });
 
   function handleSubmit(input: CreateIncomeInput) {
+    console.log('Input received', input);
     console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
     if (createMutation.isPending || isCreatePending) return;
+
+  //   {
+  //     "name": "INgreso regulacion",
+  //     "storageId": "61de3a1b-9538-48a0-8cdc-62edafcef760",
+  //     "date": "2025-02-11",
+  //     "state": true,
+  //     "description": "",
+  //     "referenceId": "",
+  //     "movement": [
+  //         {
+  //             "productId": "4d42f81a-2d5f-4bc5-8ad1-992c6a537934",
+  //             "quantity": 4
+  //         },
+  //         {
+  //             "productId": "397d68a1-cb47-4402-9546-0ab7b57ec93f",
+  //             "quantity": 2
+  //         }
+  //     ]
+  // }
 
     startCreateTransition(() => {
       createMutation.mutate(input, {
@@ -97,6 +118,16 @@ export function CreateIncomingDialog() {
   //     console.log("Errores en el formulario", form.formState.errors);
   //   }
   // }, [form.formState.errors]);
+  
+  // useEffect(() => {
+  //     if (!open) {
+  //       // Resetear formulario
+  //       form.reset();
+
+  //       // Limpiar otros estados si existen
+  //     }
+  //   }, [open, form]);
+
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
@@ -141,7 +172,7 @@ export function CreateIncomingDialog() {
         <DialogTrigger asChild>
           <TriggerButton />
         </DialogTrigger>
-        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)]">
+        <DialogContent key={open ? 'open' : 'closed'} className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{CREATE_INCOMING_MESSAGES.title}</DialogTitle>
             <DialogDescription>
@@ -164,7 +195,7 @@ export function CreateIncomingDialog() {
       <DrawerTrigger asChild>
         <TriggerButton />
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent key={open ? 'open' : 'closed'} className="overflow-y-auto">
         <DrawerHeader>
           <DrawerTitle>{CREATE_INCOMING_MESSAGES.title}</DrawerTitle>
           <DrawerDescription>
@@ -201,6 +232,15 @@ function DevelopmentZodError({ form }: { form: UseFormReturn<CreateIncomeInput> 
               {key}: {errors[key as keyof CreateIncomeInput]?.message}
             </p>
           ))
+        }
+        {
+          <div>
+            {Object.entries(form.getFieldState("movement")).map(([key, value]) => (
+              <p key={key}>
+                {key}: {JSON.stringify(value)}
+              </p>
+            ))}
+          </div>
         }
       </div>
     </div>

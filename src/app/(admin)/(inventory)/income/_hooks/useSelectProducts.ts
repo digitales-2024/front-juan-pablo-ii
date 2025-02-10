@@ -1,6 +1,6 @@
 // StateManager/index.tsx
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MovementDto } from "../_interfaces/income.interface";
+//import { MovementDto } from "../_interfaces/income.interface";
 import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
 // type MovementDto = {
 //     productId: string;
@@ -15,7 +15,7 @@ import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfa
 type State = ActiveProduct[];
 type Action =
   | { type: "append"; payload: ActiveProduct[] }
-  | { type: "remove"; payload: { productId: string } }
+  | { type: "remove"; payload: { productId: string }}
   | { type: "clear" };
 
 function reducer(state: State, action: Action): ActiveProduct[] {

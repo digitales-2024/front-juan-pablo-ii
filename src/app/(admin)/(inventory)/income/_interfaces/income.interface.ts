@@ -3,8 +3,50 @@ import { z } from "zod";
 
 // Tipos base de la API
 export type Incoming = components['schemas']['Incoming'];
-export type DetailedIncoming = components['schemas']['DetailedIncoming'];
-export type IncomingMovement = components['schemas']['IncomingMovement'];
+export type DetailedIncomingPrototype = components['schemas']['DetailedIncoming'];
+export type IncomingProduct = components['schemas']['IncomingProduct'];
+export type IncomingBranchPrototype = components['schemas']['IncomingBranch'];
+export type IncomingBranch = {
+  id: string;
+  name: string;
+}
+export type IncomingStorageTypePrototype= components['schemas']['IncomingStorageType'];
+export type IncomingStorageType = {
+  id: string;
+  name: string;
+  branch?: IncomingBranch;
+}
+export type IncomingStoragePrototype = components['schemas']['IncomingStorage'];
+export type IncomingStorage = {
+  id: string;
+  name: string;
+  TypeStorage: IncomingStorageType;
+}
+
+export type IncomingMovementPrototype = components['schemas']['IncomingMovement'];
+export type IncomingMovement = {
+  id: string;
+  movementTypeId: string;
+  quantity: number;
+  date: string;
+  state: boolean;
+  isActive: boolean;
+  Producto: IncomingProduct
+};
+
+export type DetailedIncoming = {
+  id: string;
+  name: string;
+  description: string;
+  storageId: string;
+  date: string;
+  state: boolean;
+  referenceId: string;
+  isActive: boolean;
+  Storage: IncomingStorage;
+  Movement: IncomingMovement[];
+};
+
 export type MovementDto = components['schemas']['OutgoingIncomingMovementDto'];
 export type CreateIncomingDto = components['schemas']['CreateIncomingDtoStorage'];
 export type UpdateIncomingDto = components['schemas']['UpdateIncomingDto'];
@@ -38,7 +80,9 @@ export const createIncomeSchemaPrototype = z.object({
   name: z.string().min(1, "El nombre es requerido"), //En el back es opcional, pero considero que debe ser requerido
   description: z.string().optional(),
   storageId: z.string().min(1, "El tipo de almacenamiento es requerido"),
-  date: z.string().min(1,"La fecha es requerida"),
+  date: z.string().min(1,"La fecha es requerida").refine((val) => !isNaN(Date.parse(val)), {
+    message: "La fecha debe ser una cadena de fecha válida ISO 8601",
+  }),
   state: z.coerce.boolean(),
   referenceId: z.string().optional(),
   movement: z.array(
@@ -51,7 +95,7 @@ export const createIncomeSchemaPrototype = z.object({
       date: z.string().optional(),
       state: z.coerce.boolean().optional(),
     })
-  ),
+  ).length(1, "Se debe tener al menos un movimiento"),
 }) satisfies z.ZodType<CreateIncomingDto>;
 
 export const incomeMovementSchema = z.object({
@@ -61,19 +105,26 @@ export const incomeMovementSchema = z.object({
     invalid_type_error: "La cantidad debe ser un número"
   }).min(1, "Se debe tener al menos una unidad").nonnegative(),
   date: z.string().optional(),
-  state: z.string().default("False").optional(),
+  state: z.coerce.boolean().optional(),
+  // state: z.string().default("False").optional(),
 });
 
 export const movementArrayIncomeSchema = z.array(
   incomeMovementSchema
-);
+).min(1, "Debe contener al menos un elemento");
 
 export const createIncomeSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   description: z.string().optional(),
   storageId: z.string().min(1, "El tipo de almacenamiento es requerido"),
-  date: z.string().min(1,"La fecha es requerida"),
-  state: z.string().min(1,"Debe selecionar una opción"),
+  date: z.coerce.string().min(1, 'Se necesita la fecha'),
+  // state: z.string()
+  // .refine((value) => value === "true" || value === "false", {
+  //   message: "Value must be a boolean",
+  // })
+  // .transform((value) => value === "true"),
+  //state: z.string().min(1,"Debe selecionar una opción"),
+  state: z.coerce.boolean(),
   referenceId: z.string().optional(),
   movement: movementArrayIncomeSchema,
 });
@@ -90,7 +141,7 @@ export const updateIncomeSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   storageId: z.string().optional(),
-  date: z.string().optional(),
+  date: z.coerce.string().optional(),
   state: z.coerce.boolean().optional(),
   referenceId: z.string().optional(),
 }) satisfies z.ZodType<UpdateIncomingDto>;
