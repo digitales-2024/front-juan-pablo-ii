@@ -2,22 +2,41 @@ import { components } from "@/types/api";
 import { z } from "zod";
 
 // Tipos base de la API
+/* export type CreateMedicalHistoryDto =
+  components["schemas"]["CreateMedicalHistoryDto"]; */
+
 export type MedicalHistory = components["schemas"]["MedicalHistory"];
-export type CreateMedicalHistoryDto =
-  components["schemas"]["CreateMedicalHistoryDto"];
 export type UpdateMedicalHistoryDto =
-  components["schemas"]["UpdateMedicalHistoryDto"];
+  components["schemas"]["UpdateMedicalHistoryDto"]; //
 export type DeleteMedicalHistoryDto =
-  components["schemas"]["DeleteMedicalHistoryDto"];
+  components["schemas"]["DeleteMedicalHistoryDto"]; /* DeleteMedicalHistoryDto: { ids: string[]; }; */
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateMedicalHistoryDto = DeleteMedicalHistoryDto;
+//historia completa con actualizaciones e imagenes
+export type CompleteMedicalHistory = {
+  data: MedicalHistory & {
+    updates: Record<
+      string,
+      {
+        service: string;
+        staff: string;
+        branch: string;
+        images: {
+          id: string;
+          url: string;
+        }[];
+      }
+    >;
+  };
+};
 
-//ejmplo del dto de create qie tambien es el de update
+//ejemplo del dto de actualizar que tambien es el de update
+//UpdateMedicalHistoryDto: {
 /**
  * @description ID of the patient
  * @example 123e4567-e89b-12d3-a456-426614174000
  */
-//patientId: string;
+//patientId?: string;
 /**
  * @description Medical history data
  * @example {
@@ -31,12 +50,26 @@ export type ReactivateMedicalHistoryDto = DeleteMedicalHistoryDto;
  *       ]
  *     }
  */
-//medicalHistory: Record<string, never>;
+//medicalHistory?: Record<string, never>;
 /**
  * @description Additional description
  * @example First patient consultation
  */
 //description?: string;
+
+export const updateMedicalHistorySchema = z.object({
+  patientId: z.string(),
+  medicalHistory: z.record(z.never()).optional(),
+  description: z.string().optional(),
+  //datos para actualizar la historia medica
+  titulo: z.string().optional(),
+  contenido: z.string().optional(),
+}) satisfies z.ZodType<UpdateMedicalHistoryDto>;
+
+export type UpdateMedicalHistoryInput = z.infer<
+  typeof updateMedicalHistorySchema
+
+>;
 
 // Schema de validación para crear/actualizar producto
 /* MedicalHistory: {
@@ -47,21 +80,12 @@ export type ReactivateMedicalHistoryDto = DeleteMedicalHistoryDto;
   isActive: boolean;
 } */
 // }
-export const createMedicalHistorySchema = z.object({
+/* export const createMedicalHistorySchema = z.object({
   patientId: z.string(),
   medicalHistory: z.record(z.never()).optional(),
   description: z.string().optional(),
-}) satisfies z.ZodType<CreateMedicalHistoryDto>;
+}) satisfies z.ZodType<CreateMedicalHistoryDto>; */
 
-export const updateMedicalHistorySchema = z.object({
-  patientId: z.string(),
-  medicalHistory: z.record(z.never()).optional(),
-  description: z.string().optional(),
-}) satisfies z.ZodType<UpdateMedicalHistoryDto>;
-
-export type CreateMedicalHistoryInput = z.infer<
+/* export type CreateMedicalHistoryInput = z.infer<
   typeof createMedicalHistorySchema
->;
-export type UpdateMedicalHistoryInput = z.infer<
-  typeof updateMedicalHistorySchema
->;
+>; */
