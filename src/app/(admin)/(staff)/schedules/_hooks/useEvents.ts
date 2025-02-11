@@ -5,7 +5,8 @@ import {
   deleteEvents,
   reactivateEvents,
   generateEvents,
-  getEventsByFilter
+  getEventsByFilter,
+  deleteEventsByScheduleId
 } from "../_actions/event.actions";
 import { toast } from "sonner";
 import {
@@ -16,6 +17,7 @@ import {
 } from "../_interfaces/event.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { useStaff } from "../../staff/_hooks/useStaff";
+import { useMemo } from "react";
 
 interface UpdateEventVariables {
   id: string;
@@ -27,27 +29,26 @@ export interface EventFilterParams {
   type: "TURNO" | "CITA" | "OTRO";
   branchId?: string;
   status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+  staffScheduleId?: string;
 }
 
 export const useEvents = (filters?: EventFilterParams) => {
   const queryClient = useQueryClient();
   const { staff } = useStaff();
 
+  // Normalizar filtros
+  const normalizedFilters = useMemo(() => ({
+    ...filters,
+    staffId: filters?.staffId || undefined,
+    staffScheduleId: filters?.staffScheduleId || undefined
+  }), [filters]);
+
   // Query para obtener eventos con filtros
   const eventsQuery = useQuery({
-    queryKey: ["events", filters],
+    queryKey: ["events", normalizedFilters],
     queryFn: async () => {
-      console.log("⚡ Ejecutando query de eventos con filtros:", filters);
-      const response = await getEventsByFilter(filters || {});
-      
-      console.log("📨 Respuesta de getEventsByFilter:", response);
-      
-      if (response.error) {
-        throw new Error(response.error);
-      }
-
-      console.log("📊 Eventos procesados:", response.data?.length);
-      return response.data;
+      const response = await getEventsByFilter(normalizedFilters);
+      return response.data || [];
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
@@ -146,6 +147,27 @@ export const useEvents = (filters?: EventFilterParams) => {
     onError: (error) => handleAuthError(error, "generar eventos recurrentes")
   });
 
+  // Nueva mutación para eliminar eventos por scheduleId
+  const deleteByScheduleIdMutation = useMutation<BaseApiResponse<Event>, Error, string>({
+    mutationFn: deleteEventsByScheduleId,
+    onSuccess: (res, scheduleId) => {
+      // Filtrar los eventos eliminados de la caché
+      queryClient.setQueryData<Event[]>(["events"], (oldEvents) => {
+        // Asegurarse de que oldEvents no sea undefined
+        if (!oldEvents) return [];
+        
+        // Obtener los IDs de los eventos eliminados desde la respuesta
+        const deletedEventIds = res.data ? [res.data.id] : [];
+
+        // Filtrar los eventos que no están en la lista de eliminados
+        return oldEvents.filter(event => !deletedEventIds.includes(event.id));
+      });
+
+      toast.success("Eventos eliminados exitosamente");
+    },
+    onError: (error) => handleAuthError(error, "eliminar eventos por scheduleId")
+  });
+
   // Manejo de errores de autorización
   const handleAuthError = (error: Error, action: string) => {
     console.error(`Error en ${action}:`, error);
@@ -164,6 +186,7 @@ export const useEvents = (filters?: EventFilterParams) => {
     deleteMutation,
     reactivateMutation,
     generateEventsMutation,
+    deleteByScheduleIdMutation,
     refetch: eventsQuery.refetch
   };
 }; 
