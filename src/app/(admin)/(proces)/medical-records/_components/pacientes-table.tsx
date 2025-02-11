@@ -43,6 +43,7 @@ const columns: ColumnDef<Paciente>[] = [
     accessorKey: "cita",
     header: "Cita / Consulta",
   },
+  //import { useRouter } from "next/navigation"
   {
     id: "actions",
     cell: ({ row }) => {
