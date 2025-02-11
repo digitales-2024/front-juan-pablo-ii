@@ -1,6 +1,6 @@
 "use client";
 
-import { useFieldArray, UseFormReturn } from "react-hook-form";
+import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -40,8 +40,9 @@ interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
   form: UseFormReturn<CreateIncomeInput>;
+  controlledFieldArray: UseFieldArrayReturn<CreateIncomeInput>;
   onSubmit: (data: CreateIncomeInput) => void;
-  onClosingDialog?: () => void;
+  onDialogClose?: () => void;
 }
 
 // export const createIncomeSchema = z.object({
@@ -65,15 +66,17 @@ export function CreateIncomingForm({
   children,
   form,
   onSubmit,
+  controlledFieldArray
 }: CreateProductFormProps) {
   const { register, control, watch } = form;
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "movement",
-    rules: {
-      minLength: 1
-    }
-  });
+  // const { fields, append, remove } = useFieldArray({
+  //   control,
+  //   name: "movement",
+  //   rules: {
+  //     minLength: 1
+  //   }
+  // });
+  const { fields, append, remove } = controlledFieldArray;
   const watchFieldArray = watch("movement");
   const controlledFields = fields.map((field, index) => {
     const watchItem = watchFieldArray?.[index];
@@ -105,6 +108,32 @@ export function CreateIncomingForm({
   useEffect(() => {
     syncProducts();
   }, [syncProducts]);
+
+  // useEffect(() => {
+  //   console.log(console.log('Dialog state has changed', dialogState))
+  // }, [dialogState]);
+
+  // const handleClearProductList = () => {
+
+  // }
+
+  // const handleClearProductList = useCallback(() => {
+  //   // this removes from the tanstack state management
+  //   dispatch(
+  //     {
+  //       type: "clear",
+  //     }
+  //   )
+  //   //THis removes from the react-hook-form arraylist
+  //   remove();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!dialogState) {
+  //     console.log('Dialog state has changed', dialogState);
+  //     handleClearProductList();
+  //   }
+  // }, [dialogState, handleClearProductList]);
 
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
   const STATEPROP_OPTIONS = useMemo(() => {
@@ -224,35 +253,6 @@ export function CreateIncomingForm({
   // state
   // }
 
-  // function totalCal(results) {
-  //   let totalValue = 0
-  
-  //   for (const key in results) {
-  //     for (const value in results[key]) {
-  //       if (typeof results[key][value] === "string") {
-  //         const output = parseInt(results[key][value], 10)
-  //         totalValue = totalValue + (Number.isNaN(output) ? 0 : output)
-  //       } else {
-  //         totalValue = totalValue + totalCal(results[key][value], totalValue)
-  //       }
-  //     }
-  //   }
-  
-  //   return totalValue
-  // }
-  
-  // const Calc = ({ control, setValue }) => {
-  //   const results = useWatch({ control, name: "test" })
-  //   const output = totalCal(results)
-  
-  //   // isolated re-render to calc the result with Field Array
-  //   console.log(results)
-  
-  //   setValue("total", output)
-  
-  //   return <p>{output}</p>
-  // }
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -338,16 +338,24 @@ export function CreateIncomingForm({
                   </FormItem>
                 </TableCell>
                 <TableCell>
-                  <FormItem>
+                    <FormItem>
                     {/* <FormLabel>Cantidad</FormLabel> */}
                     <Input
                       {...register(`movement.${index}.quantity` as const, {
-                        valueAsNumber: true
+                      valueAsNumber: true,
+                      validate: value => value >= 0 || "La cantidad no puede ser negativa"
                       })}
                       type="number"
+                      min="0"
+                      onInput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        if (target.valueAsNumber < 0) {
+                          target.value = "0";
+                        }
+                      }}
                     />
                     <FormMessage />
-                  </FormItem>
+                    </FormItem>
                 </TableCell>
                 <TableCell>
                   <div>
@@ -364,12 +372,6 @@ export function CreateIncomingForm({
                     {/* <FormLabel>Total</FormLabel> */}
                     <span className="block text-center">
                       {
-                        // isNaN(data!.precio * watchFieldArray[index].quantity) ? "S/ 0.00" : (data!.precio * watchFieldArray[index].quantity).toLocaleString("es-PE",
-                        //   {
-                        //     style: "currency",
-                        //     currency: "PEN"
-                        //   })
-
                         total.toLocaleString("es-PE",
                           {
                             style: "currency",
@@ -392,10 +394,6 @@ export function CreateIncomingForm({
                   </Button>
                 </TableCell>
               </TableRow>
-              
-                // (<TableBody key={field.id} className="flex gap-4 mb-4">
-              
-                // </TableBody>)
               })}
             </TableBody>
             {/* <Button

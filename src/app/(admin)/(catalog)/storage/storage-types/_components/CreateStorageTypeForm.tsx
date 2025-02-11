@@ -165,7 +165,7 @@ export function CreateTypeStorageForm({
                     }
                   </FormControl>
                   <CustomFormDescription required={FORMSTATICS.branchId.required}>
-                    { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas. Este campo es opcional</span>}
+                    { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas.</span>}
                   </CustomFormDescription>
                   <FormMessage />
                 </FormItem>
@@ -204,7 +204,7 @@ export function CreateTypeStorageForm({
                     }
                   </FormControl>
                   <CustomFormDescription required={FORMSTATICS.staffId.required}>
-                    { staffOptions.length===0 && <span>No hay personal disponible o activo. Este campo es opcional</span>}
+                    { staffOptions.length===0 && <span>No hay personal disponible o activo.</span>}
                   </CustomFormDescription>
                   <FormMessage />
                 </FormItem>

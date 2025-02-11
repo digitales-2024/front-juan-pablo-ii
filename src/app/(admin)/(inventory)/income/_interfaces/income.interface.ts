@@ -106,7 +106,6 @@ export const incomeMovementSchema = z.object({
   }).min(1, "Se debe tener al menos una unidad").nonnegative(),
   date: z.string().optional(),
   state: z.coerce.boolean().optional(),
-  // state: z.string().default("False").optional(),
 });
 
 export const movementArrayIncomeSchema = z.array(
@@ -118,12 +117,6 @@ export const createIncomeSchema = z.object({
   description: z.string().optional(),
   storageId: z.string().min(1, "El tipo de almacenamiento es requerido"),
   date: z.coerce.string().min(1, 'Se necesita la fecha'),
-  // state: z.string()
-  // .refine((value) => value === "true" || value === "false", {
-  //   message: "Value must be a boolean",
-  // })
-  // .transform((value) => value === "true"),
-  //state: z.string().min(1,"Debe selecionar una opción"),
   state: z.coerce.boolean(),
   referenceId: z.string().optional(),
   movement: movementArrayIncomeSchema,

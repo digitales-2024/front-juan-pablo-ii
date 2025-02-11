@@ -392,20 +392,6 @@ export function UpdateIncomingSheet({
 
                 {/* Fecha */}
                 <div>
-                  {/* <FormItem>
-                    <FormLabel>{FORMSTATICS.date.label}</FormLabel>
-                    <Input
-                      {...register(FORMSTATICS.date.name)}
-                      type="date"
-                      placeholder={FORMSTATICS.date.placeholder}
-                    />
-                    <CustomFormDescription required={FORMSTATICS.date.required} />
-                    {form.formState.errors.date && (
-                    <FormMessage className="text-destructive">
-                      {form.formState.errors.date.message}
-                    </FormMessage>
-                    )}
-                  </FormItem> */}
                   <FormField
                     control={form.control}
                     name={FORMSTATICS.date.name}

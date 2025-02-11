@@ -53,12 +53,8 @@ const useSelectProductDispatch = () => {
   const client = useQueryClient();
   const dispatch = (action: Action) => {
     client.setQueryData<ActiveProduct[]>(["incoming-selected-products"], (oldState) => {
-      console.log(
-        "oldState",
-        oldState
-      )
       const newData = reducer(oldState ?? [], action);
-      console.log('updatedData', newData);
+      // console.log('updatedData', newData);
       return newData;
     });
   };

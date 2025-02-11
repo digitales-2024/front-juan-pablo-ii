@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState, useTransition } from "react";
-import { FieldErrors, useForm, UseFormReturn } from "react-hook-form";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import { FieldErrors, useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateIncomeInput, createIncomeSchema} from "../_interfaces/income.interface";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -26,7 +26,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { METADATA } from "../_statics/metadata";
+import { useSelectProductDispatch } from "../_hooks/useSelectProducts";
 
 const CREATE_INCOMING_MESSAGES = {
   button: "Crear entrada",
@@ -42,6 +42,7 @@ export function CreateIncomingDialog() {
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { createMutation } = useIncoming();
+  const dispatch = useSelectProductDispatch();
 
   // name: string;
   // storageId: string;
@@ -65,9 +66,37 @@ export function CreateIncomingDialog() {
     },
   });
 
+  const formControl = form.control; 
+
+  const fieldArray = useFieldArray({
+      control:formControl,
+      name: "movement",
+      rules: {
+        minLength: 1
+      }
+    });
+  const { remove } = fieldArray;
+
+  const handleClearProductList = useCallback(() => {
+    // this removes from the tanstack state management
+    dispatch(
+      {
+        type: "clear",
+      }
+    )
+    //THis removes from the react-hook-form arraylist
+    remove();
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      handleClearProductList();
+    }
+  }, [open, handleClearProductList]);
+
   function handleSubmit(input: CreateIncomeInput) {
-    console.log('Input received', input);
-    console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
+    // console.log('Input received', input);
+    // console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
     if (createMutation.isPending || isCreatePending) return;
 
   //   {
@@ -96,7 +125,6 @@ export function CreateIncomingDialog() {
           form.reset();
         },
         onError: (error) => {
-          console.error(`Error al crear ${METADATA.entityName.toLowerCase()}:`, error);
           if (error.message.includes("No autorizado")) {
             setTimeout(() => {
               form.reset();
@@ -111,23 +139,6 @@ export function CreateIncomingDialog() {
     form.reset();
     setOpen(false);
   };
-
-  //ACtivate only when form errors
-  // useEffect(() => {
-  //   if (form.formState.errors) {
-  //     console.log("Errores en el formulario", form.formState.errors);
-  //   }
-  // }, [form.formState.errors]);
-  
-  // useEffect(() => {
-  //     if (!open) {
-  //       // Resetear formulario
-  //       form.reset();
-
-  //       // Limpiar otros estados si existen
-  //     }
-  //   }, [open, form]);
-
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
@@ -179,7 +190,7 @@ export function CreateIncomingDialog() {
               {CREATE_INCOMING_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <CreateIncomingForm form={form} onSubmit={handleSubmit}>
+          <CreateIncomingForm form={form} onSubmit={handleSubmit} controlledFieldArray={fieldArray}>
             <DevelopmentZodError form={form} />
             <DialogFooter>
               <DialogFooterContent />
@@ -202,7 +213,7 @@ export function CreateIncomingDialog() {
             {CREATE_INCOMING_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <CreateIncomingForm form={form} onSubmit={handleSubmit}>
+        <CreateIncomingForm form={form} onSubmit={handleSubmit} controlledFieldArray={fieldArray}>
           <DevelopmentZodError form={form} />
           <DrawerFooter>
             <DialogFooterContent />
