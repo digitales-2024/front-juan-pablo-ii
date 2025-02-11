@@ -2,45 +2,25 @@
 
 import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from "./HistoryTableColumns";
-import { ProductTableToolbarActions } from "./HistoryTableToolbarActions";
-// import { ListCategoryResponse } from "../_actions/category.actions";
-import { DetailedProduct } from "../_interfaces/history.interface";
+import { HistoryTableToolbarActions } from "./HistoryTableToolbarActions";
+import { MedicalHistory } from "../_interfaces/history.interface";
 
-interface ProductTableProps {
-  data: DetailedProduct[];
+interface HistoryTableProps {
+  data: MedicalHistory[];
 }
 
-// name
-// unidadMedida
-// codigoProducto
-// categoria
-// tipoProducto
-// precio
-// descuento
-// description
-// observaciones
-// condicionesAlmacenamiento
-// usoProducto
-// isActive
-export function ProductTable({ data }: ProductTableProps) {
+export function HistoryTable({ data }: HistoryTableProps) {
   return (
     <DataTable
       columns={columns}
       data={data}
       placeholder="Buscar por nombre ..."
-      toolbarActions={(table) => <ProductTableToolbarActions table={table} />}
+      toolbarActions={(table) => <HistoryTableToolbarActions table={table} />}
       columnVisibilityConfig={{
-        name: true,
-        unidadMedida: false,
-        codigoProducto: true,
-        categoria: true,
-        tipoProducto: false,
-        precio: true,
-        descuento: false,
+        id: true,
+        patientId: true,
+        medicalHistory: false,
         description: true,
-        observaciones: false,
-        condicionesAlmacenamiento: false,
-        usoProducto: true,
         isActive: true,
       }}
     />
