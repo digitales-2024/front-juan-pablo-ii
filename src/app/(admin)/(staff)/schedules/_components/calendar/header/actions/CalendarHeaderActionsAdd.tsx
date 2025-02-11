@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
-// import { Plus } from "lucide-react";
-// import { useCalendarContext } from "../../CalendarContext";
+import { Plus } from "lucide-react";
+import { useCalendarContext } from "../../CalendarContext";
 
 export default function CalendarHeaderActionsAdd() {
-	// const { setNewEventDialogOpen } = useCalendarContext();
+	const { setNewEventDialogOpen } = useCalendarContext();
 	return (
 		<Button
 			className="flex items-center gap-1 bg-primary text-background"
-			// onClick={() => setNewEventDialogOpen(true)}
+			onClick={() => setNewEventDialogOpen(true)}
 		>
-			{/* <Plus /> */}
+			<Plus />
 
 		 </Button>
 	);
