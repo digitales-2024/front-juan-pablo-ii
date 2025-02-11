@@ -1,36 +1,33 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import {
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  reactivateProduct,
-  getProducts,
-  getDetailedProducts,
-  getProductById,
-  ProductResponse,
-  getDetailedProductById,
-  getActiveProducts
+  getMedicalHistories,
+  updateMedicalHistory,
+  getCompleteMedicalHistory,
+  deleteMedicalHistories,
+  reactivateMedicalHistories,
 } from "../_actions/history.actions";
 import { toast } from "sonner";
 import {
-  Product, CreateProductDto, DeleteProductDto, UpdateProductDto,
-  DetailedProduct,
+  MedicalHistory,
+  UpdateMedicalHistoryDto,
+  DeleteMedicalHistoryDto,
+  CompleteMedicalHistory,
 } from "../_interfaces/history.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
-interface UpdateProductVariables {
+interface UpdateMedicalHistoryVariables {
   id: string;
-  data: UpdateProductDto;
+  data: UpdateMedicalHistoryDto;
 }
 
-export const useProducts = () => {
+export const useMedicalHistories = () => {
   const queryClient = useQueryClient();
 
-  // Query para obtener los productos
-  const productsQuery = useQuery({
-    queryKey: ["products"],
+  // Query para obtener todas las historias médicas
+  const medicalHistoriesQuery = useQuery({
+    queryKey: ["medical-histories"],
     queryFn: async () => {
-      const response = await getProducts({});
+      const response = await getMedicalHistories({});
       if (!response) {
         throw new Error("No se recibió respuesta del servidor");
       }
@@ -38,213 +35,179 @@ export const useProducts = () => {
       if (response.error || !response.data) {
         throw new Error(response.error ?? "Error desconocido");
       }
-      return response.data;
+      return {
+        success: true,
+        message: "Data fetched successfully",
+        data: response.data,
+      };
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
-  const detailedProductsQuery = useQuery({
-    queryKey: ["detailed-products"],
-    queryFn: async () => {
-      const response = await getDetailedProducts({});
-      if (!response) {
-        throw new Error("No se recibió respuesta del servidor");
-      }
+  // Query para obtener la información completa de una historia médica por ID
 
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? "Error desconocido");
-      }
-      return response.data;
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
-
-  const activeProductsQuery = useQuery({
-    queryKey: ["active-products"],
-    queryFn: async () => {
-      const response = await getActiveProducts({});
-      if (!response) {
-        throw new Error("No se recibió respuesta del servidor");
-      }
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? "Error desconocido");
-      }
-      return response.data;
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
-
-  const oneProductQuery = useQuery({
-    queryKey: ["product", "some-product-id"], // replace "some-product-id" with the actual product id
-    queryFn: async ({ queryKey }) => {
-      const [, id] = queryKey;
-      try{
-        const response: ProductResponse = await getProductById(id);
+  /*   export type CompleteMedicalHistory = {
+    data: MedicalHistory & {
+      updates: Record<
+        string,
+        {
+          service: string;
+          staff: string;
+          branch: string;
+          images: {
+            id: string;
+            url: string;
+          }[];
+        }
+      >;
+    };
+  }; */
+  // Query para obtener la información completa de una historia médica por ID
+  const completeMedicalHistoryQuery = (id: string) =>
+    useQuery<CompleteMedicalHistory>({
+      queryKey: ["complete-medical-history", id],
+      queryFn: async () => {
+        const response = await getCompleteMedicalHistory(id);
         if (!response) {
           throw new Error("No se recibió respuesta del servidor");
         }
-        if ('error' in response) {
-          throw new Error(response.error);
-        }
-        if ('data' in response) {
-          return response.data;
-        }
-      } catch (error) {
-        if (error instanceof Error) return { error: error.message };
-        return { error: "Error desconocido" };
-      }
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
 
-  // Mutación para crear producto
-  const createMutation = useMutation<BaseApiResponse<Product>, Error, CreateProductDto>({
-    mutationFn: async (data) => {
-      const response = await createProduct(data);
-      if ("error" in response) {
-        throw new Error(response.error);
-      }
-      // Retornamos directamente la respuesta ya que viene en el formato correcto
-      return response;
-    },
-    onSuccess: async (res) => {
-      const detailedProduct = await getDetailedProductById(res.data.id);
-        if ("error" in detailedProduct) {
-          throw new Error(detailedProduct.error);
+        if ("error" in response) {
+          throw new Error(response.error ?? "Error desconocido");
         }
-      queryClient.setQueryData<DetailedProduct[] | undefined>(
-        ["detailed-products"], (oldProducts) => {
-          if (!oldProducts) return detailedProduct;
-          return [...oldProducts, ...detailedProduct];
-      });
-      toast.success(res.message);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    }
-  });
+        return response.data;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
 
-  // Mutación para actualizar producto
-  const updateMutation = useMutation<BaseApiResponse<Product>, Error, UpdateProductVariables>({
+  // Mutación para actualizar una historia médica
+  const updateMedicalHistoryMutation = useMutation<
+    BaseApiResponse<MedicalHistory>,
+    Error,
+    UpdateMedicalHistoryVariables
+  >({
     mutationFn: async ({ id, data }) => {
-      const response = await updateProduct(id, data);
+      const response = await updateMedicalHistory(id, data);
       if ("error" in response) {
         throw new Error(response.error);
       }
       return response;
     },
-    onSuccess: async(res) => {
-      const detailedProduct = await getDetailedProductById(res.data.id);
-      if ("error" in detailedProduct) {
-        throw new Error(detailedProduct.error);
-      }
-      queryClient.setQueryData<DetailedProduct[] | undefined>(["detailed-products"], (oldProducts) => {
-        if (!oldProducts) return undefined;
-        return oldProducts.map((product) =>
-          product.id === res.data.id ? {...product, ...detailedProduct[0]} : product
-        );
-      });
-      toast.success("Producto actualizado exitosamente");
+    onSuccess: (res) => {
+      queryClient.setQueryData<MedicalHistory[]>(
+        ["medical-histories"],
+        (oldHistories) => {
+          if (!oldHistories) {
+            return [res.data];
+          }
+          const updatedHistories = oldHistories.map((history) =>
+            history.id === res.data.id ? res.data : history
+          );
+          return updatedHistories;
+        }
+      );
+      toast.success("Historia médica actualizada exitosamente");
     },
     onError: (error) => {
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
-        toast.error("No tienes permisos para realizar esta acción");
-      } else {
-        toast.error(error.message || "Error al actualizar el producto");
-      }
+      toast.error(error.message || "Error al actualizar la historia médica");
     },
   });
 
-  // Mutación para eliminar productos
-  const deleteMutation = useMutation<BaseApiResponse<Product>, Error, DeleteProductDto>({
+  // Mutación para desactivar historias médicas
+  const deleteMedicalHistoryMutation = useMutation<
+    BaseApiResponse<MedicalHistory>,
+    Error,
+    DeleteMedicalHistoryDto
+  >({
     mutationFn: async (data) => {
-      const response = await deleteProduct(data);
+      const response = await deleteMedicalHistories(data);
       if ("error" in response) {
         throw new Error(response.error);
       }
       return response;
     },
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<DetailedProduct[]>(["detailed-products"], (oldProducts) => {
-        console.log("🔄 Cache actual:", oldProducts);
-        if (!oldProducts) {
-          console.log("⚠️ No hay productos en caché");
-          return [];
-        }
-        const updatedProducts = oldProducts.map((product) => {
-          if (variables.ids.includes(product.id)) {
-            return { ...product, isActive: false };
+      queryClient.setQueryData<MedicalHistory[]>(
+        ["medical-histories"],
+        (oldHistories) => {
+          if (!oldHistories) {
+            return [];
           }
-          return product;
-        });
-        console.log("📦 Nueva caché:", updatedProducts);
-        return updatedProducts;
-      });
+          const updatedHistories = oldHistories.map((history) => {
+            if (variables.ids.includes(history.id)) {
+              return { ...history, isActive: false };
+            }
+            return history;
+          });
+          return updatedHistories;
+        }
+      );
 
       toast.success(
         variables.ids.length === 1
-          ? "Producto desactivado exitosamente"
-          : "Productos desactivados exitosamente"
+          ? "Historia médica desactivada exitosamente"
+          : "Historias médicas desactivadas exitosamente"
       );
     },
     onError: (error) => {
-      console.error("💥 Error en la mutación:", error);
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
-        toast.error("No tienes permisos para realizar esta acción");
-      } else {
-        toast.error(error.message || "Error al desactivar el/los producto(s)");
-      }
+      toast.error(
+        error.message || "Error al desactivar la(s) historia(s) médica(s)"
+      );
     },
   });
 
-  // Mutación para reactivar productos
-  const reactivateMutation = useMutation<BaseApiResponse<Product>, Error, DeleteProductDto>({
+  // Mutación para reactivar historias médicas
+  const reactivateMedicalHistoryMutation = useMutation<
+    BaseApiResponse<MedicalHistory>,
+    Error,
+    DeleteMedicalHistoryDto
+  >({
     mutationFn: async (data) => {
-      const response = await reactivateProduct(data);
+      const response = await reactivateMedicalHistories(data);
       if ("error" in response) {
         throw new Error(response.error);
       }
       return response;
     },
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<DetailedProduct[]>(["detailed-products"], (oldProducts) => {
-        if (!oldProducts) {
-          return [];
-        }
-        const updatedProducts = oldProducts.map((product) => {
-          if (variables.ids.includes(product.id)) {
-            return { ...product, isActive: true };
+      queryClient.setQueryData<MedicalHistory[]>(
+        ["medical-histories"],
+        (oldHistories) => {
+          if (!oldHistories) {
+            return [];
           }
-          return product;
-        });
-        return updatedProducts;
-      });
+          const updatedHistories = oldHistories.map((history) => {
+            if (variables.ids.includes(history.id)) {
+              return { ...history, isActive: true };
+            }
+            return history;
+          });
+          return updatedHistories;
+        }
+      );
 
       toast.success(
         variables.ids.length === 1
-          ? "Producto reactivado exitosamente"
-          : "Productos reactivados exitosamente"
+          ? "Historia médica reactivada exitosamente"
+          : "Historias médicas reactivadas exitosamente"
       );
     },
     onError: (error) => {
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
-        toast.error("No tienes permisos para realizar esta acción");
-      } else {
-        toast.error(error.message || "Error al reactivar el/los producto(s)");
-      }
+      toast.error(
+        error.message || "Error al reactivar la(s) historia(s) médica(s)"
+      );
     },
   });
 
   return {
-    productsQuery,
-    detailedProductsQuery,
-    activeProductsQuery,
-    products: productsQuery.data,
-    oneProductQuery,
-    createMutation,
-    updateMutation,
-    deleteMutation,
-    reactivateMutation,
+    medicalHistoriesQuery,
+    updateMedicalHistoryMutation,
+    completeMedicalHistoryQuery,
+    deleteMedicalHistoryMutation,
+    reactivateMedicalHistoryMutation,
+
+    isLoading: medicalHistoriesQuery.isLoading,
+    isError: medicalHistoriesQuery.isError,
+    error: medicalHistoriesQuery.error,
   };
 };
