@@ -1,210 +1,181 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import {
-  Product,
-  DetailedProduct,
-  CreateProductDto,
-  UpdateProductDto,
-  DeleteProductDto,
-  ActiveProduct,
-} from "../_interfaces/history.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";
+import {
+  MedicalHistory,
+  UpdateMedicalHistoryDto,
+  DeleteMedicalHistoryDto,
+  CompleteMedicalHistory,
+} from "../_interfaces/history.interface";
 
-export type ProductResponse = BaseApiResponse<Product> | { error: string };
-export type DetailedProductResponse =
-  | BaseApiResponse<DetailedProduct>
+type MedicalHistoryResponse =
+  | BaseApiResponse<MedicalHistory>
   | { error: string };
-export type ListProductResponse = Product[] | { error: string };
-export type ListDetailedProductResponse = DetailedProduct[] | { error: string };
-export type ListActiveProducts = ActiveProduct[] | { error: string };
+type ListMedicalHistoryResponse = MedicalHistory[] | { error: string };
+type PacientMedicalHistoryResponse =
+  | BaseApiResponse<CompleteMedicalHistory>
+  | { error: string };
 
-const GetProductSchema = z.object({});
-
-// const GetProductByIdSchema = z.string();
+const ROUTES = {
+  getHistories: "/medical-history",
+  getComplete: (id: string) => `/medical-history/${id}/complete`,
+  updateHistory: (id: string) => `/medical-history/${id}`,
+  deleteHistories: "/medical-history/remove/all",
+  reactivateHistories: "/medical-history/reactivate/all",
+};
 
 /**
- * Obtiene todos los productos del catálogo.
- *
- * @returns Un objeto con una propiedad `data` que contiene un array de objetos `Product`,
- *          o un objeto con una propiedad `error` que contiene un mensaje de error.
+ * Obtiene todas las historias médicas del sistema
+ * @returns Lista de historias médicas o mensaje de error
  */
-const getProductsHandler = async () => {
+const getMedicalHistoriesHandler = async () => {
   try {
-    const [products, error] = await http.get<ListProductResponse>("/product");
+    const [histories, error] = await http.get<ListMedicalHistoryResponse>(
+      ROUTES.getHistories
+    );
     if (error) {
       return {
         error:
           typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : "Error al obtener los productos",
+            : "Error al obtener las historias médicas",
       };
     }
-    if (!Array.isArray(products)) {
+
+    if (!Array.isArray(histories)) {
       return { error: "Respuesta inválida del servidor" };
     }
-    return { data: products };
+    return { data: histories };
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido" };
   }
 };
 
-export const getProducts = await createSafeAction(
-  GetProductSchema,
-  getProductsHandler
+// validacion de datos del back
+const GetMedicalHistoriesSchema = z.object({});
+
+export const getMedicalHistories = await createSafeAction(
+  GetMedicalHistoriesSchema,
+  getMedicalHistoriesHandler
 );
 
-const getDetailedProductsHandler = async () => {
+/**
+ * Obtiene una historia médica completa por ID incluyendo actualizaciones e imágenes
+ * @param id - Identificador único de la historia médica
+ * @returns Historia médica con sus detalles completos o mensaje de error
+ */
+/* export type CompleteMedicalHistory = {
+  data: MedicalHistory & {
+    updates: Record<
+      string,
+      {
+        service: string;
+        staff: string;
+        branch: string;
+        images: {
+          id: string;
+          url: string;
+        }[];
+      }
+    >;
+  };
+}; */
+
+/* 
+
+ BaseApiResponse: {
+            /**
+             * @description Estado de la operación
+             * @example true
+             */
+//success: boolean;
+/**
+ * @description Mensaje descriptivo
+ * @example Operación realizada con éxito
+ */
+//message: string;
+/** @description Datos de la respuesta */
+//data: Record<string, never> | null;
+//};
+
+/* export type BaseApiResponse<T = any> = Omit<
+  components["schemas"]["BaseApiResponse"],
+  "data"
+> & {
+  data: T;
+}; 
+ */
+
+//type PacientMedicalHistoryResponse = BaseApiResponse<CompleteMedicalHistory> | { error: string };
+/**
+ * Obtiene una historia médica completa por ID incluyendo actualizaciones e imágenes
+ * @param id - Identificador único de la historia médica
+ * @returns Historia médica con sus detalles completos o mensaje de error
+ */
+const getCompleteMedicalHistoryHandler = async (id: string): Promise<PacientMedicalHistoryResponse> => {
+  console.log(`Enviando solicitud para obtener la historia médica completa del paciente con ID: ${id}`);
   try {
-    const [products, error] = await http.get<ListDetailedProductResponse>(
-      "/product/detailed"
+    const [history, error] = await http.get<PacientMedicalHistoryResponse>(
+      ROUTES.getComplete(id)
     );
+    console.log('Respuesta recibida:', history);
+    console.log('Error recibido:', error);
+
     if (error) {
       return {
         error:
           typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : "Error al obtener los productos detallados",
+            : "Error al obtener la historia médica",
       };
     }
-    if (!Array.isArray(products)) {
+
+    if (!history || typeof history !== "object" || Array.isArray(history)) {
       return { error: "Respuesta inválida del servidor" };
     }
-    return { data: products };
+    return history;
   } catch (error) {
+    console.log('Excepción capturada:', error);
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido" };
   }
 };
 
-export const getDetailedProducts = await createSafeAction(
-  GetProductSchema,
-  getDetailedProductsHandler
-);
+// Validación de datos del backend
+const GetIdCompleteMedicalHistoriesSchema = z.string();
 
-const getActiveProductsHandler = async () => {
-  try {
-    const [products, error] = await http.get<ListActiveProducts>(
-      "/product/active"
-    );
-    if (error) {
-      return {
-        error:
-          typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "Error al obtener los productos activos",
-      };
-    }
-    if (!Array.isArray(products)) {
-      return { error: "Respuesta inválida del servidor" };
-    }
-    return { data: products };
-  } catch (error) {
-    if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido" };
+export async function getCompleteMedicalHistory(id: string): Promise<PacientMedicalHistoryResponse> {
+  // Validar el ID
+  const validation = GetIdCompleteMedicalHistoriesSchema.safeParse(id);
+  if (!validation.success) {
+    return { error: "ID inválido" };
   }
-};
 
-export const getActiveProducts = await createSafeAction(
-  GetProductSchema,
-  getActiveProductsHandler
-);
-
-export async function getProductById(id: string): Promise<ProductResponse> {
-  try {
-    const [product, error] = await http.get<ProductResponse>(`/product/${id}`);
-    if (error) {
-      return {
-        error:
-          typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "Error al obtener el producto",
-      };
-    }
-    return product;
-  } catch (error) {
-    if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido" };
-  }
-}
-
-export async function getDetailedProductById(
-  id: string
-): Promise<ListDetailedProductResponse> {
-  try {
-    const [product, error] = await http.get<ListDetailedProductResponse>(
-      `/product/detailed/${id}`
-    );
-    if (error) {
-      return {
-        error:
-          typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "Error al obtener el producto",
-      };
-    }
-    return product;
-  } catch (error) {
-    if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido" };
-  }
+  // Llamar al handler
+  return await getCompleteMedicalHistoryHandler(id);
 }
 
 /**
- * Crea un nuevo producto en el catálogo.
- *
- * Crea un nuevo producto en el catálogo.
- *
- * @param data - Un objeto con la información del producto a crear.
- * @returns Un objeto con una propiedad `data` que contiene el producto creado,
- *          o un objeto con una propiedad `error` que contiene un mensaje de error.
+ * Actualiza una historia médica existente
+ * @param id - Identificador único de la historia médica
+ * @param data - Datos actualizados de la historia médica
+ * @returns Historia médica actualizada o mensaje de error
  */
-export async function createProduct(
-  data: CreateProductDto
-): Promise<ProductResponse> {
-  try {
-    const [responseData, error] = await http.post<ProductResponse>(
-      "/product",
-      data
-    );
-
-    if (error) {
-      return { error: error.message };
-    }
-
-    return responseData;
-  } catch (error) {
-    if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido" };
-  }
-}
-
-/**
- * Actualiza un producto en el catálogo.
- *
- * @param id - El identificador único del producto a actualizar.
- * @param data - Un objeto con la información del producto a actualizar.
- * @returns Un objeto con una propiedad `data` que contiene el producto actualizado,
- *          o un objeto con una propiedad `error` que contiene un mensaje de error.
- */
-export async function updateProduct(
+export async function updateMedicalHistory(
   id: string,
-  data: UpdateProductDto
-): Promise<ProductResponse> {
+  data: UpdateMedicalHistoryDto
+): Promise<MedicalHistoryResponse> {
   try {
-    const [responseData, error] = await http.patch<ProductResponse>(
-      `/product/${id}`,
+    const [response, error] = await http.patch<MedicalHistoryResponse>(
+      ROUTES.updateHistory(id),
       data
     );
-
-    if (error) {
-      return { error: error.message };
-    }
-
-    return responseData;
+    if (error) return { error: error.message };
+    return response;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido" };
@@ -212,28 +183,24 @@ export async function updateProduct(
 }
 
 /**
- * Elimina uno o varios productos del catálogo.
- *
- * @param data - Un objeto con la información de los productos a eliminar.
- * @returns Un objeto con una propiedad `data` que contiene la respuesta del servidor,
- *          o un objeto con una propiedad `error` que contiene un mensaje de error.
+ * Desactiva múltiples historias médicas
+ * @param data - DTO con los IDs de las historias médicas a desactivar
+ * @returns Historias médicas desactivadas o mensaje de error
  */
-export async function deleteProduct(
-  data: DeleteProductDto
-): Promise<ProductResponse> {
+export async function deleteMedicalHistories(
+  data: DeleteMedicalHistoryDto
+): Promise<MedicalHistoryResponse> {
   try {
     const [response, error] = await http.delete<BaseApiResponse>(
-      "/product/remove/all",
+      ROUTES.deleteHistories,
       data
     );
-
     if (error) {
       if (error.statusCode === 401) {
-        return { error: "No autorizado. Por favor, inicie sesión nuevamente." };
+        return { error: "No autorizado para realizar esta operación" };
       }
       return { error: error.message };
     }
-
     return response;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
@@ -242,28 +209,24 @@ export async function deleteProduct(
 }
 
 /**
- * Reactiva uno o varios productos en el catálogo.
- *
- * @param data - Un objeto con la información de los productos a reactivar.
- * @returns Un objeto con una propiedad `data` que contiene la respuesta del servidor,
- *          o un objeto con una propiedad `error` que contiene un mensaje de error.
+ * Reactiva múltiples historias médicas
+ * @param data - DTO con los IDs de las historias médicas a reactivar
+ * @returns Historias médicas reactivadas o mensaje de error
  */
-export async function reactivateProduct(
-  data: DeleteProductDto
-): Promise<ProductResponse> {
+export async function reactivateMedicalHistories(
+  data: DeleteMedicalHistoryDto
+): Promise<MedicalHistoryResponse> {
   try {
     const [response, error] = await http.patch<BaseApiResponse>(
-      "/product/reactivate/all",
+      ROUTES.reactivateHistories,
       data
     );
-
     if (error) {
       if (error.statusCode === 401) {
-        return { error: "No autorizado. Por favor, inicie sesión nuevamente." };
+        return { error: "No autorizado para realizar esta operación" };
       }
       return { error: error.message };
     }
-
     return response;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
