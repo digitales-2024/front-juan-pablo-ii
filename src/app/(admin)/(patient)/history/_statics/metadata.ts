@@ -1,20 +1,22 @@
 import { PageMetadata } from "@/types/statics/pageMetadata";
-import { Box } from "lucide-react";
+import { FileText } from "lucide-react";
 
-export const METADATA:PageMetadata = {
-	title: "Productos",
-	entityName: "Producto",
-	entityPluralName: "Productos",
-	description: "Administra todos los productos de tu catálogo.",
-    Icon: Box,
-	dataDependencies: [
-		{
-			dependencyName: "Categorías",
-			dependencyUrl: "/product/category"
-		},
-		{
-			dependencyName: "Subcategorías",
-			dependencyUrl: "/product/product-types"
-		}
-	]
+export const METADATA: PageMetadata = {
+  title: "Historias Médicas",
+  entityName: "Historia Médica",
+  entityPluralName: "Historias Médicas",
+  description: "Administra todas las historias médicas de tus pacientes.",
+  Icon: FileText,
+  dataDependencies: [
+    /* 
+    {
+      dependencyName: "Pacientes",
+      dependencyUrl: "/patient"
+    },
+    {
+      dependencyName: "Doctores",
+      dependencyUrl: "/doctor"
+    } 
+    */
+  ]
 } as const;
