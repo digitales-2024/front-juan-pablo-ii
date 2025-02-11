@@ -120,3 +120,14 @@ export async function getEvents(): Promise<BaseApiResponse<Event[]>> {
     throw new Error(error instanceof Error ? error.message : "Error al obtener eventos");
   }
 }
+
+// Nueva acción para eliminar eventos por scheduleId
+export async function deleteEventsByScheduleId(scheduleId: string): Promise<BaseApiResponse<Event>> {
+  try {
+    const [response, error] = await http.delete<BaseApiResponse<Event>>(`/events/by-schedule/${scheduleId}`);
+    if (error) throw new Error(error.message);
+    return response;
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : "Error al eliminar eventos por scheduleId");
+  }
+}

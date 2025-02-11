@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Mode } from "../_types/CalendarTypes";
 import Calendar from "./calendar/Calendar";
 import { useEvents, type EventFilterParams } from "../_hooks/useEvents";
+import { EventFilters } from "./calendar/header/filters/EventFilters";
 
 // Define el tipo de datos que entrega la API
 // interface ApiCalendarEvent {
@@ -27,24 +28,33 @@ import { useEvents, type EventFilterParams } from "../_hooks/useEvents";
 // }
 
 // Definir tipo explícito para los filtros
-const filters: EventFilterParams = {
-	staffId: "86438925-75c1-4239-ac91-15004527fe5a",
-	type: "TURNO",
-	branchId: "5ed6ea70-3419-4c70-a761-0067b440b753",
-	status: "CONFIRMED",
-};
+// const filters: EventFilterParams = {
+// 	staffId: "86438925-75c1-4239-ac91-15004527fe5a",
+// 	type: "TURNO",
+// 	branchId: "5ed6ea70-3419-4c70-a761-0067b440b753",
+// 	status: "CONFIRMED",
+// };
 
 export default function CalendarConsultations() {
 	const [mode, setMode] = useState<Mode>("mes");
-	const [date, setDate] = useState<Date>(new Date("2025-02-07"));
-	
-	const { eventsQuery: { data: events, isLoading, error } } = useEvents(filters);
+	const [date, setDate] = useState<Date>(new Date());
+	const [appliedFilters, setAppliedFilters] = useState<EventFilterParams>({
+		staffId: undefined,
+		type: "TURNO",
+		branchId: undefined,
+		status: "CONFIRMED",
+		staffScheduleId: undefined
+	});
+
+	const {
+		eventsQuery: { data: events, isLoading, error },
+	} = useEvents(appliedFilters);
 
 	useEffect(() => {
 		console.log("🔄 Estado de carga de eventos:", {
 			isLoading,
 			error: error?.message,
-			eventsCount: events?.length
+			eventsCount: events?.length,
 		});
 	}, [isLoading, error, events]);
 
@@ -54,8 +64,16 @@ export default function CalendarConsultations() {
 		}
 	}, [error]);
 
+	const handleFilterChange = (newFilters: EventFilterParams) => {
+		setAppliedFilters(prev => ({
+			...prev,
+			...newFilters
+		}));
+	};
+
 	return (
 		<div>
+			<EventFilters onFilterChange={handleFilterChange} />
 			{isLoading && <div>Cargando eventos...</div>}
 			{error && <div>Error al cargar eventos: {error.message}</div>}
 			<Calendar
