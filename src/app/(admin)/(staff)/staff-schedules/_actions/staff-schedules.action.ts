@@ -1,11 +1,11 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { 
-  StaffSchedule, 
-  CreateStaffScheduleDto, 
-  UpdateStaffScheduleDto, 
-  DeleteStaffSchedulesDto 
+import {
+  StaffSchedule,
+  CreateStaffScheduleDto,
+  UpdateStaffScheduleDto,
+  DeleteStaffSchedulesDto
 } from "../_interfaces/staff-schedules.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { createSafeAction } from '@/utils/createSafeAction';
@@ -23,15 +23,17 @@ const getStaffSchedulesHandler = async () => {
     const [schedules, error] = await http.get<StaffSchedule[]>("/staff-schedule");
 
     if (error) {
-      return { error: typeof error === 'object' && error !== null && 'message' in error 
-        ? String(error.message) 
-        : 'Error al obtener los horarios' };
+      return {
+        error: typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : 'Error al obtener los horarios'
+      };
     }
 
     if (!Array.isArray(schedules)) {
       return { error: 'Respuesta inválida del servidor' };
     }
-    
+
     return { data: schedules };
   } catch (error) {
     console.error("💥 Error en getStaffSchedulesHandler:", error);
@@ -118,3 +120,40 @@ export async function reactivateStaffSchedules(
     return { error: "Error desconocido al reactivar los horarios" };
   }
 }
+
+// Usar el mismo enfoque que getEventsByFilter
+const GetFilteredStaffSchedulesSchema = z.object({
+  staffId: z.string().uuid().optional(),
+  branchId: z.string().uuid().optional()
+});
+
+const getFilteredStaffSchedulesHandler = async (filters: z.infer<typeof GetFilteredStaffSchedulesSchema>) => {
+  try {
+    const query = new URLSearchParams();
+    if (filters.staffId) query.append('staffId', filters.staffId);
+    if (filters.branchId) query.append('branchId', filters.branchId);
+
+    const [response, error] = await http.get<StaffSchedule[]>(`/staff-schedule/filter?${query.toString()}`);
+
+    if (error) throw new Error(error.message);
+    if (!Array.isArray(response)) throw new Error("Formato de respuesta inválido");
+
+    // Mantener consistencia con la estructura de event.actions.ts
+    return {
+      data: response,
+      message: "Horarios filtrados obtenidos exitosamente",
+      success: true
+    };
+  } catch (error) {
+    console.error("💥 Error en getFilteredStaffSchedulesHandler:", error);
+    return {
+      error: error instanceof Error ? error.message : "Error desconocido",
+      success: false
+    };
+  }
+}
+
+export const getFilteredStaffSchedules = await createSafeAction(
+  GetFilteredStaffSchedulesSchema,
+  getFilteredStaffSchedulesHandler
+);

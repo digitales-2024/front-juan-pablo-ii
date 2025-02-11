@@ -48,6 +48,7 @@ export function CreateStaffScheduleDialog() {
       staffId: "",
       branchId: "",
       title: "",
+      color: "sky",
       startTime: "",
       endTime: "",
       daysOfWeek: [],

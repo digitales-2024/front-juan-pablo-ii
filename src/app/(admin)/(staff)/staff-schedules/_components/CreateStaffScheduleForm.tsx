@@ -30,6 +30,7 @@ import { format, toDate } from "date-fns-tz";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { colorOptions } from "../../schedules/_components/calendar/calendarTailwindClasses";
 
 const TIME_ZONE = 'America/Lima';
 
@@ -178,6 +179,36 @@ export function CreateStaffScheduleForm({
                   <FormControl>
                     <Input placeholder="Ingrese un título para el horario" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="color"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Color</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione un color" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {colorOptions.map((color) => (
+                        <SelectItem key={color.value} value={color.value}>
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className={`w-4 h-4 rounded-full bg-${color.value}-500`}
+                            />
+                            {color.label}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

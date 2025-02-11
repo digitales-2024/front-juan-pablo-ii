@@ -2,7 +2,7 @@
 import { Table } from '@tanstack/react-table';
 import { StaffSchedule } from '../_interfaces/staff-schedules.interface';
 import { CreateStaffScheduleDialog } from './CreateStaffScheduleDialog';
-import { DeactivateStaffScheduleDialog } from './DeactivateStaffScheduleDialog';
+import { DeleteStaffScheduleDialog } from './DeactivateStaffScheduleDialog';
 import { ReactivateStaffScheduleDialog } from './ReactivateStaffScheduleDialog';
 
 export interface StaffSchedulesTableToolbarActionsProps {
@@ -16,7 +16,7 @@ export function StaffSchedulesTableToolbarActions({
     <div className="flex flex-wrap items-center justify-end gap-2">
       {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
         <>
-          <DeactivateStaffScheduleDialog
+          <DeleteStaffScheduleDialog
             schedules={table
               .getFilteredSelectedRowModel()
               .rows.map((row) => row.original)}

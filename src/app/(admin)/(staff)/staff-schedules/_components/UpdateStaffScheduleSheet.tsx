@@ -44,6 +44,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format, toDate } from "date-fns-tz";
 import { Badge } from "@/components/ui/badge";
+import { colorOptions } from "@/app/(admin)/(staff)/schedules/_components/calendar/calendarTailwindClasses";
 
 const DAYS_OF_WEEK = [
   { label: "Lunes", value: "MONDAY" },
@@ -80,6 +81,7 @@ export function UpdateStaffScheduleSheet({
     resolver: zodResolver(updateStaffScheduleSchema),
     defaultValues: {
       title: schedule.title,
+      color: schedule.color,
       daysOfWeek: schedule.daysOfWeek,
       startTime: schedule.startTime,
       endTime: schedule.endTime,
@@ -139,6 +141,34 @@ export function UpdateStaffScheduleSheet({
                     <FormControl>
                       <Input placeholder="Nombre del horario" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="color"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Color</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione un color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {colorOptions.map((color) => (
+                          <SelectItem key={color.value} value={color.value}>
+                            <div className="flex items-center gap-2">
+                              <div 
+                                className={`w-4 h-4 rounded-full bg-${color.value}-500`}
+                              />
+                              {color.label}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

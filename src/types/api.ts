@@ -2423,6 +2423,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/events/by-schedule/{scheduleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos por ID de horario de staff */
+        get: operations["EventController_findEventsByStaffSchedule"];
+        put?: never;
+        post?: never;
+        /** Eliminar todos los eventos por ID de horario de staff */
+        delete: operations["EventController_deleteEventsByStaffSchedule"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/staff-schedule": {
         parameters: {
             query?: never;
@@ -5011,6 +5029,11 @@ export interface components {
              */
             title: string;
             /**
+             * @description Color del evento
+             * @example sky
+             */
+            color: string;
+            /**
              * @description Tipo de evento
              * @example TURNO
              * @enum {string}
@@ -5055,6 +5078,11 @@ export interface components {
              * @example Turno Mañana
              */
             title?: string;
+            /**
+             * @description Color del evento
+             * @example sky
+             */
+            color?: string;
             /**
              * @description Tipo de evento
              * @example TURNO
@@ -5134,6 +5162,11 @@ export interface components {
              */
             title: string;
             /**
+             * @description Color del horario
+             * @example sky
+             */
+            color: string;
+            /**
              * @description Hora de inicio en formato HH:mm
              * @example 08:00
              */
@@ -5167,6 +5200,8 @@ export interface components {
             branchId: string;
             /** @default Turno */
             title: string;
+            /** @default sky */
+            color: string;
             /** @description Hora de inicio en formato HH:mm */
             startTime: string;
             /** @description Hora de fin en formato HH:mm */
@@ -5206,6 +5241,11 @@ export interface components {
              * @example branch-5678
              */
             branchId?: string;
+            /**
+             * @description Color del horario
+             * @example sky
+             */
+            color?: string;
             /**
              * @description Hora de inicio en formato HH:mm
              * @example 08:00
@@ -12894,6 +12934,85 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_findEventsByStaffSchedule: {
+        parameters: {
+            query?: {
+                /** @description Página para paginación */
+                page?: number;
+                /** @description Límite de resultados por página */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                /** @description ID del horario del staff */
+                scheduleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Eventos encontrados para el horario */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_deleteEventsByStaffSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del horario del staff */
+                scheduleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Eventos eliminados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
