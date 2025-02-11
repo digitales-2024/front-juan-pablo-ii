@@ -5861,7 +5861,7 @@ export interface components {
              *       ]
              *     }
              */
-            medicalHistory: Record<string, never>;
+            medicalHistory?: Record<string, never>;
             /**
              * @description Additional description
              * @example First patient consultation
