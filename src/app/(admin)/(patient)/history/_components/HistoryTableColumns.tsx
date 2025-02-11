@@ -5,7 +5,13 @@ import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHe
 import { MedicalHistory } from "../_interfaces/history.interface";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, RefreshCcwDot, Trash, RefreshCcw } from "lucide-react";
+import {
+  Ellipsis,
+  RefreshCcwDot,
+  Trash,
+
+  ClipboardPlus,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,9 +24,10 @@ import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { ReactivateHistoryDialog } from "./ReactivateHistoryDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateHistoryDialog } from "./DeactivateHistoryDialog";
-//import { useMedicalHistories } from "../_hooks/usehistory";
-//import { UpdateHistorySheet } from "../../update-history/_components/UpdateHistorySheet";
-
+/* import { useMedicalHistories } from "../_hooks/usehistory";
+import { UpdateHistorySheet } from "../../update-history/page";
+import { cn } from "@/lib/utils"; */
+import { useRouter } from "next/navigation";
 export const columns: ColumnDef<MedicalHistory>[] = [
   {
     id: "select",
@@ -52,48 +59,34 @@ export const columns: ColumnDef<MedicalHistory>[] = [
     enableHiding: false,
     enablePinning: true,
   },
-  /* {
-    id: "update",
-    size: 10,
-    header: () => <span>Actualizar</span>,
-    cell: ({ row }) => {
-      const [showEditSheet, setShowEditSheet] = useState(false);
-      const history = row.original;
-      const { completeMedicalHistoryQuery } = useMedicalHistories();
-      const { data: completeHistory, refetch } = completeMedicalHistoryQuery(history.id);
+//boton con ek id para iniciar la funcion del completeMedicalHistoryQuery 
+{
+  id: "id",
+  meta: {
+    title: "Boton",
+  },
+  header: ({ column }) => (
+    <DataTableColumnHeader column={column} title="Boton" />
+  ),
+  cell: ({ row }) => {
+    const router = useRouter();
+    return (
+      <div className="flex justify-center">
+        <Button
+          onClick={() => {
+            console.log(`Navigating to /update-history/${row.original.id}`);
+            router.push(`/update-history/${row.original.id}`);
+          }}
+          className="flex items-center gap-2"
+        >
+          <ClipboardPlus className="h-4 w-4" />
+          Actualizar
+        </Button>
+      </div>
+    );
+  },
+},
 
-      const handleUpdateClick = async () => {
-        try {
-          await refetch();
-          setShowEditSheet(true);
-        } catch (error) {
-          console.error("Error fetching complete medical history:", error);
-        }
-      };
-
-      return (
-        <div>
-          <UpdateHistorySheet
-            history={completeHistory}
-            open={showEditSheet}
-            onOpenChange={setShowEditSheet}
-            showTrigger={false}
-          />
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleUpdateClick}
-          >
-            <RefreshCcw className="mr-2 size-4" aria-hidden="true" />
-            Actualizar
-          </Button>
-        </div>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-    enablePinning: true,
-  }, */
   {
     accessorKey: "fullName",
     meta: {
