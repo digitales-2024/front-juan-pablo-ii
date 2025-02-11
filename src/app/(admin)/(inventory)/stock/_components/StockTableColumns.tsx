@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { type StockByStorage as Stock } from "../_interfaces/stock.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -21,11 +21,32 @@ import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { ReactivateProductDialog } from "./ReactivateProductDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateProductDialog } from "./DeactivateProductDialog";
+import { ShowMovementsDialog, ShowProductStockDialog } from "./ProductStock/ShowProductStockDialog";
 // import Image from "next/image";
 
-export const columns: ColumnDef<DetailedProduct>[] = [
+// {
+//   "idStorage": "61de3a1b-9538-48a0-8cdc-62edafcef760",
+//   "name": "Almacen medicamentos",
+//   "location": "JLBR",
+//   "address": "Urb La rivera E-18, JLBR",
+//   "staff": "Juan",
+//   "description": "",
+//   "stock": [
+//     {
+//       "idProduct": "397d68a1-cb47-4402-9546-0ab7b57ec93f",
+//       "name": "escitalopram",
+//       "unit": "blister",
+//       "price": 150,
+//       "stock": 7,
+//       "totalPrice": 1050
+//     }
+//   ]
+// }
+
+export const columns: ColumnDef<Stock>[] = [
   {
     id: "select",
+    meta: { title: "Selec." },
     size: 10,
     header: ({ table }) => (
       <div className="px-2">
@@ -58,23 +79,38 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "name",
-    id: "Nombre",
+    meta:{
+      title: "Almacén"
+    },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nombre" />
+      <DataTableColumnHeader column={column} title="Almacén" />
     ),
   },
   {
-    accessorKey: "unidadMedida",
-    id: "Unidad de Medida",
+    accessorKey: "location",
+    meta:{
+      title: "Ubicación"
+    },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Medida" />
+      <DataTableColumnHeader column={column} title="Ubicación" />
     ),
   },
   {
-    accessorKey: "codigoProducto",
-    id: "Código",
+    accessorKey: "address",
+    meta:{
+      title: "Dirección"
+    },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
+      <DataTableColumnHeader column={column} title="Dirección" />
+    )
+  },
+  {
+    accessorKey: "staff",
+    meta:{
+      title: "Personal"
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Personal" />
     ),
   },
   // NO usamos por el momento
@@ -98,101 +134,59 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   //   ),
   // },
   {
-    accessorKey: "categoria",
-    id: "Categoría",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Categoría" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.categoria?.name || "Sin Categoría"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "tipoProducto",
-    id: "Subcategoría",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Subcategoría" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.tipoProducto?.name || "Sin subcategoría"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "precio",
-    id: "Precio",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Precio" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.precio.toLocaleString("es-PE", {
-          style: "currency",
-          currency: "PEN",
-        })}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "descuento",
-    id: "Descuento",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descuento" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {/* The discounts have been stored in the DB as a porcentage, so we need to convert it to a percentage by dividing by 100*/}
-        {(row.original.descuento / 100)?.toLocaleString("es-PE", {
-          style: "percent",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }) || "Sin descuento"}
-      </span>
-    ),
-  },
-  {
     accessorKey: "description",
-    id: "Descripción",
+    meta: {
+      title: "Descripción"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
   },
+    // {
+    //   accessorKey: "movements",
+    //   size: 10,
+    //   meta: {
+    //     title: "Movimientos"
+    //   },
+    //   header: () => (
+    //     <div>Movimientos</div>
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div>
+    //       <ShowMovementsDialog data={row.original.Movement} incomingName={row.original.name??row.original.id}></ShowMovementsDialog>
+    //     </div>
+    //   ),
+    // },
   {
-    accessorKey: "observaciones",
-    id: "Observaciones",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Observaciones" />
+    accessorKey: "stock",
+    meta:{
+      title: "Stock",
+    },
+    header: ()=>(
+      <div>Stock</div>
     ),
-  },
-  {
-    accessorKey: "condicionesAlmacenamiento",
-    id: "Condiciones de almacenamiento",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Condiciones de almacenamiento" />
-    ),
-  },
-  {
-    accessorKey: "usoProducto",
-    id: "Uso",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ámbito de uso" />
-    ),
-  },
-  {
-    accessorKey: "isActive",
-    id: "Estado",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
-    ),
+    // header: ({ column }) => (
+    //   <DataTableColumnHeader column={column} title="Stock" />
+    // ),
     cell: ({ row }) => (
-      <Badge variant={row.original.isActive ? "success" : "destructive"}>
-        {row.original.isActive ? "Activo" : "Inactivo"}
-      </Badge>
+      <div>
+        {/* <ShowMovementsDialog data={row.original.Movement} incomingName={row.original.name??row.original.id}></ShowMovementsDialog> */}
+        <ShowProductStockDialog data={row.original.stock} storageName={row.original.name??undefined}></ShowProductStockDialog>
+      </div>
     ),
   },
+  // {
+  //   accessorKey: "isActive",
+  //   id: "Estado",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Estado" />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Badge variant={row.original.isActive ? "success" : "destructive"}>
+  //       {row.original.isActive ? "Activo" : "Inactivo"}
+  //     </Badge>
+  //   ),
+  // },
   // {
   //   accessorKey: "createdAt",
   //   header: ({ column }) => (
@@ -209,16 +203,16 @@ export const columns: ColumnDef<DetailedProduct>[] = [
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: function Cell({ row }) {
-      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-      const [showReactivateDialog, setShowReactivateDialog] = useState(false);
-      const [showEditSheet, setShowEditSheet] = useState(false);
-      const product = row.original;
-      const { isActive } = product;
-      const isSuperAdmin = true;
+      // const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+      // const [showReactivateDialog, setShowReactivateDialog] = useState(false);
+      // const [showEditSheet, setShowEditSheet] = useState(false);
+      // const product = row.original;
+      // const { isActive } = product;
+      //const isSuperAdmin = true;
 
       return (
         <div>
-          <div>
+          {/* <div>
             <UpdateProductSheet
               product={product}
               open={showEditSheet}
@@ -237,7 +231,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
               onOpenChange={setShowReactivateDialog}
               showTrigger={false}
             />
-          </div>
+          </div> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -249,7 +243,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem 
+              {/* <DropdownMenuItem 
                 onSelect={() => setShowEditSheet(true)}
                 disabled={!isActive}
               >
@@ -275,7 +269,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
                 <DropdownMenuShortcut>
                   <Trash className="size-4" aria-hidden="true" />
                 </DropdownMenuShortcut>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
