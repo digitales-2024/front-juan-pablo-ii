@@ -1,227 +1,132 @@
-// StateManager/index.tsx
 import { useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
-//import { MovementDto } from "../_interfaces/income.interface";
-// import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
-import { type StockByStorage as Stock} from "../_interfaces/stock.interface";
-//import { useStock } from "./useStock";
+import { type StockByStorage as Stock } from "../_interfaces/stock.interface";
 import { getStockByProduct, getStockByStorage, getStockByStorageProduct, getStockForAllStorages } from "../_actions/stock.actions";
 import { toast } from "sonner";
-// type MovementDto = {
-//     productId: string;
-//     quantity: number;
-//     date?: string;
-//     state?: boolean;
-// }
-// interface ProductSelected extends MovementDto {
-//   name: string;
-// }
 
-// type State = Stock[];
 type Action =
   | { type: "ALL_STORAGES" }
   | { type: "BY_STORAGE"; payload: { storageId: string }}
   | { type: "BY_PRODUCT"; payload: { productId: string }}
-  | { type: "BY_STORAGE_N_PRODUCT"; payload: { productId: string, storageId: string }}
-  | { type: "clear" };
+  | { type: "BY_STORAGE_N_PRODUCT"; payload: { productId: string, storageId: string }};
 
-// function reducer(state: State, action: Action): Stock[] {
-//     const {stockAllStoragesQuery, stockByProductQuery, stockByStorageNProductQuery, stockByStorageQuery} = useStock();
-//   switch (action.type) {
-//     case "BY_STORAGE": {
-//         const data = stockByStorageQuery(action.payload.storageId).data;
-//         if(data){
-//             return data;
-//         }
-//         return [];
-//     }
-//     case "BY_PRODUCT":{
-//         const data = stockByProductQuery(action.payload.productId).data;
-//         if(data){
-//             return data;
-//         }
-//         return [];
-//     }
-//     case "BY_STORAGE_N_PRODUCT":{
-//         const data = stockByStorageNProductQuery({
-//             productId: action.payload.productId,
-//             storageId: action.payload.storageId
-//         }).data;
-//         if(data){
-//             return data;
-//         }
-//         return [];
-//     }
-//     case "ALL_STORAGES":{
-//         const data = stockAllStoragesQuery.data;
-//         if(data){
-//             return data;
-//         }
-//         return [];
-//     }
-//     default:{
-//         const data = stockAllStoragesQuery.data;
-//         if(data){
-//             return data;
-//         }
-//         return [];
-//     }
-//   }
-// }
-
-  // Query para obtener los productos
+/**
+ * Hook que encapsula todas las queries relacionadas al stock
+ */
+const useStock = () => {
   const stockAllStoragesQuery = useQuery({
     queryKey: ["stock-storages"],
     queryFn: async () => {
       try {
         const response = await getStockForAllStorages();
-        if ("error" in response) {
-          throw new Error(response.error);
-        }
-        if (!response) {
-          throw new Error("No se recibió respuesta del servidor");
+        if (!response || "error" in response) {
+          throw new Error(response?.error || "No se recibió respuesta del servidor");
         }
         return response;
       } catch (error) {
-        if (error instanceof Error) toast.error(error.message);
-        toast.error("Error desconocido");
-        ;
+        toast.error(error instanceof Error ? error.message : "Error desconocido");
+        return [];
       }
     },
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 5,
   });
 
-  const stockByProductQuery = (productId: string)=>{
-    return useQuery({
-      queryKey: ["stock-by-product", productId], // replace "product-id" with the actual product id
+  const stockByProductQuery = (productId: string) =>
+    useQuery({
+      queryKey: ["stock-by-product", productId],
       queryFn: async () => {
         try {
           const response = await getStockByProduct(productId);
-          if ("error" in response) {
-            throw new Error(response.error);
-          }
-          if (!response) {
-            throw new Error("No se recibió respuesta del servidor");
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta del servidor");
           }
           return response;
         } catch (error) {
-          if (error instanceof Error) toast.error(error.message);
-          toast.error("Error desconocido");
-          ;
+          toast.error(error instanceof Error ? error.message : "Error desconocido");
+          return [];
         }
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos
+      staleTime: 1000 * 60 * 5,
+      enabled: !!productId,
     });
-  }
 
-  const stockByStorageQuery = (storageId: string)=>{
-    return useQuery({
-      queryKey: ["stock-by-storage", storageId], // replace "product-id" with the actual product id
+  const stockByStorageQuery = (storageId: string) =>
+    useQuery({
+      queryKey: ["stock-by-storage", storageId],
       queryFn: async () => {
         try {
           const response = await getStockByStorage(storageId);
-          if ("error" in response) {
-            throw new Error(response.error);
-          }
-          if (!response) {
-            throw new Error("No se recibió respuesta del servidor");
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta del servidor");
           }
           return response;
         } catch (error) {
-          if (error instanceof Error) toast.error(error.message);
-          toast.error("Error desconocido");
-          ;
+          toast.error(error instanceof Error ? error.message : "Error desconocido");
+          return [];
         }
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos
+      staleTime: 1000 * 60 * 5,
+      enabled: !!storageId,
     });
-  }
 
-  const stockByStorageNProductQuery = ({storageId, productId}: {storageId:string, productId:string})=>{
-    return useQuery({
-      queryKey: ["stock-by-storage-n-product", {storageId, productId}], // replace "product-id" with the actual product id
+  const stockByStorageNProductQuery = (storageId: string, productId: string) =>
+    useQuery({
+      queryKey: ["stock-by-storage-n-product", { storageId, productId }],
       queryFn: async () => {
         try {
-          const response = await getStockByStorageProduct({storageId, productId});
-          if ("error" in response) {
-            throw new Error(response.error);
-          }
-          if (!response) {
-            throw new Error("No se recibió respuesta del servidor");
+          const response = await getStockByStorageProduct({ storageId, productId });
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta del servidor");
           }
           return response;
         } catch (error) {
-          if (error instanceof Error) toast.error(error.message);
-          toast.error("Error desconocido");
-          ;
+          toast.error(error instanceof Error ? error.message : "Error desconocido");
+          return [];
         }
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos
+      staleTime: 1000 * 60 * 5,
+      enabled: !!storageId && !!productId,
     });
-  }
 
+  return { stockAllStoragesQuery, stockByProductQuery, stockByStorageQuery, stockByStorageNProductQuery };
+};
 
-function reducer( action: Action): UseQueryResult<Stock[] | undefined, Error> {
-    //const {stockAllStoragesQuery, stockByProductQuery, stockByStorageNProductQuery, stockByStorageQuery} = useStock();
+/**
+ * Hook para filtrar stock basado en una acción.
+ */
+const useFilterStock = (action: Action): UseQueryResult<Stock[] | undefined, Error> => {
+  const { stockAllStoragesQuery, stockByProductQuery, stockByStorageQuery, stockByStorageNProductQuery } = useStock();
+
   switch (action.type) {
-    case "BY_STORAGE": {
-        return stockByStorageQuery(action.payload.storageId);
-    }
-    case "BY_PRODUCT":{
-        return stockByProductQuery(action.payload.productId);
-    }
-    case "BY_STORAGE_N_PRODUCT":{
-        return stockByStorageNProductQuery({
-            productId: action.payload.productId,
-            storageId: action.payload.storageId
-        });
-    }
-    case "ALL_STORAGES":{
-        return stockAllStoragesQuery;
-    }
-    default:{
-        return stockAllStoragesQuery;
-    }
+    case "BY_STORAGE":
+      return stockByStorageQuery(action.payload.storageId);
+    case "BY_PRODUCT":
+      return stockByProductQuery(action.payload.productId);
+    case "BY_STORAGE_N_PRODUCT":
+      return stockByStorageNProductQuery(action.payload.storageId, action.payload.productId);
+    case "ALL_STORAGES":
+    default:
+      return stockAllStoragesQuery;
   }
-}
+};
 
+/**
+ * Hook para obtener el stock filtrado desde el cache del cliente.
+ */
 const useFilteredStock = () => {
-  const serverFilteredStock = useQuery<Stock[]>({
+  return useQuery<Stock[]>({
     queryKey: ["stock-server-filtered"],
     initialData: [],
-  });
-
-  return serverFilteredStock.data ?? [];
+  }).data ?? [];
 };
 
-// const useFilterStockDispatch = () => {
-//   const client = useQueryClient();
-//   const dispatch = (action: Action) => {
-//     client.setQueryData<Stock[]>(["stock-server-filtered"], () => {
-//       const query = reducer(action);
-//       // console.log('updatedData', newData);
-//       return query.data;
-//     });
-//   };
-//   return dispatch;
-// };
-
-const useFilterStockDispatch = () => {
-  const dispatch = (action: Action) => {
-    const query = reducer(action);
-    return query;
+/**
+ * Hook para actualizar el stock filtrado en cache del cliente.
+ */
+const useUpdateFilteredStock = () => {
+  const client = useQueryClient();
+  return (data: Stock[]) => {
+    client.setQueryData<Stock[]>(["stock-server-filtered"], () => data);
   };
-  return dispatch;
 };
 
-const updatedFilteredStock = (data: Stock[]) => {
-    const client = useQueryClient();
-    client.setQueryData<Stock[]>(["stock-server-filtered"], () => {
-        return data;
-    });
-}
-
-const useStock = () => {
-    return {stockAllStoragesQuery, stockByProductQuery, stockByStorageNProductQuery, stockByStorageQuery};
-}
-
-export { useFilteredStock, useFilterStockDispatch, updatedFilteredStock, useStock };
+export { useStock, useFilterStock, useFilteredStock, useUpdateFilteredStock };

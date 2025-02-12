@@ -1,3 +1,4 @@
+
 import { components } from "@/types/api";
 import { z } from "zod";
 
@@ -10,6 +11,13 @@ export type DeleteProductDto = components['schemas']['DeleteProductDto'];
 export type ActiveProductPrototype = components['schemas']['ActiveProduct'];
 export type ActiveProductCategory = components['schemas']['ActiveProductCategory'];
 export type ActiveProductType = components['schemas']['ActiveProductTypeProduct'];
+
+export type ProductSearchPrototype= components['schemas']['ProductSearch'];
+export type ProductSearch = {
+  id: string;
+  name: string;
+}
+
 //Es necesario crear tipos explicitos para tipos anidados autogenerados para evitar errores de compilación y errores en tiempo de ejecución
 export type ActiveProduct = {
   id: string;
@@ -22,8 +30,6 @@ export type ActiveProduct = {
   categoria: ActiveProductCategory;
   tipoProducto: ActiveProductType;
 }
-
-
 
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateProductDto = DeleteProductDto;

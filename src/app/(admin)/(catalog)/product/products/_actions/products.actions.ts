@@ -1,7 +1,7 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { Product, DetailedProduct, CreateProductDto, UpdateProductDto, DeleteProductDto, ActiveProduct } from "../_interfaces/products.interface";
+import { Product, DetailedProduct, CreateProductDto, UpdateProductDto, DeleteProductDto, ActiveProduct, ProductSearch } from "../_interfaces/products.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";
@@ -11,6 +11,7 @@ export type DetailedProductResponse = BaseApiResponse<DetailedProduct> | { error
 export type ListProductResponse = Product[] | { error: string };
 export type ListDetailedProductResponse = DetailedProduct[] | { error: string };
 export type ListActiveProducts = ActiveProduct[] | { error: string };
+export type ProductSearchResponse = ProductSearch[] | { error: string };
 
 const GetProductSchema = z.object({});
 
@@ -126,6 +127,29 @@ export async function getDetailedProductById (id: string) : Promise<ListDetailed
     return { error: "Error desconocido" };
   }
 };
+
+export async function searchProductByIndexedName (name: string) : Promise<ProductSearchResponse> {
+  try {
+    const [productList, error] = await http.get<ListDetailedProductResponse>(`/product/search?name=${name}`);
+    console.log('url:', `/product/search?name=${name}`)
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock por producto",
+      };
+    }
+    // if (!Array.isArray(stockList)) {
+    //   return { error: "Respuesta inválida del servidor" };
+    // }
+    // return { data: stockList };
+    return productList;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
 
 /**
  * Crea un nuevo producto en el catálogo.
