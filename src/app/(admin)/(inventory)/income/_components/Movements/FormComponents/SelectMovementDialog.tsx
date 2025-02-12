@@ -21,13 +21,13 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useSelectedProducts, useSelectProductDispatch } from "../../../_hooks/useSelectProducts";
+import { useSelectProductDispatch } from "../../../_hooks/useSelectProducts";
 import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
 import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from './SelectProductTableColumns';
 
 const CREATE_PRODUCT_MESSAGES = {
-    button: "Seleccionar producto(s)",
+    button: "Añadir producto(s)",
     title: "Seleccionar productos para lista de movimientos",
     description: "Selecciona uno o varios productos para añadir a la lista de movimientos.",
     success: "Productos guardados exitosamente",
@@ -42,25 +42,13 @@ interface SelectProductDialogProps extends React.HTMLAttributes<HTMLButtonElemen
 export function SelectProductDialog({data, className, ...rest}: SelectProductDialogProps) {
     const [open, setOpen] = useState(false);
     const [localSelectRows, setLocalSelectRows] = useState<ActiveProduct[]>([]);
-    //const [isCreatePending, startCreateTransition] = useTransition();
-    // const { activeProductsQuery: activeProductsResponse } = useProducts();
-    const selectedProductsTanstack = useSelectedProducts();
+    // const selectedProductsTanstack = useSelectedProducts();
     const dispatch = useSelectProductDispatch()
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
-    // const handleDelete = () => {
-    //     const selectedRows = table.getSelectedRowModel().rows;
-    //     selectedRows.forEach(row => {
-    //       // Assuming you have a delete function defined
-    //       deleteRow(row.id);
-    //     });
-    //     // Optionally, refresh the table data after deletion
-    //     refreshTableData();
-    //   };
-
     const handleSave = (selectedRows: ActiveProduct[]) => {
-        console.log('oldStateTanstack', selectedProductsTanstack);
-        console.log('handleSave', selectedRows);
+        // console.log('oldStateTanstack', selectedProductsTanstack);
+        // console.log('handleSave', selectedRows);
         dispatch({type: "append", payload: selectedRows});
         setOpen(false);
     }
@@ -127,8 +115,6 @@ export function SelectProductDialog({data, className, ...rest}: SelectProductDia
                             columns={columns}
                             data={data}
                             onRowSelectionChange={(selectedRows)=>{
-                                //dispatch({type: 'SET_SELECTED_PRODUCTS', payload: table.getSelectedRowModel().rows});
-                                // console.log('outer', selectedRows);
                                 setLocalSelectRows(()=>[...selectedRows]);
                             }}
                             />
@@ -152,12 +138,6 @@ export function SelectProductDialog({data, className, ...rest}: SelectProductDia
                         {CREATE_PRODUCT_MESSAGES.description}
                     </DrawerDescription>
                 </DrawerHeader>
-                {/* <CreateProductForm form={form} onSubmit={handleSubmit}>
-                    <DevelopmentZodError form={form} />
-                    <DrawerFooter>
-                        <DialogFooterContent />
-                    </DrawerFooter>
-                </CreateProductForm> */}
                 <DrawerFooter>
                     <DialogFooterContent />
                 </DrawerFooter>
@@ -165,27 +145,3 @@ export function SelectProductDialog({data, className, ...rest}: SelectProductDia
         </Drawer>
     );
 }
-
-// function DevelopmentZodError({ form }: { form: UseFormReturn<CreateProductInput> }) {
-//     console.log('Ingresando a DevelopmentZodError', process.env.NEXT_PUBLIC_ENV);
-//     if (process.env.NEXT_PUBLIC_ENV !== "development") return null;
-//     const [errors, setErrors] = useState<FieldErrors<CreateProductInput>>({});
-//     useEffect(() => {
-//         if (form.formState.errors) {
-//             setErrors(form.formState.errors);
-//         }
-//     }, [form.formState.errors]);
-//     return  (
-//         <div>
-//             <div>
-//                 {
-//                     Object.keys(errors).map((key) => (
-//                         <p key={key}>
-//                             {key}: {errors[key as keyof CreateProductInput]?.message}
-//                         </p>
-//                     ))
-//                 }
-//             </div>
-//         </div>
-//     )
-// }

@@ -7,9 +7,9 @@ import { DetailedIncoming } from "../_interfaces/income.interface";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { es } from "date-fns/locale";
-import { UpdateProductSheet } from "./UpdateProductSheet";
+import { UpdateIncomingSheet } from "./UpdateIncomingSheet";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, RefreshCcwDot, TableProperties, Trash } from "lucide-react";
+import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,7 +72,9 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   },
   {
     accessorKey: "name",
-    id: "Nombre",
+    meta: {
+      title: "Nombre"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
@@ -84,7 +86,9 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   },
   {
     accessorKey: "description",
-    id: "Descripción",
+    meta: {
+      title: "Descripción"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
@@ -95,20 +99,52 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
     ),
   },
   {
-    accessorKey: "storageId",
-    id: "Almacén",
+    accessorKey: "Storage.name",
+    meta: {
+      title: "Almacén"
+    } ,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Almacén" />
     ),
     cell: ({ row }) => (
       <span>
-        {(row.original.Storage as { name: string })?.name ?? "Sin Almacen"}
+        {(row.original.Storage.name) ?? "Sin Almacen"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "Storage.TypeStorage.name",
+    meta: {
+      title: "Tipo de almacén"
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tipo de almacén" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {(row.original.Storage.TypeStorage.name) ?? "Sin tipo de almacén"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "Storage.TypeStorage.branch.name",
+    meta: {
+      title: "Sucursal"
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Sucursal" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.Storage.TypeStorage.branch?.name ?? "Sin sucursal"}
       </span>
     ),
   },
   {
     accessorKey: "date",
-    id: "Fecha de ingreso",
+    meta: {
+      title: "Fecha de ingreso"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha de ingreso" />
     ),
@@ -140,7 +176,9 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   // },
   {
     accessorKey: "state",
-    id: "Consumación",
+    meta: {
+      title: "Consumación"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Consumación" />
     ),
@@ -155,6 +193,9 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   },
   {
     accessorKey: "isActive",
+    meta: {
+      title: "Estado"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
@@ -173,9 +214,11 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
   {
-    id: "Movimientos",
     accessorKey: "movements",
     size: 10,
+    meta: {
+      title: "Movimientos"
+    },
     header: () => (
       <div>Movimientos</div>
     ),
@@ -196,31 +239,38 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
       const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
       const [showEditSheet, setShowEditSheet] = useState(false);
-      const product = row.original;
-      const { isActive } = product;
+      const incoming = row.original;
+      const { isActive } = incoming;
       const isSuperAdmin = true;
 
       return (
         <div>
           <div>
-            {/* <UpdateProductSheet
-              product={product}
+            { showEditSheet && <UpdateIncomingSheet
+              incoming={incoming}
               open={showEditSheet}
               onOpenChange={setShowEditSheet}
               showTrigger={false}
-            /> */}
-            {/* <DeactivateProductDialog
-              product={product}
-              open={showDeleteDialog}
-              onOpenChange={setShowDeleteDialog}
-              showTrigger={false}
-            />
-            <ReactivateProductDialog
-              product={product}
-              open={showReactivateDialog}
-              onOpenChange={setShowReactivateDialog}
-              showTrigger={false}
-            /> */}
+            />}
+            {
+              showDeleteDialog && (
+                <DeactivateIncomingDialog
+                  incoming={incoming}
+                  open={showDeleteDialog}
+                  onOpenChange={setShowDeleteDialog}
+                  showTrigger={false}
+                />
+              )
+            }
+            {
+              showReactivateDialog && (
+                <ReactivateIncomingDialog
+                  incoming={incoming}
+                  open={showReactivateDialog}
+                  onOpenChange={setShowReactivateDialog}
+                />
+              )
+            }
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -4066,6 +4066,7 @@ export interface components {
             id: string;
             name: string;
             precio: number;
+
             categoriaId: string;
             tipoProductoId: string;
             categoria: components["schemas"]["ActiveProductCategory"];
@@ -4506,8 +4507,19 @@ export interface components {
             referenceId: string;
             isActive: boolean;
         };
-        IncomingStorage: {
+        IncomingBranch: {
+            id: string;
             name: string;
+        };
+        IncomingStorageType: {
+            id: string;
+            name: string;
+            branch?: components["schemas"]["IncomingBranch"];
+        };
+        IncomingStorage: {
+            id: string;
+            name: string;
+            TypeStorage: components["schemas"]["IncomingStorageType"];
         };
         IncomingWithStorage: {
             id: string;
@@ -4542,7 +4554,7 @@ export interface components {
             date: string;
             state: boolean;
             isActive: boolean;
-            Product: components["schemas"]["IncomingProduct"];
+
         };
         DetailedIncoming: {
             id: string;
@@ -4731,7 +4743,8 @@ export interface components {
             date: string;
             state: boolean;
             isActive: boolean;
-            Product: components["schemas"]["OutgoingProduct"];
+
+
         };
         DetailedOutgoing: {
             id: string;

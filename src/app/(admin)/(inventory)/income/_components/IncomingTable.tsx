@@ -25,6 +25,11 @@ export function IncomingTable({ data }: IncomingTableProps) {
       data={data}
       placeholder="Buscar por nombre ..."
       toolbarActions={(table) => <IncomingTableToolbarActions table={table} />}
+      columnVisibilityConfig={
+        {
+          description: false,
+        }
+      }
     />
   );
 }
