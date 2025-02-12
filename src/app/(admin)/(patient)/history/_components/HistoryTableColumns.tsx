@@ -22,6 +22,7 @@ import { DeactivateHistoryDialog } from "./DeactivateHistoryDialog";
 import { UpdateHistorySheet } from "../../update-history/page";
 import { cn } from "@/lib/utils"; */
 import { useRouter } from "next/navigation";
+
 export const columns: ColumnDef<MedicalHistory>[] = [
   {
     id: "select",
@@ -53,7 +54,6 @@ export const columns: ColumnDef<MedicalHistory>[] = [
     enableHiding: false,
     enablePinning: true,
   },
-  //boton con ek id para iniciar la funcion del completeMedicalHistoryQuery
   {
     id: "id",
     meta: {
@@ -64,6 +64,7 @@ export const columns: ColumnDef<MedicalHistory>[] = [
     ),
     cell: ({ row }) => {
       const router = useRouter();
+      const isActive = row.original.isActive;
       return (
         <div className="flex justify-center">
           <Button
@@ -72,6 +73,7 @@ export const columns: ColumnDef<MedicalHistory>[] = [
               router.push(`/update-history/${row.original.id}`);
             }}
             className="flex items-center gap-2"
+            disabled={!isActive}
           >
             <ClipboardPlus className="h-4 w-4" />
             Actualizar
@@ -80,7 +82,6 @@ export const columns: ColumnDef<MedicalHistory>[] = [
       );
     },
   },
-
   {
     accessorKey: "fullName",
     meta: {
@@ -170,7 +171,7 @@ export const columns: ColumnDef<MedicalHistory>[] = [
                 onSelect={() => setShowDeleteDialog(true)}
                 disabled={!isActive}
               >
-                Eliminar
+                Desactivar
                 <DropdownMenuShortcut>
                   <Trash className="size-4" aria-hidden="true" />
                 </DropdownMenuShortcut>

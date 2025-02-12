@@ -1,4 +1,10 @@
-export interface Paciente {
+
+import { components } from "@/types/api";
+// Tipos base de la API
+export type Patient = components["schemas"]["Patient"];
+
+/* export interface Paciente extends Patient */
+/* export interface Paciente {
     id: string;
     nombre: string;
     apellido: string;
@@ -7,9 +13,9 @@ export interface Paciente {
     correo: string;
     direccion: string;
     foto: string;
-  }
-  
-  export interface PrescriptionItem {
+  } */
+
+   export interface PrescriptionItem {
     nombre: string;
     dosis: string;
     frecuencia: string;

@@ -7,21 +7,33 @@ import { MedicalBackground } from "../_components/MedicalBackground";
 import { MedicalHistory } from "../_components/MedicalHistory";
 import { PrescriptionModal } from "../_components/PrescriptionModal";
 import { PERSONAL_MEDICO, SUCURSAL } from "../constants";
-import type { Paciente, HistorialItem, Servicio } from "../types";
+import type { Patient, HistorialItem, Servicio } from "../types";
 
 export default function UpdateHistorySheet() {
   const { historyId } = useParams();
   console.log("ID de la historia:", historyId);
 
-  const [paciente, _setPaciente] = useState<Paciente>({
+   const [paciente, _setPaciente] = useState<Patient>({
     id: historyId as string,
-    nombre: "Juan",
-    apellido: "Pérez",
+    name: "Juan",
+    lastName: "Pérez",
     dni: "12345678",
-    telefono: "123-456-7890",
-    correo: "juan@example.com",
-    direccion: "Calle Principal 123",
-    foto: "https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/c39396cb-84bd-4f08-b56e-356107809ba9.png",
+    birthDate: "1990-01-01",
+    gender: "Masculino",
+    address: "Calle Principal 123",
+    phone: "123-456-7890",
+    email: "juan@example.com",
+    emergencyContact: "María Pérez",
+    emergencyPhone: "098-765-4321",
+    healthInsurance: "Seguro Salud S.A.",
+    maritalStatus: "Soltero",
+    occupation: "Ingeniero",
+    workplace: "Empresa XYZ",
+    bloodType: "O+",
+    primaryDoctor: "Dr. Smith",
+    language: "Español",
+    notes: "Paciente con antecedentes de hipertensión.",
+    patientPhoto: "https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/c39396cb-84bd-4f08-b56e-356107809ba9.png",
   });
 
   const [historialMedico, setHistorialMedico] = useState<HistorialItem[]>([
