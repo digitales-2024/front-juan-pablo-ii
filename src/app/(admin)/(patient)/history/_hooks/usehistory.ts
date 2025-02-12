@@ -35,11 +35,7 @@ export const useMedicalHistories = () => {
       if (response.error || !response.data) {
         throw new Error(response.error ?? "Error desconocido");
       }
-      return {
-        success: true,
-        message: "Data fetched successfully",
-        data: response.data,
-      };
+      return response.data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });

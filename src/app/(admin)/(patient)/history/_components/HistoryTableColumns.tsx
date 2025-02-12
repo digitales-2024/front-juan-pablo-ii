@@ -5,13 +5,7 @@ import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHe
 import { MedicalHistory } from "../_interfaces/history.interface";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Ellipsis,
-  RefreshCcwDot,
-  Trash,
-
-  ClipboardPlus,
-} from "lucide-react";
+import { Ellipsis, RefreshCcwDot, Trash, ClipboardPlus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,33 +53,33 @@ export const columns: ColumnDef<MedicalHistory>[] = [
     enableHiding: false,
     enablePinning: true,
   },
-//boton con ek id para iniciar la funcion del completeMedicalHistoryQuery 
-{
-  id: "id",
-  meta: {
-    title: "Boton",
+  //boton con ek id para iniciar la funcion del completeMedicalHistoryQuery
+  {
+    id: "id",
+    meta: {
+      title: "Boton",
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Boton" />
+    ),
+    cell: ({ row }) => {
+      const router = useRouter();
+      return (
+        <div className="flex justify-center">
+          <Button
+            onClick={() => {
+              console.log(`Navigating to /update-history/${row.original.id}`);
+              router.push(`/update-history/${row.original.id}`);
+            }}
+            className="flex items-center gap-2"
+          >
+            <ClipboardPlus className="h-4 w-4" />
+            Actualizar
+          </Button>
+        </div>
+      );
+    },
   },
-  header: ({ column }) => (
-    <DataTableColumnHeader column={column} title="Boton" />
-  ),
-  cell: ({ row }) => {
-    const router = useRouter();
-    return (
-      <div className="flex justify-center">
-        <Button
-          onClick={() => {
-            console.log(`Navigating to /update-history/${row.original.id}`);
-            router.push(`/update-history/${row.original.id}`);
-          }}
-          className="flex items-center gap-2"
-        >
-          <ClipboardPlus className="h-4 w-4" />
-          Actualizar
-        </Button>
-      </div>
-    );
-  },
-},
 
   {
     accessorKey: "fullName",
