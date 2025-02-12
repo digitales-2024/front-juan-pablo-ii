@@ -1,5 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   User,
   Mail,
@@ -9,100 +11,200 @@ import {
   Calendar,
   Heart,
   Briefcase,
-  Globe,
-  Clipboard,
-} from "lucide-react";
-import type { Patient } from "../types";
+  UserCog,
+  AlertCircle,
+  Building2,
+  UserCheck,
+  Stethoscope,
+  Languages,
+  ScrollText,
+  IdCard,
+} from "lucide-react"
+import type { Patient } from "../types"
 
 interface PatientBasicInfoProps {
-  paciente: Patient;
+  paciente: Patient
 }
 
 export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
   return (
-    <Card className="text-center">
-      <CardHeader>
-        <CardTitle className="text-3xl font-bold">Historia Médica</CardTitle>
-        <Avatar className="w-32 h-32 mx-auto mt-4">
-          <AvatarImage
-            src={paciente.patientPhoto}
-            alt={`${paciente.name} ${paciente.lastName}`}
-          />
-          <AvatarFallback>
-            <User className="w-16 h-16" />
-          </AvatarFallback>
-        </Avatar>
-      </CardHeader>
-      <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-left">
-        <div className="flex items-center space-x-2">
-          <User className="w-5 h-5 text-gray-500" />
-          <span>{`${paciente.name} ${paciente.lastName}`}</span>
+    <div className="bg-gray-50/50">
+      <div className="container mx-auto py-8">
+        <div className="grid grid-cols-12 gap-6">
+          {/* Sidebar */}
+          <div className="col-span-12 md:col-span-3">
+            <Card className="h-full flex items-center justify-center">
+              <CardContent className="p-6 text-center">
+                <Avatar className="w-32 h-32 mx-auto">
+                  <AvatarImage src={paciente.patientPhoto} alt={`${paciente.name} ${paciente.lastName}`} />
+                  <AvatarFallback>
+                    <User className="w-16 h-16" />
+                  </AvatarFallback>
+                </Avatar>
+                <h2 className="mt-4 text-2xl font-semibold">{`${paciente.name} ${paciente.lastName}`}</h2>
+                <div className="flex items-center justify-center mt-2">
+                  <IdCard className="w-5 h-5 text-primary mr-2" />
+                  <p className="text-muted-foreground">{paciente.dni}</p>
+                </div>
+                <div className="mt-4 flex justify-center gap-2">
+                  <Badge variant="secondary" className="bg-green-500 text-white">
+                    Paciente
+                  </Badge>
+                  <Badge variant="secondary">
+                    <Heart className="w-4 h-4 mr-1" />
+                    {paciente.bloodType}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Main Content */}
+          <div className="col-span-12 md:col-span-9">
+            <Tabs defaultValue="medical" className="w-full">
+              <TabsList className="w-full justify-start">
+                <TabsTrigger value="medical">
+                  <Stethoscope className="w-4 h-4 mr-2" />
+                  Información Médica
+                </TabsTrigger>
+                <TabsTrigger value="personal">
+                  <UserCog className="w-4 h-4 mr-2" />
+                  Información Personal
+                </TabsTrigger>
+                <TabsTrigger value="contact">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Contacto
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="medical" className="mt-6">
+                <Card className="h-full min-h-[300px]">
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Seguro de Salud</label>
+                        <div className="flex items-center space-x-2">
+                          <FileText className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.healthInsurance}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Médico Primario</label>
+                        <div className="flex items-center space-x-2">
+                          <Stethoscope className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.primaryDoctor}</span>
+                        </div>
+                      </div>
+                      <div className="col-span-2">
+                        <label className="text-sm font-medium text-muted-foreground">Notas Médicas</label>
+                        <div className="flex items-start space-x-2 mt-1">
+                          <ScrollText className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                          <span className="font-medium">{paciente.notes}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="personal" className="mt-6">
+                <Card className="h-full min-h-[300px]">
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Fecha de Nacimiento</label>
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.birthDate}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Género</label>
+                        <div className="flex items-center space-x-2">
+                          <UserCheck className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.gender}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Estado Civil</label>
+                        <div className="flex items-center space-x-2">
+                          <User className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.maritalStatus}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Idioma</label>
+                        <div className="flex items-center space-x-2">
+                          <Languages className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.language}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Ocupación</label>
+                        <div className="flex items-center space-x-2">
+                          <Briefcase className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.occupation}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Lugar de Trabajo</label>
+                        <div className="flex items-center space-x-2">
+                          <Building2 className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.workplace}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="contact" className="mt-6">
+                <Card className="h-full min-h-[300px]">
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Teléfono</label>
+                        <div className="flex items-center space-x-2">
+                          <Phone className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.phone}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Email</label>
+                        <div className="flex items-center space-x-2">
+                          <Mail className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.email}</span>
+                        </div>
+                      </div>
+                      <div className="col-span-2">
+                        <label className="text-sm font-medium text-muted-foreground">Dirección</label>
+                        <div className="flex items-center space-x-2">
+                          <MapPin className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.address}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Contacto de Emergencia</label>
+                        <div className="flex items-center space-x-2">
+                          <AlertCircle className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.emergencyContact}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-muted-foreground">Teléfono de Emergencia</label>
+                        <div className="flex items-center space-x-2">
+                          <Phone className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{paciente.emergencyPhone}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <FileText className="w-5 h-5 text-gray-500" />
-          <span>{paciente.dni}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Calendar className="w-5 h-5 text-gray-500" />
-          <span>{paciente.birthDate}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Heart className="w-5 h-5 text-gray-500" />
-          <span>{paciente.gender}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Phone className="w-5 h-5 text-gray-500" />
-          <span>{paciente.phone}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Mail className="w-5 h-5 text-gray-500" />
-          <span>{paciente.email}</span>
-        </div>
-        <div className="flex items-center space-x-2 col-span-2 md:col-span-1">
-          <MapPin className="w-5 h-5 text-gray-500" />
-          <span>{paciente.address}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Phone className="w-5 h-5 text-gray-500" />
-          <span>{`Contacto de emergencia: ${paciente.emergencyContact}`}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Phone className="w-5 h-5 text-gray-500" />
-          <span>{`Teléfono de emergencia: ${paciente.emergencyPhone}`}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Clipboard className="w-5 h-5 text-gray-500" />
-          <span>{`Seguro de salud: ${paciente.healthInsurance}`}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Clipboard className="w-5 h-5 text-gray-500" />
-          <span>{`Estado civil: ${paciente.maritalStatus}`}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Briefcase className="w-5 h-5 text-gray-500" />
-          <span>{`Ocupación: ${paciente.occupation}`}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Briefcase className="w-5 h-5 text-gray-500" />
-          <span>{`Lugar de trabajo: ${paciente.workplace}`}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Heart className="w-5 h-5 text-gray-500" />
-          <span>{`Tipo de sangre: ${paciente.bloodType}`}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <User className="w-5 h-5 text-gray-500" />
-          <span>{`Médico primario: ${paciente.primaryDoctor}`}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Globe className="w-5 h-5 text-gray-500" />
-          <span>{`Idioma: ${paciente.language}`}</span>
-        </div>
-        <div className="flex items-center space-x-2 col-span-2">
-          <Clipboard className="w-5 h-5 text-gray-500" />
-          <span>{`Notas: ${paciente.notes}`}</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
+      </div>
+    </div>
+  )
 }

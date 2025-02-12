@@ -13,7 +13,7 @@ export default function UpdateHistorySheet() {
   const { historyId } = useParams();
   console.log("ID de la historia:", historyId);
 
-   const [paciente, _setPaciente] = useState<Patient>({
+  const [paciente, _setPaciente] = useState<Patient>({
     id: historyId as string,
     name: "Juan",
     lastName: "Pérez",
@@ -33,7 +33,8 @@ export default function UpdateHistorySheet() {
     primaryDoctor: "Dr. Smith",
     language: "Español",
     notes: "Paciente con antecedentes de hipertensión.",
-    patientPhoto: "https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/c39396cb-84bd-4f08-b56e-356107809ba9.png",
+    patientPhoto:
+      "https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/c39396cb-84bd-4f08-b56e-356107809ba9.png",
   });
 
   const [historialMedico, setHistorialMedico] = useState<HistorialItem[]>([
