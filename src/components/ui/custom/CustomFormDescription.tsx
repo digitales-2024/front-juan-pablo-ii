@@ -26,6 +26,12 @@ export function CustomFormDescription({
       )}
       {(!required && children) && <FormDescription className={className} {...props}>{children}
         </FormDescription>}
+      {
+        (required && children) && <FormDescription className={className} {...props}>
+          {children}
+          <span className="block">{REQUIRED_MESSAGE}</span>
+        </FormDescription>
+      }
       {/* {children&&children} */}
     </>
   );

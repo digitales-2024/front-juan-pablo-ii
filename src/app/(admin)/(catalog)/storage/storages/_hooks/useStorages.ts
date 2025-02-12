@@ -110,14 +110,14 @@ export const useStorages = () => {
       return response;
     },
     onSuccess: async (res) => {
-      const detailedTypeStorage = await getDetailedStorageById(res.data.id);
-        if ("error" in detailedTypeStorage) {
-          throw new Error(detailedTypeStorage.error);
+      const detailedStorage = await getDetailedStorageById(res.data.id);
+        if ("error" in detailedStorage) {
+          throw new Error(detailedStorage.error);
         }
       queryClient.setQueryData<DetailedStorage[] | undefined>(
         ["detailed-storages"], (oldStorages) => {
-          if (!oldStorages) return detailedTypeStorage;
-          return [...oldStorages, ...detailedTypeStorage];
+          if (!oldStorages) return detailedStorage;
+          return [...oldStorages, ...detailedStorage];
       });
       toast.success(res.message);
     },
@@ -137,14 +137,14 @@ export const useStorages = () => {
     },
     onSuccess: async(res) => {
       //Actualiza los datos con las relaciones que tenga
-      const detailedTypeStorage = await getDetailedStorageById(res.data.id);
-        if ("error" in detailedTypeStorage) {
-          throw new Error(detailedTypeStorage.error);
+      const detailedStorage = await getDetailedStorageById(res.data.id);
+        if ("error" in detailedStorage) {
+          throw new Error(detailedStorage.error);
         }
       queryClient.setQueryData<DetailedStorage[] | undefined>(["detailed-storages"], (oldStorages) => {
         if (!oldStorages) return undefined;
         return oldStorages.map((storage) =>
-          storage.id === res.data.id ? {...storage, ...detailedTypeStorage[0]} : storage
+          storage.id === res.data.id ? {...storage, ...detailedStorage[0]} : storage
         );
       });
       toast.success("Almacén actualizado exitosamente");

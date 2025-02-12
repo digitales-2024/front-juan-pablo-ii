@@ -21,8 +21,8 @@ import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescript
 import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
 import { METADATA } from "../_statics/metadata";
 import { useMemo } from "react";
-import { useStaff } from "@/app/(admin)/staff/_hooks/useStaff";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
+import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 
 interface CreateTypeStorageFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -165,7 +165,7 @@ export function CreateTypeStorageForm({
                     }
                   </FormControl>
                   <CustomFormDescription required={FORMSTATICS.branchId.required}>
-                    { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas. Este campo es opcional</span>}
+                    { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas.</span>}
                   </CustomFormDescription>
                   <FormMessage />
                 </FormItem>
@@ -204,7 +204,7 @@ export function CreateTypeStorageForm({
                     }
                   </FormControl>
                   <CustomFormDescription required={FORMSTATICS.staffId.required}>
-                    { staffOptions.length===0 && <span>No hay personal disponible o activo. Este campo es opcional</span>}
+                    { staffOptions.length===0 && <span>No hay personal disponible o activo.</span>}
                   </CustomFormDescription>
                   <FormMessage />
                 </FormItem>

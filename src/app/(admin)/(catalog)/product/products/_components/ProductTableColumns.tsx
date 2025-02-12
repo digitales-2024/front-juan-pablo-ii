@@ -23,6 +23,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateProductDialog } from "./DeactivateProductDialog";
 // import Image from "next/image";
 
+// declare module '@tanstack/react-table' {
+//   interface ColumnMeta<TData extends RowData, TValue> {
+//     title: string
+//   }
+// }
+
 export const columns: ColumnDef<DetailedProduct>[] = [
   {
     id: "select",
@@ -58,18 +64,30 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "name",
+    //id: "Nombre",
+    meta: {
+      title: "Nombre"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
   },
   {
     accessorKey: "unidadMedida",
+    meta: {
+      title: "Unidad de Medida"
+    },
+    //id: "Unidad de Medida",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Medida" />
+      <DataTableColumnHeader column={column} title="Unidad de Medida" />
     ),
   },
   {
     accessorKey: "codigoProducto",
+    //id: "Código",
+    meta: {
+      title: "Código"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
     ),
@@ -96,6 +114,10 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   // },
   {
     accessorKey: "categoria",
+    //id: "Categoría",
+    meta:{
+      title: "Categoría"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Categoría" />
     ),
@@ -107,6 +129,10 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "tipoProducto",
+    meta:{
+      title: "Subcategoría"
+    },
+    //id: "Subcategoría",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Subcategoría" />
     ),
@@ -118,6 +144,10 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "precio",
+    meta:{
+      title: "Precio"
+    },
+    //id: "Precio",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Precio" />
     ),
@@ -132,6 +162,10 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "descuento",
+    meta: {
+      title: "Descuento"
+    },
+    //id: "Descuento",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descuento" />
     ),
@@ -148,30 +182,50 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "description",
+    meta: {
+      title: "Descripción"
+    },
+    //id: "Descripción",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
   },
   {
     accessorKey: "observaciones",
+    meta:{
+      title: "Observaciones"
+    },
+    //id: "Observaciones",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Observaciones" />
     ),
   },
   {
     accessorKey: "condicionesAlmacenamiento",
+    //id: "Condiciones de almacenamiento",
+    meta: {
+      title: "Condiciones de almacenamiento"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Condiciones de almacenamiento" />
     ),
   },
   {
     accessorKey: "usoProducto",
+    meta: {
+      title: "Ámbito de uso"
+    },
+    //id: "Uso",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ámbito de uso" />
     ),
   },
   {
     accessorKey: "isActive",
+    meta: {
+      title: "Estado"
+    },
+    //id: "Estado",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
@@ -190,8 +244,11 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
   {
-    id: "Acciones",
     accessorKey: "actions",
+    //id: "Acciones",
+    meta: {
+      title: "Acciones"
+    },
     size: 10,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />

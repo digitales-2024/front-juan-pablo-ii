@@ -2,11 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { DetailedIncoming } from "../_interfaces/income.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-import { UpdateProductSheet } from "./UpdateProductSheet";
+import { es } from "date-fns/locale";
+import { UpdateIncomingSheet } from "./UpdateIncomingSheet";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import {
@@ -18,12 +19,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-import { ReactivateProductDialog } from "./ReactivateProductDialog";
+import { ReactivateIncomingDialog } from "./ReactivateIncomingDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DeactivateProductDialog } from "./DeactivateProductDialog";
+import { DeactivateIncomingDialog } from "./DeactivateIncomingDialog";
+import { format } from "date-fns";
+import { ShowMovementsDialog } from "./Movements/ShowMovementsDialog";
 // import Image from "next/image";
 
-export const columns: ColumnDef<DetailedProduct>[] = [
+//   name        String?
+//   description String?
+//   Storage.name Storage  @relation(fields: [storageId], references: [id])
+//   date        DateTime @default(now()) @db.Timestamptz(6)
+//   state       Boolean  @default(false) // Estado que indica si el ingreso es concreto (true) o está en proceso (false)
+//   isActive    Boolean  @default(true) // Campo para controlar si está activo o no
+//   createdAt   DateTime @default(now()) @db.Timestamptz(6)
+const STATE_OPTIONS = {
+  true: "Concretado",
+  false: "En proceso",
+}
+export const columns: ColumnDef<DetailedIncoming>[] = [
   {
     id: "select",
     size: 10,
@@ -58,20 +72,86 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "name",
+    meta: {
+      title: "Nombre"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
-  },
-  {
-    accessorKey: "unidadMedida",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Medida" />
+    cell: ({ row }) => (
+      <span>
+        {!row.original.name || (row.original.name.length == 0)? "" : row.original.name}
+      </span>
     ),
   },
   {
-    accessorKey: "codigoProducto",
+    accessorKey: "description",
+    meta: {
+      title: "Descripción"
+    },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
+      <DataTableColumnHeader column={column} title="Descripción" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.description || "Sin descripción"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "Storage.name",
+    meta: {
+      title: "Almacén"
+    } ,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Almacén" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {(row.original.Storage.name) ?? "Sin Almacen"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "Storage.TypeStorage.name",
+    meta: {
+      title: "Tipo de almacén"
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tipo de almacén" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {(row.original.Storage.TypeStorage.name) ?? "Sin tipo de almacén"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "Storage.TypeStorage.branch.name",
+    meta: {
+      title: "Sucursal"
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Sucursal" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.Storage.TypeStorage.branch?.name ?? "Sin sucursal"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "date",
+    meta: {
+      title: "Fecha de ingreso"
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fecha de ingreso" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.date ? format(new Date(row.original.date), "PPp", { locale: es }) : "Fecha no disponible"}
+      </span>
     ),
   },
   // NO usamos por el momento
@@ -95,83 +175,27 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   //   ),
   // },
   {
-    accessorKey: "categoria",
+    accessorKey: "state",
+    meta: {
+      title: "Consumación"
+    },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Categoría" />
+      <DataTableColumnHeader column={column} title="Consumación" />
     ),
     cell: ({ row }) => (
-      <span>
-        {row.original.categoria?.name || "Sin Categoría"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "tipoProducto",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Subcategoría" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.tipoProducto?.name || "Sin subcategoría"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "precio",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Precio" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.precio.toLocaleString("es-PE", {
-          style: "currency",
-          currency: "PEN",
-        })}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "descuento",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descuento" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {/* The discounts have been stored in the DB as a porcentage, so we need to convert it to a percentage by dividing by 100*/}
-        {(row.original.descuento / 100)?.toLocaleString("es-PE", {
-          style: "percent",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }) || "Sin descuento"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "description",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
-    ),
-  },
-  {
-    accessorKey: "observaciones",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Observaciones" />
-    ),
-  },
-  {
-    accessorKey: "condicionesAlmacenamiento",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Condiciones de almacenamiento" />
-    ),
-  },
-  {
-    accessorKey: "usoProducto",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ámbito de uso" />
+      // <span>
+      //   {row.original.state}
+      // </span>
+      <Badge variant={row.original.state ? "default" : "secondary"}>
+        {row.original.state? STATE_OPTIONS.true : STATE_OPTIONS.false}
+      </Badge>
     ),
   },
   {
     accessorKey: "isActive",
+    meta: {
+      title: "Estado"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
@@ -190,6 +214,21 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
   {
+    accessorKey: "movements",
+    size: 10,
+    meta: {
+      title: "Movimientos"
+    },
+    header: () => (
+      <div>Movimientos</div>
+    ),
+    cell: ({ row }) => (
+      <div>
+        <ShowMovementsDialog data={row.original.Movement} incomingName={row.original.name??row.original.id}></ShowMovementsDialog>
+      </div>
+    ),
+  },
+  {
     id: "Acciones",
     accessorKey: "actions",
     size: 10,
@@ -200,31 +239,38 @@ export const columns: ColumnDef<DetailedProduct>[] = [
       const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
       const [showEditSheet, setShowEditSheet] = useState(false);
-      const product = row.original;
-      const { isActive } = product;
+      const incoming = row.original;
+      const { isActive } = incoming;
       const isSuperAdmin = true;
 
       return (
         <div>
           <div>
-            <UpdateProductSheet
-              product={product}
+            { showEditSheet && <UpdateIncomingSheet
+              incoming={incoming}
               open={showEditSheet}
               onOpenChange={setShowEditSheet}
               showTrigger={false}
-            />
-            <DeactivateProductDialog
-              product={product}
-              open={showDeleteDialog}
-              onOpenChange={setShowDeleteDialog}
-              showTrigger={false}
-            />
-            <ReactivateProductDialog
-              product={product}
-              open={showReactivateDialog}
-              onOpenChange={setShowReactivateDialog}
-              showTrigger={false}
-            />
+            />}
+            {
+              showDeleteDialog && (
+                <DeactivateIncomingDialog
+                  incoming={incoming}
+                  open={showDeleteDialog}
+                  onOpenChange={setShowDeleteDialog}
+                  showTrigger={false}
+                />
+              )
+            }
+            {
+              showReactivateDialog && (
+                <ReactivateIncomingDialog
+                  incoming={incoming}
+                  open={showReactivateDialog}
+                  onOpenChange={setShowReactivateDialog}
+                />
+              )
+            }
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

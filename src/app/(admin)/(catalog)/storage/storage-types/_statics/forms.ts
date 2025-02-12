@@ -47,7 +47,7 @@ export const FORMSTATICS: FormStatics<CreateTypeStorageInput> = {
         name: "description",
     },
     branchId: {
-        required: false,
+        required: true,
         label: "Sucursal",
         defaultValue: "",
         type: "text",
@@ -55,7 +55,7 @@ export const FORMSTATICS: FormStatics<CreateTypeStorageInput> = {
         name: "branchId",
     },
     staffId: {
-        required: false,
+        required: true,
         label: "Personal",
         defaultValue: "",
         type: "text",
