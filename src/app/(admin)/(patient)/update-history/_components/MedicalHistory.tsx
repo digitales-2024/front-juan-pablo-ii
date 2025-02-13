@@ -67,30 +67,30 @@ export function MedicalHistory({
 
   return (
     <Card className="border-t-4 border-t-primary">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Stethoscope className="w-6 h-6 text-primary" />
-          <CardTitle>Historial Médico de Consultas, Servicios y Tratamientos</CardTitle>
+      <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0 p-6">
+        <div className="flex items-center gap-3">
+          <Stethoscope className="w-8 h-8 md:w-6 md:h-6 text-primary flex-shrink-0" />
+          <CardTitle className="text-xl md:text-2xl">Historial Médico de Consultas, Servicios y Tratamientos</CardTitle>
         </div>
-        <Button onClick={() => setIsHistoryModalOpen(true)}>
+        <Button className="w-full md:w-auto" onClick={() => setIsHistoryModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" /> Agregar Historia
         </Button>
       </CardHeader>
 
       <AddHistoryModal isOpen={isHistoryModalOpen} setIsOpen={setIsHistoryModalOpen} onSave={handleAddNewService} />
 
-      <CardContent>
+      <CardContent className="p-4 md:p-6">
         {servicios.map((servicio, index) => (
-          <Card key={servicio.serviceId} className="mb-4 overflow-hidden border-t-2 border-t-primary">
+          <Card key={servicio.serviceId} className="mb-6 overflow-hidden border-t-2 border-t-primary">
             <CardHeader
-              className="bg-gray-50 flex flex-row items-center justify-between p-4 cursor-pointer"
+              className="bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 cursor-pointer space-y-3 sm:space-y-0"
               onClick={() => toggleServiceExpansion(servicio.serviceId)}
             >
-              <div className="flex items-center gap-4">
-                <Badge variant="outline" className="text-base px-2 py-1">{`Servicio ${servicio.serviceId}`}</Badge>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <Badge variant="outline" className="text-base px-3 py-1.5">{`Servicio ${servicio.serviceId}`}</Badge>
                 <CardTitle className="text-lg">Consulta / Servicio</CardTitle>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
                 <span className="text-base text-muted-foreground">{formatDate(servicio.date)}</span>
                 <Button variant="ghost" size="sm" className="flex items-center gap-1 text-primary">
                   <Eye className="w-5 h-5" />
@@ -103,46 +103,54 @@ export function MedicalHistory({
               </div>
             </CardHeader>
             {expandedService === servicio.serviceId && (
-              <CardContent className="pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <User className="w-5 h-5 text-primary" />
-                    <span className="text-base">
-                      <strong>Médico:</strong> {servicio.staffId}
-                    </span>
+              <CardContent className="p-4 md:p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <User className="w-5 h-5 text-primary flex-shrink-0" />
+                      <span className="text-base">
+                        <strong className="block sm:inline">Médico:</strong>{" "}
+                        <span className="block sm:inline mt-1 sm:mt-0">{servicio.staffId}</span>
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="w-5 h-5 text-primary" />
-                    <span className="text-base">
-                      <strong>Sucursal:</strong> {servicio.branchId}
-                    </span>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
+                      <span className="text-base">
+                        <strong className="block sm:inline">Sucursal:</strong>{" "}
+                        <span className="block sm:inline mt-1 sm:mt-0">{servicio.branchId}</span>
+                      </span>
+                    </div>
                   </div>
-                  <div className="col-span-2 flex items-start space-x-2">
-                    <FileText className="w-5 h-5 text-primary mt-1" />
-                    <div className="flex-grow">
-                      <strong className="text-base">Descripción:</strong>
-                      <p className="mt-1 p-3 bg-gray-50 border border-gray-200 rounded-md text-base">
-                        {servicio.description}
-                      </p>
+                  <div className="col-span-1 md:col-span-2 space-y-2">
+                    <div className="flex items-start space-x-3">
+                      <FileText className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                      <div className="flex-grow">
+                        <strong className="text-base block mb-2">Descripción:</strong>
+                        <p className="p-4 bg-gray-50 border border-gray-200 rounded-md text-base">
+                          {servicio.description}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {servicio.newImages && servicio.newImages.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="font-semibold mb-2 flex items-center text-base">
-                      <ImageIcon className="w-5 h-5 mr-2 text-primary" />
+                  <div className="space-y-4">
+                    <h4 className="font-semibold flex items-center text-base">
+                      <ImageIcon className="w-5 h-5 mr-3 text-primary" />
                       Evidencia Médica Fotográfica:
                     </h4>
                     <Carousel className="w-full max-w-4xl mx-auto">
                       <CarouselContent>
                         {servicio.newImages.map((image, imageIndex) => (
-                          <CarouselItem key={imageIndex} className="basis-1/4 md:basis-1/5">
-                            <div className="p-1">
+                          <CarouselItem key={imageIndex} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                            <div className="p-2">
                               <img
                                 src={image || "/placeholder.svg"}
                                 alt={`Imagen ${imageIndex + 1}`}
-                                className="w-full h-48 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                                className="w-full aspect-square object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                                 onClick={() => setSelectedImage(image)}
                               />
                             </div>
@@ -155,19 +163,28 @@ export function MedicalHistory({
                   </div>
                 )}
 
-                <Tabs defaultValue="prescription" className="mt-4">
-                  <TabsList>
-                    {servicio.prescription && <TabsTrigger value="prescription">Receta</TabsTrigger>}
-                    {servicio.medicalLeave && <TabsTrigger value="leave">Licencia Médica</TabsTrigger>}
+                <Tabs defaultValue="prescription" className="mt-6">
+                  <TabsList className="flex flex-wrap gap-2">
+                    {servicio.prescription && (
+                      <TabsTrigger value="prescription" className="flex-1 sm:flex-none">
+                        Receta
+                      </TabsTrigger>
+                    )}
+                    {servicio.medicalLeave && (
+                      <TabsTrigger value="leave" className="flex-1 sm:flex-none">
+                        Licencia Médica
+                      </TabsTrigger>
+                    )}
                   </TabsList>
 
                   {servicio.prescription && (
-                    <TabsContent value="prescription" className="mt-2">
+                    <TabsContent value="prescription" className="mt-4">
                       <Button
                         onClick={() => {
                           setSelectedPrescription(servicio)
                           setIsPrescriptionModalOpen(true)
                         }}
+                        className="w-full sm:w-auto"
                       >
                         <FileText className="w-4 h-4 mr-2" /> Ver Receta Médica
                       </Button>
@@ -175,33 +192,44 @@ export function MedicalHistory({
                   )}
 
                   {servicio.medicalLeave && (
-                    <TabsContent value="leave" className="mt-2">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-base">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="w-5 h-5 text-primary" />
-                          <span>
-                            <strong>Inicio:</strong> {servicio.medicalLeaveStartDate}
-                          </span>
+                    <TabsContent value="leave" className="mt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-3">
+                            <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
+                            <span className="text-base">
+                              <strong className="block sm:inline">Inicio:</strong>{" "}
+                              <span className="block sm:inline mt-1 sm:mt-0">{servicio.medicalLeaveStartDate}</span>
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="w-5 h-5 text-primary" />
-                          <span>
-                            <strong>Fin:</strong> {servicio.medicalLeaveEndDate}
-                          </span>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-3">
+                            <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
+                            <span className="text-base">
+                              <strong className="block sm:inline">Fin:</strong>{" "}
+                              <span className="block sm:inline mt-1 sm:mt-0">{servicio.medicalLeaveEndDate}</span>
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <AlertTriangle className="w-5 h-5 text-primary" />
-                          <span>
-                            <strong>Días:</strong> {servicio.medicalLeaveDays}
-                          </span>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-3">
+                            <AlertTriangle className="w-5 h-5 text-primary flex-shrink-0" />
+                            <span className="text-base">
+                              <strong className="block sm:inline">Días:</strong>{" "}
+                              <span className="block sm:inline mt-1 sm:mt-0">{servicio.medicalLeaveDays}</span>
+                            </span>
+                          </div>
                         </div>
-                        <div className="col-span-2 flex items-start space-x-2">
-                          <FileText className="w-5 h-5 text-primary mt-1" />
-                          <div className="flex-grow">
-                            <strong>Descripción:</strong>
-                            <p className="mt-1 p-3 bg-gray-50 border border-gray-200 rounded-md">
-                              {servicio.leaveDescription}
-                            </p>
+                        <div className="col-span-1 md:col-span-2 space-y-2">
+                          <div className="flex items-start space-x-3">
+                            <FileText className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                            <div className="flex-grow">
+                              <strong className="text-base block mb-2">Descripción:</strong>
+                              <p className="p-4 bg-gray-50 border border-gray-200 rounded-md text-base">
+                                {servicio.leaveDescription}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>

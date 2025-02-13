@@ -86,12 +86,12 @@ export function MedicalBackground({ historialMedico, setHistorialMedico }: Medic
   return (
     <>
       <Card className="border-t-4 border-t-primary">
-        <CardHeader className="flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-col md:flex-row items-center justify-between">
           <div className="flex items-center gap-2">
             <BookHeart className="w-5 h-5 text-primary" />
             <CardTitle>Historial de Antecedentes Médicos</CardTitle>
           </div>
-          <Button onClick={() => setIsHistorialModalOpen(true)}>
+          <Button className="mt-4 md:mt-0 w-full md:w-auto" onClick={() => setIsHistorialModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" /> Agregar Antecedente
           </Button>
         </CardHeader>
