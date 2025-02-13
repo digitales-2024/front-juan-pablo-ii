@@ -1,7 +1,7 @@
 export const SERVICIOS_OPCIONES = [
     "Tratamiento Dermatológico",
     "Consulta General",
-    "Tratamiento Dental",
+    "Tratamiento Facial",
   ];
   
   export const PERSONAL_MEDICO = "Alex Flores Valdez DR001";

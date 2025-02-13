@@ -17,7 +17,7 @@ import {
   Stethoscope,
   Languages,
   ScrollText,
-  BadgeIcon as IdCard,
+ IdCard,
 } from "lucide-react"
 import type { Patient } from "../_interfaces/types"
 
@@ -46,7 +46,7 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
                   <p className="text-muted-foreground">{paciente.dni}</p>
                 </div>
                 <div className="mt-4 flex flex-wrap justify-center gap-2">
-                  <Badge variant="secondary" className="bg-green-500 text-white">
+                  <Badge variant="secondary" className="bg-green-500 text-black">
                     Paciente
                   </Badge>
                   <Badge variant="secondary">

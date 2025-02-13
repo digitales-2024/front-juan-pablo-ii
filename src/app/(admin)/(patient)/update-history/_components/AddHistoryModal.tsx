@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { DialogClose } from "@radix-ui/react-dialog"
-import { ImageIcon, X, FileText, User, MapPin, Calendar, Stethoscope, ClipboardPlus, CalendarHeart } from "lucide-react"
+import { ImageIcon, X, FileText, User, MapPin, Stethoscope, ClipboardPlus, CalendarHeart } from "lucide-react"
 import { SERVICIOS_OPCIONES, PERSONAL_MEDICO, SUCURSAL } from "../_interfaces/constants"
 import type { Servicio } from "../_interfaces/types"
 import { AddMedicalLeaveModal } from "./AddMedicalLeaveModal"
@@ -106,7 +106,7 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
                   <div className="space-y-2">
                     <Label htmlFor="staffId" className="flex items-center gap-2">
                       <User className="h-4 w-4 text-primary" />
-                      Personal
+                      Medico
                     </Label>
                     <Input id="staffId" value={PERSONAL_MEDICO} disabled className="bg-muted" />
                   </div>
