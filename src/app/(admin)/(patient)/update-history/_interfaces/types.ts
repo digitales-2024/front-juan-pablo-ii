@@ -37,6 +37,7 @@ export type Patient = components["schemas"]["Patient"];
     medicalLeaveDays?: number;
     leaveDescription?: string;
     newImages: string[];
+    date: string;
   }
   //clave y valo de json de historia medica
   export interface HistorialItem {

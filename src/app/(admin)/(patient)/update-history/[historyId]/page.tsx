@@ -64,6 +64,7 @@ export default function UpdateHistorySheet() {
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxbgoMzx7izKzehJBf1248szuAVwH8-F-crA&s",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-unksKExUrmuNTnD4pSfPAfPVrHVKOf9stg&s",
       ],
+      date: "2025-02-02",
     },
   ]);
 
@@ -74,6 +75,7 @@ export default function UpdateHistorySheet() {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
+      <h1 className="text-3xl font-bold text-center">Historia Médica</h1>
       <PatientBasicInfo paciente={paciente} />
 
       <MedicalBackground
