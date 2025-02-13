@@ -1,132 +1,137 @@
-import { useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
-import { type StockByStorage as Stock } from "../_interfaces/stock.interface";
-import { getStockByProduct, getStockByStorage, getStockByStorageProduct, getStockForAllStorages } from "../_actions/stock.actions";
+// "use client";
+
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import {
+  GeneralStockResponse,
+  getStockByProduct,
+  getStockByStorage,
+  getStockByStorageProduct,
+  getStockForAllStorages,
+} from "../_actions/stock.actions";
 
-type Action =
-  | { type: "ALL_STORAGES" }
-  | { type: "BY_STORAGE"; payload: { storageId: string }}
-  | { type: "BY_PRODUCT"; payload: { productId: string }}
-  | { type: "BY_STORAGE_N_PRODUCT"; payload: { productId: string, storageId: string }};
+export type StockFilter =
+  | { type: "ALL" }
+  | { type: "BY_PRODUCT"; productId: string }
+  | { type: "BY_STORAGE"; storageId: string }
+  | { type: "BY_STORAGE_N_PRODUCT"; productId: string; storageId: string };
 
-/**
- * Hook que encapsula todas las queries relacionadas al stock
- */
-const useStock = () => {
-  const stockAllStoragesQuery = useQuery({
-    queryKey: ["stock-storages"],
+  
+  export const StockFilterType = {
+    ALL: "ALL",
+    BY_PRODUCT: "BY_PRODUCT",
+    BY_STORAGE: "BY_STORAGE",
+    BY_STORAGE_N_PRODUCT: "BY_STORAGE_N_PRODUCT",
+  }
+  
+  export type StockFilterType = keyof typeof StockFilterType;
+
+export function useUnifiedStock() {
+  // Filtro por defecto: "ALL" (todos los almacenes)
+  const queryClient = useQueryClient();
+  const [filter, setFilter] = useState<StockFilter>({ type: "ALL" });
+  // const [success, setSuccess] = useState(false);
+
+  const STOCK_QUERY_KEY = ['stock'] as const;
+
+  // const handleNotifications = () => {
+  //     toast.success("Stock filtrado y actualizado correctamente");
+  // }
+
+  // useQuery principal
+  const unifiedQuery = useQuery({
+    // El queryKey varía según el tipo y parámetros
+    //queryKey: ["stock", filter],
+    queryKey: STOCK_QUERY_KEY,
     queryFn: async () => {
       try {
-        const response = await getStockForAllStorages();
-        if (!response || "error" in response) {
-          throw new Error(response?.error || "No se recibió respuesta del servidor");
+        let response: GeneralStockResponse;
+        switch (filter.type) {
+          case "ALL": {
+            response = await getStockForAllStorages();
+            if ("error" in response) {
+              toast.error(response.error);
+            }
+            break;
+          }
+          case "BY_PRODUCT": {
+            response = await getStockByProduct(filter.productId);
+            if ("error" in response) {
+              toast.error(response.error);
+            }
+            else{
+               response = response.filter(stock => stock.stock.length > 0)
+            }
+            break;
+          }
+          case "BY_STORAGE": {
+            response = await getStockByStorage(filter.storageId);
+            if ("error" in response) {
+              toast.error(response.error);
+            }else{
+              response = response.filter(stock => stock.idStorage===filter.storageId)
+            }
+            break;
+          }
+          case "BY_STORAGE_N_PRODUCT": {
+            response = await getStockByStorageProduct({
+              storageId: filter.storageId,
+              productId: filter.productId,
+            });
+            if ("error" in response) {
+              toast.error(response.error);
+            }
+            else{
+               response = response.filter(stock => stock.stock.length > 0)
+            }
+            break;
+          }
         }
+        if (!response || "error" in response) {
+          throw new Error(response?.error || "No se recibió respuesta");
+        }
+        // console.log('response', response);
         return response;
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Error desconocido");
-        return [];
+        const message = error instanceof Error ? error.message : "Error desconocido";
+        toast.error(message);
+        return []; // Retornamos un array vacío si sucede un error
       }
     },
+    // Podrías considerar enabled: false si quisieras no hacer fetch por defecto
     staleTime: 1000 * 60 * 5,
   });
 
-  const stockByProductQuery = (productId: string) =>
-    useQuery({
-      queryKey: ["stock-by-product", productId],
-      queryFn: async () => {
-        try {
-          const response = await getStockByProduct(productId);
-          if (!response || "error" in response) {
-            throw new Error(response?.error || "No se recibió respuesta del servidor");
-          }
-          return response;
-        } catch (error) {
-          toast.error(error instanceof Error ? error.message : "Error desconocido");
-          return [];
-        }
-      },
-      staleTime: 1000 * 60 * 5,
-      enabled: !!productId,
-    });
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: STOCK_QUERY_KEY }).catch(()=>toast.error('error al actualizar'));
+    // handleNotifications();
+    console.log('filter hook', filter);
+  }, [filter, queryClient]);
 
-  const stockByStorageQuery = (storageId: string) =>
-    useQuery({
-      queryKey: ["stock-by-storage", storageId],
-      queryFn: async () => {
-        try {
-          const response = await getStockByStorage(storageId);
-          if (!response || "error" in response) {
-            throw new Error(response?.error || "No se recibió respuesta del servidor");
-          }
-          return response;
-        } catch (error) {
-          toast.error(error instanceof Error ? error.message : "Error desconocido");
-          return [];
-        }
-      },
-      staleTime: 1000 * 60 * 5,
-      enabled: !!storageId,
-    });
-
-  const stockByStorageNProductQuery = (storageId: string, productId: string) =>
-    useQuery({
-      queryKey: ["stock-by-storage-n-product", { storageId, productId }],
-      queryFn: async () => {
-        try {
-          const response = await getStockByStorageProduct({ storageId, productId });
-          if (!response || "error" in response) {
-            throw new Error(response?.error || "No se recibió respuesta del servidor");
-          }
-          return response;
-        } catch (error) {
-          toast.error(error instanceof Error ? error.message : "Error desconocido");
-          return [];
-        }
-      },
-      staleTime: 1000 * 60 * 5,
-      enabled: !!storageId && !!productId,
-    });
-
-  return { stockAllStoragesQuery, stockByProductQuery, stockByStorageQuery, stockByStorageNProductQuery };
-};
-
-/**
- * Hook para filtrar stock basado en una acción.
- */
-const useFilterStock = (action: Action): UseQueryResult<Stock[] | undefined, Error> => {
-  const { stockAllStoragesQuery, stockByProductQuery, stockByStorageQuery, stockByStorageNProductQuery } = useStock();
-
-  switch (action.type) {
-    case "BY_STORAGE":
-      return stockByStorageQuery(action.payload.storageId);
-    case "BY_PRODUCT":
-      return stockByProductQuery(action.payload.productId);
-    case "BY_STORAGE_N_PRODUCT":
-      return stockByStorageNProductQuery(action.payload.storageId, action.payload.productId);
-    case "ALL_STORAGES":
-    default:
-      return stockAllStoragesQuery;
+  // Helpers para actualizar el filtro
+  function setFilterAllStorages() {
+    setFilter({ type: "ALL" });
   }
-};
+  function setFilterByProduct(productId: string) {
+    setFilter({ type: "BY_PRODUCT", productId });
+  }
+  function setFilterByStorage(storageId: string) {
+    setFilter({ type: "BY_STORAGE", storageId });
+  }
+  function setFilterByStorageAndProduct({productId, storageId}:{productId: string, storageId: string}) {
+    setFilter({ type: "BY_STORAGE_N_PRODUCT", productId, storageId });
+  }
 
-/**
- * Hook para obtener el stock filtrado desde el cache del cliente.
- */
-const useFilteredStock = () => {
-  return useQuery<Stock[]>({
-    queryKey: ["stock-server-filtered"],
-    initialData: [],
-  }).data ?? [];
-};
-
-/**
- * Hook para actualizar el stock filtrado en cache del cliente.
- */
-const useUpdateFilteredStock = () => {
-  const client = useQueryClient();
-  return (data: Stock[]) => {
-    client.setQueryData<Stock[]>(["stock-server-filtered"], () => data);
+  return {
+    data: unifiedQuery.data,
+    isLoading: unifiedQuery.isLoading,
+    isError: unifiedQuery.isError,
+    query: unifiedQuery,
+    filter, // Por si quieres leer el tipo de filtro actual
+    setFilterAllStorages,
+    setFilterByProduct,
+    setFilterByStorage,
+    setFilterByStorageAndProduct,
   };
-};
-
-export { useStock, useFilterStock, useFilteredStock, useUpdateFilteredStock };
+}

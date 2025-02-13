@@ -5,23 +5,23 @@ import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHe
 import { type StockByStorage as Stock } from "../_interfaces/stock.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
-import { Badge } from "@/components/ui/badge";
-import { UpdateProductSheet } from "./UpdateProductSheet";
+// import { Badge } from "@/components/ui/badge";
+// import { UpdateProductSheet } from "./UpdateProductSheet";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
+import { Ellipsis} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
+  // DropdownMenuItem,
+  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-import { ReactivateProductDialog } from "./ReactivateProductDialog";
+// import { useEffect, useState } from "react";
+// import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
+// import { ReactivateProductDialog } from "./ReactivateProductDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DeactivateProductDialog } from "./DeactivateProductDialog";
-import { ShowMovementsDialog, ShowProductStockDialog } from "./ProductStock/ShowProductStockDialog";
+// import { DeactivateProductDialog } from "./DeactivateProductDialog";
+import { ShowProductStockDialog } from "./ProductStock/ShowProductStockDialog";
 // import Image from "next/image";
 
 // {
@@ -85,6 +85,26 @@ export const columns: ColumnDef<Stock>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Almacén" />
     ),
+  },
+  {
+    accessorKey: "stock",
+    meta:{
+      title: "Stock",
+    },
+    header: ()=>(
+      <div>Stock</div>
+    ),
+    // header: ({ column }) => (
+    //   <DataTableColumnHeader column={column} title="Stock" />
+    // ),
+    cell: ({ row }) => {
+      return <div>
+        <ShowProductStockDialog 
+          storageId={row.original.idStorage} 
+          storageName={row.original.name??undefined}
+        ></ShowProductStockDialog>
+      </div>
+    },
   },
   {
     accessorKey: "location",
@@ -157,24 +177,7 @@ export const columns: ColumnDef<Stock>[] = [
     //     </div>
     //   ),
     // },
-  {
-    accessorKey: "stock",
-    meta:{
-      title: "Stock",
-    },
-    header: ()=>(
-      <div>Stock</div>
-    ),
-    // header: ({ column }) => (
-    //   <DataTableColumnHeader column={column} title="Stock" />
-    // ),
-    cell: ({ row }) => (
-      <div>
-        {/* <ShowMovementsDialog data={row.original.Movement} incomingName={row.original.name??row.original.id}></ShowMovementsDialog> */}
-        <ShowProductStockDialog data={row.original.stock} storageName={row.original.name??undefined}></ShowProductStockDialog>
-      </div>
-    ),
-  },
+
   // {
   //   accessorKey: "isActive",
   //   id: "Estado",

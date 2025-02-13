@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TableProperties } from "lucide-react";
+import { PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,9 +22,20 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ProductStockTable } from "./ProductStockTable";
-import { ProductStock } from "../../_interfaces/stock.interface";
+//import { ProductStock } from "../../_interfaces/stock.interface";
+import { useUnifiedStock } from "../../_hooks/useFilterStock";
 
-export function ShowProductStockDialog({data, storageName}: {data: ProductStock[], storageName?: string}) {
+interface ShowProductStockDialogProps {
+  //data: ProductStock[];
+  storageId: string;
+  storageName?: string;
+  onCloseDialog?: () => void;
+}
+export function ShowProductStockDialog({
+  storageId, 
+  storageName,
+  // onCloseDialog,
+}: ShowProductStockDialogProps) {
     const SHOW_MOVEMENTS_MESSAGES = {
         button: "Mostrar Stock de Productos",
         title: "Stock de productos",
@@ -32,12 +43,17 @@ export function ShowProductStockDialog({data, storageName}: {data: ProductStock[
         cancel: "Cerrar",
     } as const;
   const [open, setOpen] = useState(false);
-  //   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const handleClose = () => {
+  const {
+      query: stockQuery,
+    } = useUnifiedStock();
+
+  const data = stockQuery.data?.find((stock) => stock.idStorage === storageId)?.stock ?? [];
+
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
@@ -55,12 +71,12 @@ export function ShowProductStockDialog({data, storageName}: {data: ProductStock[
   const TriggerButton = () => (
     <Button
       onClick={() => setOpen(true)}
-      variant="ghost"
+      variant="outline"
       size="sm"
       aria-label="Open menu"
-      className="flex p-2 data-[state=open]:bg-muted"
+      className="flex p-2 data-[state=open]:bg-muted text-sm"
     >
-      <TableProperties />
+      <PackageSearch className="text-primary size-7"/>
       {SHOW_MOVEMENTS_MESSAGES.button}
     </Button>
   );
@@ -82,10 +98,6 @@ export function ShowProductStockDialog({data, storageName}: {data: ProductStock[
           <DialogFooter>
               <DialogFooterContent />
         </DialogFooter>
-          {/* <CreateProductForm form={form} onSubmit={handleSubmit}>
-            <DevelopmentZodError form={form} />
-            
-          </CreateProductForm> */}
         </DialogContent>
       </Dialog>
     );

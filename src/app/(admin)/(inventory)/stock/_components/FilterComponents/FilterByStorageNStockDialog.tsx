@@ -1,8 +1,8 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TableProperties } from "lucide-react";
+import { Filter, Info, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,67 +24,97 @@ import {
 } from "@/components/ui/drawer";
 import SearchProductCombobox from "./SearchProductCombobox";
 import {
-  Card,
-  CardContent,
   CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FilterByStorageSchema, FilterByProductSchema, FilterByStorageAndProductSchema, FilterByStorage, FilterByProduct, FilterByStorageAndProduct } from "../../_interfaces/filter.interface";
-import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useUpdateFilteredStock, useFilterStock } from "../../_hooks/useFilterStock";
+import {
+  FilterByStorageSchema,
+  FilterByProductSchema,
+  FilterByStorageAndProductSchema,
+  FilterByStorage,
+  FilterByProduct,
+  FilterByStorageAndProduct,
+} from "../../_interfaces/filter.interface";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  useUnifiedStock,
+} from "../../_hooks/useFilterStock";
 import { toast } from "sonner";
-import { useHandleFilterByProductSubmit } from "../../_hooks/useFilterStockHandlers";
+import { FilterStockTabCardContent } from "./FilterStockTabCardContent";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
+import SmallLoading from "../errorComponents/SmallLoading";
+import GeneralErrorMessage from "../errorComponents/GeneralErrorMessage";
 
 export function FilterStockDialog() {
-  const SHOW_MOVEMENTS_MESSAGES = useMemo(
-    () => ({
-      button: "Opciones de filtrado",
-      title: "Filtrar Stock",
-      description: `Escoge una opción para filtrar el stock.`,
-      cancel: "Cerrar",
-    }),
-    []
-  );
+  const FILTER_DIALOG_MESSAGES = {
+    button: "Opciones de filtrado",
+    title: "Filtrar Stock",
+    description: `Escoge una opción para filtrar el stock.`,
+    cancel: "Cerrar",
+    submitButton: "Aplicar",
+  };
 
   const TAB_OPTIONS = useMemo(
     () => ({
       BY_STORAGE: {
         label: "Por Almacén",
         value: "BY_STORAGE",
+        description: "Selecciona un almacén para filtrar el stock",
       },
       BY_PRODUCT: {
         label: "Por Producto",
         value: "BY_PRODUCT",
+        description: "Selecciona un producto para filtrar el stock",
       },
       BY_STORAGE_N_PRODUCT: {
         label: "Por Almacén y Producto",
         value: "BY_STORAGE_N_PRODUCT",
+        description:
+          "Selecciona un almacén y un producto para filtrar el stock",
       },
       ALL_STORAGES: {
         label: "Todos los almacenes",
         value: "ALL_STORAGES",
+        description: "Muestra todo el stock disponible",
       },
     }),
     []
   );
 
   const [open, setOpen] = useState(false);
-  //   const [isCreatePending, startCreateTransition] = useTransition();
+
+  const {
+    isLoading,
+    query: stockQuery,
+    setFilterAllStorages,
+    setFilterByProduct,
+    setFilterByStorage,
+    setFilterByStorageAndProduct,
+  } = useUnifiedStock();
+
+  const { activeStoragesQuery } = useStorages();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const updateStockData = useUpdateFilteredStock()
-  const handleFilterByProductSubmit = useHandleFilterByProductSubmit();
-
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
   const filterByStorageForm = useForm({
     resolver: zodResolver(FilterByStorageSchema),
@@ -98,7 +128,7 @@ export function FilterStockDialog() {
     defaultValues: {
       productId: "",
     },
-  })
+  });
 
   const filterByStorageAndProductForm = useForm({
     resolver: zodResolver(FilterByStorageAndProductSchema),
@@ -106,40 +136,78 @@ export function FilterStockDialog() {
       storageId: "",
       productId: "",
     },
-  })
+  });
 
-  function handleFilterByStorageSubmit(input: FilterByStorage) {
-    console.log('Ingresando a handdle submit', input);
+  const onSubmitAllStorages = useCallback(() => {
+    setFilterAllStorages();
+    if (stockQuery.isError) {
+      toast.error("Error al filtrar stock");
+    }
+    if (stockQuery.data) {
+      toast.success("Stock filtrado correctamente");
+      handleClose();
+    }
+  }
+  , [setFilterAllStorages]);
+
+  const onSubmitStorage = useCallback((input: FilterByStorage) => {
+    console.log("Ingresando a handdle submit", input);
+    setFilterByStorage(input.storageId);
+    if (stockQuery.isError) {
+      toast.error("Error al filtrar stock");
+    }
+    if (stockQuery.data) {
+      filterByStorageForm.reset();
+      toast.success("Stock filtrado correctamente");
+      handleClose();
+    }
+  }, [setFilterByStorage]);
+
+  const onSubmitProduct = useCallback((values: FilterByProduct) => {
+    setFilterByProduct(values.productId);
+    if (stockQuery.isError) {
+      toast.error("Error al filtrar stock");
+    }
+    if (stockQuery.data) {
+      filterByProductForm.reset();
+      toast.success("Stock filtrado correctamente");
+      handleClose();
+    }
+  }, [setFilterByProduct]);
+
+  const onSubmitStorageAndProduct = useCallback((input: FilterByStorageAndProduct) => {
+    console.log("Ingresando a handdle submit", input);
+    setFilterByStorageAndProduct({
+      storageId: input.storageId,
+      productId: input.productId,
+    });
+    if (stockQuery.isError) {
+      toast.error("Error al filtrar stock");
+    }
+    if (stockQuery.data) {
+      filterByStorageAndProductForm.reset();
+      toast.success("Stock filtrado correctamente");
+      handleClose();
+    }
+  }, [setFilterByStorageAndProduct]);
+
+  if (stockQuery.isError) {
+    toast.error("Error al filtrar stock");
+  }
+  if (stockQuery.isLoading) {
+    toast.success("Filtrando...");
   }
 
-  // function handleFilterByProductSubmit(input: FilterByProduct) {
-  //   console.log('Ingresando a handle submit de producto', input);
-  //   const stockData = useFilterStock({
-  //     type: "BY_PRODUCT",
-  //     payload: { productId: input.productId }
-  //   })
-  //   if (stockData.isError){
-  //     toast.error("Error al filtrar stock")
-  //   }
-  //   if (stockData.data) {
-  //     toast.success("Stock filtrado correctamente")
-  //     updateStockData(stockData.data)
-  //   }
-  // }
+  if (!activeStoragesQuery.data) {
+    return <SmallLoading/>;
+  }
 
-  function handleFilterByStorageAndProductSubmit(input: FilterByStorageAndProduct) {
-    console.log('Ingresando a handdle submit', input);
-    // const stockData = useFilterStock({
-    //   type: "BY_PRODUCT",
-    //   payload: { productId: input.productId }
-    // })
-    // if (stockData.isError){
-    //   toast.error("Error al filtrar stock")
-    // }
-    // if (stockData.data) {
-    //   toast.success("Stock filtrado correctamente")
-    //   updateStockData(stockData.data)
-    // }
+  if (activeStoragesQuery.isLoading) {
+    return <SmallLoading />;
+  }
+
+  if (activeStoragesQuery.isError) {
+    return <GeneralErrorMessage error={activeStoragesQuery.error} reset={activeStoragesQuery.refetch}></GeneralErrorMessage>
   }
 
   const DialogFooterContent = () => (
@@ -150,7 +218,7 @@ export function FilterStockDialog() {
         className="w-full"
         onClick={handleClose}
       >
-        {SHOW_MOVEMENTS_MESSAGES.cancel}
+        {FILTER_DIALOG_MESSAGES.cancel}
       </Button>
     </div>
   );
@@ -163,10 +231,220 @@ export function FilterStockDialog() {
       aria-label="Open menu"
       className="flex p-2 data-[state=open]:bg-muted"
     >
-      <TableProperties />
-      {SHOW_MOVEMENTS_MESSAGES.button}
+      <Filter />
+      {FILTER_DIALOG_MESSAGES.button}
     </Button>
   );
+
+  const SubmitButton = ({
+    type = "submit",
+    onClick,
+    ...rest
+  }:React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <Button {...rest} type={type} className="w-full" disabled={isLoading} onClick={onClick}>
+      {isLoading ? (
+        <div>
+          <span className="animate-spin">
+            <LoaderCircle></LoaderCircle>
+          </span>
+          <span>Filtrando...</span>
+        </div>
+      ) : (
+        FILTER_DIALOG_MESSAGES.submitButton
+      )}
+    </Button>
+  );
+
+
+  const FilteringTabs = () => (
+    <div>
+    <Tabs
+      defaultValue={TAB_OPTIONS.ALL_STORAGES.value}
+      className="w-full flex flex-col space-y-4"
+    >
+      <TabsList className="grid w-full grid-cols-2 h-fit">
+        <TabsTrigger value={TAB_OPTIONS.ALL_STORAGES.value}>
+          {TAB_OPTIONS.ALL_STORAGES.label}
+        </TabsTrigger>
+        <TabsTrigger value={TAB_OPTIONS.BY_STORAGE.value}>{TAB_OPTIONS.BY_STORAGE.label}</TabsTrigger>
+        <TabsTrigger value={TAB_OPTIONS.BY_PRODUCT.value}>
+          {TAB_OPTIONS.BY_PRODUCT.label}
+        </TabsTrigger>
+        <TabsTrigger value={TAB_OPTIONS.BY_STORAGE_N_PRODUCT.value}>{TAB_OPTIONS.BY_STORAGE_N_PRODUCT.label}</TabsTrigger>
+      </TabsList>
+
+      <FilterStockTabCardContent
+        value={TAB_OPTIONS.ALL_STORAGES.value}
+        title={TAB_OPTIONS.ALL_STORAGES.label}
+        description={TAB_OPTIONS.ALL_STORAGES.description}
+      >
+        <section className="space-y-4">
+          {/* <Button onClick={onSubmitAllStorages} className="w-full">
+            {FILTER_DIALOG_MESSAGES.submitButton}
+          </Button> */}
+          <header className="flex flex-col space-y-2 justify-center items-center">
+            <Info className="size-8"></Info>
+            <CardDescription className="text-center">
+              Este es el filtro por defecto
+            </CardDescription>
+          </header>
+          <SubmitButton type="button" onClick={onSubmitAllStorages} className="w-full">
+            {FILTER_DIALOG_MESSAGES.submitButton}
+          </SubmitButton>
+        </section>
+      </FilterStockTabCardContent>
+
+      <FilterStockTabCardContent
+        value={TAB_OPTIONS.BY_PRODUCT.value}
+        title={TAB_OPTIONS.BY_PRODUCT.label}
+        description={TAB_OPTIONS.BY_PRODUCT.description}
+      >
+        <Form {...filterByProductForm}>
+          <form
+            onSubmit={filterByProductForm.handleSubmit(onSubmitProduct)}
+            className="space-y-4 flex flex-col items-center"
+          >
+            <FormField
+              control={filterByProductForm.control}
+              name="productId"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Seleccionar producto</FormLabel>
+                  <SearchProductCombobox
+                    onValueChange={(val) => {
+                      field.onChange(val);
+                    }}
+                  />
+                  <FormMessage />
+                  <FormDescription>
+                    Solo visualizará almacenes activos
+                  </FormDescription>
+                </FormItem>
+              )}
+            ></FormField>
+            <SubmitButton></SubmitButton>
+          </form>
+        </Form>
+      </FilterStockTabCardContent>
+
+      <FilterStockTabCardContent
+        value={TAB_OPTIONS.BY_STORAGE.value}
+        title={TAB_OPTIONS.BY_STORAGE.label}
+        description={TAB_OPTIONS.BY_STORAGE.description}
+      >
+        <Form {...filterByStorageForm}>
+          <form
+            onSubmit={filterByStorageForm.handleSubmit(
+              onSubmitStorage
+            )}
+            className="space-y-4 flex flex-col items-center"
+          >
+            <FormField
+              control={filterByStorageForm.control}
+              name="storageId"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Escoger almacén</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona un almacén" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {
+                        activeStoragesQuery.data.map((storage) => (
+                          <SelectItem key={storage.id} value={storage.id}>
+                            {storage.name}
+                          </SelectItem>
+                        ))
+                      }
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                  <FormDescription>
+                    Solo visualizará almacenes activos
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+            <SubmitButton></SubmitButton>
+          </form>
+        </Form>
+      </FilterStockTabCardContent>
+
+      <FilterStockTabCardContent
+        value={TAB_OPTIONS.BY_STORAGE_N_PRODUCT.value}
+        title={TAB_OPTIONS.BY_STORAGE_N_PRODUCT.label}
+        description={TAB_OPTIONS.BY_STORAGE_N_PRODUCT.description}
+      >
+        <Form {...filterByStorageAndProductForm}>
+          <form
+            onSubmit={filterByStorageAndProductForm.handleSubmit(
+              onSubmitStorageAndProduct
+            )}
+            className="space-y-4 flex flex-col items-center"
+          >
+            <FormField
+              control={filterByStorageAndProductForm.control}
+              name="storageId"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Escoger almacén</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona un almacén" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {
+                        activeStoragesQuery.data.map((storage) => (
+                          <SelectItem key={storage.id} value={storage.id}>
+                            {storage.name}
+                          </SelectItem>
+                        ))
+                      }
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                  <FormDescription>
+                    Solo visualizará almacenes activos
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={filterByStorageAndProductForm.control}
+              name="productId"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Seleccionar producto</FormLabel>
+                  <SearchProductCombobox
+                    onValueChange={(val) => {
+                      field.onChange(val);
+                    }}
+                  />
+                  <FormMessage />
+                  <FormDescription>
+                    Solo visualizará productos activos
+                  </FormDescription>
+                </FormItem>
+              )}
+            ></FormField>
+            <SubmitButton></SubmitButton>
+          </form>
+        </Form>
+      </FilterStockTabCardContent>
+    </Tabs>
+  </div>
+  )
 
   if (isDesktop) {
     return (
@@ -176,96 +454,12 @@ export function FilterStockDialog() {
         </DialogTrigger>
         <DialogContent className="min-w-[calc(384px-2rem)] max-h-[calc(100vh-4rem)] w-s">
           <DialogHeader>
-            <DialogTitle>{SHOW_MOVEMENTS_MESSAGES.title}</DialogTitle>
+            <DialogTitle>{FILTER_DIALOG_MESSAGES.title}</DialogTitle>
             <DialogDescription>
-              {SHOW_MOVEMENTS_MESSAGES.description}
+              {FILTER_DIALOG_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <div>
-            <Tabs
-              defaultValue={TAB_OPTIONS.ALL_STORAGES.value}
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value={TAB_OPTIONS.ALL_STORAGES.value}>
-                  {TAB_OPTIONS.ALL_STORAGES.label}
-                </TabsTrigger>
-                {/* <TabsTrigger value={TAB_OPTIONS.BY_STORAGE.value}>{TAB_OPTIONS.BY_STORAGE.label}</TabsTrigger> */}
-                <TabsTrigger value={TAB_OPTIONS.BY_PRODUCT.value}>
-                  {TAB_OPTIONS.BY_PRODUCT.label}
-                </TabsTrigger>
-                {/* <TabsTrigger value={TAB_OPTIONS.BY_STORAGE_N_PRODUCT.value}>{TAB_OPTIONS.BY_STORAGE_N_PRODUCT.label}</TabsTrigger> */}
-              </TabsList>
-              <TabsContent value={TAB_OPTIONS.ALL_STORAGES.value}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Account</CardTitle>
-                    <CardDescription>
-                      Make changes to your account here. Click save when you're
-                      done.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <div className="space-y-1">
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" defaultValue="Pedro Duarte" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="username">Username</Label>
-                      <Input id="username" defaultValue="@peduarte" />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button>Save changes</Button>
-                  </CardFooter>
-                </Card>
-              </TabsContent>
-              <TabsContent value={TAB_OPTIONS.BY_PRODUCT.value}>
-                <Card>
-                  <CardHeader className="space-y-4">
-                    <CardTitle className="block text-center">Password</CardTitle>
-                    <CardDescription>
-                      Change your password here. After saving, you'll be logged
-                      out.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {/* <div className="space-y-1">
-                      <Label htmlFor="current">Current password</Label>
-                      <Input id="current" type="password" />
-                    </div> */}
-                    <Form {...filterByProductForm}>
-                      <form onSubmit={filterByProductForm.handleSubmit(handleFilterByProductSubmit)} className="space-y-4 flex flex-col items-center">
-                        <FormField
-                          control= {filterByProductForm.control}
-                          name="productId"
-                          render={({ field }) => (
-                            <FormItem className="w-full">
-                              {/* <FormLabel>Producto Seleccionado</FormLabel> */}
-                              <SearchProductCombobox
-                                onValueChange={(val) => {
-                                  field.onChange(val);
-                                }}
-                              />
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        ></FormField>
-                        <Button type="submit" className="w-full">Aplicar</Button>
-                        {/* <CardFooter>
-                          <Button type="submit">Aplicar</Button>
-                        </CardFooter> */}
-                      </form>
-                    </Form>
-                    {/* <div className="space-y-1">
-                      <Label htmlFor="new">New password</Label>
-                      <Input id="new" type="password" />
-                    </div> */}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
+            <FilteringTabs></FilteringTabs>
           <DialogFooter>
             <DialogFooterContent />
           </DialogFooter>
@@ -281,20 +475,18 @@ export function FilterStockDialog() {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{SHOW_MOVEMENTS_MESSAGES.title}</DrawerTitle>
+          <DrawerTitle>{FILTER_DIALOG_MESSAGES.title}</DrawerTitle>
           <DrawerDescription>
-            {SHOW_MOVEMENTS_MESSAGES.description}
+            {FILTER_DIALOG_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-
+          <div className="px-2">
+            <FilteringTabs></FilteringTabs>
+          </div>
         <DrawerFooter>
           <DialogFooterContent />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
-}
-
-export function FilteByStorageNStockDialog() {
-  return <div>FilteByStorageNStockDialog</div>;
 }

@@ -35,10 +35,6 @@ export async function getStockByProduct (id:string) {
             : "Error al obtener el stock por producto",
       };
     }
-    // if (!Array.isArray(stockList)) {
-    //   return { error: "Respuesta inválida del servidor" };
-    // }
-    // return { data: stockList };
     return stockList;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };

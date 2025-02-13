@@ -15,7 +15,7 @@ export default function SearchProductCombobox({
     defaultValue,
 }: SearchProductComoBoxProps) {
   const [value, setValue] = useState(defaultValue);
-  const [label, setLabel] = useState("Seleccione un producto");
+  const [label, setLabel] = useState("Busque un producto");
   const [search, setSearch] = useState("None");
 //   const { data } = useQuery({
 //     queryKey: ["regions", search],

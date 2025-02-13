@@ -2,7 +2,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { FieldErrors, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateProductInput, createProductSchema } from "../_interfaces/products.interface";
+import { CreateProductInput, createProductSchema } from "../_interfaces/outgoing.interface";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
