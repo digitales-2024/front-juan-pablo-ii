@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -61,7 +60,30 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSave(nuevoServicio)
+    resetForm()
     setIsOpen(false)
+  }
+
+  const resetForm = () => {
+    setNuevoServicio({
+      serviceId: "",
+      staffId: PERSONAL_MEDICO,
+      branchId: SUCURSAL,
+      prescription: false,
+      prescriptionItems: [],
+      description: "",
+      medicalLeave: false,
+      newImages: [],
+      medicalLeaveStartDate: null,
+      medicalLeaveEndDate: null,
+      medicalLeaveDays: null,
+      leaveDescription: "",
+      prescriptionTitle: "",
+      prescriptionDescription: "",
+      services: [],
+    })
+    setShowMedicalLeaveModal(false)
+    setShowPrescriptionModal(false)
   }
 
   return (
@@ -188,7 +210,7 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
             <Card>
               <CardContent className="p-6 space-y-4">
                 <div className="flex flex-col sm:flex-row gap-4">
-                <Button
+                  <Button
                     type="button"
                     variant="outline"
                     onClick={() => setShowPrescriptionModal(true)}
@@ -206,7 +228,6 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
                     <CalendarHeart className="w-4 h-4" />
                     Agregar Descanso Médico
                   </Button>
-                  
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {nuevoServicio.medicalLeave && <Badge variant="secondary">Descanso Médico Agregado</Badge>}
@@ -238,6 +259,7 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
           medicalLeaveDays: nuevoServicio.medicalLeaveDays,
           leaveDescription: nuevoServicio.leaveDescription,
         }}
+        
       />
 
       <AddPrescriptionModal
@@ -261,4 +283,3 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
     </Dialog>
   )
 }
-
