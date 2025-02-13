@@ -35,6 +35,7 @@ interface MedicalBackgroundProps {
 }
 
 const antecedentesPreDefinidos = [
+  { value: "otro", label: "Otro Antecedente", icon: PenTool },
   { value: "alergias", label: "Alergias", icon: AlertCircle },
   { value: "cirugias", label: "Cirugías Previas", icon: Stethoscope },
   { value: "medicamentos", label: "Medicamentos Actuales", icon: Pills },
@@ -47,7 +48,7 @@ const antecedentesPreDefinidos = [
   { value: "tabaquismo", label: "Tabaquismo", icon: Cigarette },
   { value: "alcohol", label: "Consumo de Alcohol", icon: Wine },
   { value: "cronicas", label: "Enfermedades Crónicas", icon: Activity },
-  { value: "otro", label: "Otro Antecedente", icon: PenTool },
+
 ]
 
 export function MedicalBackground({ historialMedico, setHistorialMedico }: MedicalBackgroundProps) {
@@ -158,10 +159,10 @@ export function MedicalBackground({ historialMedico, setHistorialMedico }: Medic
 
             {nuevoHistorial.tipo === "otro" && (
               <div className="space-y-2">
-                <Label htmlFor="customTitulo">Título Personalizado</Label>
+                <Label htmlFor="customTitulo">Agregar Ancedene</Label>
                 <Input
                   id="customTitulo"
-                  placeholder="Ingrese un título personalizado"
+                  placeholder="Ingrese un Antecedente Medico"
                   value={nuevoHistorial.customTitulo}
                   onChange={(e) =>
                     setNuevoHistorial({
