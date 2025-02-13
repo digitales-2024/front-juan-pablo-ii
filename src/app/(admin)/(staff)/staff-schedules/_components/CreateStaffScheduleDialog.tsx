@@ -49,10 +49,13 @@ export function CreateStaffScheduleDialog() {
       branchId: "",
       title: "",
       color: "sky",
-      startTime: "",
-      endTime: "",
+      startTime: "08:00",
+      endTime: "17:00",
       daysOfWeek: [],
-      recurrence: {},
+      recurrence: {
+        frequency: "WEEKLY",
+        interval: 1
+      },
       exceptions: [],
     },
   });

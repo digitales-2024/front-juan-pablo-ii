@@ -2459,6 +2459,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/staff-schedule/filter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Filtrar horarios por criterios (sucursal, personal y días) */
+        get: operations["StaffScheduleController_findByCriteria"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/staff-schedule/{id}": {
         parameters: {
             query?: never;
@@ -12666,6 +12683,8 @@ export interface operations {
                 branchId?: string;
                 /** @description Estado del evento (PENDING, CONFIRMED, CANCELLED, COMPLETED, NO_SHOW) */
                 status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+                /** @description ID del horario del personal para filtrar eventos */
+                staffScheduleId?: string;
             };
             header?: never;
             path?: never;
@@ -13097,6 +13116,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StaffSchedule"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_findByCriteria: {
+        parameters: {
+            query?: {
+                /** @description ID de la sucursal para filtrar */
+                branchId?: string;
+                /** @description ID del personal para filtrar */
+                staffId?: string;
+                daysOfWeek?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Horarios encontrados */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */

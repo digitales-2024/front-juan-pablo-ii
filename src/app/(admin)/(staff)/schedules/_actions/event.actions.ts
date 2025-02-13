@@ -1,7 +1,7 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { 
+import {
   Event,
   CreateEventDto,
   UpdateEventDto,
@@ -24,21 +24,28 @@ const GetEventsByFilterSchema = z.object({
   staffId: z.string().optional(),
   type: z.enum(["TURNO", "CITA", "OTRO"]).optional(),
   branchId: z.string().optional(),
-  status: z.enum(["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED", "NO_SHOW"]).optional()
+  status: z.enum(["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED", "NO_SHOW"]).optional(),
+  staffScheduleId: z.string().optional()
 });
 
 const getEventsByFilterHandler = async (filters: EventFilterParams) => {
   try {
-    console.log("🔍 Enviando filtros a /events/filter:", filters);
-    const query = new URLSearchParams(filters).toString();
+    // Limpiar parámetros undefined antes de enviar
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, v]) => v !== undefined)
+    );
+
+    console.log("🔍 Filtros limpios para /events/filter:", cleanFilters);
+    const query = new URLSearchParams(cleanFilters).toString();
+
     const [response, error] = await http.get<Event[]>(`/events/filter?${query}`);
-    
+
     if (error || !response) {
       throw new Error(error?.message || 'Error al obtener eventos');
     }
-    
+
     // Envolver la respuesta en estructura BaseApiResponse
-    return { 
+    return {
       data: response,
       message: "Eventos obtenidos exitosamente",
       success: true

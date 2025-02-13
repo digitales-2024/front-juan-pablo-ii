@@ -15,7 +15,8 @@ import { Staff } from "@/app/(admin)/(staff)/staff/_interfaces/staff.interface";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { useStaffSchedules } from "@/app/(admin)/(staff)/staff-schedules/_hooks/useStaffSchedules";
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
-
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 export interface EventFiltersProps {
   onFilterChange: (filters: EventFilterParams) => void;
@@ -55,9 +56,12 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
   // const hasStaffSchedules = staffScheduleOptions && staffScheduleOptions.length > 0;
 
   useEffect(() => {
+    queryClient.invalidateQueries({ 
+      queryKey: ['events', filters]
+    });
     console.log("📢 Filtros actualizados:", filters);
     onFilterChange(filters);
-  },[filters]);
+  },[filters, queryClient]);
 
   useEffect(() => {
     setFilters(prev => ({
@@ -115,59 +119,60 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
   };
 
   return (
-    <div className="flex flex-wrap gap-4 items-end">
-      <div>
-        <label htmlFor="staffId" className="block text-sm font-medium text-gray-700">
-          Personal
-        </label>
-        <Select
-          value={filters.staffId || "todos"}
-          onValueChange={(value) => handleFilterChange("staffId", value)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Seleccione un personal" />
-          </SelectTrigger>
-          {renderSelectContent(staffOptions, "profesionales", "/staff")}
-        </Select>
-      </div>
+    <Card className="w-full bg-background shadow-md">
+      <CardContent className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="staffId" className="text-sm font-medium text-foreground">
+              Personal
+            </Label>
+            <Select value={filters.staffId || "todos"} onValueChange={(value) => handleFilterChange("staffId", value)}>
+              <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
+                <SelectValue placeholder="Seleccione un personal" />
+              </SelectTrigger>
+              {renderSelectContent(staffOptions, "profesionales", "/staff")}
+            </Select>
+          </div>
 
-      <div>
-        <label htmlFor="branchId" className="block text-sm font-medium text-gray-700">
-          Sucursal
-        </label>
-        <Select
-          value={filters.branchId || "todos"}
-          onValueChange={(value) => handleFilterChange("branchId", value)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Seleccione una sucursal" />
-          </SelectTrigger>
-          {renderSelectContent(filteredBranchOptions, "sucursales", "/branches")}
-        </Select>
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="branchId" className="text-sm font-medium text-foreground">
+              Sucursal
+            </Label>
+            <Select
+              value={filters.branchId || "todos"}
+              onValueChange={(value) => handleFilterChange("branchId", value)}
+            >
+              <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
+                <SelectValue placeholder="Seleccione una sucursal" />
+              </SelectTrigger>
+              {renderSelectContent(branchOptions, "sucursales", "/branches")}
+            </Select>
+          </div>
 
-      <div>
-        <label htmlFor="staffScheduleId" className="block text-sm font-medium text-gray-700">
-          Horarios
-        </label>
-        <Select
-          value={filters.staffScheduleId || "todos"}
-          onValueChange={(value) => handleFilterChange("staffScheduleId", value)}
-        >
-          <SelectTrigger className="w-[250px]">
-            <SelectValue placeholder="Seleccione horario" />
-          </SelectTrigger>
-          {renderSelectContent(
-            (staffScheduleOptions || []).map(schedule => ({
-              id: schedule.id,
-              title: schedule.title,
-              staff: schedule.staff
-            })), 
-            "horarios", 
-            "/staff-schedules"
-          )}
-        </Select>
-      </div>
-    </div>
+          <div className="space-y-2">
+            <Label htmlFor="staffScheduleId" className="text-sm font-medium text-foreground">
+              Horarios
+            </Label>
+            <Select
+              value={filters.staffScheduleId || "todos"}
+              onValueChange={(value) => handleFilterChange("staffScheduleId", value)}
+            >
+              <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
+                <SelectValue placeholder="Seleccione horario" />
+              </SelectTrigger>
+              {renderSelectContent(
+                (staffScheduleOptions || []).map((schedule) => ({
+                  id: schedule.id,
+                  title: schedule.title,
+                  staff: schedule.staff,
+                })),
+                "horarios",
+                "/staff-schedules",
+              )}
+            </Select>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
