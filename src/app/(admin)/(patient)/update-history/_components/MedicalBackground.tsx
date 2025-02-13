@@ -27,7 +27,7 @@ import {
   FileText,
   BookHeart,
 } from "lucide-react"
-import type { HistorialItem } from "../types"
+import type { HistorialItem } from "../_interfaces/types"
 
 interface MedicalBackgroundProps {
   historialMedico: HistorialItem[]

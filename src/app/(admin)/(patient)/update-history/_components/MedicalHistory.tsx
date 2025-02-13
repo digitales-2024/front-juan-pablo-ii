@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-
 import {
   Plus,
   User,
@@ -16,8 +15,6 @@ import {
   FileText,
   Calendar,
   AlertTriangle,
-  Image as ImageIcon,
-  X,
 } from "lucide-react";
 import {
   Carousel,
@@ -27,9 +24,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-import type {  Servicio } from "../types";
+import type { Servicio } from "../_interfaces/types";
 import { AddHistoryModal } from "./AddHistoryModal";
-
 
 interface MedicalHistoryProps {
   servicios: Servicio[];

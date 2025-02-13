@@ -6,8 +6,8 @@ import { PatientBasicInfo } from "../_components/PatientBasicInfo";
 import { MedicalBackground } from "../_components/MedicalBackground";
 import { MedicalHistory } from "../_components/MedicalHistory";
 import { PrescriptionModal } from "../_components/PrescriptionModal";
-import { PERSONAL_MEDICO, SUCURSAL } from "../constants";
-import type { Patient, HistorialItem, Servicio } from "../types";
+import { PERSONAL_MEDICO, SUCURSAL } from "../_interfaces/constants";
+import type { Patient, HistorialItem, Servicio } from "../_interfaces/types";
 
 export default function UpdateHistorySheet() {
   const { historyId } = useParams();

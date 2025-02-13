@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
-import type { Servicio, Paciente } from "../types";
+import type { Servicio, Paciente } from "../_interfaces/types";
 
 interface PrescriptionModalProps {
   isOpen: boolean;

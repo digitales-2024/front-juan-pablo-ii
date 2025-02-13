@@ -7,8 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Image as ImageIcon, X } from "lucide-react";
-import { SERVICIOS_OPCIONES, PERSONAL_MEDICO, SUCURSAL } from "../constants";
-import type { Servicio } from "../types";
+import { SERVICIOS_OPCIONES, PERSONAL_MEDICO, SUCURSAL } from "../_interfaces/constants";
+import type { Servicio } from "../_interfaces/types";
 import { AddMedicalLeaveModal } from "./AddMedicalLeaveModal";
 import { AddPrescriptionModal } from "./AddPrescriptionModal";
 

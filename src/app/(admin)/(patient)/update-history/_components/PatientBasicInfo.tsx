@@ -19,7 +19,7 @@ import {
   ScrollText,
   IdCard,
 } from "lucide-react";
-import type { Patient } from "../types";
+import type { Patient } from "../_interfaces/types";
 
 interface PatientBasicInfoProps {
   paciente: Patient;
