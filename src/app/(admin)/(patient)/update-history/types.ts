@@ -38,8 +38,9 @@ export type Patient = components["schemas"]["Patient"];
     leaveDescription?: string;
     newImages: string[];
   }
-  
+  //clave y valo de json de historia medica
   export interface HistorialItem {
     titulo: string;
     contenido: string;
+    tipo: string
   }

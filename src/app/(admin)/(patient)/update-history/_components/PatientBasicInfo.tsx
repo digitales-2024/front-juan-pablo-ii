@@ -1,7 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   User,
   Mail,
@@ -11,7 +11,6 @@ import {
   Calendar,
   Heart,
   Briefcase,
-  UserCog,
   AlertCircle,
   Building2,
   UserCheck,
@@ -19,11 +18,11 @@ import {
   Languages,
   ScrollText,
   IdCard,
-} from "lucide-react"
-import type { Patient } from "../types"
+} from "lucide-react";
+import type { Patient } from "../types";
 
 interface PatientBasicInfoProps {
-  paciente: Patient
+  paciente: Patient;
 }
 
 export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
@@ -36,7 +35,10 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
             <Card className="h-full flex items-center justify-center">
               <CardContent className="p-6 text-center">
                 <Avatar className="w-32 h-32 mx-auto">
-                  <AvatarImage src={paciente.patientPhoto} alt={`${paciente.name} ${paciente.lastName}`} />
+                  <AvatarImage
+                    src={paciente.patientPhoto}
+                    alt={`${paciente.name} ${paciente.lastName}`}
+                  />
                   <AvatarFallback>
                     <User className="w-16 h-16" />
                   </AvatarFallback>
@@ -47,7 +49,10 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
                   <p className="text-muted-foreground">{paciente.dni}</p>
                 </div>
                 <div className="mt-4 flex justify-center gap-2">
-                  <Badge variant="secondary" className="bg-green-500 text-white">
+                  <Badge
+                    variant="secondary"
+                    className="bg-green-500 text-white"
+                  >
                     Paciente
                   </Badge>
                   <Badge variant="secondary">
@@ -68,7 +73,7 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
                   Información Médica
                 </TabsTrigger>
                 <TabsTrigger value="personal">
-                  <UserCog className="w-4 h-4 mr-2" />
+                  <UserCheck className="w-4 h-4 mr-2" />
                   Información Personal
                 </TabsTrigger>
                 <TabsTrigger value="contact">
@@ -82,21 +87,31 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Seguro de Salud</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Seguro de Salud
+                        </label>
                         <div className="flex items-center space-x-2">
                           <FileText className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.healthInsurance}</span>
+                          <span className="font-medium">
+                            {paciente.healthInsurance}
+                          </span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Médico Primario</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Médico de cabecera
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Stethoscope className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.primaryDoctor}</span>
+                          <span className="font-medium">
+                            {paciente.primaryDoctor}
+                          </span>
                         </div>
                       </div>
                       <div className="col-span-2">
-                        <label className="text-sm font-medium text-muted-foreground">Notas Médicas</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Notas Médicas
+                        </label>
                         <div className="flex items-start space-x-2 mt-1">
                           <ScrollText className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                           <span className="font-medium">{paciente.notes}</span>
@@ -112,45 +127,67 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Fecha de Nacimiento</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Fecha de Nacimiento
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Calendar className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.birthDate}</span>
+                          <span className="font-medium">
+                            {paciente.birthDate}
+                          </span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Género</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Género
+                        </label>
                         <div className="flex items-center space-x-2">
                           <UserCheck className="w-5 h-5 text-primary" />
                           <span className="font-medium">{paciente.gender}</span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Estado Civil</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Estado Civil
+                        </label>
                         <div className="flex items-center space-x-2">
                           <User className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.maritalStatus}</span>
+                          <span className="font-medium">
+                            {paciente.maritalStatus}
+                          </span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Idioma</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Idioma
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Languages className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.language}</span>
+                          <span className="font-medium">
+                            {paciente.language}
+                          </span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Ocupación</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Ocupación
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Briefcase className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.occupation}</span>
+                          <span className="font-medium">
+                            {paciente.occupation}
+                          </span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Lugar de Trabajo</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Lugar de Trabajo
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Building2 className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.workplace}</span>
+                          <span className="font-medium">
+                            {paciente.workplace}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -163,38 +200,54 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Teléfono</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Celular
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Phone className="w-5 h-5 text-primary" />
                           <span className="font-medium">{paciente.phone}</span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Email</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Email
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Mail className="w-5 h-5 text-primary" />
                           <span className="font-medium">{paciente.email}</span>
                         </div>
                       </div>
                       <div className="col-span-2">
-                        <label className="text-sm font-medium text-muted-foreground">Dirección</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Dirección
+                        </label>
                         <div className="flex items-center space-x-2">
                           <MapPin className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.address}</span>
+                          <span className="font-medium">
+                            {paciente.address}
+                          </span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Contacto de Emergencia</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Contacto de Emergencia
+                        </label>
                         <div className="flex items-center space-x-2">
                           <AlertCircle className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.emergencyContact}</span>
+                          <span className="font-medium">
+                            {paciente.emergencyContact}
+                          </span>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium text-muted-foreground">Teléfono de Emergencia</label>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Teléfono de Emergencia
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Phone className="w-5 h-5 text-primary" />
-                          <span className="font-medium">{paciente.emergencyPhone}</span>
+                          <span className="font-medium">
+                            {paciente.emergencyPhone}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -206,5 +259,5 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
