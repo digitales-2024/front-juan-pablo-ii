@@ -28,7 +28,7 @@ interface AddMedicalLeaveModalProps {
 
 export function AddMedicalLeaveModal({ isOpen, setIsOpen, onSave, initialData }: AddMedicalLeaveModalProps) {
   const [formData, setFormData] = useState<MedicalLeaveData>(
-    initialData || {
+    initialData ?? {
       medicalLeave: false,
       medicalLeaveDays: 0,
     },
@@ -90,7 +90,7 @@ export function AddMedicalLeaveModal({ isOpen, setIsOpen, onSave, initialData }:
                     </Label>
                     <Input
                       type="date"
-                      value={formData.medicalLeaveStartDate || ""}
+                      value={formData.medicalLeaveStartDate ?? ""}
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
@@ -111,7 +111,7 @@ export function AddMedicalLeaveModal({ isOpen, setIsOpen, onSave, initialData }:
                     </Label>
                     <Input
                       type="date"
-                      value={formData.medicalLeaveEndDate || ""}
+                      value={formData.medicalLeaveEndDate ?? ""}
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
@@ -135,7 +135,7 @@ export function AddMedicalLeaveModal({ isOpen, setIsOpen, onSave, initialData }:
                   <div className="relative">
                     <Input
                       type="number"
-                      value={formData.medicalLeaveDays || 0}
+                      value={formData.medicalLeaveDays ?? 0}
                       disabled
                       className="bg-muted/50 font-medium"
                     />
@@ -149,7 +149,7 @@ export function AddMedicalLeaveModal({ isOpen, setIsOpen, onSave, initialData }:
                     Descripción del Descanso Médico
                   </Label>
                   <Textarea
-                    value={formData.leaveDescription || ""}
+                    value={formData.leaveDescription ?? ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,

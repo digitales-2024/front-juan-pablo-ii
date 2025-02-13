@@ -7,26 +7,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Plus, FileText, Pill, Stethoscope, DollarSign, Trash2 } from "lucide-react"
 import { useState } from "react"
+import { Service, PrescriptionItem, PrescriptionData } from "../_interfaces/types"
 
-interface ServiceItem {
-  nombre: string
-  descripcion: string
-  precio: number
-}
-
-interface PrescriptionItem {
-  nombre: string
-  dosis: string
-  frecuencia: string
-}
-
-interface PrescriptionData {
-  prescription: boolean
-  prescriptionTitle?: string
-  prescriptionDescription?: string
-  prescriptionItems: PrescriptionItem[]
-  services: ServiceItem[]
-}
 
 interface AddPrescriptionModalProps {
   isOpen: boolean
@@ -37,7 +19,7 @@ interface AddPrescriptionModalProps {
 
 export function AddPrescriptionModal({ isOpen, setIsOpen, onSave, initialData }: AddPrescriptionModalProps) {
   const [formData, setFormData] = useState<PrescriptionData>(
-    initialData || {
+    initialData ?? {
       prescription: false,
       prescriptionItems: [],
       services: [],
@@ -50,7 +32,7 @@ export function AddPrescriptionModal({ isOpen, setIsOpen, onSave, initialData }:
     frecuencia: "",
   })
 
-  const [newService, setNewService] = useState<ServiceItem>({
+  const [newService, setNewService] = useState<Service>({
     nombre: "",
     descripcion: "",
     precio: 0,
@@ -95,13 +77,13 @@ export function AddPrescriptionModal({ isOpen, setIsOpen, onSave, initialData }:
           <ScrollArea className="max-h-[60vh] overflow-y-auto pr-4">
             <div className="space-y-6">
               <div className="space-y-4">
-                <div>
+{/*                 <div>
                   <Label htmlFor="prescriptionTitle" className="text-base font-medium">
                     Título de la Receta
                   </Label>
                   <Input
                     id="prescriptionTitle"
-                    value={formData.prescriptionTitle || ""}
+                    value={formData.prescriptionTitle ?? ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -111,27 +93,26 @@ export function AddPrescriptionModal({ isOpen, setIsOpen, onSave, initialData }:
                     required
                     className="mt-1"
                   />
-                </div>
+                </div> */}
                 <div>
                   <Label htmlFor="prescriptionDescription" className="text-base font-medium">
-                    Descripción General
+                    Descripción General e indicaciones
                   </Label>
                   <Textarea
                     id="prescriptionDescription"
-                    value={formData.prescriptionDescription || ""}
+                    value={formData.prescriptionDescription ?? ""}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
                         prescriptionDescription: e.target.value,
                       }))
                     }
-                    required
+                    
                     className="mt-1 min-h-[100px]"
                   />
                 </div>
               </div>
 
-            
               <Card>
                 <CardContent className="p-4 space-y-4">
                   <h3 className="font-semibold text-lg flex items-center gap-2">
@@ -266,4 +247,3 @@ export function AddPrescriptionModal({ isOpen, setIsOpen, onSave, initialData }:
     </Dialog>
   )
 }
-

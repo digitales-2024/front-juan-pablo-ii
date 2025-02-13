@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
@@ -61,10 +59,11 @@ export function MedicalHistory({
   }
 
   const handleAddNewService = (newService: Servicio) => {
-    setServicios([newService, ...servicios])
-    setExpandedService(newService.serviceId)
+    const currentDate = new Date().toISOString(); // Obtén la fecha actual en formato ISO
+    const newServiceWithDate = { ...newService, date: currentDate }; // Añade la fecha al nuevo servicio
+    setServicios([newServiceWithDate, ...servicios]);
+    setExpandedService(newServiceWithDate.serviceId);
   }
-
   return (
     <Card className="border-t-4 border-t-primary">
       <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0 p-6">
@@ -88,7 +87,7 @@ export function MedicalHistory({
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <Badge variant="outline" className="text-base px-3 py-1.5">{`Servicio ${servicio.serviceId}`}</Badge>
-                <CardTitle className="text-lg">Consulta / Servicio</CardTitle>
+      
               </div>
               <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
                 <span className="text-base text-muted-foreground">{formatDate(servicio.date)}</span>
@@ -247,7 +246,7 @@ export function MedicalHistory({
           <DialogHeader className="flex flex-col items-center">
             <DialogTitle className="text-center mb-2">Vista Detallada</DialogTitle>
             <span className="text-base text-muted-foreground">
-              {selectedImage && formatDate(servicios.find((s) => s.newImages?.includes(selectedImage))?.date || "")}
+              {selectedImage && formatDate(servicios.find((s) => s.newImages?.includes(selectedImage))?.date ?? "")}
             </span>
           </DialogHeader>
           {selectedImage && (
@@ -267,4 +266,3 @@ export function MedicalHistory({
     </Card>
   )
 }
-

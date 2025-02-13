@@ -58,6 +58,10 @@ export default function UpdateHistorySheet() {
         { nombre: "Losartan", dosis: "50mg", frecuencia: "Una vez al día" },
         { nombre: "Amlodipino", dosis: "5mg", frecuencia: "Una vez al día" },
       ],
+      services: [
+        { nombre: "Consulta Dermatológica", descripcion: "Revisión de la piel", precio: 100 },
+        { nombre: "Análisis de Sangre", descripcion: "Examen completo", precio: 200 },
+      ],
       description: "el pacciente presenta una erupcion en la piel...",
       medicalLeave: false,
       newImages: [

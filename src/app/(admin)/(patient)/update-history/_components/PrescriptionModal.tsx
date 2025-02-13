@@ -86,8 +86,37 @@ export function PrescriptionModal({
                     {prescription.prescriptionDescription}
                   </p>
                 </div>
-                {/* Medicamentos Recetados */}
-                <div>
+
+                {/* Servicios Adicionales */}
+                {prescription.services && prescription.services.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold mb-2">
+                      Servicios Adicionales
+                    </h4>
+                    <div className="bg-gray-50 p-3 rounded">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="text-sm text-gray-600 border-b">
+                            <th className="text-left py-2">Servicio</th>
+                            <th className="text-left py-2">Descripción</th>
+                            <th className="text-left py-2">Precio</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {prescription.services.map((service, index) => (
+                            <tr key={index} className="border-b last:border-0">
+                              <td className="py-2">{service.nombre}</td>
+                              <td className="py-2">{service.descripcion}</td>
+                              <td className="py-2">S/.{service.precio}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+                                {/* Medicamentos Recetados */}
+                                <div>
                   <h4 className="font-semibold mb-2">Medicamentos Recetados</h4>
                   <div className="bg-gray-50 p-3 rounded">
                     <table className="w-full">
@@ -111,7 +140,7 @@ export function PrescriptionModal({
                   </div>
                 </div>
                 {/* Indicaciones Adicionales */}
-                {prescription.prescriptionTitle && (
+           {/*      {prescription.prescriptionTitle && (
                   <div>
                     <h4 className="font-semibold mb-2">
                       Indicaciones Adicionales
@@ -120,7 +149,7 @@ export function PrescriptionModal({
                       {prescription.prescriptionTitle}
                     </p>
                   </div>
-                )}
+                )} */}
                 <div>
                   <div className="border-t w-fit pt-2">
                     <span className="text-sm text-gray-600">

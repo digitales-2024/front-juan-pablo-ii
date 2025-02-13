@@ -3,18 +3,6 @@ import { components } from "@/types/api";
 // Tipos base de la API
 export type Patient = components["schemas"]["Patient"];
 
-/* export interface Paciente extends Patient */
-/* export interface Paciente {
-    id: string;
-    nombre: string;
-    apellido: string;
-    dni: string;
-    telefono: string;
-    correo: string;
-    direccion: string;
-    foto: string;
-  } */
-
    export interface PrescriptionItem {
     nombre: string;
     dosis: string;
@@ -39,9 +27,28 @@ export type Patient = components["schemas"]["Patient"];
     newImages: string[];
     date: string;
   }
+  export interface PrescriptionItem {
+    nombre: string
+    dosis: string
+    frecuencia: string
+  }
+
   //clave y valo de json de historia medica
-  export interface HistorialItem {
-    titulo: string;
-    contenido: string;
-    tipo: string
+  export interface Service {
+    nombre: string
+    descripcion: string
+    precio: number
+  }
+  export interface PrescriptionItem {
+    nombre: string
+    dosis: string
+    frecuencia: string
+  }
+  
+  export interface PrescriptionData {
+    prescription: boolean
+    prescriptionTitle?: string
+    prescriptionDescription?: string
+    prescriptionItems: PrescriptionItem[]
+    services: Service[]
   }
