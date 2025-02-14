@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TableProperties } from "lucide-react";
+import { PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,23 +21,39 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { MovementsTable } from "./MovementsTable";
-import { IncomingMovement } from "../../_interfaces/income.interface";
+import { ProductStockTable } from "./ProductStockTable";
+//import { ProductStock } from "../../_interfaces/stock.interface";
+import { useUnifiedStock } from "../../_hooks/useFilterStock";
 
-export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovement[], incomingName: string}) {
+interface ShowProductStockDialogProps {
+  //data: ProductStock[];
+  storageId: string;
+  storageName?: string;
+  onCloseDialog?: () => void;
+}
+export function ShowProductStockDialog({
+  storageId, 
+  storageName,
+  // onCloseDialog,
+}: ShowProductStockDialogProps) {
     const SHOW_MOVEMENTS_MESSAGES = {
-        button: "Mostrar Movimientos",
-        title: "Movimientos de la entrada",
-        description: `Aquí puedes ver los movimientos de la entrada "${incomingName}".`,
+        button: "Mostrar Stock de Productos",
+        title: "Stock de productos",
+        description: `Aquí puedes ver el stock de productos de la sucursal seleccionada.` + (storageName ? ` Almacén: "${storageName}".` : ""),
         cancel: "Cerrar",
     } as const;
   const [open, setOpen] = useState(false);
-  //   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const handleClose = () => {
+  const {
+      query: stockQuery,
+    } = useUnifiedStock();
+
+  const data = stockQuery.data?.find((stock) => stock.idStorage === storageId)?.stock ?? [];
+
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
@@ -60,7 +76,7 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
       aria-label="Open menu"
       className="flex p-2 data-[state=open]:bg-muted text-sm"
     >
-      <TableProperties className="text-primary size-7"/>
+      <PackageSearch className="text-primary size-7"/>
       {SHOW_MOVEMENTS_MESSAGES.button}
     </Button>
   );
@@ -78,14 +94,10 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
               {SHOW_MOVEMENTS_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <MovementsTable data={data}></MovementsTable>
+          <ProductStockTable data={data}></ProductStockTable>
           <DialogFooter>
               <DialogFooterContent />
         </DialogFooter>
-          {/* <CreateProductForm form={form} onSubmit={handleSubmit}>
-            <DevelopmentZodError form={form} />
-            
-          </CreateProductForm> */}
         </DialogContent>
       </Dialog>
     );
@@ -103,7 +115,7 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
             {SHOW_MOVEMENTS_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <MovementsTable data={data}></MovementsTable>
+        <ProductStockTable data={data}></ProductStockTable>
           <DrawerFooter>
             <DialogFooterContent />
           </DrawerFooter>

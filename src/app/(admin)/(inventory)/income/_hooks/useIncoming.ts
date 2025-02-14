@@ -101,7 +101,7 @@ export const useIncoming = () => {
       }
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       queryClient.setQueryData<DetailedIncoming[] | undefined>(
         ["detailed-incomings"],
         (oldIncomings) => {
@@ -111,6 +111,7 @@ export const useIncoming = () => {
           );
         }
       );
+      await queryClient.invalidateQueries({ queryKey: ["stock-storages"] });
       toast.success("Ingreso actualizado exitosamente");
     },
     onError: (error) => {

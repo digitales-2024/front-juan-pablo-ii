@@ -1,18 +1,16 @@
 import { PageMetadata } from "@/types/statics/pageMetadata";
-import { Box } from "lucide-react";
+import { PackageMinus } from "lucide-react";
 
 export const METADATA:PageMetadata = {
-	title: "Productos",
-	description: "Administra todos los productos de tu catálogo.",
-    Icon: Box,
+	title: "Salidas",
+	description: "Administra todos las salidas de productos.",
+	entityName: "Salida",
+	entityPluralName: "Salidas",
+    Icon: PackageMinus,
 	dataDependencies: [
 		{
-			dependencyName: "Categorías",
-			dependencyUrl: "/product/category"
-		},
-		{
-			dependencyName: "Subcategorías",
-			dependencyUrl: "/product/product-types"
+			dependencyName: "Almacenes",
+			dependencyUrl: "/storage/storages"
 		}
 	]
 } as const;

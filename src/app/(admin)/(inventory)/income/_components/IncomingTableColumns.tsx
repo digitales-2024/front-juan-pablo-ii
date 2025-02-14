@@ -85,6 +85,21 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
     ),
   },
   {
+    accessorKey: "movements",
+    size: 10,
+    meta: {
+      title: "Movimientos"
+    },
+    header: () => (
+      <div>Movimientos</div>
+    ),
+    cell: ({ row }) => (
+      <div>
+        <ShowMovementsDialog data={row.original.Movement} incomingName={row.original.name??row.original.id}></ShowMovementsDialog>
+      </div>
+    ),
+  },
+  {
     accessorKey: "description",
     meta: {
       title: "Descripción"
@@ -213,21 +228,6 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   //   cell: ({ row }) =>
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
-  {
-    accessorKey: "movements",
-    size: 10,
-    meta: {
-      title: "Movimientos"
-    },
-    header: () => (
-      <div>Movimientos</div>
-    ),
-    cell: ({ row }) => (
-      <div>
-        <ShowMovementsDialog data={row.original.Movement} incomingName={row.original.name??row.original.id}></ShowMovementsDialog>
-      </div>
-    ),
-  },
   {
     id: "Acciones",
     accessorKey: "actions",
