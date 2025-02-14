@@ -23,7 +23,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Product } from "../_interfaces/products.interface";
+import { Product } from "../_interfaces/outgoing.interface";
 import { RefreshCcw, Trash } from "lucide-react";
 import { useProducts } from "../_hooks/useProduct";
 import { toast } from "sonner";

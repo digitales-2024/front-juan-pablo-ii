@@ -1,7 +1,7 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { Product, DetailedProduct, CreateProductDto, UpdateProductDto, DeleteProductDto } from "../_interfaces/products.interface";
+import { Product, DetailedProduct, CreateProductDto, UpdateProductDto, DeleteProductDto } from "../_interfaces/outgoing.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";

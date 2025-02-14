@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { TableSkeleton } from "@/components/data-table/TableSkeleton";
 import { METADATA } from "./_statics/metadata";
 
-export default function LoadingCategories() {
+export default function Loading() {
 	return (
 		<div className="flex flex-col gap-4">
 			<PageHeader

@@ -1525,6 +1525,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Busqueda rápida de producto por su nombre */
+        get: operations["ProductController_searchProductByIndexedName"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/{id}": {
         parameters: {
             query?: never;
@@ -4130,6 +4147,13 @@ export interface components {
             categoria: Record<string, never>;
             tipoProducto: Record<string, never>;
         };
+        SearchProductDto: {
+            name: string;
+        };
+        ProductSearch: {
+            id: string;
+            name: string;
+        };
         UpdateProductDto: {
             /**
              * @description ID de la categoría
@@ -5787,15 +5811,13 @@ export interface components {
              */
             medicalLeave: boolean;
             /**
-             * Format: date-time
              * @description Fecha de inicio del descanso médico
-             * @example 2024-03-16T10:00:00Z
+             * @example 2024-03-16
              */
             medicalLeaveStartDate?: string;
             /**
-             * Format: date-time
              * @description Fecha de fin del descanso médico
-             * @example 2024-03-19T10:00:00Z
+             * @example 2024-03-19
              */
             medicalLeaveEndDate?: string;
             /**
@@ -5821,9 +5843,7 @@ export interface components {
             updateHistory: Record<string, never>;
             description: string;
             medicalLeave: boolean;
-            /** Format: date-time */
             medicalLeaveStartDate: string;
-            /** Format: date-time */
             medicalLeaveEndDate: string;
             medicalLeaveDays: number;
             leaveDescription: string;
@@ -5887,15 +5907,13 @@ export interface components {
              */
             medicalLeave: boolean;
             /**
-             * Format: date-time
              * @description Fecha de inicio del descanso médico
-             * @example 2024-03-16T10:00:00Z
+             * @example 2024-03-16
              */
             medicalLeaveStartDate?: string;
             /**
-             * Format: date-time
              * @description Fecha de fin del descanso médico
-             * @example 2024-03-19T10:00:00Z
+             * @example 2024-03-19
              */
             medicalLeaveEndDate?: string;
             /**
@@ -5931,7 +5949,7 @@ export interface components {
              *       ]
              *     }
              */
-            medicalHistory: Record<string, never>;
+            medicalHistory?: Record<string, never>;
             /**
              * @description Additional description
              * @example First patient consultation
@@ -10438,6 +10456,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductWithRelations"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Producto no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_searchProductByIndexedName: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: unknown;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SearchProductDto"];
+            };
+        };
+        responses: {
+            /** @description Producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductSearch"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */

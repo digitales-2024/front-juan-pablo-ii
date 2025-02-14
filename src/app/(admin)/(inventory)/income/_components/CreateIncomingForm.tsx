@@ -85,8 +85,6 @@ export function CreateIncomingForm({
       ...(watchItem ?? {})
     };
   });
-  // const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
-  // const [productOptions, setproductOptions] = useState<Option[]>([]);
   const { activeStoragesQuery: responseStorage } = useStorages();
   const { activeProductsQuery: reponseProducts } = useProducts();
   const selectedProducts = useSelectedProducts();
@@ -233,11 +231,6 @@ export function CreateIncomingForm({
     //THis removes from the react-hook-form arraylist
     remove(index);
   }
-
-  // const productOptions: Option[] = reponseProducts.data.map((typeProduct) => ({
-  //   label: typeProduct.name,
-  //   value: typeProduct.id,
-  // }));
 
   // name
   // description

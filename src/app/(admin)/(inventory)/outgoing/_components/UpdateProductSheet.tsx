@@ -27,7 +27,7 @@ import {
   updateProductSchema,
   UpdateProductInput,
   Product,
-} from "../_interfaces/products.interface";
+} from "../_interfaces/outgoing.interface";
 import { PencilIcon, RefreshCcw } from "lucide-react";
 import { useProducts } from "../_hooks/useProduct";
 import { AutoComplete } from "@/components/ui/autocomplete";

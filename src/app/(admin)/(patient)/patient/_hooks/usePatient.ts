@@ -72,7 +72,12 @@ export const usePatients = () => {
       queryClient.setQueryData<Patient[]>(["patients"], (old) => {
         return old ? [...old, res.data] : [res.data];
       });
+
       toast.success("Paciente creado exitosamente");
+
+      // Llamar a la función de historia médica para actualizarla
+      void queryClient.invalidateQueries({ queryKey: ["medical-histories"] });
+ 
     },
     onError: (error) => {
       toast.error(error.message || "Error al crear el paciente");
@@ -86,9 +91,8 @@ export const usePatients = () => {
     { id: string; formData: UpdatePatientFormData }
   >({
     mutationFn: async ({ id, formData }) => {
-
       console.log("Datos en la mutación:", formData);
-      
+
       const response = await updatePatient(id, formData);
       if ("error" in response) {
         throw new Error(response.error);
@@ -97,12 +101,14 @@ export const usePatients = () => {
     },
     onSuccess: (res) => {
       queryClient.setQueryData<Patient[] | undefined>(
-        ["patients"], (oldPatients) => {
+        ["patients"],
+        (oldPatients) => {
           if (!oldPatients) return [res.data];
           return oldPatients.map((patient) =>
             patient.id === res.data.id ? res.data : patient
           );
-      });
+        }
+      );
       toast.success(res.message || "Paciente actualizado exitosamente");
     },
     onError: (error) => {

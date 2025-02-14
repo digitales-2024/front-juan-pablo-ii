@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import {
   Product, CreateProductDto, DeleteProductDto, UpdateProductDto,
   DetailedProduct,
-} from "../_interfaces/products.interface";
+} from "../_interfaces/outgoing.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
 interface UpdateProductVariables {

@@ -2,19 +2,16 @@ import { components } from "@/types/api";
 import { z } from "zod";
 
 // Tipos base de la API
-export type Product = components['schemas']['Product'];
-export type DetailedProduct = components['schemas']['ProductWithRelations'];
+export type Outgoing = components['schemas']['Outgoing'];
+export type DetailedOutgoingPrototype = components['schemas']['DetailedOutgoing'];
+export type OutgoingProduct = components['schemas']['OutgoingProduct'];
+// export type OutgoingBranchPrototype = components['schemas']['OutgoingBranch'];
 export type CreateProductDto = components['schemas']['CreateProductDto'];
 export type UpdateProductDto = components['schemas']['UpdateProductDto'];
 export type DeleteProductDto = components['schemas']['DeleteProductDto'];
 
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateProductDto = DeleteProductDto;
-
-// Interfaz para la tabla extendiendo el tipo base
-export interface ProductTableItem extends DetailedProduct {
-  selected?: boolean;
-}
 
 // Schema de validación para crear/actualizar producto
 // type CreateProductDto = {
