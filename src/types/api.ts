@@ -5754,15 +5754,13 @@ export interface components {
              */
             medicalLeave: boolean;
             /**
-             * Format: date-time
              * @description Fecha de inicio del descanso médico
-             * @example 2024-03-16T10:00:00Z
+             * @example 2024-03-16
              */
             medicalLeaveStartDate?: string;
             /**
-             * Format: date-time
              * @description Fecha de fin del descanso médico
-             * @example 2024-03-19T10:00:00Z
+             * @example 2024-03-19
              */
             medicalLeaveEndDate?: string;
             /**
@@ -5788,9 +5786,7 @@ export interface components {
             updateHistory: Record<string, never>;
             description: string;
             medicalLeave: boolean;
-            /** Format: date-time */
             medicalLeaveStartDate: string;
-            /** Format: date-time */
             medicalLeaveEndDate: string;
             medicalLeaveDays: number;
             leaveDescription: string;
@@ -5854,15 +5850,13 @@ export interface components {
              */
             medicalLeave: boolean;
             /**
-             * Format: date-time
              * @description Fecha de inicio del descanso médico
-             * @example 2024-03-16T10:00:00Z
+             * @example 2024-03-16
              */
             medicalLeaveStartDate?: string;
             /**
-             * Format: date-time
              * @description Fecha de fin del descanso médico
-             * @example 2024-03-19T10:00:00Z
+             * @example 2024-03-19
              */
             medicalLeaveEndDate?: string;
             /**
@@ -5898,7 +5892,7 @@ export interface components {
              *       ]
              *     }
              */
-            medicalHistory: Record<string, never>;
+            medicalHistory?: Record<string, never>;
             /**
              * @description Additional description
              * @example First patient consultation
