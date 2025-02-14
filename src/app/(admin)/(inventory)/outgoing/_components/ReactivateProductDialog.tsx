@@ -23,30 +23,30 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Product } from "../_interfaces/outgoing.interface";
+import { DetailedOutgoing } from "../_interfaces/outgoing.interface";
 import { RefreshCcw, RefreshCcwDot } from "lucide-react";
-import { useProducts } from "../_hooks/useProduct";
+import { useOutgoing } from "../_hooks/useOutgoing";
 import { ComponentPropsWithoutRef } from "react";
 import { METADATA } from "../_statics/metadata";
 
-interface ReactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
-  product?: Product;
-  products?: Product[];
+interface ReactivateOutgoingDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+  outgoing?: DetailedOutgoing;
+  outcomes?: DetailedOutgoing[];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export function ReactivateProductDialog({
-  product,
-  products,
+export function ReactivateOutgoingDialog({
+  outgoing,
+  outcomes,
   showTrigger = true,
   onSuccess,
   ...props
-}: ReactivateProductDialogProps) {
+}: ReactivateOutgoingDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { reactivateMutation: { isPending, mutateAsync } } = useProducts();
+  const { reactivateMutation: { isPending, mutateAsync } } = useOutgoing();
 
-  const items = products ?? (product ? [product] : []);
+  const items = outcomes ?? (outgoing ? [outgoing] : []);
 
   async function onReactivate() {
     const ids = items.map((item) => item.id);

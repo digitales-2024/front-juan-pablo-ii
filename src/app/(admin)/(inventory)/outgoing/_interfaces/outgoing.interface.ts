@@ -18,13 +18,13 @@ export type OutgoingProduct = {
   codigoProducto: string;
   isActive: boolean;
 }
-// export type OutgoingBranchPrototype = components['schemas']['OutgoingBranch'];
+export type OutgoingBranchPrototype = components['schemas']['OutgoingBranch'];
 export type OutgoingBranch = {
   id: string;
   name: string;
 }
 
-// export type OutgoingStorageTypePrototype = components['schemas']['OutgoingStorageType']
+export type OutgoingStorageTypePrototype = components['schemas']['OutgoingStorageType']
 export type OutgoingStorageType = {
   id: string;
   name: string;

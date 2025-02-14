@@ -2132,6 +2132,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/outgoing/storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los ingresos con detalles de almacen */
+        get: operations["OutgoingController_findAllWithStorage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/outgoing/detailed": {
         parameters: {
             query?: never;
@@ -4112,9 +4129,6 @@ export interface components {
             categoria: Record<string, never>;
             tipoProducto: Record<string, never>;
         };
-        SearchProductDto: {
-            name: string;
-        };
         ProductSearch: {
             id: string;
             name: string;
@@ -4744,8 +4758,31 @@ export interface components {
             referenceId: string;
             isActive: boolean;
         };
-        OutgoingStorage: {
+        OutgoingBranch: {
+            id: string;
             name: string;
+        };
+        OutgoingStorageType: {
+            id: string;
+            name: string;
+            branch?: components["schemas"]["OutgoingBranch"];
+        };
+        OutgoingStorage: {
+            id: string;
+            name: string;
+            TypeStorage: components["schemas"]["OutgoingStorageType"];
+        };
+        OutgoingWithStorage: {
+            id: string;
+            name: string;
+            description: string;
+            storageId: string;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            referenceId: string;
+            isActive: boolean;
+            Storage: components["schemas"]["OutgoingStorage"];
         };
         OutgoingProduct: {
             id: string;
@@ -10432,7 +10469,9 @@ export interface operations {
     };
     ProductController_searchProductByIndexedName: {
         parameters: {
-            query?: never;
+            query: {
+                name: string;
+            };
             header?: never;
             path: {
                 /** @description ID del producto */
@@ -10440,11 +10479,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SearchProductDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Producto encontrado */
             200: {
@@ -12229,6 +12264,40 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o salida ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_findAllWithStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los ingresos con detalles de almacen */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutgoingWithStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;

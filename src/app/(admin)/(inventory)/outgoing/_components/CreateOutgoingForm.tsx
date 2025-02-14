@@ -1,6 +1,6 @@
 "use client";
 
-import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
+import { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -9,6 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+// import { CreateProductInput } from "../_interfaces/outgoing.interface";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AutoComplete } from "@/components/ui/autocomplete";
@@ -19,71 +20,50 @@ import { Option } from "@/types/statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
 import { METADATA } from "../_statics/metadata";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
-import { CreateIncomeInput } from "../_interfaces/income.interface";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { SelectProductDialog } from "./Movements/FormComponents/SelectMovementDialog";
-import { Button } from "@/components/ui/button";
-import { useSelectedProducts, useSelectProductDispatch } from "../_hooks/useSelectProducts";
+import { CreateOutgoingInput } from "../_interfaces/outgoing.interface";
+import { CreateIncomeInput } from "../../income/_interfaces/income.interface";
+import {
+  useSelectedProducts,
+  useSelectProductDispatch,
+} from "../_hooks/useSelectProducts";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CalendarIcon, Trash2 } from "lucide-react";
 import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon, Trash2 } from "lucide-react";
+import { SelectProductDialog } from "./Movements/FormComponents/SelectMovementDialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import { es } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
-  form: UseFormReturn<CreateIncomeInput>;
+  form: UseFormReturn<CreateOutgoingInput>;
   controlledFieldArray: UseFieldArrayReturn<CreateIncomeInput>;
-  onSubmit: (data: CreateIncomeInput) => void;
+  onSubmit: (data: CreateOutgoingInput) => void;
   onDialogClose?: () => void;
 }
 
-// export const createIncomeSchema = z.object({
-//   name: z.string().min(1, "El nombre es requerido"), //En el back es opcional, pero considero que debe ser requerido
-//   description: z.string().optional(),
-//   storageId: z.string().min(1, "El tipo de almacenamiento es requerido"),
-//   date: z.string().date("La fecha es requerida"),
-//   state: z.boolean(),
-//   referenceId: z.string().optional(),
-//   movement: z.array(
-//     z.object({
-//       productId: z.string().min(1, "El producto es requerido"),
-//       quantity: z.number().min(1, "La cantidad debe ser mayor a 0"),
-//       date: z.string().optional(),
-//       state: z.boolean().optional(),
-//     })
-//   ),
-// }) satisfies z.ZodType<CreateIncomingDto>;
-
-export function CreateIncomingForm({
+export function CreateOutgoingForm({
   children,
   form,
   onSubmit,
-  controlledFieldArray
+  controlledFieldArray,
 }: CreateProductFormProps) {
   const { register, control, watch } = form;
-  // const { fields, append, remove } = useFieldArray({
-  //   control,
-  //   name: "movement",
-  //   rules: {
-  //     minLength: 1
-  //   }
-  // });
   const { fields, append, remove } = controlledFieldArray;
-  const [priceValue, setPriceValue] = useState('')
   const watchFieldArray = watch("movement");
   const controlledFields = fields.map((field, index) => {
     const watchItem = watchFieldArray?.[index];
     return {
       ...field,
-      ...(watchItem ?? {})
+      ...(watchItem ?? {}),
     };
   });
   const { activeStoragesQuery: responseStorage } = useStorages();
@@ -94,9 +74,9 @@ export function CreateIncomingForm({
   const syncProducts = useCallback(() => {
     // Limpiar fields existentes
     remove(); //Without parameters it removes all fields
-    
+
     // Agregar nuevos productos
-    selectedProducts.forEach(product => {
+    selectedProducts.forEach((product) => {
       append({
         productId: product.id,
         quantity: 1, //THis is the default value for quantity
@@ -107,32 +87,6 @@ export function CreateIncomingForm({
   useEffect(() => {
     syncProducts();
   }, [syncProducts]);
-
-  // useEffect(() => {
-  //   console.log(console.log('Dialog state has changed', dialogState))
-  // }, [dialogState]);
-
-  // const handleClearProductList = () => {
-
-  // }
-
-  // const handleClearProductList = useCallback(() => {
-  //   // this removes from the tanstack state management
-  //   dispatch(
-  //     {
-  //       type: "clear",
-  //     }
-  //   )
-  //   //THis removes from the react-hook-form arraylist
-  //   remove();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!dialogState) {
-  //     console.log('Dialog state has changed', dialogState);
-  //     handleClearProductList();
-  //   }
-  // }, [dialogState, handleClearProductList]);
 
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
   const STATEPROP_OPTIONS = useMemo(() => {
@@ -203,20 +157,10 @@ export function CreateIncomingForm({
     );
   }
 
-
   const storageOptions: Option[] = responseStorage.data.map((category) => ({
     label: category.name,
     value: category.id,
   }));
-
-  // const handleRemoveAllProducts = () => {
-  //   dispatch(
-  //     {
-  //       type: "clear"
-  //     }
-  //   )
-  //   remove();
-  // }
 
   const handleRemoveProduct = (index: number) => {
     // this removes from the tanstack state management
@@ -232,20 +176,6 @@ export function CreateIncomingForm({
     //THis removes from the react-hook-form arraylist
     remove(index);
   }
-
-  // name
-  // description
-  // storageId
-  // date
-  // state
-  // referenceId
-  // movement
-  // {
-  // productId
-  // quantity
-  // date
-  // state
-  // }
 
   return (
     <Form {...form}>
@@ -354,26 +284,11 @@ export function CreateIncomingForm({
                 <TableCell>
                   <div>
                     {/* <FormLabel>Precio</FormLabel> */}
-                    {/* <span className="block text-center">{price.toLocaleString("es-PE",
+                    <span className="block text-center">{price.toLocaleString("es-PE",
                       {
                         style: "currency",
                         currency: "PEN"
-                      })}</span> */}
-                    <div className="flex space-x-2 items-center">
-                      <span>S/</span>
-                      <Input
-                      value={priceValue || price}
-                      type="text"
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setPriceValue(newValue);
-                        // setTimeout(() => {
-                        // setPriceValue('');
-                        // }, 50000);
-                      }}
-                      />
-                    </div>
-                      
+                      })}</span>
                   </div>
                 </TableCell>
                 <TableCell>

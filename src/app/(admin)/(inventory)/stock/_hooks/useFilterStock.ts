@@ -1,6 +1,6 @@
 // "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
@@ -26,6 +26,8 @@ export type StockFilter =
   }
   
   export type StockFilterType = keyof typeof StockFilterType;
+  
+  const STOCK_QUERY_KEY = ['stock'] as const;
 
 export function useUnifiedStock() {
   // Filtro por defecto: "ALL" (todos los almacenes)
@@ -33,12 +35,12 @@ export function useUnifiedStock() {
   const [filter, setFilter] = useState<StockFilter>({ type: "ALL" });
   // const [success, setSuccess] = useState(false);
 
-  const STOCK_QUERY_KEY = ['stock'] as const;
+    // Referencia para bloquear la invalidación de caché en el primer render
+    const firstRenderRef = useRef(true);
 
   // const handleNotifications = () => {
   //     toast.success("Stock filtrado y actualizado correctamente");
   // }
-
   // useQuery principal
   const unifiedQuery = useQuery({
     // El queryKey varía según el tipo y parámetros
@@ -104,8 +106,13 @@ export function useUnifiedStock() {
   });
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: STOCK_QUERY_KEY }).catch(()=>toast.error('error al actualizar'));
-    // handleNotifications();
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
+      return;
+    }
+    queryClient
+      .invalidateQueries({ queryKey: STOCK_QUERY_KEY })
+      .catch(() => toast.error("Error al actualizar"));
     console.log('filter hook', filter);
   }, [filter, queryClient]);
 
