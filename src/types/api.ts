@@ -4147,9 +4147,6 @@ export interface components {
             categoria: Record<string, never>;
             tipoProducto: Record<string, never>;
         };
-        SearchProductDto: {
-            name: string;
-        };
         ProductSearch: {
             id: string;
             name: string;
@@ -10483,7 +10480,9 @@ export interface operations {
     };
     ProductController_searchProductByIndexedName: {
         parameters: {
-            query?: never;
+            query: {
+                name: string;
+            };
             header?: never;
             path: {
                 /** @description ID del producto */
@@ -10491,11 +10490,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SearchProductDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Producto encontrado */
             200: {
@@ -13052,9 +13047,9 @@ export interface operations {
     EventController_findEventsByStaffSchedule: {
         parameters: {
             query?: {
-                /** @description Página para paginación */
+                /** @description Número de página */
                 page?: number;
-                /** @description Límite de resultados por página */
+                /** @description Límite de resultados por página (máximo 50) */
                 limit?: number;
             };
             header?: never;
@@ -13069,6 +13064,8 @@ export interface operations {
             /** @description Eventos encontrados para el horario */
             200: {
                 headers: {
+                    /** @description Número total de registros disponibles */
+                    "X-Total-Count"?: number;
                     [name: string]: unknown;
                 };
                 content: {
