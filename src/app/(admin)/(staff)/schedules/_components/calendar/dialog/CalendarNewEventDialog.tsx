@@ -20,16 +20,22 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { useCalendarContext } from "../CalendarContext";
 import { DateTimePicker } from "../../form/DateTimePicker";
-import { ColorPicker } from "../../form/ColorPicker";
 import { CalendarEvent } from "../../../_types/CalendarTypes";
-import { ColorType } from "../../../_types/CalendarTypes";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { useStaffSchedules } from "@/app/(admin)/(staff)/staff-schedules/_hooks/useStaffSchedules";
 
 const formSchema = z
 	.object({
-		title: z.string().min(1, "Title is required"),
+		title: z.string().min(1, "Título es requerido"),
 		start: z.string().datetime(),
 		end: z.string().datetime(),
-		color: z.string(),
+		staffScheduleId: z.string().min(1, "Debe seleccionar un horario"),
 	})
 	.refine(
 		(data) => {
@@ -38,7 +44,7 @@ const formSchema = z
 			return end >= start;
 		},
 		{
-			message: "End time must be after start time",
+			message: "La hora final debe ser posterior a la inicial",
 			path: ["end"],
 		}
 	);
@@ -51,6 +57,9 @@ export default function CalendarNewEventDialog() {
 		events,
 		setEvents,
 	} = useCalendarContext();
+	const { 
+		allStaffSchedulesQuery, 
+	} = useStaffSchedules();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -58,17 +67,21 @@ export default function CalendarNewEventDialog() {
 			title: "",
 			start: format(date, "yyyy-MM-dd'T'HH:mm"),
 			end: format(date, "yyyy-MM-dd'T'HH:mm"),
-			color: "blue",
+			staffScheduleId: "",
 		},
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
+		const selectedSchedule = allStaffSchedulesQuery.data?.find(
+			s => s.id === values.staffScheduleId
+		);
+		
 		const newEvent: CalendarEvent = {
 			id: crypto.randomUUID(),
 			title: values.title,
 			start: new Date(values.start),
 			end: new Date(values.end),
-			color: values.color as ColorType,
+			color: selectedSchedule?.color || "blue",
 			type: "CITA" as const,
 			status: "CONFIRMED" as const,
 			staff: {
@@ -90,7 +103,7 @@ export default function CalendarNewEventDialog() {
 			isBaseEvent: false,
 			branchId: "temp-branch-id",
 			staffId: "temp-staff-id",
-			staffScheduleId: "temp-schedule-id"
+			staffScheduleId: values.staffScheduleId
 		};
 
 		setEvents([...events, newEvent]);
@@ -102,7 +115,7 @@ export default function CalendarNewEventDialog() {
 		<Dialog open={newEventDialogOpen} onOpenChange={setNewEventDialogOpen}>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Create event</DialogTitle>
+					<DialogTitle>Crear nuevo evento</DialogTitle>
 				</DialogHeader>
 				<Form {...form}>
 					<form
@@ -111,15 +124,38 @@ export default function CalendarNewEventDialog() {
 					>
 						<FormField
 							control={form.control}
+							name="staffScheduleId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="font-bold">Horario</FormLabel>
+									<Select onValueChange={field.onChange} defaultValue={field.value}>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Seleccione un horario" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{allStaffSchedulesQuery.data?.map((schedule) => (
+												<SelectItem key={schedule.id} value={schedule.id}>
+													{schedule.title} - {schedule.staff?.name} {schedule.staff?.lastName}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
 							name="title"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="font-bold">
-										Title
-									</FormLabel>
+									<FormLabel className="font-bold">Título</FormLabel>
 									<FormControl>
 										<Input
-											placeholder="Event title"
+											placeholder="Nombre del evento"
 											{...field}
 										/>
 									</FormControl>
@@ -133,9 +169,7 @@ export default function CalendarNewEventDialog() {
 							name="start"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="font-bold">
-										Start
-									</FormLabel>
+									<FormLabel className="font-bold">Inicio</FormLabel>
 									<FormControl>
 										<DateTimePicker field={field} />
 									</FormControl>
@@ -149,9 +183,7 @@ export default function CalendarNewEventDialog() {
 							name="end"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="font-bold">
-										End
-									</FormLabel>
+									<FormLabel className="font-bold">Fin</FormLabel>
 									<FormControl>
 										<DateTimePicker field={field} />
 									</FormControl>
@@ -160,24 +192,8 @@ export default function CalendarNewEventDialog() {
 							)}
 						/>
 
-						<FormField
-							control={form.control}
-							name="color"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="font-bold">
-										Color
-									</FormLabel>
-									<FormControl>
-										<ColorPicker field={field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
 						<div className="flex justify-end">
-							<Button type="submit">Create event</Button>
+							<Button type="submit">Crear evento</Button>
 						</div>
 					</form>
 				</Form>

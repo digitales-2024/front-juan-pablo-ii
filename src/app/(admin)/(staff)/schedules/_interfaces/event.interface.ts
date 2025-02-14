@@ -61,11 +61,11 @@ export type EventTableItem = Event & { selected?: boolean };
 
 // Esquemas de validación
 const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato YYYY-MM-DD requerido");
-const timeSchema = z.string()
-  .regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Formato HH:mm requerido (ej: 09:00)");
+
 
 export const createEventSchema = z.object({
   title: z.string().min(1, "El título es requerido"),
+  color: z.string().min(1,"Color requerido"),
   start: z.string().datetime({ offset: true }),
   end: z.string().datetime({ offset: true }),
   type: z.enum(["TURNO", "CITA", "OTRO"]),

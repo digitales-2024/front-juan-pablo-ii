@@ -5,7 +5,8 @@ import {
   deleteEvents,
   reactivateEvents,
   generateEvents,
-  getEventsByFilter
+  getEventsByFilter,
+  deleteEventsByScheduleId
 } from "../_actions/event.actions";
 import { toast } from "sonner";
 import {
@@ -16,6 +17,7 @@ import {
 } from "../_interfaces/event.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { useStaff } from "../../staff/_hooks/useStaff";
+import { useMemo } from "react";
 
 interface UpdateEventVariables {
   id: string;
@@ -27,27 +29,34 @@ export interface EventFilterParams {
   type: "TURNO" | "CITA" | "OTRO";
   branchId?: string;
   status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+  staffScheduleId?: string;
 }
 
 export const useEvents = (filters?: EventFilterParams) => {
   const queryClient = useQueryClient();
   const { staff } = useStaff();
 
+  // Modificar la normalización de filtros
+  const normalizedFilters = useMemo(() => {
+    const cleanFilters: Partial<EventFilterParams> = {};
+
+    if (filters) {
+      if (filters.staffScheduleId) cleanFilters.staffScheduleId = filters.staffScheduleId;
+      if (filters.staffId) cleanFilters.staffId = filters.staffId;
+      if (filters.branchId) cleanFilters.branchId = filters.branchId;
+      cleanFilters.type = filters.type;
+      cleanFilters.status = filters.status;
+    }
+
+    return cleanFilters;
+  }, [filters]);
+
   // Query para obtener eventos con filtros
   const eventsQuery = useQuery({
-    queryKey: ["events", filters],
+    queryKey: ["events", normalizedFilters],
     queryFn: async () => {
-      console.log("⚡ Ejecutando query de eventos con filtros:", filters);
-      const response = await getEventsByFilter(filters || {});
-      
-      console.log("📨 Respuesta de getEventsByFilter:", response);
-      
-      if (response.error) {
-        throw new Error(response.error);
-      }
-
-      console.log("📊 Eventos procesados:", response.data?.length);
-      return response.data;
+      const response = await getEventsByFilter(normalizedFilters);
+      return response.data || [];
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
@@ -56,7 +65,7 @@ export const useEvents = (filters?: EventFilterParams) => {
   const createMutation = useMutation<BaseApiResponse<Event>, Error, CreateEventDto>({
     mutationFn: (data) => createEvent(data),
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(["events"], (oldSchedules) => {
+      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldSchedules) => {
         const selectedStaff = staff?.find(member => member.id === variables.staffId);
         const newEvent = {
           ...res.data,
@@ -69,7 +78,7 @@ export const useEvents = (filters?: EventFilterParams) => {
             name: res.data.branch.name,
           } : undefined
         } as Event; // Aserción de tipo explícita
-        
+
         if (!oldSchedules) return [newEvent];
         return [...oldSchedules, newEvent];
       });
@@ -82,13 +91,10 @@ export const useEvents = (filters?: EventFilterParams) => {
   const updateMutation = useMutation<BaseApiResponse<Event>, Error, UpdateEventVariables>({
     mutationFn: ({ id, data }) => updateEvent(id, data),
     onSuccess: (res) => {
-      queryClient.setQueryData<Event[]>(["events"], (oldEvents = []) => 
-        oldEvents.map(event => 
-          event.id === res.data.id ? { 
-            ...event, 
-            ...res.data,
-            staff: event.staff // Mantener datos existentes de staff
-          } : event
+      queryClient.setQueryData<Event[]>(
+        ["events", normalizedFilters], // Usar la misma estructura de clave
+        (oldEvents = []) => oldEvents.map(event =>
+          event.id === res.data.id ? { ...event, ...res.data } : event
         )
       );
       toast.success("Evento actualizado exitosamente");
@@ -100,16 +106,16 @@ export const useEvents = (filters?: EventFilterParams) => {
   const deleteMutation = useMutation<BaseApiResponse<Event>, Error, DeleteEventsDto>({
     mutationFn: deleteEvents,
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(["events"], (oldEvents = []) => 
-        oldEvents.map(event => 
-          variables.ids.includes(event.id) 
-            ? { ...event, isActive: false } 
+      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents = []) =>
+        oldEvents.map(event =>
+          variables.ids.includes(event.id)
+            ? { ...event, isActive: false }
             : event
         )
       );
       toast.success(
-        variables.ids.length === 1 
-          ? "Evento desactivado exitosamente" 
+        variables.ids.length === 1
+          ? "Evento desactivado exitosamente"
           : "Eventos desactivados exitosamente"
       );
     },
@@ -120,16 +126,16 @@ export const useEvents = (filters?: EventFilterParams) => {
   const reactivateMutation = useMutation<BaseApiResponse<Event>, Error, DeleteEventsDto>({
     mutationFn: reactivateEvents,
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(["events"], (oldEvents = []) => 
-        oldEvents.map(event => 
-          variables.ids.includes(event.id) 
-            ? { ...event, isActive: true } 
+      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents = []) =>
+        oldEvents.map(event =>
+          variables.ids.includes(event.id)
+            ? { ...event, isActive: true }
             : event
         )
       );
       toast.success(
-        variables.ids.length === 1 
-          ? "Evento reactivado exitosamente" 
+        variables.ids.length === 1
+          ? "Evento reactivado exitosamente"
           : "Eventos reactivados exitosamente"
       );
     },
@@ -139,11 +145,33 @@ export const useEvents = (filters?: EventFilterParams) => {
   // Mutación para generar eventos recurrentes
   const generateEventsMutation = useMutation<BaseApiResponse<Event>, Error, string>({
     mutationFn: (id) => generateEvents(id),
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
+    onSuccess: () => {
+      // Invalidar todas las queries de eventos
+      queryClient.invalidateQueries({ queryKey: ['events'] });
       toast.success("Eventos recurrentes generados exitosamente");
     },
     onError: (error) => handleAuthError(error, "generar eventos recurrentes")
+  });
+
+  // Nueva mutación para eliminar eventos por scheduleId
+  const deleteByScheduleIdMutation = useMutation<BaseApiResponse<Event>, Error, string>({
+    mutationFn: deleteEventsByScheduleId,
+    onSuccess: (res, _scheduleId) => {
+      // Filtrar los eventos eliminados de la caché
+      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents) => {
+        // Asegurarse de que oldEvents no sea undefined
+        if (!oldEvents) return [];
+
+        // Obtener los IDs de los eventos eliminados desde la respuesta
+        const deletedEventIds = res.data ? [res.data.id] : [];
+
+        // Filtrar los eventos que no están en la lista de eliminados
+        return oldEvents.filter(event => !deletedEventIds.includes(event.id));
+      });
+
+      toast.success("Eventos eliminados exitosamente");
+    },
+    onError: (error) => handleAuthError(error, "eliminar eventos por scheduleId")
   });
 
   // Manejo de errores de autorización
@@ -164,6 +192,7 @@ export const useEvents = (filters?: EventFilterParams) => {
     deleteMutation,
     reactivateMutation,
     generateEventsMutation,
+    deleteByScheduleIdMutation,
     refetch: eventsQuery.refetch
   };
 }; 

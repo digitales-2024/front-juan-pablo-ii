@@ -4,7 +4,7 @@
 export const colorOptions = [
 	{
 		value: "blue",
-		label: "Blue",
+		label: "Azul",
 		class: {
 			base: "bg-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500",
 			light: "bg-blue-300 border-blue-300 bg-blue-300/10 text-blue-300",
@@ -13,7 +13,7 @@ export const colorOptions = [
 	},
 	{
 		value: "indigo",
-		label: "Indigo",
+		label: "Índigo",
 		class: {
 			base: "bg-indigo-500 border-indigo-500 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-500",
 			light: "bg-indigo-300 border-indigo-300 bg-indigo-300/10 text-indigo-300",
@@ -22,7 +22,7 @@ export const colorOptions = [
 	},
 	{
 		value: "pink",
-		label: "Pink",
+		label: "Rosa",
 		class: {
 			base: "bg-pink-500 border-pink-500 bg-pink-500/10 hover:bg-pink-500/20 text-pink-500",
 			light: "bg-pink-300 border-pink-300 bg-pink-300/10 text-pink-300",
@@ -31,7 +31,7 @@ export const colorOptions = [
 	},
 	{
 		value: "red",
-		label: "Red",
+		label: "Rojo",
 		class: {
 			base: "bg-red-500 border-red-500 bg-red-500/10 hover:bg-red-500/20 text-red-500",
 			light: "bg-red-300 border-red-300 bg-red-300/10 text-red-300",
@@ -40,7 +40,7 @@ export const colorOptions = [
 	},
 	{
 		value: "orange",
-		label: "Orange",
+		label: "Naranja",
 		class: {
 			base: "bg-orange-500 border-orange-500 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500",
 			light: "bg-orange-300 border-orange-300 bg-orange-300/10 text-orange-300",
@@ -49,7 +49,7 @@ export const colorOptions = [
 	},
 	{
 		value: "amber",
-		label: "Amber",
+		label: "Ámbar",
 		class: {
 			base: "bg-amber-500 border-amber-500 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500",
 			light: "bg-amber-300 border-amber-300 bg-amber-300/10 text-amber-300",
@@ -58,7 +58,7 @@ export const colorOptions = [
 	},
 	{
 		value: "emerald",
-		label: "Emerald",
+		label: "Esmeralda",
 		class: {
 			base: "bg-emerald-500 border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500",
 			light: "bg-emerald-300 border-emerald-300 bg-emerald-300/10 text-emerald-300",
@@ -67,7 +67,7 @@ export const colorOptions = [
 	},
 	{
 		value: "sky",
-		label: "Sky",
+		label: "Cielo",
 		class: {
 			base: "bg-sky-500 border-sky-500 bg-sky-500/10 hover:bg-sky-500/20 text-sky-500",
 			light: "bg-sky-300 border-sky-300 bg-sky-300/10 text-sky-300",

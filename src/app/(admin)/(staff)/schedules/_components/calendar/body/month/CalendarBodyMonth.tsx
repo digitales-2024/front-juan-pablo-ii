@@ -15,7 +15,7 @@ import { useCalendarContext } from "../../CalendarContext";
 import CalendarEvent from "../../CalendarEvent";
 
 export default function CalendarBodyMonth() {
-	const { date, events, setDate, setMode } = useCalendarContext();
+	const { date, events, setDate, setMode, setNewEventDialogOpen } = useCalendarContext();
 
 	// Get the first day of the month
 	const monthStart = startOfMonth(date);
@@ -93,7 +93,7 @@ export default function CalendarBodyMonth() {
 								onClick={(e) => {
 									e.stopPropagation();
 									setDate(day);
-									setMode("dia");
+									setNewEventDialogOpen(true);
 								}}
 							>
 								<div
@@ -129,7 +129,7 @@ export default function CalendarBodyMonth() {
 												) => {
 													e.stopPropagation();
 													setDate(day);
-													setMode("dia");
+													setNewEventDialogOpen(true);
 												}}
 											>
 												+{dayEvents.length - 3} more

@@ -15,7 +15,7 @@ import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { useStaffSchedules } from "../_hooks/useStaffSchedules";
 
-interface DeactivateStaffScheduleDialogProps {
+interface DeleteStaffScheduleDialogProps {
   schedule?: StaffSchedule;
   schedules?: StaffSchedule[];
   variant?: "default" | "outline";
@@ -25,7 +25,7 @@ interface DeactivateStaffScheduleDialogProps {
   onSuccess?: () => void;
 }
 
-export function DeactivateStaffScheduleDialog({
+export function DeleteStaffScheduleDialog({
   schedule,
   schedules,
   variant = "outline",
@@ -33,7 +33,7 @@ export function DeactivateStaffScheduleDialog({
   onOpenChange,
   showTrigger = true,
   onSuccess
-}: DeactivateStaffScheduleDialogProps) {
+}: DeleteStaffScheduleDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const { deleteMutation: { isPending, mutateAsync } } = useStaffSchedules();
 
@@ -41,11 +41,11 @@ export function DeactivateStaffScheduleDialog({
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
   const items = schedules ?? (schedule ? [schedule] : []);
-  const title = items.length === 1 ? "Desactivar Horario" : "Desactivar Horarios";
+  const title = items.length === 1 ? "Eliminar Horario" : "Eliminar Horarios";
   const description =
     items.length === 1
-      ? `¿Estás seguro de que deseas desactivar el horario de "${items[0].staff?.name ?? 'el usuario'}"?`
-      : `¿Estás seguro de que deseas desactivar ${items.length} horarios?`;
+      ? `¿Estás seguro de que deseas eliminar el horario de "${items[0].staff?.name ?? 'el usuario'}"?`
+      : `¿Estás seguro de que deseas eliminar ${items.length} horarios?`;
 
   async function handleDeactivate() {
     const ids = items.map((item) => item.id);
@@ -64,7 +64,7 @@ export function DeactivateStaffScheduleDialog({
         <DialogTrigger asChild>
           <Button variant={variant} size={variant === "outline" ? "sm" : "default"}>
             <TrashIcon className="mr-2 h-4 w-4" />
-            {items.length === 1 ? "Desactivar" : `Desactivar (${items.length})`}
+            {items.length === 1 ? "Eliminar" : `Eliminar (${items.length})`}
           </Button>
         </DialogTrigger>
       )}
@@ -78,7 +78,7 @@ export function DeactivateStaffScheduleDialog({
             Cancelar
           </Button>
           <Button variant="destructive" onClick={handleDeactivate} disabled={isPending}>
-            {isPending ? "Desactivando..." : "Desactivar"}
+            {isPending ? "Eliminandi..." : "Eliminar"}
           </Button>
         </DialogFooter>
       </DialogContent>

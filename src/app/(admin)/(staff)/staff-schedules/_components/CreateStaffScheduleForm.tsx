@@ -30,6 +30,7 @@ import { format, toDate } from "date-fns-tz";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { colorOptions } from "../../schedules/_components/calendar/calendarTailwindClasses";
 
 const TIME_ZONE = 'America/Lima';
 
@@ -41,6 +42,16 @@ const DAYS_OF_WEEK = [
   { label: "Viernes", value: "FRIDAY" },
   { label: "Sábado", value: "SATURDAY" },
   { label: "Domingo", value: "SUNDAY" },
+] as const;
+
+const RECURRENCE_OPTIONS = [
+  { label: "Diario", frequency: "DAILY", interval: 1 },
+  { label: "Interdiario", frequency: "DAILY", interval: 2 },
+  { label: "Semanal", frequency: "WEEKLY", interval: 1 },
+  { label: "Quincenal", frequency: "WEEKLY", interval: 2 },
+  { label: "Mensual", frequency: "MONTHLY", interval: 1 },
+  { label: "Anual", frequency: "YEARLY", interval: 1 },
+  { label: "Personalizado", frequency: "CUSTOM", interval: 1 },
 ] as const;
 
 interface CreateStaffScheduleFormProps
@@ -185,6 +196,36 @@ export function CreateStaffScheduleForm({
 
             <FormField
               control={form.control}
+              name="color"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Color</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione un color" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {colorOptions.map((color) => (
+                        <SelectItem key={color.value} value={color.value}>
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className={`w-4 h-4 rounded-full bg-${color.value}-500`}
+                            />
+                            {color.label}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="daysOfWeek"
               render={({ field }) => (
                 <FormItem>
@@ -228,54 +269,93 @@ export function CreateStaffScheduleForm({
               )}
             />
 
-            <div className="grid grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="recurrence.frequency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Frecuencia</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccione frecuencia" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="DAILY">Diario</SelectItem>
-                        <SelectItem value="WEEKLY">Semanal</SelectItem>
-                        <SelectItem value="MONTHLY">Mensual</SelectItem>
-                        <SelectItem value="YEARLY">Anual</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="recurrence.interval"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Intervalo</FormLabel>
+            <FormField
+              control={form.control}
+              name="recurrence"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Patrón de repetición</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      if (value === "CUSTOM") {
+                        field.onChange({ frequency: "", interval: 1 });
+                        return;
+                      }
+                      const option = RECURRENCE_OPTIONS.find(opt => opt.label === value);
+                      if (option) {
+                        field.onChange({
+                          frequency: option.frequency,
+                          interval: option.interval
+                        });
+                      }
+                    }}
+                    value={RECURRENCE_OPTIONS.find(opt => 
+                      opt.frequency === field.value?.frequency && 
+                      opt.interval === field.value?.interval
+                    )?.label || (field.value?.frequency ? "CUSTOM" : "")}
+                  >
                     <FormControl>
-                      <Input
-                        type="number"
-                        min="1"
-                        {...field}
-                        value={field.value ?? ""}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value === "" ? undefined : Number(value));
-                        }}
-                      />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione un patrón" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                    <SelectContent>
+                      {RECURRENCE_OPTIONS.map((option) => (
+                        <SelectItem key={option.label} value={option.label}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  {!field.value?.frequency && (
+                    <div className="grid grid-cols-2 gap-6 mt-4">
+                      <FormField
+                        control={form.control}
+                        name="recurrence.frequency"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Frecuencia</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Seleccione frecuencia" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="DAILY">Diario</SelectItem>
+                                <SelectItem value="WEEKLY">Semanal</SelectItem>
+                                <SelectItem value="MONTHLY">Mensual</SelectItem>
+                                <SelectItem value="YEARLY">Anual</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="recurrence.interval"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Intervalo</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                min="1"
+                                {...field}
+                                value={field.value ?? 1}
+                                onChange={(e) => field.onChange(Number(e.target.value))}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
