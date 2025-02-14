@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { DetailedProduct } from "../_interfaces/outgoing.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";

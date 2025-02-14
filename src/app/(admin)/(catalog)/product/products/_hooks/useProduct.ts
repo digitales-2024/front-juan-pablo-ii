@@ -9,7 +9,8 @@ import {
   getProductById,
   ProductResponse,
   getDetailedProductById,
-  getActiveProducts
+  getActiveProducts,
+  searchProductByIndexedName
 } from "../_actions/products.actions";
 import { toast } from "sonner";
 import {
@@ -97,6 +98,30 @@ export const useProducts = () => {
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
+
+  const searchProductsByIndexedName = (name:string)=>(
+    useQuery({
+      queryKey: ["products-searched", name],
+      queryFn: async ({ queryKey }) => {
+        const [,name] = queryKey;
+        try {
+          const response = await searchProductByIndexedName(name);
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta del servidor");
+          }
+          return response as {
+            id: string;
+            name: string;
+        }[];
+        } catch (error) {
+          toast.error(error instanceof Error ? error.message : "Error desconocido");
+          return [];
+        }
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+      enabled: !!name,
+    })
+  )
 
   // Mutación para crear producto
   const createMutation = useMutation<BaseApiResponse<Product>, Error, CreateProductDto>({
@@ -240,7 +265,8 @@ export const useProducts = () => {
     productsQuery,
     detailedProductsQuery,
     activeProductsQuery,
-    products: productsQuery.data,
+    searchProductsByIndexedName,
+    // products: productsQuery.data,
     oneProductQuery,
     createMutation,
     updateMutation,

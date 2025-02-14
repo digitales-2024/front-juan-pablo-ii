@@ -1525,6 +1525,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Busqueda rápida de producto por su nombre */
+        get: operations["ProductController_searchProductByIndexedName"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/{id}": {
         parameters: {
             query?: never;
@@ -4094,6 +4111,13 @@ export interface components {
             createdAt: string;
             categoria: Record<string, never>;
             tipoProducto: Record<string, never>;
+        };
+        SearchProductDto: {
+            name: string;
+        };
+        ProductSearch: {
+            id: string;
+            name: string;
         };
         UpdateProductDto: {
             /**
@@ -10381,6 +10405,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductWithRelations"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Producto no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductController_searchProductByIndexedName: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: unknown;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SearchProductDto"];
+            };
+        };
+        responses: {
+            /** @description Producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductSearch"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */

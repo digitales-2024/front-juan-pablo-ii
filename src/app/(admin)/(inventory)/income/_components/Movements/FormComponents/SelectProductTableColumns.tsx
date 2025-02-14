@@ -64,7 +64,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "name",
-        id: "Producto",
+        meta: {
+            title: "Nombre"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Producto" />
         ),
@@ -74,7 +76,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "codigoProducto",
-        id: "Código",
+        meta: {
+            title: "Código"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Código" />
         ),
@@ -84,7 +88,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "unidadMedida",
-        id: "Unidad de medida",
+        meta: {
+            title: "Unidad de Medida"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Unidad de Medida" />
         ),
@@ -94,7 +100,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "precio",
-        id: "Precio",
+        meta: {
+            title: "Precio"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Precio" />
         ),
@@ -106,7 +114,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "categoria.name",
-        id: "Categoría",
+        meta:{
+            title: "Categoría"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Categoría" />
         ),
@@ -119,7 +129,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "tipoProducto.name",
-        id: "Subcategoría",
+        meta:{
+            title: "Subcategoría"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Subcategoría" />
         ),

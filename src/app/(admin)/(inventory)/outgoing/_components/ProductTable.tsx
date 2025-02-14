@@ -4,7 +4,7 @@ import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from "./ProductTableColumns";
 import { ProductTableToolbarActions } from "./ProductTableToolbarActions";
 // import { ListCategoryResponse } from "../_actions/category.actions";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { DetailedProduct } from "../_interfaces/outgoing.interface";
 
 interface ProductTableProps {
   data: DetailedProduct[];

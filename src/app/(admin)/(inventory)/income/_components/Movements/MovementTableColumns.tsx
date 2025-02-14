@@ -43,7 +43,9 @@ export const columns: ColumnDef<IncomingMovement>[] = [
 //   },
   {
     accessorKey: "Producto.name",
-    id: "Producto",
+    meta:{
+      title: "Producto"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Producto" />
     ),
@@ -53,7 +55,9 @@ export const columns: ColumnDef<IncomingMovement>[] = [
   },
   {
     accessorKey: "quantity",
-    id: "Cantidad",
+    meta:{
+      title: "Cantidad"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Cantidad" />
     ),
@@ -66,7 +70,9 @@ export const columns: ColumnDef<IncomingMovement>[] = [
   },
   {
     accessorKey: "price",
-    id: "Precio",
+    meta:{
+      title: "Precio"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Precio" />
     ),
@@ -81,7 +87,9 @@ export const columns: ColumnDef<IncomingMovement>[] = [
   },
   {
     accessorKey: "total",
-    id: "Total",
+    meta:{
+      title: "Total"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Total" />
     ),
@@ -96,7 +104,9 @@ export const columns: ColumnDef<IncomingMovement>[] = [
   },
   {
     accessorKey: "date",
-    id: "Fecha de ingreso",
+    meta:{
+      title: "Fecha de ingreso"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha de ingreso" />
     ),
@@ -110,7 +120,9 @@ export const columns: ColumnDef<IncomingMovement>[] = [
   },
   {
     accessorKey: "state",
-    id: "Consumación",
+    meta:{
+      title: "Consumación"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Consumación" />
     ),

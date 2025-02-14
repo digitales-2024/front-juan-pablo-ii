@@ -1,5 +1,5 @@
 import { Table } from "@tanstack/react-table";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import { DetailedProduct } from "../_interfaces/outgoing.interface";
 import { CreateProductDialog } from "./CreateProductDialog";
 import { DeactivateProductDialog } from "./DeactivateProductDialog";
 import { ReactivateProductDialog } from "./ReactivateProductDialog";
