@@ -65,26 +65,43 @@ export const useEvents = (filters?: EventFilterParams) => {
   const createMutation = useMutation<BaseApiResponse<Event>, Error, CreateEventDto>({
     mutationFn: (data) => createEvent(data),
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldSchedules) => {
-        const selectedStaff = staff?.find(member => member.id === variables.staffId);
-        const newEvent = {
-          ...res.data,
-          staff: selectedStaff ? {
-            name: selectedStaff.name,
-            lastName: selectedStaff.lastName
-          } : undefined,
-          // Asegurar todas las propiedades requeridas de Event
-          branch: res.data.branch ? {
-            name: res.data.branch.name,
-          } : undefined
-        } as Event; // Aserción de tipo explícita
+      // 1. Actualización optimista
+      queryClient.setQueryData<Event[]>(
+        ["events", normalizedFilters],
+        (oldEvents = []) => {
+          const selectedStaff = staff?.find(member => member.id === variables.staffId);
 
-        if (!oldSchedules) return [newEvent];
-        return [...oldSchedules, newEvent];
+          const newEvent = {
+            ...res.data,
+            staff: selectedStaff ? {
+              name: selectedStaff.name,
+              lastName: selectedStaff.lastName
+            } : undefined,
+            branch: variables.branchId ? {
+              name: "Sucursal"
+            } : undefined
+          } as Event;
+
+          return [...oldEvents, newEvent];
+        }
+      );
+
+      // 2. Invalidar queries relacionadas
+      queryClient.invalidateQueries({
+        queryKey: ['events'],
+        exact: false
       });
+
       toast.success(res.message);
     },
-    onError: (error) => toast.error(error.message)
+    onError: (error) => {
+      // Revertir la actualización optimista en caso de error
+      queryClient.invalidateQueries({
+        queryKey: ['events'],
+        exact: false
+      });
+      toast.error(error.message);
+    }
   });
 
   // Mutación para actualizar evento
