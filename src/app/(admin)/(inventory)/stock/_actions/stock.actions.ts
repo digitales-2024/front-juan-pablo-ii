@@ -1,6 +1,6 @@
 "use server";
 import { http } from "@/utils/serverFetch";
-import { StockByStorage } from "../_interfaces/stock.interface";
+import { OutgoingProducStockForm, OutgoingProductStock, StockByStorage } from "../_interfaces/stock.interface";
 // import { BaseApiResponse } from "@/types/api/types";
 // import { z } from "zod";
 // import { createSafeAction } from "@/utils/createSafeAction";
@@ -14,6 +14,7 @@ export type StockByProduct = GeneralStockResponse
 export type StockForAllStorages = GeneralStockResponse
 export type StockByStorageProduct = GeneralStockResponse
 
+export type GeneralOutgoingProductStock = OutgoingProductStock[] | { error: string };
 // const GetStockSchema = z.object({});
 
 // const GetProductByIdSchema = z.string();
@@ -97,6 +98,46 @@ export async function getStockByStorageProduct({ productId, storageId }: {storag
     return { error: "Error desconocido" };
   }
 };
+
+export async function getProductStock ({productId}: {productId:string}) : Promise<GeneralOutgoingProductStock> {
+  try {
+    const [stockList, error] = await http.get<GeneralOutgoingProductStock>(`/stock/availableProduct/${productId}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock de productos",
+      };
+    }
+    return stockList;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export async function getProductsStock (){
+  try {
+    const [stockList, error] = await http.get<GeneralOutgoingProductStock>(`/stock/availableProducts`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock de productos",
+      };
+    }
+    return stockList;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export function ToOutgoingStockForm( data: OutgoingProductStock[] ): OutgoingProducStockForm[]{
+  return data.map((ele)=>{return {...ele, storageId:""}})
+}
 
 // /**
 //  * Crea un nuevo producto en el catálogo.

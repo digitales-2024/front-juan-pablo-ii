@@ -1,10 +1,9 @@
 import React from 'react'
 import { DataTable } from '@/components/data-table/DataTable';
-import { ActiveProduct } from '@/app/(admin)/(catalog)/product/products/_interfaces/products.interface';
 import { columns } from './SelectProductTableColumns';
+import { OutgoingProducStockForm } from '@/app/(admin)/(inventory)/stock/_interfaces/stock.interface';
 interface SelectProductsTableProps {
-  data: ActiveProduct[];
-  onSelection: (selected: ActiveProduct[]) => void;
+  data: OutgoingProducStockForm[];
 }
 
 export function SelectProductsTable({ data }: SelectProductsTableProps) {
@@ -12,6 +11,11 @@ export function SelectProductsTable({ data }: SelectProductsTableProps) {
     <DataTable
       columns={columns}
       data={data}
+      // columnVisibilityConfig={
+      //   {
+      //     precio:false,
+      //   }
+      // }
     //   columnVisibilityConfig={{
     //     id: true,
     //     date: true,

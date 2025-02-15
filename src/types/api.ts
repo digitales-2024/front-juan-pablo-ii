@@ -2320,6 +2320,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stock/availableProducts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los productos en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStock"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/availableProduct/{productId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStockById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/billing/product-sale": {
         parameters: {
             query?: never;
@@ -4919,6 +4953,23 @@ export interface components {
             staff: string;
             description: string;
             stock: components["schemas"]["ProductStockResponse"][];
+        };
+        StockStorage: {
+            id: string;
+            name: string;
+        };
+        StockProduct: {
+            stock: number;
+            isActive: boolean;
+            Storage: components["schemas"]["StockStorage"];
+        };
+        ProductStock: {
+            id: string;
+            name: string;
+            precio: number;
+            codigoProducto: string;
+            unidadMedida: string;
+            Stock: components["schemas"]["StockProduct"][];
         };
         ProductSaleItemDto: {
             /**
@@ -12676,6 +12727,49 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StockByStorage"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Productos en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStockById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
                 };
             };
         };

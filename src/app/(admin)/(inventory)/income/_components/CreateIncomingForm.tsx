@@ -162,7 +162,7 @@ export function CreateIncomingForm({
     if (!responseStorage.data) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron categorías")}
+          error={new Error("No se encontraron almacenes")}
           reset={responseStorage.refetch}
         />
       );
@@ -178,7 +178,7 @@ export function CreateIncomingForm({
     if (!reponseProducts.data) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron subcategorías")}
+          error={new Error("No se encontraron productos")}
           reset={reponseProducts.refetch}
         />
       );

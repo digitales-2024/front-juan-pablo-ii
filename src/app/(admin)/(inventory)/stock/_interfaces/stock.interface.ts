@@ -1,7 +1,7 @@
 import { components } from "@/types/api";
 // import { z } from "zod";
 
-// Tipos base de la API
+// Tipos para el modulo stock
 export type StockByStoragePrototype = components['schemas']['StockByStorage'];
 export type ProductStockResponsePrototype = components['schemas']['ProductStockResponse'];
 export type ProductStock = {
@@ -21,6 +21,33 @@ export type StockByStorage = {
   description: string;
   stock: ProductStock[];
 }
+
+// Tipos para el modulo Outgoing
+export type StorageStockPrototype = components['schemas']['StockStorage']
+export type StockStorage = {
+  id: string;
+  name: string;
+}
+export type ProductStockDataPrototype = components['schemas']['StockProduct']
+export type ProductStockData = {
+  stock: number;
+  isActive: boolean;
+  Storage: StockStorage;
+}
+export type OutgoingProductStockPrototype = components['schemas']['ProductStock']
+export type OutgoingProductStock = {
+  id: string;
+  name: string;
+  precio: number;
+  codigoProducto: string;
+  unidadMedida: string;
+  Stock: ProductStockData[];
+}
+
+export interface OutgoingProducStockForm extends OutgoingProductStock{
+  storageId: string;
+}
+
 
 // export type CreateProductDto = components['schemas']['CreateProductDto'];
 // export type UpdateProductDto = components['schemas']['UpdateProductDto'];

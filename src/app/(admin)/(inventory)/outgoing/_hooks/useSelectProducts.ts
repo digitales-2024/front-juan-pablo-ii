@@ -1,14 +1,14 @@
 // StateManager/index.tsx
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
+import { OutgoingProducStockForm } from "../../stock/_interfaces/stock.interface";
 
-type State = ActiveProduct[];
+type State = OutgoingProducStockForm[];
 type Action =
-  | { type: "append"; payload: ActiveProduct[] }
+  | { type: "append"; payload: OutgoingProducStockForm[] }
   | { type: "remove"; payload: { productId: string }}
   | { type: "clear" };
 
-function reducer(state: State, action: Action): ActiveProduct[] {
+function reducer(state: State, action: Action): OutgoingProducStockForm[] {
   switch (action.type) {
     case "append": {
       const existingIds = new Set(
@@ -31,7 +31,7 @@ function reducer(state: State, action: Action): ActiveProduct[] {
 }
 
 const useSelectedProducts = () => {
-  const selectedProducts = useQuery<ActiveProduct[]>({
+  const selectedProducts = useQuery<OutgoingProducStockForm[]>({
     queryKey: ["outgoing-selected-products"],
     initialData: [],
   });
@@ -42,12 +42,58 @@ const useSelectedProducts = () => {
 const useSelectProductDispatch = () => {
   const client = useQueryClient();
   const dispatch = (action: Action) => {
-    client.setQueryData<ActiveProduct[]>(["outgoing-selected-products"], (oldState) => {
+    client.setQueryData<OutgoingProducStockForm[]>(["outgoing-selected-products"], (oldState) => {
       const newData = reducer(oldState ?? [], action);
       return newData;
     });
   };
   return dispatch;
 };
+
+
+export type OutgoingSelectedStorage = {
+  storageId: string;
+  name: string;
+}
+type OutgoingSelectedStorageAction =
+  | { type: "append"; payload: OutgoingSelectedStorage[] }
+  | { type: "remove"; payload: { storageId: string }}
+  | { type: "clear" };
+
+export function useSelectedStorageId() {
+  const { data } = useQuery({
+    queryKey: ["selected-outgoing-storage-id"],
+    initialData: [],
+  });
+  return data;
+}
+
+function storageReducer(state: OutgoingSelectedStorage[], action: OutgoingSelectedStorageAction): OutgoingSelectedStorage[] {
+  switch (action.type) {
+    case "append": {
+      const existing = new Set(state.map(item => item.storageId));
+      return [
+        ...state,
+        ...action.payload.filter(entry => !existing.has(entry.storageId)),
+      ];
+    }
+    case "remove":
+      return state.filter(item => item.storageId !== action.payload.storageId);
+    case "clear":
+      return [];
+    default:
+      return state;
+  }
+}
+
+export function useSelectStorageDispatch() {
+  const client = useQueryClient();
+  return (action: OutgoingSelectedStorageAction) => {
+    client.setQueryData<OutgoingSelectedStorage[]>(
+      ["selected-outgoing-storage-id"],
+      prev => storageReducer(prev ?? [], action)
+    );
+  };
+}
 
 export { useSelectedProducts, useSelectProductDispatch };

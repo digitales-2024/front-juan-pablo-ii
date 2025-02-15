@@ -22,7 +22,7 @@ import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMes
 import { METADATA } from "../_statics/metadata";
 import { useCallback, useEffect, useMemo } from "react";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
-import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
+//import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { CreateOutgoingInput } from "../_interfaces/outgoing.interface";
 import { CreateIncomeInput } from "../../income/_interfaces/income.interface";
 import {
@@ -40,6 +40,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
+import { useProductsStock } from "../../stock/_hooks/useProductStock";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -67,7 +68,7 @@ export function CreateOutgoingForm({
     };
   });
   const { activeStoragesQuery: responseStorage } = useStorages();
-  const { activeProductsQuery: reponseProducts } = useProducts();
+  const { productStockQuery: reponseProducts } = useProductsStock();
   const selectedProducts = useSelectedProducts();
   const dispatch = useSelectProductDispatch();
 
@@ -116,7 +117,7 @@ export function CreateOutgoingForm({
     if (!responseStorage.data) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron categorías")}
+          error={new Error("No se encontraron almacenes")}
           reset={responseStorage.refetch}
         />
       );
@@ -132,7 +133,7 @@ export function CreateOutgoingForm({
     if (!reponseProducts.data) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron subcategorías")}
+          error={new Error("No se encontraron products en stock")}
           reset={reponseProducts.refetch}
         />
       );
