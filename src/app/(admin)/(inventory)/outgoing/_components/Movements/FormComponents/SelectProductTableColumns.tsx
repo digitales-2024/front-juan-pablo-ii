@@ -149,28 +149,6 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
   //     </span>
   //     ),
   // },
-  {
-    accessorKey: "Stock.stock",
-    meta: {
-      title: "Stock Total",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Stock Total" />
-    ),
-    cell: ({ row }) => {
-      const stock = row.original.Stock;
-      const totalStock =
-        stock.length === 0
-          ? 0
-          : stock.reduce((acc, stock) => acc + stock.stock, 0);
-      return (
-        <span>
-          {totalStock}
-          {/* {row.original.Producto.unidadMedida?? ""} */}
-        </span>
-      );
-    },
-  },
   // {
   //     accessorKey: "tipoProducto.name",
   //     meta:{
@@ -188,10 +166,10 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
   {
     accessorKey: "storageId",
     meta: {
-      title: "Almacénes",
+      title: "Stock por almacén",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Almacénes" />
+      <DataTableColumnHeader column={column} title="Stock por almacén" />
     ),
     cell: ({ row }) => {
         // const { updateProductStock } =  useUpdateProductStock();
@@ -255,7 +233,7 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
                                 {/* <div className="w-full"><span className="w-full overflow-hidden text-wrap text-ellipsis">{stock.Storage.name}</span></div>
                                 <div className="flex justify-center"><ArrowBigRightDash></ArrowBigRightDash></div>
                                 <span>{stock.stock}</span> */}
-                                <li>{stock.Storage.name+` (${stock.stock})`}</li>
+                                <li>{'Alm. '+ `"${stock.Storage.name}" (${stock.stock})`}</li>
                             </ul>
                             ))}
                         </div>
@@ -264,6 +242,28 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
               </PopoverContent>
             </Popover>
         </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Stock.stock",
+    meta: {
+      title: "Stock Total",
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Stock Total" />
+    ),
+    cell: ({ row }) => {
+      const stock = row.original.Stock;
+      const totalStock =
+        stock.length === 0
+          ? 0
+          : stock.reduce((acc, stock) => acc + stock.stock, 0);
+      return (
+        <span>
+          {totalStock}
+          {/* {row.original.Producto.unidadMedida?? ""} */}
+        </span>
       );
     },
   },

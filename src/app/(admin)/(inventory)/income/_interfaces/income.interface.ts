@@ -30,6 +30,7 @@ export type IncomingMovement = {
   quantity: number;
   date: string;
   state: boolean;
+  buyingPrice?: number;
   isActive: boolean;
   Producto: IncomingProduct
 };
@@ -42,6 +43,7 @@ export type DetailedIncoming = {
   date: string;
   state: boolean;
   referenceId: string;
+  isTransference?: boolean;
   isActive: boolean;
   Storage: IncomingStorage;
   Movement: IncomingMovement[];
@@ -92,6 +94,7 @@ export const createIncomeSchemaPrototype = z.object({
         required_error: "La cantidad es requerida",
         invalid_type_error: "La cantidad debe ser un número"
       }).min(1, "Se debe tener al menos una unidad").nonnegative(),
+      buyingPrice: z.coerce.number().optional(),
       date: z.string().optional(),
       state: z.coerce.boolean().optional(),
     })
@@ -104,6 +107,7 @@ export const incomeMovementSchema = z.object({
     required_error: "La cantidad es requerida",
     invalid_type_error: "La cantidad debe ser un número"
   }).min(1, "Se debe tener al menos una unidad").nonnegative(),
+  buyingPrice: z.coerce.number().optional(),
   date: z.string().optional(),
   state: z.coerce.boolean().optional(),
 });

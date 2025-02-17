@@ -2337,6 +2337,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stock/availableProduct/storage/{storageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductStockByStorage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/stock/availableProduct/{productId}": {
         parameters: {
             query?: never;
@@ -4473,6 +4490,11 @@ export interface components {
              */
             quantity: number;
             /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
+            /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
              * @example 2023-12-01T15:30:00Z
@@ -4491,6 +4513,8 @@ export interface components {
             outgoingId: string;
             productId: string;
             quantity: number;
+            /** @description Precio de compra del producto */
+            buyingPrice?: number;
             /** Format: date-time */
             date: string;
             state: boolean;
@@ -4521,6 +4545,11 @@ export interface components {
              * @example 100
              */
             quantity?: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
             /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
@@ -4558,6 +4587,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado del ingreso
              * @example false
@@ -4578,6 +4609,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
         };
         IncomingBranch: {
@@ -4603,6 +4635,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
         };
@@ -4626,6 +4659,7 @@ export interface components {
             /** Format: date-time */
             date: string;
             state: boolean;
+            buyingPrice?: number;
             isActive: boolean;
             Producto: components["schemas"]["IncomingProduct"];
         };
@@ -4638,6 +4672,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
             Movement: components["schemas"]["IncomingMovement"][];
@@ -4664,6 +4699,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado del ingreso
              * @example false
@@ -4689,6 +4726,11 @@ export interface components {
              * @example 100
              */
             quantity: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
             /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
@@ -4733,6 +4775,8 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             referenceId?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description productos a ingresar al almacen y cantidad
              * @example [
@@ -4770,6 +4814,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado de la salida
              * @example false
@@ -4790,6 +4836,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
         };
         OutgoingBranch: {
@@ -4815,6 +4862,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
         };
@@ -4838,6 +4886,7 @@ export interface components {
             /** Format: date-time */
             date: string;
             state: boolean;
+            buyingPrice?: number;
             isActive: boolean;
             Producto: components["schemas"]["OutgoingProduct"];
         };
@@ -4850,6 +4899,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
             Movement: components["schemas"]["OutgoingMovement"][];
@@ -4876,6 +4926,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado de la salida
              * @example false
@@ -4913,10 +4965,12 @@ export interface components {
              */
             date: string;
             /**
-             * @description Estado del salida
+             * @description Estado de salida
              * @example true
              */
             state: boolean;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description ID de referencia puede ser un traslado, compra, etc.
              * @example 123e4567-e89b-12d3-a456-426614174000
@@ -12741,6 +12795,29 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Productos en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductStockByStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                storageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
             200: {
                 headers: {
                     [name: string]: unknown;

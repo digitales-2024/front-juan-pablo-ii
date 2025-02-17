@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -90,7 +91,7 @@ export function UpdateIncomingSheet({
   //     return <GeneralErrorMessage error={new Error("No se encontró el producto")} reset={oneProductQuery.refetch} />;
   //   }
   // }
-
+    
   // export const updateIncomeSchema = z.object({
   //   name: z.string().optional(),
   //   description: z.string().optional(),
@@ -245,6 +246,7 @@ export function UpdateIncomingSheet({
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.storageId.label}</FormLabel>
                       <AutoComplete
+                        disabled
                         options={storageOptions}
                         placeholder={FORMSTATICS.storageId.placeholder}
                         emptyMessage={FORMSTATICS.storageId.emptyMessage!}
@@ -252,6 +254,7 @@ export function UpdateIncomingSheet({
                         onValueChange={(option) => field.onChange(option?.value || "")}
                       />
                       <CustomFormDescription required={FORMSTATICS.storageId.required} />
+                      {<FormDescription className="text-primary">Si desea cambiar el almacén realice una salida de tipo transferencia al almacén deseado</FormDescription>}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -404,14 +407,14 @@ export function UpdateIncomingSheet({
                               <Button
                                 variant={"outline"}
                                 className={cn(
-                                  "w-[240px] pl-3 text-left font-normal",
+                                  "w-full pl-3 text-left font-normal",
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
                                 {field.value ? (
                                     // Verifica si es string
                                     typeof field.value === "string"
-                                      ? format(new Date(field.value), "PPP", { locale: es })
+                                      ? format(new Date(field.value), "PP", { locale: es })
                                         : <span>Escoja una fecha</span>
                                   ) : (
                                     <span>Escoja una fecha</span>

@@ -73,7 +73,7 @@ export const useIncoming = () => {
       // Retornamos directamente la respuesta ya que viene en el formato correcto
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       queryClient.setQueryData<DetailedIncoming[] | undefined>(
         ["detailed-incomings"],
         (oldIncomings) => {
@@ -81,6 +81,8 @@ export const useIncoming = () => {
           return [...oldIncomings, res.data];
         }
       );
+      await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
+      await queryClient.refetchQueries({ queryKey: ["stock"] });
       toast.success(res.message);
     },
     onError: (error) => {

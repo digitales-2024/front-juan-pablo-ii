@@ -45,6 +45,7 @@ export type OutgoingMovement = {
   quantity: number;
   date: string;
   state: boolean;
+  buyingPrice?: number;
   isActive: boolean;
   Producto: OutgoingProduct;
 }
@@ -57,6 +58,7 @@ export type DetailedOutgoing = {
   date: string;
   state: boolean;
   referenceId: string;
+  isTransference?: boolean;
   isActive: boolean;
   Storage: OutgoingStorage;
   Movement: OutgoingMovement[];
@@ -80,6 +82,7 @@ export const outgoingMovementSchema = z.object({
     required_error: "La cantidad es requerida",
     invalid_type_error: "La cantidad debe ser un número"
   }).min(1, "Se debe tener al menos una unidad").nonnegative(),
+  buyingPrice: z.coerce.number().optional(),
   date: z.string().optional(),
   state: z.coerce.boolean().optional(),
 });
@@ -95,6 +98,7 @@ export const createOutgoingSchema = z.object({
   storageId: z.string().min(1, "El almacen es requerido"),
   date: z.coerce.string().min(1, "La fecha es requerida"),
   state: z.coerce.boolean(),
+  isTransference: z.coerce.boolean().optional(),
   referenceId: z.string().optional(),
   movement: movementArrayOutgoingSchema,
 });
@@ -105,6 +109,7 @@ export const updateOutgoingSchema = z.object({
   storageId: z.string().optional(),
   date: z.coerce.string().optional(),
   state: z.coerce.boolean().optional(),
+  isTransference: z.coerce.boolean().optional(),
   referenceId: z.string().optional(),
 }) satisfies z.ZodType<UpdateOutgoingDto>;
 

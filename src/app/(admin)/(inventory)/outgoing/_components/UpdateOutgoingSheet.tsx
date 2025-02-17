@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -209,6 +210,7 @@ export function UpdateOutgoingSheet({
                     <FormItem className="col-span-2">
                       <FormLabel>{FORMSTATICS.storageId.label}</FormLabel>
                       <AutoComplete
+                        disabled
                         options={storageOptions}
                         placeholder={FORMSTATICS.storageId.placeholder}
                         emptyMessage={FORMSTATICS.storageId.emptyMessage!}
@@ -216,6 +218,9 @@ export function UpdateOutgoingSheet({
                         onValueChange={(option) => field.onChange(option?.value || "")}
                       />
                       <CustomFormDescription required={FORMSTATICS.storageId.required} />
+                      <FormDescription className="text-primary">
+                        Si desea cambiar el almacén, cree una nueva salida de tipo transferencia hacia el almacén deseado.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
