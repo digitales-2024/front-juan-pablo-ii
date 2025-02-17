@@ -56,30 +56,25 @@ export function useProductStockById(productId: string) {
   return { productStockQuery };
 }
 
-export function createUseProductsStockByStorage() {
-  return function useProductsStockByStorage(storageId: string) {
-    const productsStockByStorageQuery = useQuery({
-      queryKey: ["product-stock", storageId],
-      queryFn: async () => {
-        try {
-          const response = await getProductStockByStorage({ storageId });
-          if (!response || "error" in response) {
-            throw new Error(response?.error || "No se recibió respuesta");
-          }
-          const data = ToOutgoingStockForm(response);
-          return data;
-        } catch (error) {
-          const message =
-            error instanceof Error ? error.message : "Error desconocido";
-          toast.error(message);
-          return [];
+export function useProductsStockByStorage() {
+  return useQuery({
+    queryKey: ["product-stock-by-storage"],
+    queryFn: async () => {
+      try {
+        const response = await getProductsStock();
+        if (!response || "error" in response) {
+          throw new Error(response?.error || "No se recibió respuesta");
         }
-      },
-      staleTime: 1000 * 60 * 5, // 5 minutos
-    });
-
-    return { productsStockByStorageQuery };
-  };
+        const data = ToOutgoingStockForm(response);
+        return data;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Error desconocido";
+        toast.error(message);
+        return [];
+      }
+    },
+    staleTime: 1000 * 60 * 5,
+  });
 }
 
 export function useUpdateProductStock() {
@@ -95,4 +90,35 @@ export function useUpdateProductStock() {
     };
 
     return { updateProductStock };
+}
+
+export function useUpdateProductStockByStorage() {
+  const queryClient = useQueryClient();
+  const updateProductStock = async ({storageId}:{storageId: string}) => {
+      try {
+          // Call the action to update the product stock by storage
+          const response = await getProductStockByStorage({ storageId });
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          const newData = ToOutgoingStockForm(response);
+          // Update the query data
+          queryClient.setQueryData(["product-stock-by-storage"], (oldData: OutgoingProducStockForm[] ) => {
+              if (!oldData) return oldData;
+              return ToOutgoingStockForm(newData);
+              // return oldData.map((product: OutgoingProducStockForm) =>
+              //     product.id === productId ? { ...product, storageId} : product
+              // );
+          });
+      } catch (error) {
+          const message = error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+      }
+  };
+
+  // const cleanProductStock = ()=>{
+
+  // }
+
+  return { updateProductStock };
 }

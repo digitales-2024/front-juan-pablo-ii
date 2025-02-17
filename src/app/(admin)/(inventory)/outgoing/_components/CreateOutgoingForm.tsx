@@ -41,8 +41,8 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { useProductsStock } from "../../stock/_hooks/useProductStock";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
+// import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem } from "@/components/ui/select";
+// import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
