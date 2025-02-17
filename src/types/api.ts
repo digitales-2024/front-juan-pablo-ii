@@ -2337,6 +2337,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stock/availableProduct/storage/{storageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductStockByStorage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/stock/availableProduct/{productId}": {
         parameters: {
             query?: never;
@@ -12813,6 +12830,29 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Productos en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductStockByStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                storageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
             200: {
                 headers: {
                     [name: string]: unknown;

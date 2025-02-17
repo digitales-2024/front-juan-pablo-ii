@@ -25,7 +25,7 @@ import {
   FileText,
   BookHeart,
 } from "lucide-react"
-import type { HistorialItem } from "../_interfaces/types"
+import { HistorialItem } from "@/app/(admin)/(proces)/medical-records/[id]/page"
 
 interface MedicalBackgroundProps {
   historialMedico: HistorialItem[]
@@ -76,7 +76,7 @@ export function MedicalBackground({ historialMedico, setHistorialMedico }: Medic
     setIsHistorialModalOpen(false)
   }
 
-  const getIconForType = (tipo: string) => {
+  const getIconForType = (tipo: string | undefined) => {
     const antecedente = antecedentesPreDefinidos.find((a) => a.value === tipo)
     return antecedente?.icon ?? FileText
   }
@@ -84,7 +84,7 @@ export function MedicalBackground({ historialMedico, setHistorialMedico }: Medic
   return (
     <>
       <Card className="border-t-4 border-t-primary">
-                <CardHeader className="flex flex-col md:flex-row items-center justify-between">
+        <CardHeader className="flex flex-col md:flex-row items-center justify-between">
           <div className="flex items-center gap-2">
             <BookHeart className="w-5 h-5 text-primary" />
             <CardTitle>Historial de Antecedentes Médicos</CardTitle>

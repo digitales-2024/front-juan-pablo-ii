@@ -123,7 +123,7 @@ export async function createPatient(
     });
 
     // Procesar la imagen si existe
-    if (formData.image instanceof File) {
+    if (formData.image instanceof File || typeof formData.image === 'string') {
       serverFormData.append("image", formData.image);
     }
 
@@ -183,10 +183,8 @@ export async function updatePatient(
     }
 
     // Añadir el nuevo archivo de imagen o undefined si es null
-    if (formData.image !== null) {
+    if (formData.image instanceof File || typeof formData.image === 'string') {
       serverFormData.append("image", formData.image);
-    } else {
-      serverFormData.append("image", undefined);
     }
 
     // Añadir el id al FormData

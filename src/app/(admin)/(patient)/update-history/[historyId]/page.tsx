@@ -7,7 +7,8 @@ import { MedicalBackground } from "../_components/MedicalBackground";
 import { MedicalHistory } from "../_components/MedicalHistory";
 import { PrescriptionModal } from "../_components/PrescriptionModal";
 import { PERSONAL_MEDICO, SUCURSAL } from "../_interfaces/constants";
-import type { Patient, HistorialItem, Servicio } from "../_interfaces/types";
+import type { Patient, Servicio } from "../_interfaces/types";
+import { HistorialItem } from "@/app/(admin)/(proces)/medical-records/[id]/page";
 
 export default function UpdateHistorySheet() {
   const { historyId } = useParams();
@@ -35,6 +36,7 @@ export default function UpdateHistorySheet() {
     notes: "Paciente con antecedentes de hipertensión.",
     patientPhoto:
       "https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/c39396cb-84bd-4f08-b56e-356107809ba9.png",
+    isActive: true
   });
 
   const [historialMedico, setHistorialMedico] = useState<HistorialItem[]>([

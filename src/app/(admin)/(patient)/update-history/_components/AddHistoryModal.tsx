@@ -32,10 +32,11 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
       prescriptionItems: [],
       description: "",
       medicalLeave: false,
+      date: "",
       newImages: [],
-      medicalLeaveStartDate: null,
-      medicalLeaveEndDate: null,
-      medicalLeaveDays: null,
+      medicalLeaveStartDate: undefined,
+      medicalLeaveEndDate: undefined,
+      medicalLeaveDays: undefined,
       leaveDescription: "",
       prescriptionTitle: "",
       prescriptionDescription: "",
@@ -73,10 +74,11 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
       prescriptionItems: [],
       description: "",
       medicalLeave: false,
+      date: "",
       newImages: [],
-      medicalLeaveStartDate: null,
-      medicalLeaveEndDate: null,
-      medicalLeaveDays: null,
+      medicalLeaveStartDate: undefined,
+      medicalLeaveEndDate: undefined,
+      medicalLeaveDays: undefined,
       leaveDescription: "",
       prescriptionTitle: "",
       prescriptionDescription: "",
@@ -259,7 +261,7 @@ export function AddHistoryModal({ isOpen, setIsOpen, onSave, initialData }: AddH
           medicalLeaveDays: nuevoServicio.medicalLeaveDays,
           leaveDescription: nuevoServicio.leaveDescription,
         }}
-        
+
       />
 
       <AddPrescriptionModal
