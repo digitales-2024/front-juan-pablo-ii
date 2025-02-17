@@ -41,6 +41,8 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { useProductsStock } from "../../stock/_hooks/useProductStock";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -78,6 +80,7 @@ export function CreateOutgoingForm({
 
     // Agregar nuevos productos
     selectedProducts.forEach((product) => {
+      //console.log('product', product);
       append({
         productId: product.id,
         quantity: 1, //THis is the default value for quantity
@@ -332,7 +335,9 @@ export function CreateOutgoingForm({
             </Button> */}
             </Table>
             <div className="col-span-2 w-full flex flex-col gap-2 justify-center items-center py-4">
-              <SelectProductDialog data={reponseProducts.data}>
+              {/* <SelectProductDialog data={reponseProducts.data}>
+              </SelectProductDialog> */}
+              <SelectProductDialog form={form}>
               </SelectProductDialog>
               <CustomFormDescription
                 required={true}

@@ -20,14 +20,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowBigRightDash, Check, PackageOpen } from "lucide-react";
 import {
   OutgoingProducStockForm,
-  OutgoingProductStock,
 } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -38,6 +31,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUpdateProductStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 // import Image from "next/image";
 
 // [
@@ -208,16 +204,19 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
       <DataTableColumnHeader column={column} title="Almacénes" />
     ),
     cell: ({ row }) => {
-        
+        // const { updateProductStock } =  useUpdateProductStock();
       return (
         <div>
-          <Select
+          {/* <Select
             onValueChange={(value) => {
-              row;
+              updateProductStock({
+                productId: row.original.id,
+                storageId: value,
+              })
             }}
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Ver almacenes" />
+              <SelectValue placeholder="Seleccionar almacén" />
             </SelectTrigger>
             <SelectContent>
               <ScrollArea className="max-h-40">
@@ -229,10 +228,9 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
                   <SelectGroup>
                     <SelectLabel>Almacenes disponibles</SelectLabel>
                     {row.original.Stock.map((stock, idx) => (
-                      <SelectItem key={idx} value={stock.Storage.name}>
+                      <SelectItem key={idx} value={stock.Storage.id}>
                         <div className="grid grid-cols-2 gap-2">
-                          <span>{stock.Storage.name}</span>
-                          <span>{stock.stock}</span>
+                          <span>{stock.Storage.name+` (${stock.stock})`}</span>
                         </div>
                       </SelectItem>
                     ))}
@@ -240,8 +238,8 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
                 )}
               </ScrollArea>
             </SelectContent>
-          </Select>
-          {/* <Popover>
+          </Select> */}
+          <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="max-w-36 h-fit text-wrap">
                     <PackageOpen className="text-primary"></PackageOpen>
@@ -263,17 +261,18 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
                     <ScrollArea className="max-h-40 h-fit overflow-auto">
                         <div className="grid gap-2">
                             {row.original.Stock.map((stock, idx) => (
-                            <div key={idx} className="grid grid-cols-3 gap-2">
-                                <div className="w-full"><span className="w-full overflow-hidden text-wrap text-ellipsis">{stock.Storage.name}</span></div>
+                            <ul key={idx} className="list-disc list-inside">
+                                {/* <div className="w-full"><span className="w-full overflow-hidden text-wrap text-ellipsis">{stock.Storage.name}</span></div>
                                 <div className="flex justify-center"><ArrowBigRightDash></ArrowBigRightDash></div>
-                                <span>{stock.stock}</span>
-                            </div>
+                                <span>{stock.stock}</span> */}
+                                <li>{stock.Storage.name+` (${stock.stock})`}</li>
+                            </ul>
                             ))}
                         </div>
                     </ScrollArea>
                 </div>
               </PopoverContent>
-            </Popover> */}
+            </Popover>
         </div>
       );
     },

@@ -1,6 +1,6 @@
 "use server";
 import { http } from "@/utils/serverFetch";
-import { OutgoingProducStockForm, OutgoingProductStock, StockByStorage } from "../_interfaces/stock.interface";
+import { OutgoingProductStock, StockByStorage } from "../_interfaces/stock.interface";
 // import { BaseApiResponse } from "@/types/api/types";
 // import { z } from "zod";
 // import { createSafeAction } from "@/utils/createSafeAction";
@@ -117,6 +117,24 @@ export async function getProductStock ({productId}: {productId:string}) : Promis
   }
 }
 
+export async function getProductStockByStorage ({storageId}: {storageId:string}) : Promise<GeneralOutgoingProductStock> {
+  try {
+    const [stockList, error] = await http.get<GeneralOutgoingProductStock>(`/stock/availableProduct/storage/${storageId}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock de productos",
+      };
+    }
+    return stockList;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
 export async function getProductsStock (){
   try {
     const [stockList, error] = await http.get<GeneralOutgoingProductStock>(`/stock/availableProducts`);
@@ -133,10 +151,6 @@ export async function getProductsStock (){
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido" };
   }
-}
-
-export function ToOutgoingStockForm( data: OutgoingProductStock[] ): OutgoingProducStockForm[]{
-  return data.map((ele)=>{return {...ele, storageId:""}})
 }
 
 // /**

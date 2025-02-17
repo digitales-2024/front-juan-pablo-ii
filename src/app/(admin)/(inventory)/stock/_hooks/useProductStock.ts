@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { ToOutgoingStockForm, getProductStock, getProductsStock } from "../_actions/stock.actions";
+import { getProductStock, getProductStockByStorage, getProductsStock } from "../_actions/stock.actions";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { OutgoingProducStockForm } from "../_interfaces/stock.interface";
+import { OutgoingProducStockForm, OutgoingProductStock } from "../_interfaces/stock.interface";
+
+export function ToOutgoingStockForm( data: OutgoingProductStock[] ): OutgoingProducStockForm[]{
+  return data.map((ele)=>{return {...ele, storageId:""}})
+}
 
 export function useProductsStock() {
   const productStockQuery = useQuery({
@@ -52,10 +56,36 @@ export function useProductStockById(productId: string) {
   return { productStockQuery };
 }
 
+export function createUseProductsStockByStorage() {
+  return function useProductsStockByStorage(storageId: string) {
+    const productsStockByStorageQuery = useQuery({
+      queryKey: ["product-stock", storageId],
+      queryFn: async () => {
+        try {
+          const response = await getProductStockByStorage({ storageId });
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          const data = ToOutgoingStockForm(response);
+          return data;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
+        }
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+
+    return { productsStockByStorageQuery };
+  };
+}
+
 export function useUpdateProductStock() {
     const queryClient = useQueryClient();
 
-    const updateProductStock = (productId: string, storageId: string) => {
+    const updateProductStock = ({productId, storageId}:{productId: string, storageId: string}) => {
         queryClient.setQueryData(["products-stock"], (oldData: OutgoingProducStockForm[] ) => {
             if (!oldData) return oldData;
             return oldData.map((product: OutgoingProducStockForm) =>
