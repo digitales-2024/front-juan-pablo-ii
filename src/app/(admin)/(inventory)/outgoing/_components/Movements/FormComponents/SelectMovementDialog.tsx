@@ -67,19 +67,21 @@ export function SelectProductDialog({
   const { activeStoragesQuery: responseStorage } = useStorages();
 
   const productsStockQuery = useProductsStockByStorage()
-  const { updateProductStock } = useUpdateProductStockByStorage();
+  const { updateProductStock, cleanProductStock } = useUpdateProductStockByStorage();
   const dispatch = useSelectProductDispatch();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const handleSave = (selectedRows: OutgoingProducStockForm[]) => {
     // console.log('oldStateTanstack', selectedProductsTanstack);
     // console.log('handleSave', selectedRows);
+    cleanProductStock();
     dispatch({ type: "append", payload: selectedRows });
     setOpen(false);
   };
 
   const handleClose = () => {
     //form.reset();
+    cleanProductStock();
     setOpen(false);
   };
 
@@ -147,16 +149,6 @@ export function SelectProductDialog({
         );
       }
     }
-
-    // useEffect(() => {
-    //   if (responseStorage.data) {
-    //     setSelectedStorageId(responseStorage.data[0].id);
-    //     productsStockByStorage = useProductsStockByStorage(responseStorage.data[0].id);
-    //     if (productsStockByStorage.productsStockByStorageQuery.data) {
-    //       setData(productsStockByStorage.productsStockByStorageQuery.data);
-    //     }
-    //   }
-    // }, []);
 
   if (isDesktop) {
     return (

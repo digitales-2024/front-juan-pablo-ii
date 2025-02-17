@@ -116,9 +116,9 @@ export function useUpdateProductStockByStorage() {
       }
   };
 
-  // const cleanProductStock = ()=>{
+  const cleanProductStock = ()=>{
+    queryClient.setQueryData(["product-stock-by-storage"], []);
+  }
 
-  // }
-
-  return { updateProductStock };
+  return { updateProductStock, cleanProductStock };
 }
