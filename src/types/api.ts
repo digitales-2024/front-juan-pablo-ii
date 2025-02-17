@@ -3824,6 +3824,11 @@ export interface components {
              */
             lastName: string;
             /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
+            /**
              * @description Número de DNI del personal médico
              * @example 40506070
              */
@@ -3892,6 +3897,8 @@ export interface components {
                  */
                 name?: string;
             };
+            /** @description Número de Colegiatura Médica (CMP) */
+            cmp: string;
         };
         UpdateStaffDto: {
             /**
@@ -3914,6 +3921,11 @@ export interface components {
              * @example Rodríguez
              */
             lastName?: string;
+            /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
             /**
              * @description Número de DNI del personal médico
              * @example 40506070
