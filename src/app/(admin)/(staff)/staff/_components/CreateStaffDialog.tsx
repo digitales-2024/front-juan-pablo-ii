@@ -52,6 +52,7 @@ export function CreateStaffDialog() {
       birth: "",
       email: "",
       phone: "",
+      cmp: "",
     },
   });
 
@@ -79,8 +80,8 @@ export function CreateStaffDialog() {
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         disabled={isCreatePending || createMutation.isPending}
         className="w-full"
         form="create-staff-form"
@@ -105,9 +106,9 @@ export function CreateStaffDialog() {
   );
 
   const TriggerButton = () => (
-    <Button 
+    <Button
       onClick={() => setOpen(true)}
-      variant="outline" 
+      variant="outline"
       size="sm"
     >
       <Plus className="size-4 mr-2" aria-hidden="true" />

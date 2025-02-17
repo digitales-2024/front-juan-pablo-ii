@@ -37,12 +37,12 @@ export function CreateStaffForm({
 
   return (
     <Form {...form}>
-      <form 
+      <form
         id="create-staff-form"
-        onSubmit={form.handleSubmit(onSubmit)} 
-        className="space-y-8"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
       >
-        <div className="flex flex-col gap-6 p-4 sm:p-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="name"
@@ -78,10 +78,28 @@ export function CreateStaffForm({
               <FormItem>
                 <FormLabel>DNI</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="12345678" 
+                  <Input
+                    placeholder="12345678"
                     maxLength={8}
-                    {...field} 
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="cmp"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Código CMP</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="98676278"
+                    maxLength={10}
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -96,8 +114,8 @@ export function CreateStaffForm({
               <FormItem>
                 <FormLabel>Fecha de Nacimiento</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="date" 
+                  <Input
+                    type="date"
                     {...field}
                   />
                 </FormControl>
@@ -113,9 +131,9 @@ export function CreateStaffForm({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="email"
-                    placeholder="juan.perez@ejemplo.com" 
+                    placeholder="juan.perez@ejemplo.com"
                     {...field}
                   />
                 </FormControl>
@@ -131,8 +149,8 @@ export function CreateStaffForm({
               <FormItem>
                 <FormLabel>Teléfono (opcional)</FormLabel>
                 <FormControl>
-                  <PhoneInput 
-                    placeholder="999888777" 
+                  <PhoneInput
+                    placeholder="999888777"
                     {...field}
                   />
                 </FormControl>
@@ -150,7 +168,7 @@ export function CreateStaffForm({
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Seleccione un tipo de personal" />
+                      <SelectValue placeholder="Seleccione un tipo" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -170,4 +188,4 @@ export function CreateStaffForm({
       </form>
     </Form>
   );
-} 
+}

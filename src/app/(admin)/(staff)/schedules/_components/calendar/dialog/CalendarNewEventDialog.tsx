@@ -20,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { useCalendarContext } from "../CalendarContext";
 import { DateTimePicker } from "../../form/DateTimePicker";
-import { CalendarEvent } from "../../../_types/CalendarTypes";
 import {
 	Select,
 	SelectContent,
@@ -29,37 +28,26 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useStaffSchedules } from "@/app/(admin)/(staff)/staff-schedules/_hooks/useStaffSchedules";
+import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
+import { CreateEventDto } from "../../../_interfaces/event.interface";
+import { toast } from "sonner";
 
-const formSchema = z
-	.object({
-		title: z.string().min(1, "Título es requerido"),
-		start: z.string().datetime(),
-		end: z.string().datetime(),
-		staffScheduleId: z.string().min(1, "Debe seleccionar un horario"),
-	})
-	.refine(
-		(data) => {
-			const start = new Date(data.start);
-			const end = new Date(data.end);
-			return end >= start;
-		},
-		{
-			message: "La hora final debe ser posterior a la inicial",
-			path: ["end"],
-		}
-	);
+const formSchema = z.object({
+	title: z.string().min(1, "Título es requerido"),
+	start: z.string().datetime(),
+	end: z.string().datetime(),
+	staffScheduleId: z.string().min(1, "Debe seleccionar un horario"),
+});
 
 export default function CalendarNewEventDialog() {
 	const {
 		newEventDialogOpen,
 		setNewEventDialogOpen,
 		date,
-		events,
-		setEvents,
 	} = useCalendarContext();
-	const { 
-		allStaffSchedulesQuery, 
-	} = useStaffSchedules();
+	
+	const { allStaffSchedulesQuery } = useStaffSchedules();
+	const { createMutation } = useEvents();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -75,40 +63,27 @@ export default function CalendarNewEventDialog() {
 		const selectedSchedule = allStaffSchedulesQuery.data?.find(
 			s => s.id === values.staffScheduleId
 		);
-		
-		const newEvent: CalendarEvent = {
-			id: crypto.randomUUID(),
-			title: values.title,
-			start: new Date(values.start),
-			end: new Date(values.end),
-			color: selectedSchedule?.color || "blue",
-			type: "CITA" as const,
-			status: "CONFIRMED" as const,
-			staff: {
-				name: "Staff Temporal",
-				lastName: ""
-			},
-			branch: {
-				name: "Sucursal Temporal"
-			},
-			recurrence: {
-				frequency: "DAILY",
-				interval: 1,
-				until: "2025-01-01"
-			},
-			isActive: true,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			isCancelled: false,
-			isBaseEvent: false,
-			branchId: "temp-branch-id",
-			staffId: "temp-staff-id",
-			staffScheduleId: values.staffScheduleId
+
+		if (!selectedSchedule) {
+			toast.error("Horario no encontrado");
+			return;
+		}
+
+		const eventData: CreateEventDto = {
+			...values,
+			staffId: selectedSchedule.staffId,
+			branchId: selectedSchedule.branchId,
+			color: selectedSchedule.color,
+			type: "TURNO",
+			status: "CONFIRMED",
 		};
 
-		setEvents([...events, newEvent]);
-		setNewEventDialogOpen(false);
-		form.reset();
+		createMutation.mutate(eventData, {
+			onSuccess: () => {
+				setNewEventDialogOpen(false);
+				form.reset();
+			}
+		});
 	}
 
 	return (
@@ -118,17 +93,14 @@ export default function CalendarNewEventDialog() {
 					<DialogTitle>Crear nuevo evento</DialogTitle>
 				</DialogHeader>
 				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-						className="space-y-4"
-					>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 						<FormField
 							control={form.control}
 							name="staffScheduleId"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel className="font-bold">Horario</FormLabel>
-									<Select onValueChange={field.onChange} defaultValue={field.value}>
+									<Select onValueChange={field.onChange} value={field.value}>
 										<FormControl>
 											<SelectTrigger>
 												<SelectValue placeholder="Seleccione un horario" />

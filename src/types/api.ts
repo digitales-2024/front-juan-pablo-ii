@@ -3824,6 +3824,11 @@ export interface components {
              */
             lastName: string;
             /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
+            /**
              * @description Número de DNI del personal médico
              * @example 40506070
              */
@@ -3892,6 +3897,8 @@ export interface components {
                  */
                 name?: string;
             };
+            /** @description Número de Colegiatura Médica (CMP) */
+            cmp: string;
         };
         UpdateStaffDto: {
             /**
@@ -3914,6 +3921,11 @@ export interface components {
              * @example Rodríguez
              */
             lastName?: string;
+            /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
             /**
              * @description Número de DNI del personal médico
              * @example 40506070
@@ -5073,6 +5085,11 @@ export interface components {
             metadata?: Record<string, never>;
         };
         Event: Record<string, never>;
+        /**
+         * @description Estado de evento
+         * @enum {string}
+         */
+        EventStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
         CreateEventDto: {
             /**
              * @description Título del evento
@@ -5090,6 +5107,8 @@ export interface components {
              * @enum {string}
              */
             type: "TURNO" | "CITA" | "OTRO";
+            /** @example PENDING */
+            status: components["schemas"]["EventStatus"];
             /**
              * Format: date-time
              * @description Fecha y hora de inicio del evento
@@ -5140,6 +5159,8 @@ export interface components {
              * @enum {string}
              */
             type?: "TURNO" | "CITA" | "OTRO";
+            /** @example PENDING */
+            status?: components["schemas"]["EventStatus"];
             /**
              * Format: date-time
              * @description Fecha y hora de inicio del evento

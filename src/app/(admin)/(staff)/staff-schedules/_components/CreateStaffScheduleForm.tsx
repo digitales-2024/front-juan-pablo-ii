@@ -31,6 +31,9 @@ import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { colorOptions } from "../../schedules/_components/calendar/calendarTailwindClasses";
+import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
+import { useEffect } from "react";
 
 const TIME_ZONE = 'America/Lima';
 
@@ -45,14 +48,64 @@ const DAYS_OF_WEEK = [
 ] as const;
 
 const RECURRENCE_OPTIONS = [
-  { label: "Diario", frequency: "DAILY", interval: 1 },
-  { label: "Interdiario", frequency: "DAILY", interval: 2 },
-  { label: "Semanal", frequency: "WEEKLY", interval: 1 },
-  { label: "Quincenal", frequency: "WEEKLY", interval: 2 },
-  { label: "Mensual", frequency: "MONTHLY", interval: 1 },
-  { label: "Anual", frequency: "YEARLY", interval: 1 },
-  { label: "Personalizado", frequency: "CUSTOM", interval: 1 },
+  { 
+    label: "Días específicos", 
+    frequency: "WEEKLY", 
+    interval: 1,
+    description: "Selecciona los días de la semana",
+    example: "Ej: Lunes y Miércoles → Esos días cada semana"
+  },
+  { 
+    label: "Diario", 
+    frequency: "DAILY", 
+    interval: 1,
+    description: "Todos los días de la semana",
+    example: "Se aplicará de lunes a domingo"
+  },
+  { 
+    label: "Quincenal", 
+    frequency: "WEEKLY", 
+    interval: 2,
+    description: "Mismos días cada 15 días",
+    example: "Ej: Viernes → Cada 2 semanas"
+  },
 ] as const;
+
+const FERIADOS_2025 = [
+  '2025-01-01',    // Año Nuevo
+  '2025-04-17',    // Jueves Santo
+  '2025-04-18',    // Viernes Santo
+  '2025-05-01',    // Día del Trabajo
+  '2025-06-07',    // Batalla de Arica
+  '2025-06-29',    // San Pedro y San Pablo
+  '2025-07-23',    // Día de la Fuerza Aérea
+  '2025-07-28',    // Fiestas Patrias
+  '2025-07-29',    // Fiestas Patrias
+  '2025-08-06',    // Batalla de Junín
+  '2025-08-30',    // Santa Rosa de Lima
+  '2025-10-08',    // Combate de Angamos
+  '2025-11-01',    // Día de Todos los Santos
+  '2025-12-08',    // Inmaculada Concepción
+  '2025-12-09',    // Batalla de Ayacucho
+  '2025-12-25'     // Navidad
+];
+
+const DAYS_PRESETS = [
+  {
+    label: "Días laborables (L-V)",
+    days: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"] as const
+  },
+  {
+    label: "L-S",
+    days: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"] as const
+  },
+  {
+    label: "Todos los días",
+    days: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"] as const
+  }
+];
+
+const allDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"] as const;
 
 interface CreateStaffScheduleFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -68,6 +121,24 @@ export function CreateStaffScheduleForm({
 }: CreateStaffScheduleFormProps) {
   const { staff } = useStaff();
   const { branches } = useBranches();
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'recurrence.frequency') {
+        if (value.recurrence?.frequency === 'DAILY') {
+          form.setValue('daysOfWeek', [...allDays]);
+        }
+      }
+      
+      if (name === 'daysOfWeek' && value.recurrence?.frequency === 'DAILY') {
+        if (value.daysOfWeek?.length !== 7) {
+          form.setValue('daysOfWeek', [...allDays]);
+        }
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, form.watch]);
 
   const handleSubmit = (data: CreateStaffScheduleDto) => {
     const payload = {
@@ -229,41 +300,70 @@ export function CreateStaffScheduleForm({
               name="daysOfWeek"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Días de la semana</FormLabel>
-                  <div className="grid grid-cols-2 gap-4">
-                    {DAYS_OF_WEEK.map((day) => (
-                      <FormField
-                        key={day.value}
-                        control={form.control}
-                        name="daysOfWeek"
-                        render={({ field: innerField }) => (
-                          <FormItem
-                            key={day.value}
-                            className="flex flex-row items-center space-x-3 space-y-0"
+                  <FormLabel className="flex items-center gap-2">
+                    Días de aplicación
+                    <Tooltip>
+                      <Info className="h-4 w-4" />
+                      <TooltipContent className="max-w-[300px]">
+                        {form.watch('recurrence.frequency') === 'DAILY' 
+                          ? "El horario se aplicará todos los días de la semana automáticamente"
+                          : "Seleccione los días específicos para aplicar el horario"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
+                  
+                  {form.watch('recurrence.frequency') !== 'DAILY' && (
+                    <div className="space-y-4">
+                      <div className="flex gap-2">
+                        {DAYS_PRESETS.map(preset => (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            key={preset.label}
+                            onClick={() => {
+                              form.setValue('daysOfWeek', [...preset.days]);
+                            }}
                           >
-                            <FormControl>
-                              <Checkbox
-                                checked={innerField.value?.includes(day.value)}
-                                onCheckedChange={(checked) => {
-                                  const currentValue = innerField.value || [];
-                                  if (checked) {
-                                    innerField.onChange([...currentValue, day.value]);
-                                  } else {
-                                    innerField.onChange(
-                                      currentValue.filter((value) => value !== day.value)
-                                    );
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {day.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                            {preset.label}
+                          </Button>
+                        ))}
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        {DAYS_OF_WEEK.map((day) => (
+                          <FormField
+                            key={day.value}
+                            control={form.control}
+                            name="daysOfWeek"
+                            render={({ field: innerField }) => (
+                              <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={innerField.value?.includes(day.value)}
+                                    onCheckedChange={(checked) => {
+                                      const currentValue = innerField.value || [];
+                                      if (checked) {
+                                        innerField.onChange([...currentValue, day.value]);
+                                      } else {
+                                        innerField.onChange(
+                                          currentValue.filter((value) => value !== day.value)
+                                        );
+                                      }
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  {day.label}
+                                </FormLabel>
+                              </FormItem>
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
                   <FormMessage />
                 </FormItem>
               )}
@@ -277,10 +377,6 @@ export function CreateStaffScheduleForm({
                   <FormLabel>Patrón de repetición</FormLabel>
                   <Select
                     onValueChange={(value) => {
-                      if (value === "CUSTOM") {
-                        field.onChange({ frequency: "", interval: 1 });
-                        return;
-                      }
                       const option = RECURRENCE_OPTIONS.find(opt => opt.label === value);
                       if (option) {
                         field.onChange({
@@ -292,66 +388,82 @@ export function CreateStaffScheduleForm({
                     value={RECURRENCE_OPTIONS.find(opt => 
                       opt.frequency === field.value?.frequency && 
                       opt.interval === field.value?.interval
-                    )?.label || (field.value?.frequency ? "CUSTOM" : "")}
+                    )?.label || ""}
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccione un patrón" />
+                      <SelectTrigger className="h-[56px]">
+                        <SelectValue placeholder="Seleccione un patrón">
+                          {field.value && (
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">
+                                {RECURRENCE_OPTIONS.find(opt => 
+                                  opt.frequency === field.value.frequency && 
+                                  opt.interval === field.value.interval
+                                )?.label}
+                              </span>
+                              <span className="text-muted-foreground text-sm">
+                                {RECURRENCE_OPTIONS.find(opt => 
+                                  opt.frequency === field.value.frequency && 
+                                  opt.interval === field.value.interval
+                                )?.description}
+                              </span>
+                            </div>
+                          )}
+                        </SelectValue>
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    
+                    <SelectContent className="min-w-[500px]">
                       {RECURRENCE_OPTIONS.map((option) => (
-                        <SelectItem key={option.label} value={option.label}>
-                          {option.label}
+                        <SelectItem 
+                          key={option.label} 
+                          value={option.label}
+                          className="py-3 group hover:bg-blue-50 transition-colors"
+                        >
+                          <div className="flex flex-col gap-2">
+                            <div className="flex justify-between items-baseline">
+                              <span className="font-medium text-base">{option.label}</span>
+                              <span className="text-muted-foreground text-sm ml-4">
+                                {option.description}
+                              </span>
+                            </div>
+                            <div className="text-xs text-blue-600 mt-1">
+                              {option.example}
+                            </div>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+
+                  <div className="mt-4 p-4 bg-blue-50  text-blue-600 rounded-lg space-y-3">
+                    <p className="text-sm font-medium">
+                      ¿Cómo funcionan los patrones?
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2.5">
+                      <li className="text-sm">
+                        <span className="font-medium  block mb-1">Días seleccionados:</span> 
+                        Define los días específicos de la semana que tendrán el horario
+                      </li>
+                      <li className="text-sm">
+                        <span className="font-medium block mb-1">Intervalo:</span> 
+                        Determina cada cuánto se repite el ciclo (ej: cada 2 semanas)
+                      </li>
+                      <li className="text-sm">
+                        <span className="font-medium block mb-1">Válido hasta:</span> 
+                        Última fecha donde se aplicará el horario
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="mt-4 p-4 bg-orange-50 rounded-lg">
+                    <p className="text-sm text-orange-600">
+                      ⓘ La fecha "Válido hasta" marca el ÚLTIMO DÍA donde se aplicará el horario.<br/>
+                      Ejemplo: Si creas un horario semanal hasta 01/08/2024 →<br/>
+                      Se generarán horarios cada semana hasta esa fecha inclusive.
+                    </p>
+                  </div>
                   
-                  {!field.value?.frequency && (
-                    <div className="grid grid-cols-2 gap-6 mt-4">
-                      <FormField
-                        control={form.control}
-                        name="recurrence.frequency"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Frecuencia</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Seleccione frecuencia" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="DAILY">Diario</SelectItem>
-                                <SelectItem value="WEEKLY">Semanal</SelectItem>
-                                <SelectItem value="MONTHLY">Mensual</SelectItem>
-                                <SelectItem value="YEARLY">Anual</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="recurrence.interval"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Intervalo</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="1"
-                                {...field}
-                                value={field.value ?? 1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -411,10 +523,25 @@ export function CreateStaffScheduleForm({
               control={form.control}
               name="exceptions"
               render={({ field }) => {
-                console.log('Excepciones actuales:', field.value);
+                const handleAddHolidays = () => {
+                  const currentExceptions = field.value || [];
+                  const mergedDates = [...new Set([...currentExceptions, ...FERIADOS_2025])];
+                  field.onChange(mergedDates);
+                };
+
                 return (
                   <FormItem className="flex flex-col">
                     <FormLabel>Excepciones</FormLabel>
+                    <div className="flex gap-2 mb-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleAddHolidays}
+                      >
+                        Agregar todos los feriados 2025
+                      </Button>
+                    </div>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
