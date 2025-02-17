@@ -29,7 +29,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { useTypeProducts } from "../hook/useType";
+import { useTypeProducts } from "../_hooks/useType";
 
 const infoSheet = {
   title: "Actualizar tipo de producto",

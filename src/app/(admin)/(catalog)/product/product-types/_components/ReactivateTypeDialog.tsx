@@ -29,7 +29,7 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useTypeProducts } from "../hook/useType";
+import { useTypeProducts } from "../_hooks/useType";
 
 interface ReactivateTypeDialogProps
     extends ComponentPropsWithoutRef<typeof AlertDialog> {

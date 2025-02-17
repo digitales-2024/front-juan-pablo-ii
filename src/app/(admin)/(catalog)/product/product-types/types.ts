@@ -16,6 +16,6 @@ export const TypeProductCreateSchema = z.object({
 
 // Esquema de validación para la actualización de productos
 export const TypeProductUpdateSchema = z.object({
-    name: z.string().min(1, { message: "El nombre es requerido" }),
+    name: z.string().optional(),
     description: z.string().optional(),
 }) satisfies z.ZodType<UpdateTypeProductDto>;

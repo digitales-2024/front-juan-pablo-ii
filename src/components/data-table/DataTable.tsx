@@ -17,8 +17,11 @@ import {
   useReactTable,
   VisibilityState,
   Table as TableType,
+  TableState,
+  RowSelectionState,
+  Updater,
 } from "@tanstack/react-table";
-import { CSSProperties, ReactElement, useState } from "react";
+import { CSSProperties, ReactElement, useCallback, useState } from "react";
 
 import {
   Table,
@@ -41,6 +44,9 @@ interface DataTableProps<TData, TValue> {
   toolbarActions?: (table: TableType<TData>) => ReactElement | undefined;
   viewOptions?: boolean;
   getSubRows?: (row: TData) => TData[] | undefined;
+  columnVisibilityConfig?: Partial<Record<keyof TData, boolean>>;
+  onTableChange?: (table: TableType<TData>, newState: TableState) => void;
+  onRowSelectionChange?: (table: TData[]) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -50,10 +56,15 @@ export function DataTable<TData, TValue>({
   toolbarActions,
   viewOptions,
   getSubRows,
+  columnVisibilityConfig,
+  onTableChange,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [expanded, setExpanded] = useState<ExpandedState>({});
-  const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    columnVisibilityConfig as VisibilityState ?? {} //OJO: When defining visibility, at least 1 field must be present
+  );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -61,10 +72,48 @@ export function DataTable<TData, TValue>({
     left: ["select"],
     right: ["actions"],
   });
+  const handleOnRowSelectionChange = useCallback(
+    (valueFn: Updater<RowSelectionState>) => {
+      if (typeof valueFn === "function") {
+        const updatedRowSelection = valueFn(rowSelection);
+        setRowSelection(updatedRowSelection);
+  
+        //Get all selected rows based on the updatedRowSelection
+        const selectedRows = Object.keys(updatedRowSelection).reduce(
+          (acc, key) => {
+            if (updatedRowSelection[key]) {
+              const row = data[parseInt(key)]; //It will be more secure if not validating by the array key
+              if (row) {
+                acc.push(row);
+              }
+            }
+            return acc;
+          },
+          [] as TData[],
+        );  
+        // Call the onRowSelectionChange function with the selected rows
+        onRowSelectionChange?.(selectedRows);
+      }
+    },
+    [data, onRowSelectionChange, rowSelection],
+  );
 
   const table = useReactTable({
     data,
     columns,
+    onStateChange: (updaterOrValue)=>{
+      // Si no has definido onTableChange, salimos
+      if (!onTableChange) return;
+      // Determina el nuevo estado
+      // (Si updaterOrValue es una función, úsala para calcular el estado real)
+      // console.log('table.getState()', table.getState())
+      const newState =
+        typeof updaterOrValue === "function"
+          ? updaterOrValue(table.getState())
+          : updaterOrValue;
+      // Llamamos tu callback solo en los cambios de estado
+      onTableChange(table, newState);
+    },
     state: {
       sorting,
       columnVisibility,
@@ -77,7 +126,7 @@ export function DataTable<TData, TValue>({
     onExpandedChange: setExpanded,
     getSubRows,
     enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: handleOnRowSelectionChange,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

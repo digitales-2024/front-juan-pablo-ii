@@ -14,7 +14,6 @@ import { Service } from "../_interfaces/service.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { useServices } from "../_hooks/useServices";
-import { toast } from "sonner";
 
 interface DeactivateServiceDialogProps {
   service?: Service;
@@ -29,7 +28,7 @@ interface DeactivateServiceDialogProps {
 export function DeactivateServiceDialog({
   service,
   services,
-  variant = "default",
+  variant = "outline",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
@@ -52,11 +51,7 @@ export function DeactivateServiceDialog({
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
-      toast.success(
-        items.length === 1
-          ? "Servicio desactivado exitosamente"
-          : "Servicios desactivados exitosamente"
-      );
+      
       setOpen(false);
       onSuccess?.();
     } catch (error) {

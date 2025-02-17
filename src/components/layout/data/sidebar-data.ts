@@ -3,6 +3,7 @@ import {
   Boxes,
   CalendarPlus,
   CalendarRange,
+  ClipboardType,
   Clock,
   DollarSign,
   FileHeart,
@@ -10,8 +11,8 @@ import {
   Handshake,
   Home,
   Hospital,
+  HousePlus,
   KeyRound,
-  ListTodo,
   Package,
   PackageMinus,
   PackageOpen,
@@ -20,11 +21,14 @@ import {
   ShieldBan,
   ShieldCheck,
   ShieldPlus,
+  Stethoscope,
   Tag,
   User,
+  UserPen,
   UserPlus,
   UserRound,
   UserRoundSearch,
+  Warehouse,
 } from "lucide-react";
 import { type SidebarData } from "../types";
 
@@ -85,24 +89,24 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Pacientes",
-              url: "/patients",
+              url: "/patient",
               icon: UserPlus,
             },
-            {
+/*             {
               title: "Clientes",
               url: "/clients",
               icon: UserRound,
-            },
+            }, */
             {
-              title: "Historias Clinicas",
-              url: "/medical-records",
+              title: "Historial Médico",
+              url: "/history",
               icon: BookPlus,
             },
-            {
+/*             {
               title: "Recetas médicas",
               url: "/prescriptions",
               icon: FileHeart,
-            },
+            }, */
           ],
         },
         // {
@@ -158,12 +162,12 @@ export const sidebarData: SidebarData = {
             },
             {
               title: "Entradas",
-              url: "/entries",
+              url: "/income",
               icon: PackagePlus,
             },
             {
               title: "Salidas",
-              url: "/exits",
+              url: "/outgoing",
               icon: PackageMinus,
             },
           ],
@@ -183,15 +187,22 @@ export const sidebarData: SidebarData = {
               icon: UserRoundSearch,
             },
             {
+              title: "Tipos de Personal",
+              url: "/staff/types",
+              icon: UserPen,
+            },
+            {
               title: "Cronograma",
-              url: "/timetable",
+              url: "/schedules",
               icon: CalendarRange,
             },
             {
               title: "Turnos",
-              url: "/schedules",
+              url: "/staff-schedules",
               icon: Clock,
             },
+            
+           
           ],
         },
       ],
@@ -210,21 +221,47 @@ export const sidebarData: SidebarData = {
             },
             {
               title: "Categorías",
-              url: "/product/categorys",
+              url: "/product/category",
               icon: Tag,
             },
             {
-              title: "Tipos",
+              title: "Subcategorías",
               url: "/product/product-types",
               icon: Boxes,
             },
           ],
         },
-
+        {
+          title: "Almacenamiento",
+          icon: Warehouse,
+          items: [
+            {
+              title: "Almacenes",
+              url: "/storage/storages",
+              icon: Warehouse,
+            },
+            {
+              title: "Tipos de Almacén",
+              url: "/storage/storage-types",
+              icon: HousePlus,
+            },
+          ],
+        },
         {
           title: "Servicios",
-          url: "/services",
-          icon: ListTodo,
+          icon: Stethoscope,
+          items: [
+            {
+              title: "Servicios",
+              url: "/services",
+              icon: Stethoscope,
+            },
+            {
+              title: "Tipos de Servicios",
+              url: "/services/types",
+              icon: ClipboardType,
+            },
+          ],
         },
         {
           title: "Sucursales",

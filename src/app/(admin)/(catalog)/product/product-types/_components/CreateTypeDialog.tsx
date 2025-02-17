@@ -30,7 +30,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { CreateTypeForm } from "./CreateTypeForm";
-import { useTypeProducts } from "../hook/useType";
+import { useTypeProducts } from "../_hooks/useType";
 
 const CREATE_TYPE_MESSAGES = {
   button: "Crear tipo de producto",

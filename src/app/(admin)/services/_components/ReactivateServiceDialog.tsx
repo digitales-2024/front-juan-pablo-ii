@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Service } from "../_interfaces/service.interface";
-import { ActivityIcon } from "lucide-react";
+import { RefreshCcwDot } from "lucide-react";
 import { useState } from "react";
 import { useServices } from "../_hooks/useServices";
 
@@ -28,7 +28,7 @@ interface ReactivateServiceDialogProps {
 export function ReactivateServiceDialog({
   service,
   services,
-  variant = "default",
+  variant = "outline",
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
@@ -66,9 +66,8 @@ export function ReactivateServiceDialog({
           <Button 
             variant={variant} 
             size={variant === "outline" ? "sm" : "default"}
-            className="text-green-600"
           >
-            <ActivityIcon className="mr-2 h-4 w-4" />
+            <RefreshCcwDot className="mr-2 h-4 w-4" />
             {items.length === 1 ? "Reactivar" : `Reactivar (${items.length})`}
           </Button>
         </DialogTrigger>

@@ -25,7 +25,7 @@ import { UpdateTypeSheet } from "./UpdateCategorySheet";
 
 export const typeColumns = (): ColumnDef<TypeProductResponse>[] => [
   {
-    id: "select",
+    accessorKey: "select",
     size: 10,
     header: ({ table }) => (
       <div className="px-2">
@@ -53,19 +53,19 @@ export const typeColumns = (): ColumnDef<TypeProductResponse>[] => [
     enableSorting: false,
     enableHiding: false,
     enablePinning: true,
+    meta: { title: "Select" },
   },
 
   {
-    id: "Nombre",
     accessorKey: "name",
     accessorFn: (row) => row.name,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => <span className="capitalize"> {row.original.name}</span>,
+    meta: { title: "Nombre" },
   },
   {
-    id: "Descripción",
     accessorKey: "description",
     accessorFn: (row) => row.description,
     header: ({ column }) => (
@@ -74,29 +74,21 @@ export const typeColumns = (): ColumnDef<TypeProductResponse>[] => [
     cell: ({ row }) => (
       <span className="capitalize"> {row.original.description}</span>
     ),
+    meta: { title: "Descripción" },
   },
   {
-    id: "isActive",
     accessorKey: "isActive",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => (
       <div>
-        {row.getValue("isActive") ? (
-          <Badge
-            variant="secondary"
-            className="bg-emerald-100 text-emerald-500"
-          >
-            Activo
-          </Badge>
-        ) : (
-          <Badge variant="secondary" className="bg-red-100 text-red-500">
-            Inactivo
-          </Badge>
-        )}
+        <Badge variant={row.original.isActive ? "success" : "destructive"}>
+          {row.original.isActive ? "Activo" : "Inactivo"}
+        </Badge>
       </div>
     ),
+    meta: { title: "Estado" },
   },
   {
     accessorKey: "createdAt",
@@ -105,9 +97,10 @@ export const typeColumns = (): ColumnDef<TypeProductResponse>[] => [
     ),
     cell: ({ row }) =>
       format(new Date(row.original.createdAt), "PPp", { locale: es }),
+    meta: { title: "Fecha de creación" },
   },
   {
-    id: "actions",
+    accessorKey: "actions",
     size: 10,
     cell: function Cell({ row }) {
       const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -189,5 +182,6 @@ export const typeColumns = (): ColumnDef<TypeProductResponse>[] => [
     enableSorting: false,
     enableHiding: false,
     enablePinning: true,
+    meta: { title: "Actions" },
   },
 ];
