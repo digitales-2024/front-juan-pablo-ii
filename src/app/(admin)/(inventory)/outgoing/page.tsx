@@ -1,15 +1,15 @@
 "use client";
 
-import { ProductTable } from "./_components/ProductTable";
+import { OutgoingTable } from "./_components/OutgoingTable";
 import { PageHeader } from "@/components/PageHeader";
 // import { getBranches } from "./_actions/branch.actions";
 import { notFound } from "next/navigation";
-import { useProducts } from "./_hooks/useProduct";
+import { useOutgoing } from "./_hooks/useOutgoing";
 import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
 
 export default function PageBranches() {
-  const {detailedProductsQuery: response} = useProducts();
+  const {detailedOutcomesQuery: response} = useOutgoing();
 
   if (response.isLoading) {
     return <LoadingCategories />;
@@ -32,7 +32,7 @@ export default function PageBranches() {
         />
       </div>
       <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-        <ProductTable data={response.data} />
+        <OutgoingTable data={response.data} />
       </div>
     </>
   );

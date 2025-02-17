@@ -4,85 +4,109 @@ import { z } from "zod";
 // Tipos base de la API
 export type Outgoing = components['schemas']['Outgoing'];
 export type DetailedOutgoingPrototype = components['schemas']['DetailedOutgoing'];
-export type OutgoingProduct = components['schemas']['OutgoingProduct'];
-// export type OutgoingBranchPrototype = components['schemas']['OutgoingBranch'];
-export type CreateProductDto = components['schemas']['CreateProductDto'];
-export type UpdateProductDto = components['schemas']['UpdateProductDto'];
-export type DeleteProductDto = components['schemas']['DeleteProductDto'];
+export type OutgoingProductPrototype = components['schemas']['OutgoingProduct']
+export type OutgoingProduct = {
+  id: string;
+  categoriaId: string;
+  tipoProductoId: string;
+  name: string;
+  precio: number;
+  unidadMedida: string;
+  proveedor: string;
+  usoProducto: string;
+  description: string;
+  codigoProducto: string;
+  isActive: boolean;
+}
+export type OutgoingBranchPrototype = components['schemas']['OutgoingBranch'];
+export type OutgoingBranch = {
+  id: string;
+  name: string;
+}
+
+export type OutgoingStorageTypePrototype = components['schemas']['OutgoingStorageType']
+export type OutgoingStorageType = {
+  id: string;
+  name: string;
+  branch?: OutgoingBranch;
+}
+
+export type OutgoingStoragePrototype = components['schemas']['OutgoingStorage'];
+export type OutgoingStorage = {
+  id: string;
+  name: string;
+  TypeStorage: OutgoingStorageType;
+}
+
+export type OutgoingMovementPrototype = components['schemas']['OutgoingMovement'];
+export type OutgoingMovement = {
+  id: string;
+  movementTypeId: string;
+  quantity: number;
+  date: string;
+  state: boolean;
+  isActive: boolean;
+  Producto: OutgoingProduct;
+}
+
+export type DetailedOutgoing = {
+  id: string;
+  name: string;
+  description: string;
+  storageId: string;
+  date: string;
+  state: boolean;
+  referenceId: string;
+  isActive: boolean;
+  Storage: OutgoingStorage;
+  Movement: OutgoingMovement[];
+}
+
+export type MovementDto = components['schemas']['OutgoingIncomingMovementDto'];
+export type CreateOutgoingDto = components['schemas']['CreateOutgoingDtoStorage'];
+export type UpdateOutgoingDto = components['schemas']['UpdateOutgoingDto'];
+export type DeleteOutgoingDto = components['schemas']['DeleteOutgoingDto'];
 
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
-export type ReactivateProductDto = DeleteProductDto;
+export type ReactivateOutgoingDto = DeleteOutgoingDto;
 
-// Schema de validación para crear/actualizar producto
-// type CreateProductDto = {
-//   categoriaId: string;
-//   tipoProductoId: string;
-//   name: string;
-//   precio: number;
-//   unidadMedida?: string;
-//   proveedor?: string;
-//   uso?: string;
-//   usoProducto?: string;
-//   description?: string;
-//   codigoProducto?: string;
-//   descuento?: number;
-//   observaciones?: string;
-//   condicionesAlmacenamiento?: string;
-//   imagenUrl?: string;
-// }
-export const createProductSchema = z.object({
-  categoriaId: z.string().min(1, "La categoría es requerida").uuid(),
-  tipoProductoId: z.string().min(1, "El tipo de producto es requerido").uuid(),
+export interface OutgoingableItem extends DetailedOutgoing {
+  selected?: boolean;
+}
+
+export const outgoingMovementSchema = z.object({
+  productId: z.string().min(1, "El producto es requerido"),
+  quantity: z.coerce.number({
+    required_error: "La cantidad es requerida",
+    invalid_type_error: "La cantidad debe ser un número"
+  }).min(1, "Se debe tener al menos una unidad").nonnegative(),
+  date: z.string().optional(),
+  state: z.coerce.boolean().optional(),
+});
+
+export const movementArrayOutgoingSchema = z.array(
+  outgoingMovementSchema
+).min(1, "Debe contener al menos un elemento");;
+
+
+export const createOutgoingSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
-  precio: z.coerce.number({
-    required_error: "El precio es requerido",
-    invalid_type_error: "El precio debe ser un número"
-  }).min(0).nonnegative(),
-  unidadMedida: z.string().optional(),
-  proveedor: z.string().optional(),
-  uso: z.string().optional(),
-  usoProducto: z.string().optional(),
   description: z.string().optional(),
-  codigoProducto: z.string().min(1, "El código de producto es requerido"),
-  descuento: z.coerce.number().nonnegative().optional(),
-  observaciones: z.string().optional(),
-  condicionesAlmacenamiento: z.string().optional(),
-  imagenUrl: z.string().url().optional(),
-}) satisfies z.ZodType<CreateProductDto>;
+  storageId: z.string().min(1, "El almacen es requerido"),
+  date: z.coerce.string().min(1, "La fecha es requerida"),
+  state: z.coerce.boolean(),
+  referenceId: z.string().optional(),
+  movement: movementArrayOutgoingSchema,
+});
 
-// type UpdateProductDto = {
-//   categoriaId?: string;
-//   tipoProductoId?: string;
-//   name?: string;
-//   precio?: number;
-//   unidadMedida?: string;
-//   proveedor?: string;
-//   uso?: string;
-//   usoProducto?: string;
-//   description?: string;
-//   codigoProducto?: string;
-//   descuento?: number;
-//   observaciones?: string;
-//   condicionesAlmacenamiento?: string;
-//   imagenUrl?: string;
-// }
-
-export const updateProductSchema = z.object({
-  categoriaId: z.string().uuid().optional(),
-  tipoProductoId: z.string().uuid().optional(),
-  name: z.string().min(1, "El nombre es requerido").optional(),
-  precio: z.coerce.number().min(0, "El precio no puede ser negativo").optional(),
-  unidadMedida: z.string().optional(),
-  proveedor: z.string().optional(),
-  uso: z.string().optional(),
-  usoProducto: z.string().optional(),
+export const updateOutgoingSchema = z.object({
+  name: z.string().optional(),
   description: z.string().optional(),
-  codigoProducto: z.string().optional(),
-  descuento: z.coerce.number().nonnegative().optional(),
-  observaciones: z.string().optional(),
-  condicionesAlmacenamiento: z.string().optional(),
-  imagenUrl: z.string().url().optional(),
-}) satisfies z.ZodType<UpdateProductDto>;
+  storageId: z.string().optional(),
+  date: z.coerce.string().optional(),
+  state: z.coerce.boolean().optional(),
+  referenceId: z.string().optional(),
+}) satisfies z.ZodType<UpdateOutgoingDto>;
 
-export type CreateProductInput = z.infer<typeof createProductSchema>;
-export type UpdateProductInput = z.infer<typeof updateProductSchema>;
+export type CreateOutgoingInput = z.infer<typeof createOutgoingSchema>;
+export type UpdateOutgoingInput = z.infer<typeof updateOutgoingSchema>;

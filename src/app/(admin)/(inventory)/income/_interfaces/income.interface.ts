@@ -53,10 +53,10 @@ export type UpdateIncomingDto = components['schemas']['UpdateIncomingDto'];
 export type DeleteIncomingDto = components['schemas']['DeleteIncomingDto'];
 
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
-export type ReactivateProductDto = DeleteIncomingDto;
+export type ReactivateIncomingDto = DeleteIncomingDto;
 
 // Interfaz para la tabla extendiendo el tipo base
-export interface ProductTableItem extends DetailedIncoming {
+export interface IncomingTableItem extends DetailedIncoming {
   selected?: boolean;
 }
 
