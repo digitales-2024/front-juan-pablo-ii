@@ -17,21 +17,11 @@ import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHe
 // import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 // import { ReactivateIncomingDialog } from "./ReactivateIncomingDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowBigRightDash, Check, PackageOpen } from "lucide-react";
+import { Check, PackageOpen } from "lucide-react";
 import {
   OutgoingProducStockForm,
 } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useUpdateProductStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 // import Image from "next/image";
