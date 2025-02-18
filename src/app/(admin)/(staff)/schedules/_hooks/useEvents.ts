@@ -139,19 +139,25 @@ export const useEvents = (filters?: EventFilterParams) => {
     mutationFn: deleteEvents,
     onSuccess: (res, variables) => {
       queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents = []) =>
-        oldEvents.map(event =>
-          variables.ids.includes(event.id)
-            ? { ...event, isActive: false }
-            : event
-        )
+        oldEvents.filter(event => !variables.ids.includes(event.id))
       );
+      queryClient.invalidateQueries({
+        queryKey: ['events'],
+        exact: false
+      });
       toast.success(
         variables.ids.length === 1
-          ? "Evento desactivado exitosamente"
-          : "Eventos desactivados exitosamente"
+          ? "Evento eliminado exitosamente"
+          : "Eventos eliminados exitosamente"
       );
     },
-    onError: (error) => handleAuthError(error, "desactivar los eventos")
+    onError: (error) => {
+      queryClient.invalidateQueries({
+        queryKey: ['events'],
+        exact: false
+      });
+      handleAuthError(error, "eliminar los eventos");
+    }
   });
 
   // Mutación para reactivar eventos
@@ -185,22 +191,13 @@ export const useEvents = (filters?: EventFilterParams) => {
     onError: (error) => handleAuthError(error, "generar eventos recurrentes")
   });
 
-  // Nueva mutación para eliminar eventos por scheduleId
+  // Mutación para eliminar eventos por scheduleId
   const deleteByScheduleIdMutation = useMutation<BaseApiResponse<Event>, Error, string>({
     mutationFn: deleteEventsByScheduleId,
-    onSuccess: (res, _scheduleId) => {
-      // Filtrar los eventos eliminados de la caché
-      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents) => {
-        // Asegurarse de que oldEvents no sea undefined
-        if (!oldEvents) return [];
-
-        // Obtener los IDs de los eventos eliminados desde la respuesta
-        const deletedEventIds = res.data ? [res.data.id] : [];
-
-        // Filtrar los eventos que no están en la lista de eliminados
-        return oldEvents.filter(event => !deletedEventIds.includes(event.id));
-      });
-
+    onSuccess: (res, scheduleId) => {
+      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents = []) =>
+        oldEvents.filter(event => event.staffScheduleId !== scheduleId)
+      );
       toast.success("Eventos eliminados exitosamente");
     },
     onError: (error) => handleAuthError(error, "eliminar eventos por scheduleId")
