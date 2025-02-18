@@ -32,7 +32,7 @@ interface MedicalHistoryProps {
   setSelectedImage: (image: string | null) => void
 }
 
-export function MedicalHistory({
+export function UpdateMedicalHistoryPatient({
   servicios,
   setServicios,
   setSelectedPrescription,
