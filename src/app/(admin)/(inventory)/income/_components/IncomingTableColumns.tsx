@@ -24,6 +24,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateIncomingDialog } from "./DeactivateIncomingDialog";
 import { format } from "date-fns";
 import { ShowMovementsDialog } from "./Movements/ShowMovementsDialog";
+import { StorageMovementDetail } from "./Movements/StorageMovementDetail";
 // import Image from "next/image";
 
 //   name        String?
@@ -37,6 +38,12 @@ const STATE_OPTIONS = {
   true: "Concretado",
   false: "En proceso",
 }
+
+const TRANSFERENCE_OPTIONS = {
+  true: "SI",
+  false: "NO",
+};
+
 export const columns: ColumnDef<DetailedIncoming>[] = [
   {
     id: "select",
@@ -116,10 +123,10 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   {
     accessorKey: "Storage.name",
     meta: {
-      title: "Almacén"
+      title: "Almacén Destino"
     } ,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Almacén" />
+      <DataTableColumnHeader column={column} title="Almacén Destino" />
     ),
     cell: ({ row }) => (
       <span>
@@ -127,20 +134,20 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: "Storage.TypeStorage.name",
-    meta: {
-      title: "Tipo de almacén"
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo de almacén" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {(row.original.Storage.TypeStorage.name) ?? "Sin tipo de almacén"}
-      </span>
-    ),
-  },
+  // {
+  //   accessorKey: "Storage.TypeStorage.name",
+  //   meta: {
+  //     title: "Tipo de almacén"
+  //   },
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Tipo de almacén" />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <span>
+  //       {(row.original.Storage.TypeStorage.name) ?? "Sin tipo de almacén"}
+  //     </span>
+  //   ),
+  // },
   {
     accessorKey: "Storage.TypeStorage.branch.name",
     meta: {
@@ -165,37 +172,37 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.date ? format(new Date(row.original.date), "PPp", { locale: es }) : "Fecha no disponible"}
+        {row.original.date ? format(new Date(row.original.date), "PP", { locale: es }) : "Fecha no disponible"}
       </span>
     ),
   },
-  // NO usamos por el momento
-  // {
-  //   accessorKey: "imagenUrl",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Imágen" />
-  //   ),
-  //   cell: ({ row }) => (
-  //     // <Image
-  //     //   src={row.original.imagenUrl}
-  //     //   alt={row.original.name}
-  //     //   width={24}
-  //     //   height={24}
-  //     //   className="w-6 h-6 rounded-md object-cover"
-  //     // />
-  //     <img src={row.original.imagenUrl}
-  //         alt={row.original.name}
-  //         className="w-6 h-6 rounded-md object-cover"
-  //       />
-  //   ),
-  // },
+    {
+      accessorKey: "isTransference",
+      meta: {
+        title: "Transferencia",
+      },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="¿Es transferencia?" />
+      ),
+      cell: ({ row }) => (
+        // <span>
+        //   {row.original.state}
+        // </span>
+        <div className="flex items-center space-x-2">
+          <Badge variant={row.original.isTransference ? "default" : "secondary"}>
+            {row.original.isTransference ? TRANSFERENCE_OPTIONS.true : TRANSFERENCE_OPTIONS.false}
+          </Badge>
+          {(row.original.isTransference && row.original.referenceId && (row.original.referenceId.length>0)) && <StorageMovementDetail storageId={row.original.referenceId}></StorageMovementDetail>}
+        </div>
+      ),
+    },
   {
     accessorKey: "state",
     meta: {
-      title: "Consumación"
+      title: "Estado"
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Consumación" />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => (
       // <span>
@@ -209,7 +216,7 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
   {
     accessorKey: "isActive",
     meta: {
-      title: "Estado"
+      title: "Eliminación lógica"
     },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />

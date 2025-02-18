@@ -3,6 +3,7 @@ import { z } from "zod";
 
 // Tipos base de la API
 export type Storage = components['schemas']['Storage'];
+export type TypeStorage = components['schemas']['TypeStorage'];
 export type DetailedStorage = components['schemas']['DetailedStorage'];
 export type CreateStorageDto = components['schemas']['CreateStorageDto'];
 export type UpdateStorageDto = components['schemas']['UpdateStorageDto'];

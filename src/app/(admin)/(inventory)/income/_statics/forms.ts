@@ -35,10 +35,10 @@ export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, MovementDto> = {
     },
     storageId: {
         required: true,
-        label: "Almacenamiento",
+        label: "Almacén de destino",
         defaultValue: "",
         type: "select",
-        placeholder: "Selecciona un almacenamiento",
+        placeholder: "Selecciona un almacén",
         emptyMessage: "No se encontraron almacenes",
         name: "storageId",
     },
@@ -89,6 +89,14 @@ export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, MovementDto> = {
                 type: "number",
                 placeholder: "Cantidad",
                 name: "quantity",
+            },
+            buyingPrice: {
+                required: false,
+                label: "Precio de compra",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Precio de compra",
+                name: "buyingPrice",
             },
             date: {
                 required: false,

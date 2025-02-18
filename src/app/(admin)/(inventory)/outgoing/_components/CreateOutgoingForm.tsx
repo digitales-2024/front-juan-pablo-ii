@@ -45,6 +45,7 @@ import { OutgoingProducStockForm } from "../../stock/_interfaces/stock.interface
 import { Switch } from "@/components/ui/switch";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 // import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem } from "@/components/ui/select";
 // import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -122,11 +123,16 @@ export function CreateOutgoingForm({
       );
     }
     if (!responseStorage.data) {
+      toast.error("No se pudo cargar la información de almacenes", {
+        action: {
+          label: "Recargar",
+          onClick: async () => {
+            await responseStorage.refetch();
+          },
+        },
+      });
       return (
-        <GeneralErrorMessage
-          error={new Error("No se encontraron almacenes")}
-          reset={responseStorage.refetch}
-        />
+        <LoadingDialogForm/>
       );
     }
     if (reponseProducts.isError) {
@@ -138,11 +144,17 @@ export function CreateOutgoingForm({
       ) : null;
     }
     if (!reponseProducts.data) {
+      toast.error("No se pudo cargar la información de productos", {
+        action: {
+          label: "Recargar",
+          onClick: async () => {
+            await reponseProducts.refetch();
+          },
+        },
+      });
+
       return (
-        <GeneralErrorMessage
-          error={new Error("No se encontraron products en stock")}
-          reset={reponseProducts.refetch}
-        />
+        <LoadingDialogForm/>
       );
     }
   }
@@ -359,7 +371,7 @@ export function CreateOutgoingForm({
 
                 // Manejar NaN o valores inexistentes
                 //const total = isNaN(price * quantity) ? 0 : price * quantity;
-                return <TableRow key={field.id}>
+                return <TableRow key={field.id} className="animate-fade-down duration-500">
                 <TableCell>
                   <FormItem>
                     {/* <FormLabel>Producto</FormLabel> */}
@@ -559,7 +571,7 @@ export function CreateOutgoingForm({
           {/* Almacen de destino */}
           {
             form.watch('isTransference') && (
-              <div className="col-span-2 flex items-end">
+              <div className="animate-fade-right animate-duration-500 col-span-2 flex items-end">
               <FormField
               control={form.control}
               name={FORMSTATICS.referenceId.name}

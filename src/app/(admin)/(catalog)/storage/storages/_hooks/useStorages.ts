@@ -7,9 +7,9 @@ import {
   getStorages,
   getDetailedStorages,
   getStorageById,
-  StorageResponse,
   getActiveStorages,
-  getDetailedStorageById
+  getDetailedStorageById,
+  ListDetailedStorageResponse
 } from "../_actions/storages.actions";
 import { toast } from "sonner";
 import {
@@ -76,28 +76,25 @@ export const useStorages = () => {
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
-  const oneStorageQuery = useQuery({
-    queryKey: ["storage", "some-storage-id"], // replace "some-storage-id" with the actual storage id
-    queryFn: async ({ queryKey }) => {
-      const [, id] = queryKey;
-      try{
-        const response: StorageResponse = await getStorageById(id);
-        if (!response) {
-          throw new Error("No se recibió respuesta del servidor");
+  function useOneStorageQuery(storageId: string) {
+    return useQuery({
+      queryKey: ["storage", storageId],
+      queryFn: async () => {
+        try {
+          const response: ListDetailedStorageResponse = await getStorageById(storageId);
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
         }
-        if ('error' in response) {
-          throw new Error(response.error);
-        }
-        if ('data' in response) {
-          return response.data;
-        }
-      } catch (error) {
-        if (error instanceof Error) return { error: error.message };
-        return { error: "Error desconocido" };
-      }
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
+      },
+      staleTime: 1000 * 60 * 5,
+    });
+  }
 
   // Mutación para crear almacén
   const createMutation = useMutation<BaseApiResponse<Storage>, Error, CreateStorageDto>({
@@ -239,7 +236,7 @@ export const useStorages = () => {
     activeStoragesQuery,
     detailedStoragesQuery,
     storages: storagesQuery.data,
-    oneStorageQuery,
+    useOneStorageQuery,
     createMutation,
     updateMutation,
     deleteMutation,

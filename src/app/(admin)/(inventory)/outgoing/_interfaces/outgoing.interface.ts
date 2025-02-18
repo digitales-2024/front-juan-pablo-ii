@@ -101,7 +101,19 @@ export const createOutgoingSchema = z.object({
   isTransference: z.coerce.boolean().optional(),
   referenceId: z.string().optional(),
   movement: movementArrayOutgoingSchema,
-});
+}).refine(
+  (data) => {
+    // Exigir que referenceId sea obligatorio si isTransference está activo
+    if (data.isTransference && !data.referenceId) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "Debes proporcionar un almacén de destino",
+    path: ["referenceId"], // Indica el campo que mostrará el error
+  }
+);
 
 export const updateOutgoingSchema = z.object({
   name: z.string().optional(),

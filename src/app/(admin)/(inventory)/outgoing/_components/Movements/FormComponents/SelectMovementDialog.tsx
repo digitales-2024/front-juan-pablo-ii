@@ -37,7 +37,7 @@ import { useProductsStockByStorage, useUpdateProductStockByStorage } from "@/app
 
 const CREATE_PRODUCT_MESSAGES = {
   button: "Añadir producto(s)",
-  title: "Seleccionar almacén y productos en stock",
+  title: "Seleccionar almacén de origen y productos en stock",
   description:
     "Selecciona un alamacen y luego uno o varios productos en stock para añadir a la lista de movimientos.",
   success: "Productos guardados exitosamente",

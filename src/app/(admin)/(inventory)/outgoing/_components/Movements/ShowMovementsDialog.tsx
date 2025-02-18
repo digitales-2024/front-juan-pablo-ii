@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TableProperties } from "lucide-react";
+import { ArrowBigUpDash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,8 +27,8 @@ import { OutgoingMovement } from "../../_interfaces/outgoing.interface";
 export function ShowMovementsDialog({data, incomingName}: {data: OutgoingMovement[], incomingName: string}) {
     const SHOW_MOVEMENTS_MESSAGES = {
         button: "Mostrar Movimientos",
-        title: "Movimientos de la entrada",
-        description: `Aquí puedes ver los movimientos de la entrada "${incomingName}".`,
+        title: "Movimientos de la salida",
+        description: `Aquí puedes ver los movimientos de la salida "${incomingName}".`,
         cancel: "Cerrar",
     } as const;
   const [open, setOpen] = useState(false);
@@ -55,12 +55,12 @@ export function ShowMovementsDialog({data, incomingName}: {data: OutgoingMovemen
   const TriggerButton = () => (
     <Button
       onClick={() => setOpen(true)}
-      variant="outline"
+      variant="ghost"
       size="sm"
       aria-label="Open menu"
-      className="flex p-2 data-[state=open]:bg-muted text-sm"
+      className="flex p-2 data-[state=open]:bg-muted text-sm bg-primary/10 hover:scale-105 hover:transition-all"
     >
-      <TableProperties className="text-primary size-7"/>
+      <ArrowBigUpDash className="text-primary !size-6"/>
       {SHOW_MOVEMENTS_MESSAGES.button}
     </Button>
   );
