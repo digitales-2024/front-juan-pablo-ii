@@ -5,15 +5,15 @@ import {
 import {
   getPatientById,
   getMedicalHistoryById,
-  getUpdateHistoryById,
+  //getUpdateHistoryById,
   updateMedicalHistory,
-} from "../_actions/updateHistory";
+} from "../_actions/updateHistory.actions";
 //import { toast } from "sonner";
 import {
   Patient,
   MedicalHistory,
   UpdateMedicalHistoryDto,
-  UpdateHistory,
+  //UpdateHistory,
 } from "../_interfaces/updateHistory.interface";
 import { useBranches } from "../../../branches/_hooks/useBranches"; // Importa la función useBranches
 import { useServices } from "../../../services/_hooks/useServices"; // Importa la función useBranches
@@ -94,7 +94,7 @@ export const useUpdateHistory = () => {
     });
 
   // Query para obtener una Actualización de historia específica
-  const useUpdateHistoryById = (id: string) =>
+/*   const useUpdateHistoryById = (id: string) =>
     useQuery<UpdateHistory, Error>({
       queryKey: ["medical-history", id],
       queryFn: async () => {
@@ -108,7 +108,7 @@ export const useUpdateHistory = () => {
         return response;
       },
       enabled: !!id,
-    });
+    }); */
 
   // Nueva función personalizada para obtener las branches
   const useBranchesData = () => {
@@ -145,7 +145,7 @@ export const useUpdateHistory = () => {
     // Queries
     usePatientById, //
     useMedicalHistoryById,
-    useUpdateHistoryById,
+    //useUpdateHistoryById,
     useBranchesData, // Añade la nueva función personalizada del retorno de la función
     useServicesData, // Añade la nueva función personalizada al retorno
     useStaffData, // Añade la nueva función personalizada al retorno

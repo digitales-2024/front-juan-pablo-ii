@@ -25,7 +25,7 @@ export default function UpdateHistorySheet() {
   const { data: medicalHistoryData, isLoading: isLoadingHistory } =
     useMedicalHistoryById(historyId as string);
 
-  //console.log("historia medica de paciente en el componente page ", medicalHistoryData);
+  console.log("historia medica de paciente en el componente page ", medicalHistoryData);
 
   // Segunda consulta: Obtener paciente solo cuando tengamos medicalHistoryData
   const { data: patientData, isLoading: isLoadingPatient } = usePatientById(

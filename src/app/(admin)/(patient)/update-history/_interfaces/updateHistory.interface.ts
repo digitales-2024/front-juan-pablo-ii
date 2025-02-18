@@ -7,6 +7,28 @@ export type UpdatePatientDto = components["schemas"]["UpdatePatientDto"];
 export type DeletePatientDto = components["schemas"]["DeletePatientDto"];
 /* tipado para la historia medica */
 export type MedicalHistory = components["schemas"]["MedicalHistory"];
+export type MedicalHistoryPrototype = components["schemas"]["MedicalHistory"];
+export type UpdateHistoryResponsePrototype = components["schemas"]["UpdateHistoryResponse"];
+export type UpdateHistoryDataPrototype = components["schemas"]["UpdateHistoryData"]
+export type UpdateHistoryImagePrototype = components["schemas"]["UpdateHistoryImage"]
+export type UpdateHistoryImage = {
+    id: string;
+    url: string;
+}
+export type UpdateHistoryData = {
+    branch: string;
+    service: string;
+    staff: string;
+    images?: UpdateHistoryImage[];
+}
+export type UpdateHistoryResponse = {
+    id: string;
+    patientId: string;
+    medicalHistory: Record<string, never>;
+    description: string;
+    isActive: boolean;
+    updates?: UpdateHistoryData[];
+}
 export type CreateMedicalHistoryDto = components["schemas"]["CreateMedicalHistoryDto"];
 
 //inicio de retipado
@@ -15,12 +37,29 @@ export type UpdateMedicalHistoryDtoPrototype = components["schemas"]["UpdateMedi
 export type UpdateMedicalHistoryDto = Omit<UpdateMedicalHistoryDtoPrototype, 
 'medicalHistory'> & { medicalHistory: Record<string, string> };
 //fin
-
 export type DeleteMedicalHistoryDto = components["schemas"]["DeleteMedicalHistoryDto"];
+
 /* tipado para el actualizacion  de la historia  */
 export type UpdateHistory = components["schemas"]["UpdateHistory"];
+
+
+//tipado para crear y actualizar la historia medica con la imagen
+
 export type CreateUpdateHistoryDto = components["schemas"]["CreateUpdateHistoryDto"];
+export interface CreateUpdateHistoryFormData {
+  data: CreateUpdateHistoryDto;
+  image?: File | null;
+}
+
 export type UpdateUpdateHistoryDto = components["schemas"]["UpdateUpdateHistoryDto"];
+
+export interface UpdateUpdateHistoryFormData {
+    data: UpdateUpdateHistoryDto;
+    image?: File | null;
+  }
+//fin
+
+
 export type DeleteUpdateHistoryDto = components["schemas"]["DeleteUpdateHistoryDto"];
 /* tipado para la receta medica */
 export type Prescription = components["schemas"]["Prescription"];

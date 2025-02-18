@@ -5989,6 +5989,24 @@ export interface components {
         DeleteMedicalHistoryDto: {
             ids: string[];
         };
+        UpdateHistoryImage: {
+            id: string;
+            url: string;
+        };
+        UpdateHistoryData: {
+            branch: string;
+            service: string;
+            staff: string;
+            images?: components["schemas"]["UpdateHistoryImage"][];
+        };
+        UpdateHistoryResponse: {
+            id: string;
+            patientId: string;
+            medicalHistory: Record<string, never>;
+            description: string;
+            isActive: boolean;
+            updates?: components["schemas"]["UpdateHistoryData"][];
+        };
     };
     responses: never;
     parameters: never;
@@ -14938,7 +14956,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MedicalHistory"];
+                    "application/json": components["schemas"]["UpdateHistoryResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
