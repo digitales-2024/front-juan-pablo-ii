@@ -116,7 +116,8 @@ export async function createPatient(
     // Procesar los datos del paciente
     Object.entries(formData.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        serverFormData.append(key, String(value));
+        serverFormData.append(key, typeof value === "object" ? JSON.stringify(value) : String(value));
+        
       } else {
         serverFormData.append(key, ""); // Asegurarse de que los campos vacíos se envíen como cadenas vacías
       }
@@ -169,8 +170,9 @@ export async function updatePatient(
         if (typeof value === "object" && !(value instanceof File)) {
           serverFormData.append(key, JSON.stringify(value));
         } else {
-          serverFormData.append(key, String(value));
+          serverFormData.append(key, typeof value === "object" ? JSON.stringify(value) : String(value));
         }
+        
       }
     });
 
@@ -183,10 +185,14 @@ export async function updatePatient(
     }
 
     // Añadir el nuevo archivo de imagen o undefined si es null
-    if (formData.image !== null) {
+  /*   if (formData.image !== null) {
       serverFormData.append("image", formData.image);
     } else {
       serverFormData.append("image", undefined);
+    } */
+
+    if (formData.image instanceof File) {
+      serverFormData.append("image", formData.image);
     }
 
     // Añadir el id al FormData
