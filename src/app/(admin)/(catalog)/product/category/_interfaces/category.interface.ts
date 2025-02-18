@@ -18,12 +18,12 @@ export interface CategoryTableItem extends Category {
 // Schema de validación para crear/actualizar sucursal
 export const createCategorySchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
-  description: z.string().min(1, "La descripción es requerida").optional(),
+  description: z.string().optional(),
 }) satisfies z.ZodType<CreateCategoryDto>;
 
 export const updateCategorySchema = z.object({
-  name: z.string().min(1, "El nombre es requerido").optional(),
-  description: z.string().min(1, "La descripción es requerida").optional(),
+  name: z.string().optional(),
+  description: z.string().optional(),
 }) satisfies z.ZodType<UpdateCategoryDto>;
 
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;

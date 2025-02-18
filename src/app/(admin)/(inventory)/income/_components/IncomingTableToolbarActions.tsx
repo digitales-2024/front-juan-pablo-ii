@@ -21,7 +21,7 @@ export function IncomingTableToolbarActions({
   //   return rowValue.toString().toLowerCase().includes(filterValue.toLowerCase());
   // };
   const { activeBranchesQuery:responseBranches } = useBranches();
-  const { activeStoragesQuery:responseStorages } = useStorages()
+  const { activeStoragesQuery:responseStorages } = useStorages();
   if (responseBranches.isLoading && responseStorages.isLoading) {
       return <LoadingDialogForm />;
     } else {

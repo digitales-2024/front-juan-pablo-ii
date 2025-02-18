@@ -14,6 +14,8 @@ import {
   CreateEventDto,
   UpdateEventDto,
   DeleteEventsDto,
+  EventStatus,
+  EventType,
 } from "../_interfaces/event.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { useStaff } from "../../staff/_hooks/useStaff";
@@ -65,39 +67,69 @@ export const useEvents = (filters?: EventFilterParams) => {
   const createMutation = useMutation<BaseApiResponse<Event>, Error, CreateEventDto>({
     mutationFn: (data) => createEvent(data),
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldSchedules) => {
-        const selectedStaff = staff?.find(member => member.id === variables.staffId);
-        const newEvent = {
-          ...res.data,
-          staff: selectedStaff ? {
-            name: selectedStaff.name,
-            lastName: selectedStaff.lastName
-          } : undefined,
-          // Asegurar todas las propiedades requeridas de Event
-          branch: res.data.branch ? {
-            name: res.data.branch.name,
-          } : undefined
-        } as Event; // Aserción de tipo explícita
+      // 1. Actualización optimista
+      queryClient.setQueryData<Event[]>(
+        ["events", normalizedFilters],
+        (oldEvents = []) => {
+          const selectedStaff = staff?.find(member => member.id === variables.staffId);
 
-        if (!oldSchedules) return [newEvent];
-        return [...oldSchedules, newEvent];
+          const newEvent = {
+            ...res.data,
+            staff: selectedStaff ? {
+              name: selectedStaff.name,
+              lastName: selectedStaff.lastName
+            } : undefined,
+            branch: variables.branchId ? {
+              name: "Sucursal"
+            } : undefined
+          } as Event;
+
+          return [...oldEvents, newEvent];
+        }
+      );
+
+      // 2. Invalidar queries relacionadas
+      queryClient.invalidateQueries({
+        queryKey: ['events'],
+        exact: false
       });
+
       toast.success(res.message);
     },
-    onError: (error) => toast.error(error.message)
+    onError: (error) => {
+      // Revertir la actualización optimista en caso de error
+      queryClient.invalidateQueries({
+        queryKey: ['events'],
+        exact: false
+      });
+      toast.error(error.message);
+    }
   });
 
   // Mutación para actualizar evento
   const updateMutation = useMutation<BaseApiResponse<Event>, Error, UpdateEventVariables>({
     mutationFn: ({ id, data }) => updateEvent(id, data),
-    onSuccess: (res) => {
+    onSuccess: (res, variables) => {
+      // Actualización optimista mejorada
       queryClient.setQueryData<Event[]>(
-        ["events", normalizedFilters], // Usar la misma estructura de clave
+        ["events", normalizedFilters],
         (oldEvents = []) => oldEvents.map(event =>
-          event.id === res.data.id ? { ...event, ...res.data } : event
+          event.id === variables.id ? {
+            ...event,
+            ...variables.data,
+            type: variables.data.type as EventType,
+            status: variables.data.status as EventStatus,
+            start: new Date(variables.data.start!),
+            end: new Date(variables.data.end!)
+          } : event
         )
       );
-      toast.success("Evento actualizado exitosamente");
+
+      // Invalidar queries para sincronizar con el servidor
+      queryClient.invalidateQueries({
+        queryKey: ['events'],
+        exact: false
+      });
     },
     onError: (error) => handleAuthError(error, "actualizar el evento")
   });

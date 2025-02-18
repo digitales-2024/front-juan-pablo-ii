@@ -24,94 +24,74 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import {
-  UpdateIncomeInput,
-  updateIncomeSchema,
-  DetailedIncoming,
-} from "../_interfaces/income.interface";
+  updateOutgoingSchema,
+  UpdateOutgoingInput,
+  DetailedOutgoing,
+} from "../_interfaces/outgoing.interface";
 import { CalendarIcon, PencilIcon, RefreshCcw } from "lucide-react";
-import { useIncoming } from "../_hooks/useIncoming";
+import { useOutgoing } from "../_hooks/useOutgoing";
 import { AutoComplete } from "@/components/ui/autocomplete";
+import { useTypeProducts } from "@/app/(admin)/(catalog)/product/product-types/_hooks/useType";
 import LoadingDialogForm from "./LoadingDialogForm";
 import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
 import { Textarea } from "@/components/ui/textarea";
 import { Option } from "@/types/statics/forms";
-import { UPDATEFORMSTATICS as FORMSTATICS} from "../_statics/forms";
+import { UPDATEFORMSTATICS as FORMSTATICS } from "../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import { METADATA } from "../_statics/metadata";
+import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
-import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 
-interface UpdateIncomeSheetProps {
-  incoming: DetailedIncoming;
+interface UpdateOutgoingSheetProps {
+  outgoing: DetailedOutgoing;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   showTrigger?: boolean;
 }
 
-export function UpdateIncomingSheet({
-  incoming,
+export function UpdateOutgoingSheet({
+  outgoing,
   open: controlledOpen,
   onOpenChange,
   showTrigger = true,
-}: UpdateIncomeSheetProps) {
+}: UpdateOutgoingSheetProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const { updateMutation } = useIncoming();
+  const { updateMutation } = useOutgoing();
 
   const STATEPROP_OPTIONS = useMemo(() => {
-      return [
-        {
-          label: "En Proceso",
-          value: false,
-        },
-        {
-          label: "Concretado",
-          value: true,
-        },
-      ];
-    }, []);
+    return [
+      {
+        label: "En Proceso",
+        value: false,
+      },
+      {
+        label: "Concretado",
+        value: true,
+      },
+    ];
+  }, []);
 
   // Use controlled state if props are provided, otherwise use internal state
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
-  // const { oneProductQuery } = useProducts();
-  // if (oneProductQuery.isLoading) {
-  //   return <LoadingDialogForm />;
-  // } else{
-  //   if (oneProductQuery.isError) {
-  //     return (<GeneralErrorMessage error={oneProductQuery.error} reset={oneProductQuery.refetch} />);
-  //   }
-  //   if (!oneProductQuery.data) {
-  //     return <GeneralErrorMessage error={new Error("No se encontró el producto")} reset={oneProductQuery.refetch} />;
-  //   }
-  // }
-
-  // export const updateIncomeSchema = z.object({
-  //   name: z.string().optional(),
-  //   description: z.string().optional(),
-  //   storageId: z.string().optional(),
-  //   date: z.coerce.string().optional(),
-  //   state: z.coerce.boolean().optional(),
-  //   referenceId: z.string().optional(),
-  // }) satisfies z.ZodType<UpdateIncomingDto>;
-
-  const form = useForm<UpdateIncomeInput>({
-    resolver: zodResolver(updateIncomeSchema),
+  const form = useForm<UpdateOutgoingInput>({
+    resolver: zodResolver(updateOutgoingSchema),
     defaultValues: {
-      name: incoming.name ?? FORMSTATICS.name.defaultValue,
-      storageId: incoming.storageId ?? FORMSTATICS.storageId.defaultValue,
-      date: incoming.date ?? FORMSTATICS.date.defaultValue,
-      state: incoming.state ?? FORMSTATICS.state.defaultValue,
-      description: incoming.description ?? FORMSTATICS.description.defaultValue,
-      referenceId: incoming.referenceId ?? FORMSTATICS.referenceId.defaultValue,
-      //movement: incoming.movement ?? FORMSTATICS.movement.defaultValue,
+      name: outgoing.name ?? FORMSTATICS.name.defaultValue,
+      storageId: outgoing.storageId ?? FORMSTATICS.storageId.defaultValue,
+      date: outgoing.date ?? FORMSTATICS.date.defaultValue,
+      state: outgoing.state ?? FORMSTATICS.state.defaultValue,
+      description: outgoing.description ?? FORMSTATICS.description.defaultValue,
+      referenceId: outgoing.referenceId ?? FORMSTATICS.referenceId.defaultValue,
     },
   });
+
   const {
     control,
     register,
@@ -119,13 +99,13 @@ export function UpdateIncomingSheet({
     //formState: { errors },
   } = form
 
-  const onSubmit = async (data: UpdateIncomeInput) => {
+  const onSubmit = async (data: UpdateOutgoingInput) => {
     if (updateMutation.isPending) return;
 
     try {
       await updateMutation.mutateAsync(
         {
-          id: incoming.id,
+          id: outgoing.id,
           data,
         },
         {
@@ -134,7 +114,10 @@ export function UpdateIncomingSheet({
             form.reset();
           },
           onError: (error) => {
-            console.error(`Error al actualizar ${METADATA.entityName.toLowerCase()}:`, error);
+            console.error(
+              `Error al actualizar ${METADATA.entityName.toLowerCase()}:`,
+              error
+            );
             if (error.message.includes("No autorizado")) {
               setTimeout(() => {
                 form.reset();
@@ -150,7 +133,8 @@ export function UpdateIncomingSheet({
   };
 
   const { activeStoragesQuery: responseStorages } = useStorages();
-  if (responseStorages.isLoading) {
+  const responseTypeProducts = useTypeProducts();
+  if (responseStorages.isLoading && responseTypeProducts.activeIsLoading) {
     return <LoadingDialogForm />;
   } else {
     if (responseStorages.isError) {
@@ -169,35 +153,12 @@ export function UpdateIncomingSheet({
         />
       );
     }
-    // if (responseTypeProducts.activeIsError) {
-    //   return responseTypeProducts.activeError ? (
-    //     <GeneralErrorMessage
-    //       error={responseTypeProducts.activeError}
-    //       reset={responseTypeProducts.activeRefetch}
-    //     />
-    //   ) : null;
-    // }
-    // if (!responseTypeProducts.activeData) {
-    //   return (
-    //     <GeneralErrorMessage
-    //       error={new Error("No se encontraron subcategorías")}
-    //       reset={responseTypeProducts.activeRefetch}
-    //     />
-    //   );
-    // }
   }
 
   const storageOptions: Option[] = responseStorages.data.map((category) => ({
     label: category.name,
     value: category.id,
   }));
-
-  // const typeProductOptions: Option[] = responseTypeProducts.activeData.map(
-  //   (typeProduct) => ({
-  //     label: typeProduct.name,
-  //     value: typeProduct.id,
-  //   })
-  // );
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
@@ -210,9 +171,12 @@ export function UpdateIncomingSheet({
       )}
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Actualizar {METADATA.entityName.toLowerCase()}</SheetTitle>
+          <SheetTitle>
+            Actualizar {METADATA.entityName.toLowerCase()}
+          </SheetTitle>
           <SheetDescription>
-            Actualiza la información de este(a) {METADATA.entityName.toLowerCase()} y guarda los cambios
+            Actualiza la información de este(a){" "}
+            {METADATA.entityName.toLowerCase()} y guarda los cambios
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">

@@ -2132,6 +2132,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/outgoing/storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los ingresos con detalles de almacen */
+        get: operations["OutgoingController_findAllWithStorage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/outgoing/detailed": {
         parameters: {
             query?: never;
@@ -2295,6 +2312,40 @@ export interface paths {
         };
         /** Obtener stock por almacén y producto */
         get: operations["StockController_getStockByStorageProduct"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/availableProducts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los productos en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStock"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/availableProduct/{productId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStockById"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3824,6 +3875,11 @@ export interface components {
              */
             lastName: string;
             /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
+            /**
              * @description Número de DNI del personal médico
              * @example 40506070
              */
@@ -3892,6 +3948,8 @@ export interface components {
                  */
                 name?: string;
             };
+            /** @description Número de Colegiatura Médica (CMP) */
+            cmp: string;
         };
         UpdateStaffDto: {
             /**
@@ -3914,6 +3972,11 @@ export interface components {
              * @example Rodríguez
              */
             lastName?: string;
+            /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
             /**
              * @description Número de DNI del personal médico
              * @example 40506070
@@ -4776,8 +4839,31 @@ export interface components {
             referenceId: string;
             isActive: boolean;
         };
-        OutgoingStorage: {
+        OutgoingBranch: {
+            id: string;
             name: string;
+        };
+        OutgoingStorageType: {
+            id: string;
+            name: string;
+            branch?: components["schemas"]["OutgoingBranch"];
+        };
+        OutgoingStorage: {
+            id: string;
+            name: string;
+            TypeStorage: components["schemas"]["OutgoingStorageType"];
+        };
+        OutgoingWithStorage: {
+            id: string;
+            name: string;
+            description: string;
+            storageId: string;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            referenceId: string;
+            isActive: boolean;
+            Storage: components["schemas"]["OutgoingStorage"];
         };
         OutgoingProduct: {
             id: string;
@@ -4914,6 +5000,23 @@ export interface components {
             staff: string;
             description: string;
             stock: components["schemas"]["ProductStockResponse"][];
+        };
+        StockStorage: {
+            id: string;
+            name: string;
+        };
+        StockProduct: {
+            stock: number;
+            isActive: boolean;
+            Storage: components["schemas"]["StockStorage"];
+        };
+        ProductStock: {
+            id: string;
+            name: string;
+            precio: number;
+            codigoProducto: string;
+            unidadMedida: string;
+            Stock: components["schemas"]["StockProduct"][];
         };
         ProductSaleItemDto: {
             /**
@@ -5073,6 +5176,11 @@ export interface components {
             metadata?: Record<string, never>;
         };
         Event: Record<string, never>;
+        /**
+         * @description Estado de evento
+         * @enum {string}
+         */
+        EventStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
         CreateEventDto: {
             /**
              * @description Título del evento
@@ -5090,6 +5198,8 @@ export interface components {
              * @enum {string}
              */
             type: "TURNO" | "CITA" | "OTRO";
+            /** @example PENDING */
+            status: components["schemas"]["EventStatus"];
             /**
              * Format: date-time
              * @description Fecha y hora de inicio del evento
@@ -5140,6 +5250,8 @@ export interface components {
              * @enum {string}
              */
             type?: "TURNO" | "CITA" | "OTRO";
+            /** @example PENDING */
+            status?: components["schemas"]["EventStatus"];
             /**
              * Format: date-time
              * @description Fecha y hora de inicio del evento
@@ -12290,6 +12402,40 @@ export interface operations {
             };
         };
     };
+    OutgoingController_findAllWithStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los ingresos con detalles de almacen */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutgoingWithStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OutgoingController_findAllWithRelations: {
         parameters: {
             query?: never;
@@ -12653,6 +12799,49 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StockByStorage"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Productos en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStockById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
                 };
             };
         };

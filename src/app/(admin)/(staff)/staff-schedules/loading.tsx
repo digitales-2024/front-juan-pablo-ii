@@ -6,7 +6,7 @@ export default function LoadingBranches() {
     <>
       <div className="mb-2 flex items-center justify-between space-y-2">
         <PageHeader
-          title="Sucursales"
+          title="Turnos"
           description="Administra los turnos de tu personal"
         />
       </div>

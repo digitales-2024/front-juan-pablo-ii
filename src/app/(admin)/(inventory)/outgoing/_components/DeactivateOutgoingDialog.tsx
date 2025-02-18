@@ -23,31 +23,31 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Product } from "../_interfaces/outgoing.interface";
+import { Outgoing } from "../_interfaces/outgoing.interface";
 import { RefreshCcw, Trash } from "lucide-react";
-import { useProducts } from "../_hooks/useProduct";
+import { useOutgoing } from "../_hooks/useOutgoing";
 import { toast } from "sonner";
 import { ComponentPropsWithoutRef } from "react";
 import { METADATA } from "../_statics/metadata";
 
-interface DeactivateProductDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
-  product?: Product;
-  products?: Product[];
+interface DeactivateOutgoingDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+  outgoing?: Outgoing;
+  outcomes?: Outgoing[];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export function DeactivateProductDialog({
-  product,
-  products,
+export function DeactivateOutgoingDialog({
+  outgoing,
+  outcomes,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeactivateProductDialogProps) {
+}: DeactivateOutgoingDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { deleteMutation: { isPending, mutateAsync } } = useProducts();
+  const { deleteMutation: { isPending, mutateAsync } } = useOutgoing();
 
-  const items = products ?? (product ? [product] : []);
+  const items = outcomes ?? (outgoing ? [outgoing] : []);
 
   async function onDelete() {
     const ids = items.map((item) => item.id);

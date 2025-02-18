@@ -1,15 +1,27 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { Product, DetailedProduct, CreateProductDto, UpdateProductDto, DeleteProductDto } from "../_interfaces/outgoing.interface";
+import { 
+  Outgoing,
+  DetailedOutgoing,
+  DeleteOutgoingDto,
+  CreateOutgoingDto,
+  UpdateOutgoingDto,
+ } from "../_interfaces/outgoing.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";
 
-export type ProductResponse = BaseApiResponse<Product> | { error: string };
-export type DetailedProductResponse = BaseApiResponse<DetailedProduct> | { error: string };
-export type ListProductResponse = Product[] | { error: string };
-export type ListDetailedProductResponse = DetailedProduct[] | { error: string };
+export type OutgoingResponse = BaseApiResponse<Outgoing> | { error: string };
+export type DetailedOutgoingResponse = BaseApiResponse<DetailedOutgoing> | { error: string };
+export type ListOutgoingResponse = Outgoing[] | { error: string };
+export type ListDetailedOutgoingResponse = DetailedOutgoing[] | { error: string };
+export type ListUpdatedDetailedOutgoingResponse = BaseApiResponse<DetailedOutgoing[]> | { error: string };
+
+// export type ProductResponse = BaseApiResponse<Product> | { error: string };
+// export type DetailedProductResponse = BaseApiResponse<DetailedProduct> | { error: string };
+// export type ListProductResponse = Product[] | { error: string };
+// export type ListDetailedProductResponse = DetailedProduct[] | { error: string };
 
 const GetProductSchema = z.object({});
 
@@ -21,15 +33,38 @@ const GetProductSchema = z.object({});
  * @returns Un objeto con una propiedad `data` que contiene un array de objetos `Product`,
  *          o un objeto con una propiedad `error` que contiene un mensaje de error.
  */
-const getProductsHandler = async () => {
+const getOutgoingHandler = async () => {
   try {
-    const [products, error] = await http.get<ListProductResponse>("/product");
+    const [outcomes, error] = await http.get<ListOutgoingResponse>("/outgoing");
     if (error) {
       return {
         error:
           typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : "Error al obtener los productos",
+            : "Error al obtener las salidas",
+      };
+    }
+    if (!Array.isArray(outcomes)) {
+      return { error: "Respuesta inválida del servidor" };
+    }
+    return { data: outcomes };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
+
+export const getOutcomes = await createSafeAction(GetProductSchema, getOutgoingHandler);
+
+const getDetailedOutgoingHandler = async () => {
+  try {
+    const [products, error] = await http.get<ListDetailedOutgoingResponse>("/outgoing/detailed");
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener las salidas detalladas",
       };
     }
     if (!Array.isArray(products)) {
@@ -42,43 +77,20 @@ const getProductsHandler = async () => {
   }
 };
 
-export const getProducts = await createSafeAction(GetProductSchema, getProductsHandler);
+export const getDetailedOutcomes = await createSafeAction(GetProductSchema, getDetailedOutgoingHandler);
 
-const getDetailedProductsHandler = async () => {
+export async function getOutgoingById (id: string) : Promise<OutgoingResponse> {
   try {
-    const [products, error] = await http.get<ListDetailedProductResponse>("/product/detailed");
+    const [outgoing, error] = await http.get<OutgoingResponse>(`/outgoing/${id}`);
     if (error) {
       return {
         error:
           typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : "Error al obtener los productos detallados",
+            : "Error al obtener la salida",
       };
     }
-    if (!Array.isArray(products)) {
-      return { error: "Respuesta inválida del servidor" };
-    }
-    return { data: products };
-  } catch (error) {
-    if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido" };
-  }
-};
-
-export const getDetailedProducts = await createSafeAction(GetProductSchema, getDetailedProductsHandler);
-
-export async function getProductById (id: string) : Promise<ProductResponse> {
-  try {
-    const [product, error] = await http.get<ProductResponse>(`/product/${id}`);
-    if (error) {
-      return {
-        error:
-          typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "Error al obtener el producto",
-      };
-    }
-    return product;
+    return outgoing;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido" };
@@ -94,11 +106,11 @@ export async function getProductById (id: string) : Promise<ProductResponse> {
  * @returns Un objeto con una propiedad `data` que contiene el producto creado,
  *          o un objeto con una propiedad `error` que contiene un mensaje de error.
  */
-export async function createProduct(
-  data: CreateProductDto
-): Promise<ProductResponse> {
+export async function createOutgoing(
+  data: CreateOutgoingDto
+): Promise<DetailedOutgoingResponse> {
     try {
-        const [responseData, error] = await http.post<ProductResponse>("/product", data);
+        const [responseData, error] = await http.post<DetailedOutgoingResponse>("/outgoing/create/outgoingStorage", data);
 
         if (error) {
             return { error: error.message };
@@ -119,12 +131,12 @@ export async function createProduct(
  * @returns Un objeto con una propiedad `data` que contiene el producto actualizado,
  *          o un objeto con una propiedad `error` que contiene un mensaje de error.
  */
-export async function updateProduct(
+export async function updateOutgoing(
   id: string,
-  data: UpdateProductDto
-): Promise<ProductResponse> {
+  data: UpdateOutgoingDto
+): Promise<DetailedOutgoingResponse> {
   try {
-    const [responseData, error] = await http.patch<ProductResponse>(`/product/${id}`, data);
+    const [responseData, error] = await http.patch<DetailedOutgoingResponse>(`/outgoing/${id}`, data);
 
     if (error) {
       return { error: error.message };
@@ -144,9 +156,9 @@ export async function updateProduct(
  * @returns Un objeto con una propiedad `data` que contiene la respuesta del servidor,
  *          o un objeto con una propiedad `error` que contiene un mensaje de error.
  */
-export async function deleteProduct(data: DeleteProductDto): Promise<ProductResponse> {
+export async function deleteOutgoing(data: DeleteOutgoingDto): Promise<ListUpdatedDetailedOutgoingResponse> {
   try {
-    const [response, error] = await http.delete<BaseApiResponse>("/product/remove/all", data);
+    const [response, error] = await http.delete<BaseApiResponse>("/outgoing/remove/all", data);
 
     if (error) {
       if (error.statusCode === 401) {
@@ -169,9 +181,9 @@ export async function deleteProduct(data: DeleteProductDto): Promise<ProductResp
  * @returns Un objeto con una propiedad `data` que contiene la respuesta del servidor,
  *          o un objeto con una propiedad `error` que contiene un mensaje de error.
  */
-export async function reactivateProduct(data: DeleteProductDto): Promise<ProductResponse> {
+export async function reactivateOutgoing(data: DeleteOutgoingDto): Promise<ListUpdatedDetailedOutgoingResponse> {
   try {
-    const [response, error] = await http.patch<BaseApiResponse>("/product/reactivate/all", data);
+    const [response, error] = await http.patch<BaseApiResponse>("/outgoing/reactivate/all", data);
 
     if (error) {
       if (error.statusCode === 401) {
