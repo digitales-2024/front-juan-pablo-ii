@@ -26,6 +26,7 @@ interface PatientBasicInfoProps {
 }
 
 export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
+  //console .log("paciente en el componente de datos basicos de historia ", paciente);
   return (
     <div className="bg-gray-50/50">
       <div className="container mx-auto py-8">
