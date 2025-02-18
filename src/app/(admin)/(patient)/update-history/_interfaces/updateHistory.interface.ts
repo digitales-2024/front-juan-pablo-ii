@@ -8,7 +8,14 @@ export type DeletePatientDto = components["schemas"]["DeletePatientDto"];
 /* tipado para la historia medica */
 export type MedicalHistory = components["schemas"]["MedicalHistory"];
 export type CreateMedicalHistoryDto = components["schemas"]["CreateMedicalHistoryDto"];
-export type UpdateMedicalHistoryDto = components["schemas"]["UpdateMedicalHistoryDto"];
+
+//inicio de retipado
+export type UpdateMedicalHistoryDtoPrototype = components["schemas"]["UpdateMedicalHistoryDto"];
+//retipamos el campo medicalHistory para que sea un objeto
+export type UpdateMedicalHistoryDto = Omit<UpdateMedicalHistoryDtoPrototype, 
+'medicalHistory'> & { medicalHistory: Record<string, string> };
+//fin
+
 export type DeleteMedicalHistoryDto = components["schemas"]["DeleteMedicalHistoryDto"];
 /* tipado para el actualizacion  de la historia  */
 export type UpdateHistory = components["schemas"]["UpdateHistory"];
