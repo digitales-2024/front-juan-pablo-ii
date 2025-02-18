@@ -26,6 +26,7 @@ export const createStaffScheduleSchema = z.object({
   staffId: z.string().min(1, "El personal es requerido"),
   branchId: z.string().min(1, "La sucursal es requerida"),
   title: z.string().min(1, "El título es requerido"),
+  color: z.string().min(1, "El color es requerido"),
   startTime: timeSchema,
   endTime: timeSchema,
   daysOfWeek: z.array(z.enum([
@@ -47,6 +48,7 @@ export const updateStaffScheduleSchema = z.object({
   staffId: z.string().min(1, "El personal es requerido").optional(),
   branchId: z.string().min(1, "La sucursal es requerida").optional(),
   title: z.string().min(1, "El título es requerido"),
+  color: z.string().min(1, "El color es requerido"),
   startTime: timeSchema.optional(),
   endTime: timeSchema.optional(),
   daysOfWeek: z.array(z.enum([

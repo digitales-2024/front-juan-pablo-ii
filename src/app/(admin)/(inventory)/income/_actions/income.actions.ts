@@ -95,7 +95,7 @@ export async function createIncoming(
   data: CreateIncomingDto
 ): Promise<DetailedIncomingResponse> {
   try {
-    const [responseData, error] = await http.post<DetailedIncomingResponse>("/incoming", data);
+    const [responseData, error] = await http.post<DetailedIncomingResponse>("/incoming/create/incomingStorage", data);
 
     if (error) {
       return { error: error.message };

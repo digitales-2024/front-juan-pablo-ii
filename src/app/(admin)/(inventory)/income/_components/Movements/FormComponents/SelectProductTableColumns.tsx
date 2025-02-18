@@ -18,6 +18,7 @@ import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHe
 // import { ReactivateIncomingDialog } from "./ReactivateIncomingDialog";
 import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Check } from "lucide-react";
 // import Image from "next/image";
 export const columns: ColumnDef<ActiveProduct>[] = [
 //   {
@@ -30,9 +31,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     {
         id: "select",
         size: 10,
-        header: ({ table }) => (
-        <div className="px-2">
-            <Checkbox
+        header: ({ column }) => (
+        <div className="px-2 flex space-x-2 items-center">
+            {/* <Checkbox
             checked={
                 table.getIsAllPageRowsSelected() ||
                 (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -41,8 +42,10 @@ export const columns: ColumnDef<ActiveProduct>[] = [
                 table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
-            className="translate-y-0.5"
-            />
+            className="translate-y-0.5 animate-pulse size-6"
+            /> */}
+            <DataTableColumnHeader column={column} title="Selec." />
+            <Check className="size-4"></Check>
         </div>
         ),
         cell: ({ row }) => (
@@ -51,7 +54,7 @@ export const columns: ColumnDef<ActiveProduct>[] = [
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Select row"
-            className="translate-y-0.5"
+            className="translate-y-0.5 animate-pulse size-6"
             />
         </div>
         ),
@@ -61,7 +64,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "name",
-        id: "Producto",
+        meta: {
+            title: "Nombre"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Producto" />
         ),
@@ -71,7 +76,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "codigoProducto",
-        id: "Código",
+        meta: {
+            title: "Código"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Código" />
         ),
@@ -81,7 +88,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "unidadMedida",
-        id: "Unidad de medida",
+        meta: {
+            title: "Unidad de Medida"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Unidad de Medida" />
         ),
@@ -91,7 +100,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "precio",
-        id: "Precio",
+        meta: {
+            title: "Precio"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Precio" />
         ),
@@ -103,7 +114,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "categoria.name",
-        id: "Categoría",
+        meta:{
+            title: "Categoría"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Categoría" />
         ),
@@ -116,7 +129,9 @@ export const columns: ColumnDef<ActiveProduct>[] = [
     },
     {
         accessorKey: "tipoProducto.name",
-        id: "Subcategoría",
+        meta:{
+            title: "Subcategoría"
+        },
         header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Subcategoría" />
         ),

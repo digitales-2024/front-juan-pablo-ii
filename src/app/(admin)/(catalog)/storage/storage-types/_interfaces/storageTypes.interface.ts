@@ -26,8 +26,8 @@ export interface TypeStorageTableItem extends DetailedTypeStorage {
 export const createTypeStorageSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   description: z.string().optional(),
-  branchId: z.string().optional(),
-  staffId: z.string().optional(),
+  branchId: z.string(), //Its required event though in the back is optional
+  staffId: z.string(), //Its required event though in the back is optional
 }) satisfies z.ZodType<CreateTypeStorageDto>;
 
 // type UpdateTypeStorageDto = {

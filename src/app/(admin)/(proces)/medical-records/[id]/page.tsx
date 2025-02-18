@@ -88,6 +88,7 @@ const SERVICIOS_OPCIONES = [
 const PERSONAL_MEDICO = "Alex Flores Valdez DR001";
 const SUCURSAL = "Sede Central";
 
+
 export default function PacienteHistoria() {
   const { id } = useParams();
   const [paciente, _setPaciente] = useState<Paciente>({

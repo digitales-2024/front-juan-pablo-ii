@@ -1525,6 +1525,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Busqueda rápida de producto por su nombre */
+        get: operations["ProductController_searchProductByIndexedName"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/{id}": {
         parameters: {
             query?: never;
@@ -2115,6 +2132,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/outgoing/storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los ingresos con detalles de almacen */
+        get: operations["OutgoingController_findAllWithStorage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/outgoing/detailed": {
         parameters: {
             query?: never;
@@ -2286,6 +2320,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stock/availableProducts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los productos en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStock"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/availableProduct/{productId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStockById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/billing/product-sale": {
         parameters: {
             query?: never;
@@ -2423,6 +2491,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/events/by-schedule/{scheduleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos por ID de horario de staff */
+        get: operations["EventController_findEventsByStaffSchedule"];
+        put?: never;
+        post?: never;
+        /** Eliminar todos los eventos por ID de horario de staff */
+        delete: operations["EventController_deleteEventsByStaffSchedule"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/staff-schedule": {
         parameters: {
             query?: never;
@@ -2435,6 +2521,23 @@ export interface paths {
         put?: never;
         /** Crear nuevo horario */
         post: operations["StaffScheduleController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/filter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Filtrar horarios por criterios (sucursal, personal y días) */
+        get: operations["StaffScheduleController_findByCriteria"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3772,6 +3875,11 @@ export interface components {
              */
             lastName: string;
             /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
+            /**
              * @description Número de DNI del personal médico
              * @example 40506070
              */
@@ -3840,6 +3948,8 @@ export interface components {
                  */
                 name?: string;
             };
+            /** @description Número de Colegiatura Médica (CMP) */
+            cmp: string;
         };
         UpdateStaffDto: {
             /**
@@ -3862,6 +3972,11 @@ export interface components {
              * @example Rodríguez
              */
             lastName?: string;
+            /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
             /**
              * @description Número de DNI del personal médico
              * @example 40506070
@@ -4066,7 +4181,8 @@ export interface components {
             id: string;
             name: string;
             precio: number;
-
+            codigoProducto: string;
+            unidadMedida: string;
             categoriaId: string;
             tipoProductoId: string;
             categoria: components["schemas"]["ActiveProductCategory"];
@@ -4093,6 +4209,10 @@ export interface components {
             createdAt: string;
             categoria: Record<string, never>;
             tipoProducto: Record<string, never>;
+        };
+        ProductSearch: {
+            id: string;
+            name: string;
         };
         UpdateProductDto: {
             /**
@@ -4507,8 +4627,19 @@ export interface components {
             referenceId: string;
             isActive: boolean;
         };
-        IncomingStorage: {
+        IncomingBranch: {
+            id: string;
             name: string;
+        };
+        IncomingStorageType: {
+            id: string;
+            name: string;
+            branch?: components["schemas"]["IncomingBranch"];
+        };
+        IncomingStorage: {
+            id: string;
+            name: string;
+            TypeStorage: components["schemas"]["IncomingStorageType"];
         };
         IncomingWithStorage: {
             id: string;
@@ -4543,7 +4674,7 @@ export interface components {
             date: string;
             state: boolean;
             isActive: boolean;
-
+            Producto: components["schemas"]["IncomingProduct"];
         };
         DetailedIncoming: {
             id: string;
@@ -4708,8 +4839,31 @@ export interface components {
             referenceId: string;
             isActive: boolean;
         };
-        OutgoingStorage: {
+        OutgoingBranch: {
+            id: string;
             name: string;
+        };
+        OutgoingStorageType: {
+            id: string;
+            name: string;
+            branch?: components["schemas"]["OutgoingBranch"];
+        };
+        OutgoingStorage: {
+            id: string;
+            name: string;
+            TypeStorage: components["schemas"]["OutgoingStorageType"];
+        };
+        OutgoingWithStorage: {
+            id: string;
+            name: string;
+            description: string;
+            storageId: string;
+            /** Format: date-time */
+            date: string;
+            state: boolean;
+            referenceId: string;
+            isActive: boolean;
+            Storage: components["schemas"]["OutgoingStorage"];
         };
         OutgoingProduct: {
             id: string;
@@ -4732,8 +4886,7 @@ export interface components {
             date: string;
             state: boolean;
             isActive: boolean;
-
-
+            Producto: components["schemas"]["OutgoingProduct"];
         };
         DetailedOutgoing: {
             id: string;
@@ -4847,6 +5000,23 @@ export interface components {
             staff: string;
             description: string;
             stock: components["schemas"]["ProductStockResponse"][];
+        };
+        StockStorage: {
+            id: string;
+            name: string;
+        };
+        StockProduct: {
+            stock: number;
+            isActive: boolean;
+            Storage: components["schemas"]["StockStorage"];
+        };
+        ProductStock: {
+            id: string;
+            name: string;
+            precio: number;
+            codigoProducto: string;
+            unidadMedida: string;
+            Stock: components["schemas"]["StockProduct"][];
         };
         ProductSaleItemDto: {
             /**
@@ -5006,6 +5176,11 @@ export interface components {
             metadata?: Record<string, never>;
         };
         Event: Record<string, never>;
+        /**
+         * @description Estado de evento
+         * @enum {string}
+         */
+        EventStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
         CreateEventDto: {
             /**
              * @description Título del evento
@@ -5013,11 +5188,18 @@ export interface components {
              */
             title: string;
             /**
+             * @description Color del evento
+             * @example sky
+             */
+            color: string;
+            /**
              * @description Tipo de evento
              * @example TURNO
              * @enum {string}
              */
             type: "TURNO" | "CITA" | "OTRO";
+            /** @example PENDING */
+            status: components["schemas"]["EventStatus"];
             /**
              * Format: date-time
              * @description Fecha y hora de inicio del evento
@@ -5058,11 +5240,18 @@ export interface components {
              */
             title?: string;
             /**
+             * @description Color del evento
+             * @example sky
+             */
+            color?: string;
+            /**
              * @description Tipo de evento
              * @example TURNO
              * @enum {string}
              */
             type?: "TURNO" | "CITA" | "OTRO";
+            /** @example PENDING */
+            status?: components["schemas"]["EventStatus"];
             /**
              * Format: date-time
              * @description Fecha y hora de inicio del evento
@@ -5136,6 +5325,11 @@ export interface components {
              */
             title: string;
             /**
+             * @description Color del horario
+             * @example sky
+             */
+            color: string;
+            /**
              * @description Hora de inicio en formato HH:mm
              * @example 08:00
              */
@@ -5169,6 +5363,8 @@ export interface components {
             branchId: string;
             /** @default Turno */
             title: string;
+            /** @default sky */
+            color: string;
             /** @description Hora de inicio en formato HH:mm */
             startTime: string;
             /** @description Hora de fin en formato HH:mm */
@@ -5208,6 +5404,11 @@ export interface components {
              * @example branch-5678
              */
             branchId?: string;
+            /**
+             * @description Color del horario
+             * @example sky
+             */
+            color?: string;
             /**
              * @description Hora de inicio en formato HH:mm
              * @example 08:00
@@ -5719,15 +5920,13 @@ export interface components {
              */
             medicalLeave: boolean;
             /**
-             * Format: date-time
              * @description Fecha de inicio del descanso médico
-             * @example 2024-03-16T10:00:00Z
+             * @example 2024-03-16
              */
             medicalLeaveStartDate?: string;
             /**
-             * Format: date-time
              * @description Fecha de fin del descanso médico
-             * @example 2024-03-19T10:00:00Z
+             * @example 2024-03-19
              */
             medicalLeaveEndDate?: string;
             /**
@@ -5753,9 +5952,7 @@ export interface components {
             updateHistory: Record<string, never>;
             description: string;
             medicalLeave: boolean;
-            /** Format: date-time */
             medicalLeaveStartDate: string;
-            /** Format: date-time */
             medicalLeaveEndDate: string;
             medicalLeaveDays: number;
             leaveDescription: string;
@@ -5819,15 +6016,13 @@ export interface components {
              */
             medicalLeave: boolean;
             /**
-             * Format: date-time
              * @description Fecha de inicio del descanso médico
-             * @example 2024-03-16T10:00:00Z
+             * @example 2024-03-16
              */
             medicalLeaveStartDate?: string;
             /**
-             * Format: date-time
              * @description Fecha de fin del descanso médico
-             * @example 2024-03-19T10:00:00Z
+             * @example 2024-03-19
              */
             medicalLeaveEndDate?: string;
             /**
@@ -5863,7 +6058,7 @@ export interface components {
              *       ]
              *     }
              */
-            medicalHistory: Record<string, never>;
+            medicalHistory?: Record<string, never>;
             /**
              * @description Additional description
              * @example First patient consultation
@@ -10395,6 +10590,52 @@ export interface operations {
             };
         };
     };
+    ProductController_searchProductByIndexedName: {
+        parameters: {
+            query: {
+                name: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                id: unknown;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductSearch"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Producto no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ProductController_findOne: {
         parameters: {
             query?: never;
@@ -12161,6 +12402,40 @@ export interface operations {
             };
         };
     };
+    OutgoingController_findAllWithStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los ingresos con detalles de almacen */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutgoingWithStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OutgoingController_findAllWithRelations: {
         parameters: {
             query?: never;
@@ -12528,6 +12803,49 @@ export interface operations {
             };
         };
     };
+    StockController_getProductsStock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Productos en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStockById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
     BillingController_createProductSaleOrder: {
         parameters: {
             query?: never;
@@ -12615,6 +12933,8 @@ export interface operations {
                 branchId?: string;
                 /** @description Estado del evento (PENDING, CONFIRMED, CANCELLED, COMPLETED, NO_SHOW) */
                 status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+                /** @description ID del horario del personal para filtrar eventos */
+                staffScheduleId?: string;
             };
             header?: never;
             path?: never;
@@ -12913,6 +13233,87 @@ export interface operations {
             };
         };
     };
+    EventController_findEventsByStaffSchedule: {
+        parameters: {
+            query?: {
+                /** @description Número de página */
+                page?: number;
+                /** @description Límite de resultados por página (máximo 50) */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                /** @description ID del horario del staff */
+                scheduleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Eventos encontrados para el horario */
+            200: {
+                headers: {
+                    /** @description Número total de registros disponibles */
+                    "X-Total-Count"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_deleteEventsByStaffSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del horario del staff */
+                scheduleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Eventos eliminados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     StaffScheduleController_findAll: {
         parameters: {
             query?: never;
@@ -12967,6 +13368,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StaffSchedule"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_findByCriteria: {
+        parameters: {
+            query?: {
+                /** @description ID de la sucursal para filtrar */
+                branchId?: string;
+                /** @description ID del personal para filtrar */
+                staffId?: string;
+                daysOfWeek?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Horarios encontrados */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */

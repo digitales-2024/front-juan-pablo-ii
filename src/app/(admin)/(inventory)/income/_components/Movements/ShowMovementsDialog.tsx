@@ -55,12 +55,12 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
   const TriggerButton = () => (
     <Button
       onClick={() => setOpen(true)}
-      variant="ghost"
+      variant="outline"
       size="sm"
       aria-label="Open menu"
-      className="flex p-2 data-[state=open]:bg-muted"
+      className="flex p-2 data-[state=open]:bg-muted text-sm"
     >
-      <TableProperties />
+      <TableProperties className="text-primary size-7"/>
       {SHOW_MOVEMENTS_MESSAGES.button}
     </Button>
   );

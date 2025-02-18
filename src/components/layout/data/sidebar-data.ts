@@ -98,15 +98,15 @@ export const sidebarData: SidebarData = {
               icon: UserRound,
             }, */
             {
-              title: "Historias Clinicas",
-              url: "/medical-records",
+              title: "Historial Médico",
+              url: "/history",
               icon: BookPlus,
             },
-            {
+/*             {
               title: "Recetas médicas",
               url: "/prescriptions",
               icon: FileHeart,
-            },
+            }, */
           ],
         },
         // {

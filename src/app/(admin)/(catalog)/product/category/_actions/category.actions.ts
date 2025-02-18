@@ -1,12 +1,17 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { Category, CreateCategoryDto, UpdateCategoryDto, DeleteCategoriesDto } from "../_interfaces/category.interface";
+import {
+  Category,
+  CreateCategoryDto,
+  UpdateCategoryDto,
+  DeleteCategoriesDto,
+} from "../_interfaces/category.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";
 
-export type CategoryResponse = BaseApiResponse<Category> | { error: string };//{} debe de ser un objeto
+export type CategoryResponse = BaseApiResponse<Category> | { error: string }; //{} debe de ser un objeto
 export type ListCategoryResponse = Category[] | { error: string };
 
 // type ApiResponse<T> = BaseApiResponse & {
@@ -23,7 +28,9 @@ const GetCategoriesSchema = z.object({});
  */
 const getCategoriesHandler = async () => {
   try {
-    const [categories, error] = await http.get<ListCategoryResponse>("/category");
+    const [categories, error] = await http.get<ListCategoryResponse>(
+      "/category"
+    );
     if (error) {
       return {
         error:
@@ -44,7 +51,9 @@ const getCategoriesHandler = async () => {
 
 const getActiveCategoriesHandler = async () => {
   try {
-    const [categories, error] = await http.get<ListCategoryResponse>("/category/active");
+    const [categories, error] = await http.get<ListCategoryResponse>(
+      "/category/active"
+    );
     if (error) {
       return {
         error:
@@ -61,10 +70,16 @@ const getActiveCategoriesHandler = async () => {
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido" };
   }
-}
+};
 
-export const getCategories = await createSafeAction(GetCategoriesSchema, getCategoriesHandler);
-export const getActiveCategories = await createSafeAction(GetCategoriesSchema, getActiveCategoriesHandler);
+export const getCategories = await createSafeAction(
+  GetCategoriesSchema,
+  getCategoriesHandler
+);
+export const getActiveCategories = await createSafeAction(
+  GetCategoriesSchema,
+  getActiveCategoriesHandler
+);
 
 /**
  * Crea una nueva categoría de productos en el catálogo.
@@ -76,18 +91,21 @@ export const getActiveCategories = await createSafeAction(GetCategoriesSchema, g
 export async function createCategory(
   data: CreateCategoryDto
 ): Promise<CategoryResponse> {
-    try {
-        const [responseData, error] = await http.post<CategoryResponse>("/category", data);
+  try {
+    const [responseData, error] = await http.post<CategoryResponse>(
+      "/category",
+      data
+    );
 
-        if (error) {
-            return { error: error.message };
-        }
-
-        return responseData;
-    } catch (error) {
-        if (error instanceof Error) return { error: error.message };
-        return { error: "Error desconocido" };
+    if (error) {
+      return { error: error.message };
     }
+
+    return responseData;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
 }
 
 /**
@@ -103,7 +121,10 @@ export async function updateCategory(
   data: UpdateCategoryDto
 ): Promise<CategoryResponse> {
   try {
-    const [responseData, error] = await http.patch<CategoryResponse>(`/category/${id}`, data);
+    const [responseData, error] = await http.patch<CategoryResponse>(
+      `/category/${id}`,
+      data
+    );
 
     if (error) {
       return { error: error.message };
@@ -123,9 +144,14 @@ export async function updateCategory(
  * @returns Un objeto con una propiedad `data` que contiene la respuesta del servidor,
  *          o un objeto con una propiedad `error` que contiene un mensaje de error.
  */
-export async function deleteCategory(data: DeleteCategoriesDto): Promise<CategoryResponse> {
+export async function deleteCategory(
+  data: DeleteCategoriesDto
+): Promise<CategoryResponse> {
   try {
-    const [response, error] = await http.delete<BaseApiResponse>("/category/remove/all",data);
+    const [response, error] = await http.delete<BaseApiResponse>(
+      "/category/remove/all",
+      data
+    );
 
     if (error) {
       if (error.statusCode === 401) {
@@ -141,7 +167,6 @@ export async function deleteCategory(data: DeleteCategoriesDto): Promise<Categor
   }
 }
 
-
 /**
  * Reactiva una o varias sucursales de productos en el catálogo.
  *
@@ -149,9 +174,14 @@ export async function deleteCategory(data: DeleteCategoriesDto): Promise<Categor
  * @returns Un objeto con una propiedad `data` que contiene la respuesta del servidor,
  *          o un objeto con una propiedad `error` que contiene un mensaje de error.
  */
-export async function reactivateCategory(data: DeleteCategoriesDto): Promise<CategoryResponse> {
+export async function reactivateCategory(
+  data: DeleteCategoriesDto
+): Promise<CategoryResponse> {
   try {
-    const [response, error] = await http.patch<BaseApiResponse>("/category/reactivate/all", data);
+    const [response, error] = await http.patch<BaseApiResponse>(
+      "/category/reactivate/all",
+      data
+    );
 
     if (error) {
       if (error.statusCode === 401) {

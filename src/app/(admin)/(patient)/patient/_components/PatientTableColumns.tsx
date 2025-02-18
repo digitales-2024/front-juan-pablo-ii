@@ -14,17 +14,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ReactivatePatientDialog } from "./ReactivatePatientDialog";
 import { DeactivatePatientDialog } from "./DeactivatePatientDialog";
+import { es } from "date-fns/locale";
+import { format } from "date-fns";
 // import Image from "next/image";
 
 export const columns: ColumnDef<Patient>[] = [
   {
     id: "select",
     size: 10,
+    meta: {
+      title: "Seleccionar"
+    },
     header: ({ table }) => (
       <div className="px-2">
         <Checkbox
@@ -72,8 +77,18 @@ export const columns: ColumnDef<Patient>[] = [
   },
   {
     accessorKey: "birthDate",
+    meta: {
+      title: "Fecha de nacimiento"
+    },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha de Nacimiento" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.birthDate
+          ? format(new Date(row.original.birthDate), "PP", { locale: es })
+          : "Fecha no disponible"}
+      </span>
     ),
   },
   {

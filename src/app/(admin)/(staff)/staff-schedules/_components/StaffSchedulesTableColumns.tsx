@@ -21,7 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { PencilIcon, BanIcon, ActivityIcon } from "lucide-react";
 import { UpdateStaffScheduleSheet } from "./UpdateStaffScheduleSheet";
-import { DeactivateStaffScheduleDialog } from "./DeactivateStaffScheduleDialog";
+import { DeleteStaffScheduleDialog } from "./DeactivateStaffScheduleDialog";
 import { ReactivateStaffScheduleDialog } from "./ReactivateStaffScheduleDialog";
 
 export const columns: ColumnDef<StaffSchedule>[] = [
@@ -178,7 +178,7 @@ export const columns: ColumnDef<StaffSchedule>[] = [
             showTrigger={false}
           />
           {isActive ? (
-            <DeactivateStaffScheduleDialog
+            <DeleteStaffScheduleDialog
               schedule={schedule}
               open={showDeactivateDialog}
               onOpenChange={setShowDeactivateDialog}
@@ -218,7 +218,7 @@ export const columns: ColumnDef<StaffSchedule>[] = [
                   onSelect={() => setShowDeactivateDialog(true)}
                   className="text-destructive"
                 >
-                  Desactivar
+                  Eliminar
                   <DropdownMenuShortcut>
                     <BanIcon className="size-4" aria-hidden="true" />
                   </DropdownMenuShortcut>
