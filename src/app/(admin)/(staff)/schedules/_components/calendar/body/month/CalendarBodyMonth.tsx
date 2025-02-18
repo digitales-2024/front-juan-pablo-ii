@@ -88,12 +88,12 @@ export default function CalendarBodyMonth() {
 								className={cn(
 									"relative flex flex-col border-b border-r p-2 aspect-square cursor-pointer",
 									!isCurrentMonth &&
-										"bg-muted/50 hidden md:flex"
+									"bg-muted/50 hidden md:flex"
 								)}
 								onClick={(e) => {
 									e.stopPropagation();
 									setDate(day);
-									setNewEventDialogOpen(true);
+									// setNewEventDialogOpen(true);
 								}}
 							>
 								<div
