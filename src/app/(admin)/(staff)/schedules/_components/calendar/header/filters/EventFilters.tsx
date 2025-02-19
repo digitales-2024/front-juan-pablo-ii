@@ -30,11 +30,9 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
   const { branches } = useBranches();
   const { staff } = useStaff();
 
-  const [filters, setFilters] = useState<EventFilterParams>({
-    type: "TURNO",
-    status: "CONFIRMED",
-    startDate: undefined,
-    endDate: undefined
+  const [filter, setFilter] = useState<Omit<EventFilterParams, 'type' | 'status'>>({
+    startDate: format(currentDate, "yyyy-MM-01"),
+    endDate: format(endOfMonth(currentDate), "yyyy-MM-dd")
   });
 
   // Obtener datos de forma más robusta
@@ -42,16 +40,16 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
     filteredSchedulesQuery,
     allStaffSchedulesQuery
   } = useStaffSchedules({
-    staffId: filters.staffId,
-    branchId: filters.branchId
+    staffId: filter.staffId,
+    branchId: filter.branchId
   });
 
   // Combinar queries como en useEvents
   const staffScheduleOptions = useMemo(() => {
-    return (filters.staffId || filters.branchId)
+    return (filter.staffId || filter.branchId)
       ? filteredSchedulesQuery.data || []
       : allStaffSchedulesQuery.data || [];
-  }, [filteredSchedulesQuery.data, allStaffSchedulesQuery.data, filters.staffId, filters.branchId]);
+  }, [filteredSchedulesQuery.data, allStaffSchedulesQuery.data, filter.staffId, filter.branchId]);
 
   const staffOptions = (staff || queryClient.getQueryData<Staff[]>(["staff"]) || []).filter(s => s.isActive);
   const branchOptions = (branches || queryClient.getQueryData<Branch[]>(["branches"]) || []).filter(b => b.isActive);
@@ -60,31 +58,21 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
   // const hasStaffSchedules = staffScheduleOptions && staffScheduleOptions.length > 0;
 
   useEffect(() => {
-    const queryKey = getEventQueryKey(filters, currentDate);
+    const handler = setTimeout(() => {
+      onFilterChange({
+        ...filter,
+        type: 'TURNO' as const,
+        status: 'CONFIRMED' as const
+      } as EventFilterParams);
+    }, 300);
 
-    queryClient.invalidateQueries({
-      queryKey,
-      exact: true
-    });
+    return () => clearTimeout(handler);
+  }, [filter]);
 
-    console.log("🔀 Filtros sincronizados con query:", queryKey);
-    onFilterChange(filters);
-  }, [filters, queryClient, currentDate]);
-
-  useEffect(() => {
-    setFilters(prev => ({
+  const handleFilterChange = (key: keyof EventFilterParams, value: string) => {
+    setFilter(prev => ({
       ...prev,
-      staffScheduleId: undefined
-    }));
-  }, [filters.staffId]);
-
-  // Manejo de cambios similar a useEvents
-  const handleFilterChange = (key: keyof EventFilterParams, value: any) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value === "todos" ? undefined : value,
-      startDate: prev.startDate || format(currentDate, "yyyy-MM-01"),
-      endDate: prev.endDate || format(endOfMonth(currentDate), "yyyy-MM-dd")
+      [key]: value === 'todos' ? undefined : value
     }));
   };
 
@@ -127,11 +115,6 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
     );
   };
 
-  useEffect(() => {
-    console.log('🎛️ [EventFilters] Actualizando filtros:', filters);
-    onFilterChange(filters);
-  }, [filters]);
-
   return (
     <Card className="w-full bg-background shadow-md">
       <CardContent className="p-6">
@@ -140,7 +123,7 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
             <Label htmlFor="staffId" className="text-sm font-medium text-foreground">
               Personal
             </Label>
-            <Select value={filters.staffId || "todos"} onValueChange={(value) => handleFilterChange("staffId", value)}>
+            <Select value={filter.staffId || "todos"} onValueChange={(value) => handleFilterChange("staffId", value)}>
               <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
                 <SelectValue placeholder="Seleccione un personal" />
               </SelectTrigger>
@@ -153,7 +136,7 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
               Sucursal
             </Label>
             <Select
-              value={filters.branchId || "todos"}
+              value={filter.branchId || "todos"}
               onValueChange={(value) => handleFilterChange("branchId", value)}
             >
               <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
@@ -168,7 +151,7 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
               Horarios
             </Label>
             <Select
-              value={filters.staffScheduleId || "todos"}
+              value={filter.staffScheduleId || "todos"}
               onValueChange={(value) => handleFilterChange("staffScheduleId", value)}
             >
               <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">

@@ -20,6 +20,7 @@ import {
 import { BaseApiResponse } from '@/types/api/types';
 import { useStaff } from '../../staff/_hooks/useStaff';
 import { useMemo } from 'react';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
 
 interface UpdateEventVariables {
   id: string;
@@ -38,59 +39,29 @@ export interface EventFilterParams {
   disablePagination?: boolean;
 }
 
+// Eliminar getQueryKey y usar clave única
+const EVENT_QUERY_KEY = ['calendar-turns'] as const;
+
 export const useEvents = (filters?: EventFilterParams) => {
   const queryClient = useQueryClient();
   const { staff } = useStaff();
 
-  // Modificar la normalización de filtros
+  // En la normalización de filtros
   const normalizedFilters = useMemo(() => ({
     ...filters,
-    type: filters?.type ?? 'TURNO',
-    status: filters?.status ?? 'CONFIRMED',
-    startDate: filters?.startDate,
-    endDate: filters?.endDate,
+    type: 'TURNO' as const,
+    status: 'CONFIRMED' as const,
+    startDate: filters?.startDate || format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+    endDate: filters?.endDate || format(endOfMonth(new Date()), 'yyyy-MM-dd')
   }), [filters]);
 
   // Query para obtener eventos con filtros
   const eventsQuery = useQuery({
-    queryKey: [
-      'events',
-      {
-        type: normalizedFilters.type,
-        status: normalizedFilters.status,
-        staffId: normalizedFilters.staffId,
-        branchId: normalizedFilters.branchId,
-        staffScheduleId: normalizedFilters.staffScheduleId,
-        startDate: normalizedFilters.startDate,
-        endDate: normalizedFilters.endDate,
-      }
-    ],
+    queryKey: EVENT_QUERY_KEY,
     queryFn: async () => {
-      console.log('🚀 [useEvents] Query iniciada con:', {
-        filters: JSON.stringify(normalizedFilters, null, 2),
-        queryKey: JSON.stringify([
-          'events',
-          {
-            type: normalizedFilters.type,
-            status: normalizedFilters.status,
-            staffId: normalizedFilters.staffId,
-            branchId: normalizedFilters.branchId,
-            staffScheduleId: normalizedFilters.staffScheduleId,
-            startDate: normalizedFilters.startDate,
-            endDate: normalizedFilters.endDate,
-          }
-        ], null, 2)
-      });
-
-      const { data, error } = await getEventsByFilter(normalizedFilters);
-
-      console.log('✅ [useEvents] Respuesta recibida:', {
-        success: !error,
-        count: data?.length || 0,
-        filtersUsed: JSON.stringify(normalizedFilters, null, 2)
-      });
-
-      return data;
+      console.log('🚀 [useEvents] Query iniciada con:', normalizedFilters);
+      const res = await getEventsByFilter(normalizedFilters);
+      return res.data || [];
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
     gcTime: 1000 * 60 * 30, // Limpiar cache después de 30 minutos
@@ -105,58 +76,33 @@ export const useEvents = (filters?: EventFilterParams) => {
   >({
     mutationFn: (data) => createEvent(data),
     onSuccess: (res, variables) => {
-      // 1. Actualización optimista
-      queryClient.setQueryData<Event[]>(
-        [
-          'events',
-          {
-            staffId: normalizedFilters.staffId,
-            branchId: normalizedFilters.branchId,
-            staffScheduleId: normalizedFilters.staffScheduleId,
-            startDate: normalizedFilters.startDate,
-            endDate: normalizedFilters.endDate,
-            type: normalizedFilters.type,
-            status: normalizedFilters.status,
-          },
-        ],
-        (oldEvents = []) => {
-          const selectedStaff = staff?.find(
-            (member) => member.id === variables.staffId
-          );
+      queryClient.setQueryData<Event[]>(EVENT_QUERY_KEY, (oldEvents = []) => {
+        const selectedStaff = staff?.find(
+          (member) => member.id === variables.staffId
+        );
 
-          const newEvent = {
-            ...res.data,
-            staff: selectedStaff
-              ? {
-                name: selectedStaff.name,
-                lastName: selectedStaff.lastName,
-              }
-              : undefined,
-            branch: variables.branchId
-              ? {
-                name: 'Sucursal',
-              }
-              : undefined,
-          } as Event;
+        const newEvent = {
+          ...res.data,
+          staff: selectedStaff
+            ? {
+              name: selectedStaff.name,
+              lastName: selectedStaff.lastName,
+            }
+            : undefined,
+          branch: variables.branchId
+            ? {
+              name: 'Sucursal',
+            }
+            : undefined,
+        } as Event;
 
-          return [...oldEvents, newEvent];
-        }
-      );
-
-      // 2. Invalidar queries relacionadas
-      void queryClient.invalidateQueries({
-        queryKey: ['events'],
-        exact: false,
+        return [...oldEvents, newEvent];
       });
-
+      void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
       toast.success(res.message);
     },
     onError: (error) => {
-      // Revertir la actualización optimista en caso de error
-      void queryClient.invalidateQueries({
-        queryKey: ['events'],
-        exact: false,
-      });
+      void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
       toast.error(error.message);
     },
   });
@@ -169,40 +115,21 @@ export const useEvents = (filters?: EventFilterParams) => {
   >({
     mutationFn: ({ id, data }) => updateEvent(id, data),
     onSuccess: (res, variables) => {
-      // Actualización optimista mejorada
-      queryClient.setQueryData<Event[]>(
-        [
-          'events',
-          {
-            staffId: normalizedFilters.staffId,
-            branchId: normalizedFilters.branchId,
-            staffScheduleId: normalizedFilters.staffScheduleId,
-            startDate: normalizedFilters.startDate,
-            endDate: normalizedFilters.endDate,
-            type: normalizedFilters.type,
-            status: normalizedFilters.status,
-          },
-        ],
-        (oldEvents = []) =>
-          oldEvents.map((event) =>
-            event.id === variables.id
-              ? {
-                ...event,
-                ...variables.data,
-                type: variables.data.type as EventType,
-                status: variables.data.status as EventStatus,
-                start: new Date(variables.data.start!),
-                end: new Date(variables.data.end!),
-              }
-              : event
-          )
+      queryClient.setQueryData<Event[]>(EVENT_QUERY_KEY, (oldEvents = []) =>
+        oldEvents.map((event) =>
+          event.id === variables.id
+            ? {
+              ...event,
+              ...variables.data,
+              type: variables.data.type as EventType,
+              status: variables.data.status as EventStatus,
+              start: new Date(variables.data.start!),
+              end: new Date(variables.data.end!),
+            }
+            : event
+        )
       );
-
-      // Invalidar queries para sincronizar con el servidor
-      void queryClient.invalidateQueries({
-        queryKey: ['events'],
-        exact: false,
-      });
+      void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
     },
     onError: (error) => handleAuthError(error, 'actualizar el evento'),
   });
@@ -215,26 +142,10 @@ export const useEvents = (filters?: EventFilterParams) => {
   >({
     mutationFn: deleteEvents,
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(
-        [
-          'events',
-          {
-            staffId: normalizedFilters.staffId,
-            branchId: normalizedFilters.branchId,
-            staffScheduleId: normalizedFilters.staffScheduleId,
-            startDate: normalizedFilters.startDate,
-            endDate: normalizedFilters.endDate,
-            type: normalizedFilters.type,
-            status: normalizedFilters.status,
-          },
-        ],
-        (oldEvents = []) =>
-          oldEvents.filter((event) => !variables.ids.includes(event.id))
+      queryClient.setQueryData<Event[]>(EVENT_QUERY_KEY, (oldEvents = []) =>
+        oldEvents.filter((event) => !variables.ids.includes(event.id))
       );
-      void queryClient.invalidateQueries({
-        queryKey: ['events'],
-        exact: false,
-      });
+      void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
       toast.success(
         variables.ids.length === 1
           ? 'Evento eliminado exitosamente'
@@ -242,10 +153,7 @@ export const useEvents = (filters?: EventFilterParams) => {
       );
     },
     onError: (error) => {
-      void queryClient.invalidateQueries({
-        queryKey: ['events'],
-        exact: false,
-      });
+      void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
       handleAuthError(error, 'eliminar los eventos');
     },
   });
@@ -258,25 +166,12 @@ export const useEvents = (filters?: EventFilterParams) => {
   >({
     mutationFn: reactivateEvents,
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(
-        [
-          'events',
-          {
-            staffId: normalizedFilters.staffId,
-            branchId: normalizedFilters.branchId,
-            staffScheduleId: normalizedFilters.staffScheduleId,
-            startDate: normalizedFilters.startDate,
-            endDate: normalizedFilters.endDate,
-            type: normalizedFilters.type,
-            status: normalizedFilters.status,
-          },
-        ],
-        (oldEvents = []) =>
-          oldEvents.map((event) =>
-            variables.ids.includes(event.id)
-              ? { ...event, isActive: true }
-              : event
-          )
+      queryClient.setQueryData<Event[]>(EVENT_QUERY_KEY, (oldEvents = []) =>
+        oldEvents.map((event) =>
+          variables.ids.includes(event.id)
+            ? { ...event, isActive: true }
+            : event
+        )
       );
       toast.success(
         variables.ids.length === 1
@@ -295,8 +190,7 @@ export const useEvents = (filters?: EventFilterParams) => {
   >({
     mutationFn: (id) => generateEvents(id),
     onSuccess: () => {
-      // Invalidar todas las queries de eventos
-      void queryClient.invalidateQueries({ queryKey: ['events'] });
+      void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
       toast.success('Eventos recurrentes generados exitosamente');
     },
     onError: (error) => handleAuthError(error, 'generar eventos recurrentes'),
@@ -310,21 +204,8 @@ export const useEvents = (filters?: EventFilterParams) => {
   >({
     mutationFn: deleteEventsByScheduleId,
     onSuccess: (res, scheduleId) => {
-      queryClient.setQueryData<Event[]>(
-        [
-          'events',
-          {
-            staffId: normalizedFilters.staffId,
-            branchId: normalizedFilters.branchId,
-            staffScheduleId: normalizedFilters.staffScheduleId,
-            startDate: normalizedFilters.startDate,
-            endDate: normalizedFilters.endDate,
-            type: normalizedFilters.type,
-            status: normalizedFilters.status,
-          },
-        ],
-        (oldEvents = []) =>
-          oldEvents.filter((event) => event.staffScheduleId !== scheduleId)
+      queryClient.setQueryData<Event[]>(EVENT_QUERY_KEY, (oldEvents = []) =>
+        oldEvents.filter((event) => event.staffScheduleId !== scheduleId)
       );
       toast.success('Eventos eliminados exitosamente');
     },

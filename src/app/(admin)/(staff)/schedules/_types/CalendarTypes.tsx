@@ -1,4 +1,6 @@
 import { EventFilterParams } from "../_hooks/useEvents";
+import { UseQueryResult } from "@tanstack/react-query";
+import { Event } from "../_interfaces/event.interface";
 
 export type CalendarProps = {
   events: CalendarEvent[];
@@ -11,6 +13,7 @@ export type CalendarProps = {
 };
 
 export interface CalendarContextType {
+  eventsQuery: UseQueryResult<Event[], Error>;
   currentMonth: number;
   events: CalendarEvent[];
   setEvents: (events: CalendarEvent[]) => void;
@@ -26,7 +29,6 @@ export interface CalendarContextType {
   selectedEvent: CalendarEvent | null;
   setSelectedEvent: (event: CalendarEvent | null) => void;
   filters: EventFilterParams;
-
 }
 
 export type ColorType =
