@@ -28,7 +28,6 @@ export type OutgoingStorageTypePrototype = components['schemas']['OutgoingStorag
 export type OutgoingStorageType = {
   id: string;
   name: string;
-  branch?: OutgoingBranch;
 }
 
 export type OutgoingStoragePrototype = components['schemas']['OutgoingStorage'];
@@ -36,6 +35,7 @@ export type OutgoingStorage = {
   id: string;
   name: string;
   TypeStorage: OutgoingStorageType;
+  branch?: OutgoingBranch;
 }
 
 export type OutgoingMovementPrototype = components['schemas']['OutgoingMovement'];
@@ -112,6 +112,17 @@ export const createOutgoingSchema = z.object({
   {
     message: "Debes proporcionar un almacén de destino",
     path: ["referenceId"], // Indica el campo que mostrará el error
+  }
+).refine(
+  (data) => {
+    if (data.isTransference && (data.referenceId === data.storageId)) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "El almacén de destino no puede ser el mismo que el de origen",
+    path: ["referenceId"],
   }
 );
 

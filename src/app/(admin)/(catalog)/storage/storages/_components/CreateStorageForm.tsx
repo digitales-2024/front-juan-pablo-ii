@@ -1,3 +1,4 @@
+
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
@@ -188,7 +189,7 @@ export function CreateStorageForm({
                       branchesOptions.length>0 ? <AutoComplete
                       options={branchesOptions}
                       placeholder={FORMSTATICS.branchId.placeholder}
-                      emptyMessage={FORMSTATICS.branchId.emptyMessage!}
+                      emptyMessage={FORMSTATICS.branchId.emptyMessage??''}
                       value={
                         branchesOptions.find(
                           (option) => option.value === field.value
@@ -227,7 +228,7 @@ export function CreateStorageForm({
                       staffOptions.length>0 ? <AutoComplete
                       options={staffOptions}
                       placeholder={FORMSTATICS.staffId.placeholder}
-                      emptyMessage={FORMSTATICS.staffId.emptyMessage!}
+                      emptyMessage={FORMSTATICS.staffId.emptyMessage??''}
                       value={
                         staffOptions.find(
                           (option) => option.value === field.value

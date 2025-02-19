@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedTypeStorage } from "../_interfaces/storageTypes.interface";
+import { TypeStorage } from "../_interfaces/storageTypes.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateTypeStorageDialog } from "./DeactivateStorageTypeDialog";
 // import Image from "next/image";
 
-export const columns: ColumnDef<DetailedTypeStorage>[] = [
+export const columns: ColumnDef<TypeStorage>[] = [
   {
     accessorKey: "select",
     size: 10,
@@ -69,30 +69,6 @@ export const columns: ColumnDef<DetailedTypeStorage>[] = [
     meta: { title: "Descripción" },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
-    ),
-  },
-  {
-    accessorKey: "branch",
-    meta: { title: "Sucursal" },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Sucursal" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.branch?.name ?? "Sin Sucursal asociada"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "staff",
-    meta: { title: "Personal" },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Personal" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.staff?.name ?? "Sin personal asociado"}
-      </span>
     ),
   },
   {

@@ -138,7 +138,7 @@ export const columns: ColumnDef<DetailedOutgoing>[] = [
     ),
   },
   {
-    accessorKey: "Storage.TypeStorage.branch.name",
+    accessorKey: "Storage.branch.name",
     meta: {
       title: "Sucursal",
     },
@@ -147,7 +147,7 @@ export const columns: ColumnDef<DetailedOutgoing>[] = [
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.Storage.TypeStorage.branch?.name ?? "Sin sucursal"}
+        {row.original.Storage.branch?.name ?? "Sin sucursal"}
       </span>
     ),
   },

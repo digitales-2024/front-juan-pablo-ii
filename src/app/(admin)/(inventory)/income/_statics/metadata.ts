@@ -11,6 +11,10 @@ export const METADATA:PageMetadata = {
 		{
 			dependencyName: "Almacenes",
 			dependencyUrl: "/storage/storages"
+		},
+		{
+			dependencyName: "Productos",
+			dependencyUrl: "/product/products"
 		}
 	]
 } as const;

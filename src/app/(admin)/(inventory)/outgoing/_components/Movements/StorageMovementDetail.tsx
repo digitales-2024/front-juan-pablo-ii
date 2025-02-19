@@ -50,13 +50,13 @@ export function StorageMovementDetail({storageId, ...rest}: StorageMovementDetai
                             <TableCell>{oneStorageQuery.data[0].name}</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="font-semibold">Ubicación</TableCell>
-                            <TableCell>{oneStorageQuery.data[0].location}</TableCell>
-                        </TableRow>
-                        <TableRow>
                             <TableCell className="font-semibold">Sucursal</TableCell>
                             <TableCell>{oneStorageQuery.data[0].branch.name}</TableCell>
                         </TableRow>
+                        { oneStorageQuery.data[0].location && <TableRow>
+                            <TableCell className="font-semibold">Ubicación</TableCell>
+                            <TableCell>{oneStorageQuery.data[0].location}</TableCell>
+                        </TableRow>}
                         {/* <TableRow>
                             <TableCell className="font-medium">Sucursal</TableCell>
                             <TableCell>{oneStorageQuery.data[0].Branch.name}</TableCell>

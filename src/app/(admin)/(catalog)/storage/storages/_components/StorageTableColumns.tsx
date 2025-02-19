@@ -84,6 +84,30 @@ export const columns: ColumnDef<DetailedStorage>[] = [
     ),
   },
   {
+    accessorKey: "branch.name",
+    meta: { title: "Sucursal" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Sucursal" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.branch?.name ?? "Sin Sucursal asociada"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "staff.name",
+    meta: { title: "Personal" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Personal" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.staff? `${row.original.staff.name} ${row.original.staff.lastName}` : "Sin personal asociado"}
+      </span>
+    ),
+  },
+  {
     accessorKey: "isActive",
     meta: { title: "Estado" },
     header: ({ column }) => (

@@ -57,7 +57,7 @@ export const FORMSTATICS: ComplexFormStatics<CreateOutgoingInput, MovementDto> =
         defaultValue: "",
         type: "text",
         placeholder: "Selecciona un almacén",
-        emptyMessage: "No se encontraron almacenes",
+        emptyMessage: "No se encontraron más almacenes. Cree más almacenes.",
         name: "referenceId",
     },
     movement: {

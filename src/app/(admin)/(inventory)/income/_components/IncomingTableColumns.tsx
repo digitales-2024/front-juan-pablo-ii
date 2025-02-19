@@ -158,7 +158,7 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.Storage.TypeStorage.branch?.name ?? "Sin sucursal"}
+        {row.original.Storage.branch?.name ?? "Sin sucursal"}
       </span>
     ),
   },

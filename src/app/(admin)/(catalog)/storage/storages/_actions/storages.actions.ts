@@ -42,7 +42,7 @@ const getStoragesHandler = async () => {
 
 const getActiveStoragesHandler = async () => {
   try {
-    const [storages, error] = await http.get<ListStorageResponse>("/storage/active");
+    const [storages, error] = await http.get<ListDetailedStorageResponse>("/storage/active");
     if (error) {
       return {
         error:

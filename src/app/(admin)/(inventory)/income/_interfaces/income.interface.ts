@@ -14,13 +14,13 @@ export type IncomingStorageTypePrototype= components['schemas']['IncomingStorage
 export type IncomingStorageType = {
   id: string;
   name: string;
-  branch?: IncomingBranch;
 }
 export type IncomingStoragePrototype = components['schemas']['IncomingStorage'];
 export type IncomingStorage = {
   id: string;
   name: string;
   TypeStorage: IncomingStorageType;
+  branch?: IncomingBranch;
 }
 
 export type IncomingMovementPrototype = components['schemas']['IncomingMovement'];

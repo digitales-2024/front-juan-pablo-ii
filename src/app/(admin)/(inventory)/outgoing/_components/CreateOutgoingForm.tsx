@@ -45,7 +45,6 @@ import { OutgoingProducStockForm } from "../../stock/_interfaces/stock.interface
 import { Switch } from "@/components/ui/switch";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "sonner";
 // import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem } from "@/components/ui/select";
 // import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -123,14 +122,14 @@ export function CreateOutgoingForm({
       );
     }
     if (!responseStorage.data) {
-      toast.error("No se pudo cargar la información de almacenes", {
-        action: {
-          label: "Recargar",
-          onClick: async () => {
-            await responseStorage.refetch();
-          },
-        },
-      });
+      // toast.error("No se pudo cargar la información de almacenes", {
+      //   action: {
+      //     label: "Recargar",
+      //     onClick: async () => {
+      //       await responseStorage.refetch();
+      //     },
+      //   },
+      // });
       return (
         <LoadingDialogForm/>
       );
@@ -144,14 +143,14 @@ export function CreateOutgoingForm({
       ) : null;
     }
     if (!reponseProducts.data) {
-      toast.error("No se pudo cargar la información de productos", {
-        action: {
-          label: "Recargar",
-          onClick: async () => {
-            await reponseProducts.refetch();
-          },
-        },
-      });
+      // toast.error("No se pudo cargar la información de productos", {
+      //   action: {
+      //     label: "Recargar",
+      //     onClick: async () => {
+      //       await reponseProducts.refetch();
+      //     },
+      //   },
+      // });
 
       return (
         <LoadingDialogForm/>
@@ -177,10 +176,12 @@ export function CreateOutgoingForm({
     );
   }
 
-  const storageOptions: Option[] = responseStorage.data.map((category) => ({
-    label: category.name,
-    value: category.id,
-  }));
+  const storageOptions: Option[] = responseStorage.data.map((storage) => {
+    return {
+      label: `${storage.name} - ${storage.branch.name}`,
+      value: storage.id,
+    }
+  });
 
   const handleRemoveProduct = (index: number) => {
     // this removes from the tanstack state management
@@ -590,7 +591,7 @@ export function CreateOutgoingForm({
                           )}
                         >
                           {field.value
-                            ? storageOptions.find(
+                            ? storageOptions.filter((option)=> option.value !== form.watch('storageId')).find(
                                 (option) => option.value === field.value
                               )?.label
                             : FORMSTATICS.referenceId.placeholder}
@@ -607,7 +608,7 @@ export function CreateOutgoingForm({
                         <CommandList>
                           <CommandEmpty>{FORMSTATICS.referenceId.emptyMessage}</CommandEmpty>
                           <CommandGroup>
-                            {storageOptions.map((option) => (
+                            {storageOptions.filter((option)=> option.value !== form.watch('storageId')).map((option) => (
                               <CommandItem
                                 value={option.label}
                                 key={option.value}
