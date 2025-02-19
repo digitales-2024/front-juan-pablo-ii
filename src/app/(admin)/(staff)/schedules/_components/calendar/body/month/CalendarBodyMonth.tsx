@@ -14,7 +14,11 @@ import { useCalendarContext } from '../../CalendarContext';
 import CalendarEvent from '../../CalendarEvent';
 
 export default function CalendarBodyMonth() {
-  const { date, events, setDate, setNewEventDialogOpen } = useCalendarContext();
+  const { date, events, setDate, setNewEventDialogOpen, filters } = useCalendarContext();
+
+  console.log('📅 [CalendarBodyMonth] Filtros actuales:', filters);
+  console.log('📅 [CalendarBodyMonth] Total de eventos:', events.length);
+  console.log('📅 [CalendarBodyMonth] Eventos ejemplo:', events.slice(0, 3));
 
   // Get the first day of the month
   const monthStart = startOfMonth(date);
@@ -58,11 +62,14 @@ export default function CalendarBodyMonth() {
             ease: 'easeInOut',
           }}>
           {calendarDays.map((day) => {
-            const dayEvents = events.filter((event) =>
-              isSameDay(new Date(event.start), day)
-            );
+            // console.log('📅 [CalendarBodyMonth] Eventos para', day.toISOString(), ':', dayEvents.length);
             const isToday = isSameDay(day, today);
             const isCurrentMonth = isSameMonth(day, date);
+
+            const dayEvents = events.filter(event =>
+              isSameDay(new Date(event.start), day) &&
+              (!filters?.staffScheduleId || event.staffScheduleId === filters?.staffScheduleId)
+            );
 
             return (
               <div

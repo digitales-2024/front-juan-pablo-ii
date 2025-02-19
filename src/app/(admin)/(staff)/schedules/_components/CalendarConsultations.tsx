@@ -5,6 +5,7 @@ import Calendar from './calendar/Calendar';
 import { useEvents, type EventFilterParams } from '../_hooks/useEvents';
 import { EventFilters } from './calendar/header/filters/EventFilters';
 import { useQueryClient } from '@tanstack/react-query';
+import CalendarProvider from './calendar/CalendarProvider';
 
 // Define el tipo de datos que entrega la API
 // interface ApiCalendarEvent {
@@ -47,71 +48,46 @@ export default function CalendarConsultations() {
     staffScheduleId: undefined,
   });
 
-  const queryClient = useQueryClient();
-
-  // Calcular fechas extendidas con buffer
-  const utcMonthStart = new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1 - 8)
-  )
-    .toISOString()
-    .split('T')[0];
-
-  const utcMonthEnd = new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0 + 8)
-  )
-    .toISOString()
-    .split('T')[0];
-
-  const {
-    eventsQuery: { data: events, isLoading, error },
-  } = useEvents({
-    ...appliedFilters,
-    startDate: utcMonthStart,
-    endDate: utcMonthEnd,
-  });
-
-  useEffect(() => {
-    console.log('🔄 Estado de carga de eventos:', {
-      isLoading,
-      error: error?.message,
-      eventsCount: events?.length,
-    });
-  }, [isLoading, error, events]);
-
-  useEffect(() => {
-    if (error) {
-      console.error('🚨 Error cargando eventos:', error);
-    }
-  }, [error]);
-
   const handleFilterChange = (newFilters: EventFilterParams) => {
-    setAppliedFilters((prev) => ({
+    setAppliedFilters(prev => ({
       ...prev,
       ...newFilters,
+      status: 'CONFIRMED'
     }));
   };
+  const queryClient = useQueryClient();
 
+  // Eliminar completamente la query de useEvents aquí
   return (
     <div>
-      <EventFilters onFilterChange={handleFilterChange} />
-      {isLoading && <div>Cargando eventos...</div>}
-      {error && <div>Error al cargar eventos: {error.message}</div>}
-      <Calendar
-        events={events ?? []}
-        setEvents={() => {
-          /* Lógica de actualización no implementada */
-        }}
+      <EventFilters
+        onFilterChange={handleFilterChange}
+        currentDate={date}
+      />
+      <CalendarProvider
+        setEvents={() => { }}
         mode={mode}
         setMode={setMode}
         date={date}
-        setDate={(newDate) => {
-          setDate(newDate);
-          void queryClient.invalidateQueries({
-            queryKey: ['events'],
-            exact: false,
-          });
-        }}
-      />
+        setDate={setDate}
+        calendarIconIsToday={true}
+        filters={appliedFilters}
+      >
+        <Calendar
+          events={[]} // Los eventos vendrán del provider
+          setEvents={() => { }}
+          mode={mode}
+          setMode={setMode}
+          date={date}
+          setDate={(newDate) => {
+            setDate(newDate);
+            queryClient.invalidateQueries({
+              queryKey: ['events'],
+              exact: false,
+            });
+          }}
+        />
+      </CalendarProvider>
     </div>
   );
 }

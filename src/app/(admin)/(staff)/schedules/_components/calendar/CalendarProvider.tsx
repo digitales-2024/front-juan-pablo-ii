@@ -1,11 +1,13 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { CalendarEvent, Mode } from '../../_types/CalendarTypes';
 import { CalendarContext } from './CalendarContext';
 import CalendarNewEventDialog from './dialog/CalendarNewEventDialog';
 import CalendarManageEventDialog from './dialog/CalendarManageEventDialog';
 import { useEvents } from '../../_hooks/useEvents';
 import { useQueryClient } from '@tanstack/react-query';
+import { EventFilterParams } from '../../_actions/event.actions';
+import { getEventQueryKey } from '../../_hooks/useEventQueryKey';
 
 export default function CalendarProvider({
   setEvents,
@@ -13,16 +15,17 @@ export default function CalendarProvider({
   setMode,
   calendarIconIsToday = true,
   children,
+  filters,
   date: parentDate,
   setDate: parentSetDate,
 }: {
-  events: CalendarEvent[];
   setEvents: (events: CalendarEvent[]) => void;
   mode: Mode;
   setMode: (mode: Mode) => void;
   date: Date;
   setDate: (date: Date) => void;
   calendarIconIsToday: boolean;
+  filters: EventFilterParams
   children: React.ReactNode;
 }) {
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
@@ -35,44 +38,64 @@ export default function CalendarProvider({
     Date.UTC(
       parentDate.getUTCFullYear(),
       parentDate.getUTCMonth(),
-      1 - 8 // 8 días antes del inicio del mes
+      1
     )
-  )
-    .toISOString()
-    .split('T')[0];
+  ).toISOString().split('T')[0];
 
   const utcMonthEnd = new Date(
     Date.UTC(
       parentDate.getUTCFullYear(),
       parentDate.getUTCMonth() + 1,
-      0 + 8 // 8 días después del final del mes
+      0
     )
-  )
-    .toISOString()
-    .split('T')[0];
-
-  const { events: filteredEvents } = useEvents({
-    startDate: utcMonthStart,
-    endDate: utcMonthEnd,
-    status: 'CONFIRMED',
-    type: 'TURNO',
-  });
+  ).toISOString().split('T')[0];
 
   const queryClient = useQueryClient();
 
+  // Asegurar valores por defecto en los filtros
+  const safeFilters = useMemo(() => ({
+    ...filters,  // Asegurar que se propaguen TODOS los filtros
+    type: filters?.type ?? 'TURNO',
+    status: filters?.status ?? 'CONFIRMED',
+    startDate: utcMonthStart,
+    endDate: utcMonthEnd
+  }), [filters, utcMonthStart, utcMonthEnd]);
+
   useEffect(() => {
-    console.log('[🔄] Mes actualizado:', parentDate.toISOString());
-    queryClient.removeQueries({ queryKey: ['events'] });
-  }, [parentDate, queryClient]);
+    const queryKey = getEventQueryKey(safeFilters, parentDate);
+    console.log('🔥 [CalendarProvider] Invalidando query específica:', queryKey);
+
+    queryClient.invalidateQueries({
+      queryKey,
+      exact: true,
+      refetchType: 'active'
+    });
+
+    // Forzar recarga inicial
+    queryClient.refetchQueries({ queryKey });
+  }, [safeFilters, parentDate]);
+
+  const { events: filteredEvents } = useEvents(safeFilters);
+
+  useEffect(() => {
+    // Actualizar los eventos en el contexto con los filtros aplicados
+    setEvents(filteredEvents || []);
+  }, [filteredEvents]); // Solo ejecutar cuando filteredEvents cambie
+
+  console.log('✅ [CalendarProvider] Eventos actualizados:', {
+    count: filteredEvents?.length || 0,
+    lastUpdated: new Date().toISOString()
+  });
+
+  useEffect(() => {
+    console.log('🔥 [CalendarProvider] Filtros seguros:', safeFilters);
+    console.log('🔥 [CalendarProvider] Eventos filtrados:', filteredEvents?.length);
+  }, [safeFilters, filteredEvents]);
 
   return (
     <CalendarContext.Provider
       value={{
-        events: (filteredEvents ?? []).map((event) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.end),
-        })),
+        events: useMemo(() => filteredEvents || [], [filteredEvents]), // Simplificar
         currentMonth: parentDate.getMonth(),
         setEvents,
         mode,
@@ -86,6 +109,7 @@ export default function CalendarProvider({
         setManageEventDialogOpen,
         selectedEvent,
         setSelectedEvent,
+        filters: safeFilters,
       }}>
       <CalendarNewEventDialog />
       <CalendarManageEventDialog />

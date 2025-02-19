@@ -10,41 +10,45 @@ import {
 } from "@/components/ui/select";
 import { useQueryClient } from "@tanstack/react-query";
 import { Branch } from "@/app/(admin)/branches/_interfaces/branch.interface";
-import { EventFilterParams } from "../../../../_hooks/useEvents";
 import { Staff } from "@/app/(admin)/(staff)/staff/_interfaces/staff.interface";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { useStaffSchedules } from "@/app/(admin)/(staff)/staff-schedules/_hooks/useStaffSchedules";
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { EventFilterParams } from "../../../../_actions/event.actions";
+import { getEventQueryKey } from "../../../../_hooks/useEventQueryKey";
+import { format, endOfMonth } from "date-fns";
 
 export interface EventFiltersProps {
   onFilterChange: (filters: EventFilterParams) => void;
+  currentDate: Date;
 }
 
-export function EventFilters({ onFilterChange }: EventFiltersProps) {
+export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps) {
   const queryClient = useQueryClient();
   const { branches } = useBranches();
   const { staff } = useStaff();
-  
+
   const [filters, setFilters] = useState<EventFilterParams>({
-      // Valores fijos
-      type: "TURNO",
-      status: "CONFIRMED"
-    });
-    
-    // Obtener datos de forma más robusta
-    const { 
-      filteredSchedulesQuery,
-      allStaffSchedulesQuery
-    } = useStaffSchedules({
-      staffId: filters.staffId,
-      branchId: filters.branchId
-    });
-  
+    type: "TURNO",
+    status: "CONFIRMED",
+    startDate: undefined,
+    endDate: undefined
+  });
+
+  // Obtener datos de forma más robusta
+  const {
+    filteredSchedulesQuery,
+    allStaffSchedulesQuery
+  } = useStaffSchedules({
+    staffId: filters.staffId,
+    branchId: filters.branchId
+  });
+
   // Combinar queries como en useEvents
   const staffScheduleOptions = useMemo(() => {
-    return (filters.staffId || filters.branchId) 
+    return (filters.staffId || filters.branchId)
       ? filteredSchedulesQuery.data || []
       : allStaffSchedulesQuery.data || [];
   }, [filteredSchedulesQuery.data, allStaffSchedulesQuery.data, filters.staffId, filters.branchId]);
@@ -56,12 +60,16 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
   // const hasStaffSchedules = staffScheduleOptions && staffScheduleOptions.length > 0;
 
   useEffect(() => {
-    queryClient.invalidateQueries({ 
-      queryKey: ['events', filters]
+    const queryKey = getEventQueryKey(filters, currentDate);
+
+    queryClient.invalidateQueries({
+      queryKey,
+      exact: true
     });
-    console.log("📢 Filtros actualizados:", filters);
+
+    console.log("🔀 Filtros sincronizados con query:", queryKey);
     onFilterChange(filters);
-  },[filters, queryClient]);
+  }, [filters, queryClient, currentDate]);
 
   useEffect(() => {
     setFilters(prev => ({
@@ -72,10 +80,11 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
 
   // Manejo de cambios similar a useEvents
   const handleFilterChange = (key: keyof EventFilterParams, value: any) => {
-    const newValue = value === "todos" ? undefined : value;
     setFilters(prev => ({
       ...prev,
-      [key]: newValue
+      [key]: value === "todos" ? undefined : value,
+      startDate: prev.startDate || format(currentDate, "yyyy-MM-01"),
+      endDate: prev.endDate || format(endOfMonth(currentDate), "yyyy-MM-dd")
     }));
   };
 
@@ -104,12 +113,12 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
           <SelectItem key={option.id} value={option.id}>
             {/* Para personal: */}
             {option.name && `${(option.name || '').toUpperCase()} - ${(option.lastName || '').toUpperCase()}`}
-            
+
             {/* Para sucursales: */}
-            {option.title && (option.title || '').toUpperCase()} 
-            
+            {option.title && (option.title || '').toUpperCase()}
+
             {/* Para horarios: */}
-            {option.staffScheduleId && 
+            {option.staffScheduleId &&
               `${option.title} - ${option.staff?.name?.toUpperCase() || ''} ${option.staff?.lastName?.toUpperCase() || ''}`
             }
           </SelectItem>
@@ -117,6 +126,11 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
       </SelectContent>
     );
   };
+
+  useEffect(() => {
+    console.log('🎛️ [EventFilters] Actualizando filtros:', filters);
+    onFilterChange(filters);
+  }, [filters]);
 
   return (
     <Card className="w-full bg-background shadow-md">

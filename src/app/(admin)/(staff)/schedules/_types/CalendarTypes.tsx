@@ -1,3 +1,5 @@
+import { EventFilterParams } from "../_hooks/useEvents";
+
 export type CalendarProps = {
   events: CalendarEvent[];
   setEvents: (events: CalendarEvent[]) => void;
@@ -23,6 +25,8 @@ export interface CalendarContextType {
   setManageEventDialogOpen: (open: boolean) => void;
   selectedEvent: CalendarEvent | null;
   setSelectedEvent: (event: CalendarEvent | null) => void;
+  filters: EventFilterParams;
+
 }
 
 export type ColorType =

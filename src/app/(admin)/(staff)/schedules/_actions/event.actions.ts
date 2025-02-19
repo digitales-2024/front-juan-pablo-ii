@@ -23,6 +23,7 @@ export interface EventFilterParams {
   disablePagination?: boolean;
 }
 
+
 // Schema para getEventsByFilter
 const GetEventsByFilterSchema = z.object({
   staffId: z.string().optional(),

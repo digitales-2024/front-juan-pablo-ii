@@ -26,11 +26,12 @@ interface UpdateEventVariables {
   data: UpdateEventDto;
 }
 
+
 export interface EventFilterParams {
   staffId?: string;
   type: 'TURNO' | 'CITA' | 'OTRO';
   branchId?: string;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
+  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
   staffScheduleId?: string;
   startDate?: string;
   endDate?: string;
@@ -42,52 +43,54 @@ export const useEvents = (filters?: EventFilterParams) => {
   const { staff } = useStaff();
 
   // Modificar la normalización de filtros
-  const normalizedFilters = useMemo(() => {
-    return {
-      ...filters,
-      type: filters?.type ?? 'TURNO', // Valor por defecto obligatorio
-      startDate: filters?.startDate,
-      endDate: filters?.endDate,
-    };
-  }, [filters]);
+  const normalizedFilters = useMemo(() => ({
+    ...filters,
+    type: filters?.type ?? 'TURNO',
+    status: filters?.status ?? 'CONFIRMED',
+    startDate: filters?.startDate,
+    endDate: filters?.endDate,
+  }), [filters]);
 
   // Query para obtener eventos con filtros
   const eventsQuery = useQuery({
     queryKey: [
       'events',
       {
+        type: normalizedFilters.type,
+        status: normalizedFilters.status,
         staffId: normalizedFilters.staffId,
         branchId: normalizedFilters.branchId,
         staffScheduleId: normalizedFilters.staffScheduleId,
         startDate: normalizedFilters.startDate,
         endDate: normalizedFilters.endDate,
-        type: normalizedFilters.type,
-        status: normalizedFilters.status,
-      },
+      }
     ],
     queryFn: async () => {
-      // Formatear fechas con 2 dígitos usando UTC
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      const now = new Date();
-      const utcYear = now.getUTCFullYear();
-      const utcMonth = now.getUTCMonth();
+      console.log('🚀 [useEvents] Query iniciada con:', {
+        filters: JSON.stringify(normalizedFilters, null, 2),
+        queryKey: JSON.stringify([
+          'events',
+          {
+            type: normalizedFilters.type,
+            status: normalizedFilters.status,
+            staffId: normalizedFilters.staffId,
+            branchId: normalizedFilters.branchId,
+            staffScheduleId: normalizedFilters.staffScheduleId,
+            startDate: normalizedFilters.startDate,
+            endDate: normalizedFilters.endDate,
+          }
+        ], null, 2)
+      });
 
-      const defaultStartDate = `${utcYear}-${pad(utcMonth + 1)}-01`; // Mes UTC +1 para formato correcto
-      const lastDay = new Date(utcYear, utcMonth + 1, 0).getUTCDate();
-      const defaultEndDate = `${utcYear}-${pad(utcMonth + 1)}-${pad(lastDay)}`;
+      const { data, error } = await getEventsByFilter(normalizedFilters);
 
-      console.log('✅ Fechas UTC:', { defaultStartDate, defaultEndDate });
+      console.log('✅ [useEvents] Respuesta recibida:', {
+        success: !error,
+        count: data?.length || 0,
+        filtersUsed: JSON.stringify(normalizedFilters, null, 2)
+      });
 
-      const finalFilters = {
-        ...normalizedFilters,
-        startDate: normalizedFilters.startDate ?? defaultStartDate,
-        endDate: normalizedFilters.endDate ?? defaultEndDate,
-      };
-
-      console.log('🎚 Filtros finales para query:', finalFilters);
-
-      const response = await getEventsByFilter(finalFilters);
-      return response.data ?? [];
+      return data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
     gcTime: 1000 * 60 * 30, // Limpiar cache después de 30 minutos
@@ -125,14 +128,14 @@ export const useEvents = (filters?: EventFilterParams) => {
             ...res.data,
             staff: selectedStaff
               ? {
-                  name: selectedStaff.name,
-                  lastName: selectedStaff.lastName,
-                }
+                name: selectedStaff.name,
+                lastName: selectedStaff.lastName,
+              }
               : undefined,
             branch: variables.branchId
               ? {
-                  name: 'Sucursal',
-                }
+                name: 'Sucursal',
+              }
               : undefined,
           } as Event;
 
@@ -184,13 +187,13 @@ export const useEvents = (filters?: EventFilterParams) => {
           oldEvents.map((event) =>
             event.id === variables.id
               ? {
-                  ...event,
-                  ...variables.data,
-                  type: variables.data.type as EventType,
-                  status: variables.data.status as EventStatus,
-                  start: new Date(variables.data.start!),
-                  end: new Date(variables.data.end!),
-                }
+                ...event,
+                ...variables.data,
+                type: variables.data.type as EventType,
+                status: variables.data.status as EventStatus,
+                start: new Date(variables.data.start!),
+                end: new Date(variables.data.end!),
+              }
               : event
           )
       );
