@@ -7,7 +7,9 @@ import CalendarManageEventDialog from './dialog/CalendarManageEventDialog';
 import { useEvents } from '../../_hooks/useEvents';
 import { useQueryClient } from '@tanstack/react-query';
 import { EventFilterParams } from '../../_actions/event.actions';
-import { getEventQueryKey } from '../../_hooks/useEventQueryKey';
+import { startOfMonth, endOfMonth, format, subDays, addDays } from 'date-fns';
+
+const EVENT_QUERY_KEY = ['calendar-turns'] as const;
 
 export default function CalendarProvider({
   setEvents,
@@ -34,48 +36,22 @@ export default function CalendarProvider({
     null
   );
 
-  const utcMonthStart = new Date(
-    Date.UTC(
-      parentDate.getUTCFullYear(),
-      parentDate.getUTCMonth(),
-      1
-    )
-  ).toISOString().split('T')[0];
+  const monthStart = startOfMonth(parentDate);
+  const monthEnd = endOfMonth(parentDate);
 
-  const utcMonthEnd = new Date(
-    Date.UTC(
-      parentDate.getUTCFullYear(),
-      parentDate.getUTCMonth() + 1,
-      0
-    )
-  ).toISOString().split('T')[0];
+  // Ampliar el rango de fechas
+  const extendedStart = subDays(monthStart, 7);
+  const extendedEnd = addDays(monthEnd, 7);
 
   const queryClient = useQueryClient();
 
-  // Asegurar valores por defecto en los filtros
   const safeFilters = useMemo(() => ({
-    ...filters,  // Asegurar que se propaguen TODOS los filtros
-    type: filters?.type ?? 'TURNO',
-    status: filters?.status ?? 'CONFIRMED',
-    startDate: utcMonthStart,
-    endDate: utcMonthEnd
-  }), [filters, utcMonthStart, utcMonthEnd]);
+    ...filters,
+    startDate: format(extendedStart, 'yyyy-MM-dd'),
+    endDate: format(extendedEnd, 'yyyy-MM-dd')
+  }), [filters, extendedStart, extendedEnd]);
 
-  useEffect(() => {
-    const queryKey = getEventQueryKey(safeFilters, parentDate);
-    console.log('🔥 [CalendarProvider] Invalidando query específica:', queryKey);
-
-    queryClient.invalidateQueries({
-      queryKey,
-      exact: true,
-      refetchType: 'active'
-    });
-
-    // Forzar recarga inicial
-    queryClient.refetchQueries({ queryKey });
-  }, [safeFilters, parentDate]);
-
-  const { events: filteredEvents } = useEvents(safeFilters);
+  const { events: filteredEvents, eventsQuery } = useEvents(safeFilters);
 
   useEffect(() => {
     // Actualizar los eventos en el contexto con los filtros aplicados
@@ -92,10 +68,16 @@ export default function CalendarProvider({
     console.log('🔥 [CalendarProvider] Eventos filtrados:', filteredEvents?.length);
   }, [safeFilters, filteredEvents]);
 
+  useEffect(() => {
+    // Forzar recarga de datos cuando cambian los filtros
+    queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
+  }, [safeFilters, queryClient]);
+
   return (
     <CalendarContext.Provider
       value={{
-        events: useMemo(() => filteredEvents || [], [filteredEvents]), // Simplificar
+        events: filteredEvents || [],
+        eventsQuery: eventsQuery,
         currentMonth: parentDate.getMonth(),
         setEvents,
         mode,

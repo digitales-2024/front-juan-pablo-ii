@@ -2,6 +2,8 @@
 import { createContext, useContext } from "react";
 import { CalendarContextType } from "../../_types/CalendarTypes";
 import { EventFilterParams } from "../../_hooks/useEvents";
+import { UseQueryResult } from "@tanstack/react-query";
+import { Event } from "../../_interfaces/event.interface";
 
 export const CalendarContext = createContext<CalendarContextType>({
 	events: [],
@@ -20,6 +22,7 @@ export const CalendarContext = createContext<CalendarContextType>({
 	selectedEvent: null,
 	setSelectedEvent: () => { },
 	filters: {} as EventFilterParams,
+	eventsQuery: {} as UseQueryResult<Event[], Error>,
 });
 
 export function useCalendarContext() {

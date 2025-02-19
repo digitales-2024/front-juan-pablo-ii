@@ -14,11 +14,10 @@ import { useCalendarContext } from '../../CalendarContext';
 import CalendarEvent from '../../CalendarEvent';
 
 export default function CalendarBodyMonth() {
-  const { date, events, setDate, setNewEventDialogOpen, filters } = useCalendarContext();
+  const { events, filters, date, eventsQuery, setDate, setNewEventDialogOpen } = useCalendarContext();
 
-  console.log('📅 [CalendarBodyMonth] Filtros actuales:', filters);
-  console.log('📅 [CalendarBodyMonth] Total de eventos:', events.length);
-  console.log('📅 [CalendarBodyMonth] Eventos ejemplo:', events.slice(0, 3));
+  // Los eventos ya vienen filtrados desde el contexto
+  // Eliminar console.logs de depuración si es necesario
 
   // Get the first day of the month
   const monthStart = startOfMonth(date);
@@ -37,6 +36,15 @@ export default function CalendarBodyMonth() {
   });
 
   const today = new Date();
+
+  // Mostrar estado de carga
+  // if (eventsQuery.isLoading) {
+  //   return (
+  //     <div className="flex-1 flex items-center justify-center">
+  //       <Spinner className="h-8 w-8 text-primary" />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col flex-grow overflow-hidden">
@@ -62,13 +70,12 @@ export default function CalendarBodyMonth() {
             ease: 'easeInOut',
           }}>
           {calendarDays.map((day) => {
-            // console.log('📅 [CalendarBodyMonth] Eventos para', day.toISOString(), ':', dayEvents.length);
             const isToday = isSameDay(day, today);
             const isCurrentMonth = isSameMonth(day, date);
 
+            // Filtrar eventos para el día actual
             const dayEvents = events.filter(event =>
-              isSameDay(new Date(event.start), day) &&
-              (!filters?.staffScheduleId || event.staffScheduleId === filters?.staffScheduleId)
+              isSameDay(new Date(event.start), day)
             );
 
             return (
