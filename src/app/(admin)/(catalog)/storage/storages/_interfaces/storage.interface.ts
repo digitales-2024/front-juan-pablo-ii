@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Tipos base de la API
 export type Storage = components['schemas']['Storage'];
-export type TypeStorage = components['schemas']['TypeStorage'];
+//export type TypeStorage = components['schemas']['TypeStorage'];
 export type DetailedStorage = components['schemas']['DetailedStorage'];
 export type CreateStorageDto = components['schemas']['CreateStorageDto'];
 export type UpdateStorageDto = components['schemas']['UpdateStorageDto'];
@@ -19,14 +19,18 @@ export interface StorageTableItem extends DetailedStorage {
 
 // Schema de validación para crear/actualizar
 // type CreateStorageDto = {
-//     name: string;
-//     location?: string;
-//     typeStorageId: string;
+//   name: string;
+//   location?: string;
+//   typeStorageId: string;
+//   branchId?: string;
+//   staffId?: string;
 // }
 export const createStorageSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   location: z.string().optional(),
   typeStorageId: z.string().uuid(),
+  branchId: z.string(), //Its required event though in the back is optional
+  staffId: z.string(), //Its required event though in the back is optional
 }) satisfies z.ZodType<CreateStorageDto>;
 
 // type UpdateStorageDto: {
@@ -38,6 +42,8 @@ export const updateStorageSchema = z.object({
   name: z.string().optional(),
   location: z.string().optional(),
   typeStorageId: z.string().optional(),
+  branchId: z.string().optional(),
+  staffId: z.string().optional(),
 }) satisfies z.ZodType<UpdateStorageDto>;
 
 export type CreateStorageInput = z.infer<typeof createStorageSchema>;

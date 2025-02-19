@@ -49,7 +49,23 @@ export const FORMSTATICS: FormStatics<CreateStorageInput> = {
         type: "text",
         placeholder: "Tipo de almacenamiento",
         name: "typeStorageId",
-    }
+    },
+    branchId: {
+        required: true,
+        label: "Sucursal",
+        defaultValue: "",
+        type: "text",
+        placeholder: "Sucursal",
+        name: "branchId",
+    },
+    staffId: {
+        required: true,
+        label: "Personal",
+        defaultValue: "",
+        type: "text",
+        placeholder: "Personal",
+        name: "staffId",
+    },
 }
 
 export const UPDATEFORMSTATICS: FormStatics<UpdateStorageInput> = {
@@ -76,5 +92,21 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateStorageInput> = {
         type: "text",
         placeholder: "Tipo de almacenamiento",
         name: "typeStorageId",
-    }
+    },
+    branchId: {
+        required: false,
+        label: "Sucursal",
+        defaultValue: "",
+        type: "text",
+        placeholder: "Sucursal",
+        name: "branchId",
+    },
+    staffId: {
+        required: false,
+        label: "Personal",
+        defaultValue: "",
+        type: "text",
+        placeholder: "Personal",
+        name: "staffId",
+    },
 }

@@ -54,8 +54,8 @@ export function StorageMovementDetail({storageId, ...rest}: StorageMovementDetai
                             <TableCell>{oneStorageQuery.data[0].location}</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="font-semibold">Tipo</TableCell>
-                            <TableCell>{oneStorageQuery.data[0].TypeStorage.name}</TableCell>
+                            <TableCell className="font-semibold">Sucursal</TableCell>
+                            <TableCell>{oneStorageQuery.data[0].branch.name}</TableCell>
                         </TableRow>
                         {/* <TableRow>
                             <TableCell className="font-medium">Sucursal</TableCell>

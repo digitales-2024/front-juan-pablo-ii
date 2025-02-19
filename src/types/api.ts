@@ -1629,40 +1629,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/type-storage/detailed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los tipos de almacenamiento activos */
-        get: operations["TypeStorageController_findAllDetailed"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/type-storage/detailed/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener tipo detallado de almacenamiento por ID */
-        get: operations["TypeStorageController_findOneWithRelations"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/type-storage/{id}": {
         parameters: {
             query?: never;
@@ -4270,34 +4236,12 @@ export interface components {
              * @example Almacén destinado a productos listos para su distribución
              */
             description?: string;
-            /**
-             * @description ID de la sucursal si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description ID del personal responsable si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
         };
         TypeStorage: {
             id: string;
             name: string;
             description: string;
-            branchId: string;
-            staffId: string;
             isActive: boolean;
-        };
-        DetailedTypeStorage: {
-            id: string;
-            name: string;
-            description: string;
-            branchId: string;
-            staffId: string;
-            isActive: boolean;
-            branch: components["schemas"]["Branch"];
-            staff: components["schemas"]["Staff"];
         };
         UpdateTypeStorageDto: {
             /**
@@ -4310,16 +4254,6 @@ export interface components {
              * @example Almacén destinado a productos listos para su distribución
              */
             description?: string;
-            /**
-             * @description ID de la sucursal si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description ID del personal responsable si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
         };
         DeleteTypeStorageDto: {
             ids: string[];
@@ -4340,12 +4274,24 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             typeStorageId: string;
+            /**
+             * @description ID de la sucursal si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal responsable si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
         };
         Storage: {
             id: string;
             name: string;
             location: string;
             typeStorageId: string;
+            branchId?: string;
+            staffId?: string;
             isActive: boolean;
         };
         DetailedStorage: {
@@ -4353,8 +4299,12 @@ export interface components {
             name: string;
             location: string;
             typeStorageId: string;
+            branchId?: string;
+            staffId?: string;
             isActive: boolean;
             TypeStorage: components["schemas"]["TypeStorage"];
+            branch: components["schemas"]["Branch"];
+            staff: components["schemas"]["Staff"];
         };
         UpdateStorageDto: {
             /**
@@ -4372,6 +4322,16 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             typeStorageId?: string;
+            /**
+             * @description ID de la sucursal si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal responsable si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
         };
         DeleteStorageDto: {
             ids: string[];
@@ -4612,19 +4572,19 @@ export interface components {
             isTransference?: boolean;
             isActive: boolean;
         };
-        IncomingBranch: {
-            id: string;
-            name: string;
-        };
         IncomingStorageType: {
             id: string;
             name: string;
-            branch?: components["schemas"]["IncomingBranch"];
+        };
+        IncomingBranch: {
+            id: string;
+            name: string;
         };
         IncomingStorage: {
             id: string;
             name: string;
             TypeStorage: components["schemas"]["IncomingStorageType"];
+            branch?: components["schemas"]["IncomingBranch"];
         };
         IncomingWithStorage: {
             id: string;
@@ -4839,19 +4799,19 @@ export interface components {
             isTransference?: boolean;
             isActive: boolean;
         };
-        OutgoingBranch: {
-            id: string;
-            name: string;
-        };
         OutgoingStorageType: {
             id: string;
             name: string;
-            branch?: components["schemas"]["OutgoingBranch"];
+        };
+        OutgoingBranch: {
+            id: string;
+            name: string;
         };
         OutgoingStorage: {
             id: string;
             name: string;
             TypeStorage: components["schemas"]["OutgoingStorageType"];
+            branch?: components["schemas"]["OutgoingBranch"];
         };
         OutgoingWithStorage: {
             id: string;
@@ -10877,84 +10837,6 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_findAllDetailed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de almacenamiento activos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DetailedTypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_findOneWithRelations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del tipo de almacenamiento */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tipo de almacenamiento encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DetailedTypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Tipo de almacenamiento no encontrado */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -6,7 +6,7 @@ import { DetailedStorage } from "../_interfaces/storage.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-import { UpdateStorageSheet } from "./UpdateProductSheet";
+import { UpdateStorageSheet } from "./UpdateStorageSheet";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import {
