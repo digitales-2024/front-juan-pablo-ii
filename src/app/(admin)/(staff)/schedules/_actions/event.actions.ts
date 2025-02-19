@@ -1,66 +1,106 @@
-"use server";
+'use server';
 
-import { http } from "@/utils/serverFetch";
+import { http } from '@/utils/serverFetch';
 import {
   Event,
   CreateEventDto,
   UpdateEventDto,
-  DeleteEventsDto
-} from "../_interfaces/event.interface";
-import { BaseApiResponse } from "@/types/api/types";
+  DeleteEventsDto,
+} from '../_interfaces/event.interface';
+import { BaseApiResponse } from '@/types/api/types';
 import { createSafeAction } from '@/utils/createSafeAction';
 import { z } from 'zod';
 
 export type EventResponse = BaseApiResponse<Event> | { error: string };
-type EventFilterParams = {
+export interface EventFilterParams {
   staffId?: string;
-  type?: "TURNO" | "CITA" | "OTRO";
+  type: 'TURNO' | 'CITA' | 'OTRO';
   branchId?: string;
-  status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
-};
+  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
+  staffScheduleId?: string;
+  startDate?: string;
+  endDate?: string;
+  disablePagination?: boolean;
+}
 
 // Schema para getEventsByFilter
 const GetEventsByFilterSchema = z.object({
   staffId: z.string().optional(),
-  type: z.enum(["TURNO", "CITA", "OTRO"]).optional(),
+  type: z.enum(['TURNO', 'CITA', 'OTRO']),
   branchId: z.string().optional(),
-  status: z.enum(["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED", "NO_SHOW"]).optional(),
-  staffScheduleId: z.string().optional()
+  status: z
+    .enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW'])
+    .optional(),
+  staffScheduleId: z.string().optional(),
+  startDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  endDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
 });
 
 const getEventsByFilterHandler = async (filters: EventFilterParams) => {
   try {
-    // Limpiar parámetros undefined antes de enviar
-    const cleanFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, v]) => v !== undefined)
+    // Forzar formato YYYY-MM-DD incluso si vienen undefined
+    const cleanStartDate = filters.startDate?.split('T')[0] ?? '';
+    const cleanEndDate = filters.endDate?.split('T')[0] ?? '';
+
+    const cleanFilters = {
+      ...filters,
+      startDate: cleanStartDate,
+      endDate: cleanEndDate,
+    } as Partial<EventFilterParams>;
+
+    // Eliminar fechas vacías
+    if (!cleanFilters.startDate) delete cleanFilters.startDate;
+    if (!cleanFilters.endDate) delete cleanFilters.endDate;
+
+    console.log('🔍 Filtros finales:', cleanFilters);
+    const query = new URLSearchParams(
+      Object.entries(cleanFilters).reduce((acc, [key, value]) => {
+        if (typeof value === 'string' && value !== '') acc[key] = value;
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString();
+
+    const [response, error] = await http.get<Event[]>(
+      `/events/filter?${query}`
     );
 
-    console.log("🔍 Filtros limpios para /events/filter:", cleanFilters);
-    const query = new URLSearchParams(cleanFilters).toString();
-
-    const [response, error] = await http.get<Event[]>(`/events/filter?${query}`);
+    console.log('📥 Respuesta cruda:', { response, error });
 
     if (error || !response) {
-      throw new Error(error?.message || 'Error al obtener eventos');
+      console.error('❌ Error en la respuesta:', error);
+      throw new Error(error?.message ?? 'Error al obtener eventos');
     }
 
-    // Envolver la respuesta en estructura BaseApiResponse
     return {
       data: response,
-      message: "Eventos obtenidos exitosamente",
-      success: true
+      message: 'Eventos obtenidos exitosamente',
+      success: true,
     };
   } catch (error) {
-    console.error("💥 Error en getEventsByFilterHandler:", error);
+    console.error('💥 Error completo:', error);
     throw error;
   }
-}
+};
 
-export const getEventsByFilter = await createSafeAction(GetEventsByFilterSchema, getEventsByFilterHandler);
+export const getEventsByFilter = await createSafeAction(
+  GetEventsByFilterSchema,
+  getEventsByFilterHandler
+);
 
-export async function createEvent(data: CreateEventDto): Promise<BaseApiResponse<Event>> {
+export async function createEvent(
+  data: CreateEventDto
+): Promise<BaseApiResponse<Event>> {
   try {
-    const [event, error] = await http.post<BaseApiResponse<Event>>("/events", data);
+    const [event, error] = await http.post<BaseApiResponse<Event>>(
+      '/events',
+      data
+    );
 
     if (error) {
       throw new Error(error.message);
@@ -71,7 +111,7 @@ export async function createEvent(data: CreateEventDto): Promise<BaseApiResponse
     if (error instanceof Error) {
       throw new Error(error.message);
     }
-    throw new Error("Error desconocido al crear el evento");
+    throw new Error('Error desconocido al crear el evento');
   }
 }
 
@@ -80,61 +120,99 @@ export async function updateEvent(
   data: UpdateEventDto
 ): Promise<BaseApiResponse<Event>> {
   try {
-    const [event, error] = await http.patch<BaseApiResponse<Event>>(`/events/${id}`, data);
+    const [event, error] = await http.patch<BaseApiResponse<Event>>(
+      `/events/${id}`,
+      data
+    );
     if (error) throw new Error(error.message);
     return event;
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Error al actualizar evento");
+    throw new Error(
+      error instanceof Error ? error.message : 'Error al actualizar evento'
+    );
   }
 }
 
-export async function deleteEvents(data: DeleteEventsDto): Promise<BaseApiResponse<Event>> {
+export async function deleteEvents(
+  data: DeleteEventsDto
+): Promise<BaseApiResponse<Event>> {
   try {
-    const [response, error] = await http.delete<BaseApiResponse<Event>>("/events/remove/all", data);
+    const [response, error] = await http.delete<BaseApiResponse<Event>>(
+      '/events/remove/all',
+      data
+    );
     if (error) throw new Error(error.message);
     return response;
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Error al eliminar eventos");
+    throw new Error(
+      error instanceof Error ? error.message : 'Error al eliminar eventos'
+    );
   }
 }
 
-export async function reactivateEvents(data: DeleteEventsDto): Promise<BaseApiResponse<Event>> {
+export async function reactivateEvents(
+  data: DeleteEventsDto
+): Promise<BaseApiResponse<Event>> {
   try {
-    const [response, error] = await http.patch<BaseApiResponse<Event>>("/events/reactivate/all", data);
+    const [response, error] = await http.patch<BaseApiResponse<Event>>(
+      '/events/reactivate/all',
+      data
+    );
     if (error) throw new Error(error.message);
     return response;
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Error al reactivar eventos");
+    throw new Error(
+      error instanceof Error ? error.message : 'Error al reactivar eventos'
+    );
   }
 }
 
-export async function generateEvents(id: string): Promise<BaseApiResponse<Event>> {
+export async function generateEvents(
+  id: string
+): Promise<BaseApiResponse<Event>> {
   try {
-    const [response, error] = await http.post<BaseApiResponse<Event>>(`/events/${id}/generate-events`);
+    const [response, error] = await http.post<BaseApiResponse<Event>>(
+      `/events/${id}/generate-events`
+    );
     if (error) throw new Error(error.message);
     return response;
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Error al generar eventos");
+    throw new Error(
+      error instanceof Error ? error.message : 'Error al generar eventos'
+    );
   }
 }
 
 export async function getEvents(): Promise<BaseApiResponse<Event[]>> {
   try {
-    const [response, error] = await http.get<BaseApiResponse<Event[]>>("/events");
-    if (error || !response?.data) throw new Error(error?.message || 'Error al obtener eventos');
+    const [response, error] = await http.get<BaseApiResponse<Event[]>>(
+      '/events'
+    );
+    if (error || !response?.data)
+      throw new Error(error?.message ?? 'Error al obtener eventos');
     return response;
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Error al obtener eventos");
+    throw new Error(
+      error instanceof Error ? error.message : 'Error al obtener eventos'
+    );
   }
 }
 
 // Nueva acción para eliminar eventos por scheduleId
-export async function deleteEventsByScheduleId(scheduleId: string): Promise<BaseApiResponse<Event>> {
+export async function deleteEventsByScheduleId(
+  scheduleId: string
+): Promise<BaseApiResponse<Event>> {
   try {
-    const [response, error] = await http.delete<BaseApiResponse<Event>>(`/events/by-schedule/${scheduleId}`);
+    const [response, error] = await http.delete<BaseApiResponse<Event>>(
+      `/events/by-schedule/${scheduleId}`
+    );
     if (error) throw new Error(error.message);
     return response;
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Error al eliminar eventos por scheduleId");
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Error al eliminar eventos por scheduleId'
+    );
   }
 }

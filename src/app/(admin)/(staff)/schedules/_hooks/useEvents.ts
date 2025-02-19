@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import {
   createEvent,
   updateEvent,
@@ -6,9 +6,9 @@ import {
   reactivateEvents,
   generateEvents,
   getEventsByFilter,
-  deleteEventsByScheduleId
-} from "../_actions/event.actions";
-import { toast } from "sonner";
+  deleteEventsByScheduleId,
+} from '../_actions/event.actions';
+import { toast } from 'sonner';
 import {
   Event,
   CreateEventDto,
@@ -16,10 +16,10 @@ import {
   DeleteEventsDto,
   EventStatus,
   EventType,
-} from "../_interfaces/event.interface";
-import { BaseApiResponse } from "@/types/api/types";
-import { useStaff } from "../../staff/_hooks/useStaff";
-import { useMemo } from "react";
+} from '../_interfaces/event.interface';
+import { BaseApiResponse } from '@/types/api/types';
+import { useStaff } from '../../staff/_hooks/useStaff';
+import { useMemo } from 'react';
 
 interface UpdateEventVariables {
   id: string;
@@ -28,10 +28,13 @@ interface UpdateEventVariables {
 
 export interface EventFilterParams {
   staffId?: string;
-  type: "TURNO" | "CITA" | "OTRO";
+  type: 'TURNO' | 'CITA' | 'OTRO';
   branchId?: string;
-  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
   staffScheduleId?: string;
+  startDate?: string;
+  endDate?: string;
+  disablePagination?: boolean;
 }
 
 export const useEvents = (filters?: EventFilterParams) => {
@@ -40,48 +43,97 @@ export const useEvents = (filters?: EventFilterParams) => {
 
   // Modificar la normalización de filtros
   const normalizedFilters = useMemo(() => {
-    const cleanFilters: Partial<EventFilterParams> = {};
-
-    if (filters) {
-      if (filters.staffScheduleId) cleanFilters.staffScheduleId = filters.staffScheduleId;
-      if (filters.staffId) cleanFilters.staffId = filters.staffId;
-      if (filters.branchId) cleanFilters.branchId = filters.branchId;
-      cleanFilters.type = filters.type;
-      cleanFilters.status = filters.status;
-    }
-
-    return cleanFilters;
+    return {
+      ...filters,
+      type: filters?.type ?? 'TURNO', // Valor por defecto obligatorio
+      startDate: filters?.startDate,
+      endDate: filters?.endDate,
+    };
   }, [filters]);
 
   // Query para obtener eventos con filtros
   const eventsQuery = useQuery({
-    queryKey: ["events", normalizedFilters],
+    queryKey: [
+      'events',
+      {
+        staffId: normalizedFilters.staffId,
+        branchId: normalizedFilters.branchId,
+        staffScheduleId: normalizedFilters.staffScheduleId,
+        startDate: normalizedFilters.startDate,
+        endDate: normalizedFilters.endDate,
+        type: normalizedFilters.type,
+        status: normalizedFilters.status,
+      },
+    ],
     queryFn: async () => {
-      const response = await getEventsByFilter(normalizedFilters);
-      return response.data || [];
+      // Formatear fechas con 2 dígitos usando UTC
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      const now = new Date();
+      const utcYear = now.getUTCFullYear();
+      const utcMonth = now.getUTCMonth();
+
+      const defaultStartDate = `${utcYear}-${pad(utcMonth + 1)}-01`; // Mes UTC +1 para formato correcto
+      const lastDay = new Date(utcYear, utcMonth + 1, 0).getUTCDate();
+      const defaultEndDate = `${utcYear}-${pad(utcMonth + 1)}-${pad(lastDay)}`;
+
+      console.log('✅ Fechas UTC:', { defaultStartDate, defaultEndDate });
+
+      const finalFilters = {
+        ...normalizedFilters,
+        startDate: normalizedFilters.startDate ?? defaultStartDate,
+        endDate: normalizedFilters.endDate ?? defaultEndDate,
+      };
+
+      console.log('🎚 Filtros finales para query:', finalFilters);
+
+      const response = await getEventsByFilter(finalFilters);
+      return response.data ?? [];
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
+    gcTime: 1000 * 60 * 30, // Limpiar cache después de 30 minutos
+    refetchOnWindowFocus: false, // Evitar recargas automáticas
   });
 
   // Mutación para crear evento
-  const createMutation = useMutation<BaseApiResponse<Event>, Error, CreateEventDto>({
+  const createMutation = useMutation<
+    BaseApiResponse<Event>,
+    Error,
+    CreateEventDto
+  >({
     mutationFn: (data) => createEvent(data),
     onSuccess: (res, variables) => {
       // 1. Actualización optimista
       queryClient.setQueryData<Event[]>(
-        ["events", normalizedFilters],
+        [
+          'events',
+          {
+            staffId: normalizedFilters.staffId,
+            branchId: normalizedFilters.branchId,
+            staffScheduleId: normalizedFilters.staffScheduleId,
+            startDate: normalizedFilters.startDate,
+            endDate: normalizedFilters.endDate,
+            type: normalizedFilters.type,
+            status: normalizedFilters.status,
+          },
+        ],
         (oldEvents = []) => {
-          const selectedStaff = staff?.find(member => member.id === variables.staffId);
+          const selectedStaff = staff?.find(
+            (member) => member.id === variables.staffId
+          );
 
           const newEvent = {
             ...res.data,
-            staff: selectedStaff ? {
-              name: selectedStaff.name,
-              lastName: selectedStaff.lastName
-            } : undefined,
-            branch: variables.branchId ? {
-              name: "Sucursal"
-            } : undefined
+            staff: selectedStaff
+              ? {
+                  name: selectedStaff.name,
+                  lastName: selectedStaff.lastName,
+                }
+              : undefined,
+            branch: variables.branchId
+              ? {
+                  name: 'Sucursal',
+                }
+              : undefined,
           } as Event;
 
           return [...oldEvents, newEvent];
@@ -89,124 +141,201 @@ export const useEvents = (filters?: EventFilterParams) => {
       );
 
       // 2. Invalidar queries relacionadas
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ['events'],
-        exact: false
+        exact: false,
       });
 
       toast.success(res.message);
     },
     onError: (error) => {
       // Revertir la actualización optimista en caso de error
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ['events'],
-        exact: false
+        exact: false,
       });
       toast.error(error.message);
-    }
+    },
   });
 
   // Mutación para actualizar evento
-  const updateMutation = useMutation<BaseApiResponse<Event>, Error, UpdateEventVariables>({
+  const updateMutation = useMutation<
+    BaseApiResponse<Event>,
+    Error,
+    UpdateEventVariables
+  >({
     mutationFn: ({ id, data }) => updateEvent(id, data),
     onSuccess: (res, variables) => {
       // Actualización optimista mejorada
       queryClient.setQueryData<Event[]>(
-        ["events", normalizedFilters],
-        (oldEvents = []) => oldEvents.map(event =>
-          event.id === variables.id ? {
-            ...event,
-            ...variables.data,
-            type: variables.data.type as EventType,
-            status: variables.data.status as EventStatus,
-            start: new Date(variables.data.start!),
-            end: new Date(variables.data.end!)
-          } : event
-        )
+        [
+          'events',
+          {
+            staffId: normalizedFilters.staffId,
+            branchId: normalizedFilters.branchId,
+            staffScheduleId: normalizedFilters.staffScheduleId,
+            startDate: normalizedFilters.startDate,
+            endDate: normalizedFilters.endDate,
+            type: normalizedFilters.type,
+            status: normalizedFilters.status,
+          },
+        ],
+        (oldEvents = []) =>
+          oldEvents.map((event) =>
+            event.id === variables.id
+              ? {
+                  ...event,
+                  ...variables.data,
+                  type: variables.data.type as EventType,
+                  status: variables.data.status as EventStatus,
+                  start: new Date(variables.data.start!),
+                  end: new Date(variables.data.end!),
+                }
+              : event
+          )
       );
 
       // Invalidar queries para sincronizar con el servidor
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ['events'],
-        exact: false
+        exact: false,
       });
     },
-    onError: (error) => handleAuthError(error, "actualizar el evento")
+    onError: (error) => handleAuthError(error, 'actualizar el evento'),
   });
 
   // Mutación para eliminar eventos
-  const deleteMutation = useMutation<BaseApiResponse<Event>, Error, DeleteEventsDto>({
+  const deleteMutation = useMutation<
+    BaseApiResponse<Event>,
+    Error,
+    DeleteEventsDto
+  >({
     mutationFn: deleteEvents,
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents = []) =>
-        oldEvents.filter(event => !variables.ids.includes(event.id))
+      queryClient.setQueryData<Event[]>(
+        [
+          'events',
+          {
+            staffId: normalizedFilters.staffId,
+            branchId: normalizedFilters.branchId,
+            staffScheduleId: normalizedFilters.staffScheduleId,
+            startDate: normalizedFilters.startDate,
+            endDate: normalizedFilters.endDate,
+            type: normalizedFilters.type,
+            status: normalizedFilters.status,
+          },
+        ],
+        (oldEvents = []) =>
+          oldEvents.filter((event) => !variables.ids.includes(event.id))
       );
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ['events'],
-        exact: false
+        exact: false,
       });
       toast.success(
         variables.ids.length === 1
-          ? "Evento eliminado exitosamente"
-          : "Eventos eliminados exitosamente"
+          ? 'Evento eliminado exitosamente'
+          : 'Eventos eliminados exitosamente'
       );
     },
     onError: (error) => {
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ['events'],
-        exact: false
+        exact: false,
       });
-      handleAuthError(error, "eliminar los eventos");
-    }
+      handleAuthError(error, 'eliminar los eventos');
+    },
   });
 
   // Mutación para reactivar eventos
-  const reactivateMutation = useMutation<BaseApiResponse<Event>, Error, DeleteEventsDto>({
+  const reactivateMutation = useMutation<
+    BaseApiResponse<Event>,
+    Error,
+    DeleteEventsDto
+  >({
     mutationFn: reactivateEvents,
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents = []) =>
-        oldEvents.map(event =>
-          variables.ids.includes(event.id)
-            ? { ...event, isActive: true }
-            : event
-        )
+      queryClient.setQueryData<Event[]>(
+        [
+          'events',
+          {
+            staffId: normalizedFilters.staffId,
+            branchId: normalizedFilters.branchId,
+            staffScheduleId: normalizedFilters.staffScheduleId,
+            startDate: normalizedFilters.startDate,
+            endDate: normalizedFilters.endDate,
+            type: normalizedFilters.type,
+            status: normalizedFilters.status,
+          },
+        ],
+        (oldEvents = []) =>
+          oldEvents.map((event) =>
+            variables.ids.includes(event.id)
+              ? { ...event, isActive: true }
+              : event
+          )
       );
       toast.success(
         variables.ids.length === 1
-          ? "Evento reactivado exitosamente"
-          : "Eventos reactivados exitosamente"
+          ? 'Evento reactivado exitosamente'
+          : 'Eventos reactivados exitosamente'
       );
     },
-    onError: (error) => handleAuthError(error, "reactivar los eventos")
+    onError: (error) => handleAuthError(error, 'reactivar los eventos'),
   });
 
   // Mutación para generar eventos recurrentes
-  const generateEventsMutation = useMutation<BaseApiResponse<Event>, Error, string>({
+  const generateEventsMutation = useMutation<
+    BaseApiResponse<Event>,
+    Error,
+    string
+  >({
     mutationFn: (id) => generateEvents(id),
     onSuccess: () => {
       // Invalidar todas las queries de eventos
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-      toast.success("Eventos recurrentes generados exitosamente");
+      void queryClient.invalidateQueries({ queryKey: ['events'] });
+      toast.success('Eventos recurrentes generados exitosamente');
     },
-    onError: (error) => handleAuthError(error, "generar eventos recurrentes")
+    onError: (error) => handleAuthError(error, 'generar eventos recurrentes'),
   });
 
   // Mutación para eliminar eventos por scheduleId
-  const deleteByScheduleIdMutation = useMutation<BaseApiResponse<Event>, Error, string>({
+  const deleteByScheduleIdMutation = useMutation<
+    BaseApiResponse<Event>,
+    Error,
+    string
+  >({
     mutationFn: deleteEventsByScheduleId,
     onSuccess: (res, scheduleId) => {
-      queryClient.setQueryData<Event[]>(["events", normalizedFilters], (oldEvents = []) =>
-        oldEvents.filter(event => event.staffScheduleId !== scheduleId)
+      queryClient.setQueryData<Event[]>(
+        [
+          'events',
+          {
+            staffId: normalizedFilters.staffId,
+            branchId: normalizedFilters.branchId,
+            staffScheduleId: normalizedFilters.staffScheduleId,
+            startDate: normalizedFilters.startDate,
+            endDate: normalizedFilters.endDate,
+            type: normalizedFilters.type,
+            status: normalizedFilters.status,
+          },
+        ],
+        (oldEvents = []) =>
+          oldEvents.filter((event) => event.staffScheduleId !== scheduleId)
       );
-      toast.success("Eventos eliminados exitosamente");
+      toast.success('Eventos eliminados exitosamente');
     },
-    onError: (error) => handleAuthError(error, "eliminar eventos por scheduleId")
+    onError: (error) =>
+      handleAuthError(error, 'eliminar eventos por scheduleId'),
   });
 
   // Manejo de errores de autorización
   const handleAuthError = (error: Error, action: string) => {
     console.error(`Error en ${action}:`, error);
-    if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+    if (
+      error.message.includes('No autorizado') ||
+      error.message.includes('Unauthorized')
+    ) {
       toast.error(`No tienes permisos para ${action}`);
     } else {
       toast.error(error.message || `Error al ${action}`);
@@ -222,6 +351,6 @@ export const useEvents = (filters?: EventFilterParams) => {
     reactivateMutation,
     generateEventsMutation,
     deleteByScheduleIdMutation,
-    refetch: eventsQuery.refetch
+    refetch: eventsQuery.refetch,
   };
-}; 
+};
