@@ -6,24 +6,56 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
-import type { Servicio, Patient } from "../_interfaces/types";
+import { Branch, Patient, PrescriptionResponse, Product, Service, Staff } from "../_interfaces/updateHistory.interface";
 
 interface PrescriptionModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  prescription: Servicio | null;
-  paciente: Patient;
+  prescriptions: PrescriptionResponse[];
+  staff: Staff[];
+  branches: Branch[];
+  products: Product[];
+  services: Service[];
+  patient?: Patient;
+  updateHistoryId?: string;
 }
 
 export function PrescriptionModal({
   isOpen,
   setIsOpen,
-  prescription,
-  paciente,
+  prescriptions,
+  staff,
+  branches,
+  patient,
+  updateHistoryId
 }: PrescriptionModalProps) {
-  const handlePrintPrescription = (prescription: Servicio) => {
-    console.log("Imprimiendo receta:", prescription);
+
+  // Encontrar la receta correspondiente
+  const prescription = prescriptions.find(p => p.updateHistoryId === updateHistoryId);
+  // Encontrar datos del médico
+  const getStaffInfo = (staffId: string) => {
+    const staffMember = staff.find(s => s.id === staffId);
+    return staffMember ? {
+      name: `${staffMember.name} ${staffMember.lastName}`,
+      specialty: staffMember.staffType?.name ?? 'No especificado'
+    } : null;
   };
+
+  // Encontrar datos de la sucursal
+  const getBranchInfo = (branchId: string) => 
+    branches.find(b => b.id === branchId);
+
+  const handlePrintPrescription = () => {
+    if (prescription) {
+      console.log("Imprimiendo receta:", prescription);
+      // Implementar lógica de impresión
+    }
+  };
+
+  if (!prescription || !patient) return null;
+
+  const staffInfo = getStaffInfo(prescription.staffId);
+  const branchInfo = getBranchInfo(prescription.branchId);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -32,157 +64,143 @@ export function PrescriptionModal({
           <DialogHeader>
             <DialogTitle>Receta Médica</DialogTitle>
           </DialogHeader>
-          {prescription && (
-            <div className="space-y-6 p-4">
-              {/* Encabezado de la Receta */}
-              <div className="grid grid-cols-2 gap-4 border-b pb-4">
-                <div className="flex items-start space-x-4">
-                  <img
-                    src="https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/1fb4f92d-ff2d-4b39-a3da-9c3139a9c2d0.webp"
-                    alt="Logo Hospital"
-                    className="w-32 object-contain"
-                  />
+          <div className="space-y-6 p-4">
+            {/* Encabezado de la Receta */}
+            <div className="grid grid-cols-2 gap-4 border-b pb-4">
+              <div className="flex items-start space-x-4">
+                <img
+                  src="/logo.webp"
+                  alt="Logo Hospital"
+                  className="w-32 object-contain"
+                />
+                <div>
+                  <p className="text-sm font-medium">{branchInfo?.name}</p>
+                  <p className="text-sm text-gray-600">{branchInfo?.address}</p>
                 </div>
-                <div className="text-right">
-                  <h4 className="font-semibold">Médico Tratante</h4>
-                  <p className="text-sm">Dr. Alex Flores Valdez</p>
-                  <p className="text-sm text-gray-600">
-                    Especialidad: Dermatología
+              </div>
+              <div className="text-right">
+                <h4 className="font-semibold">Médico Tratante</h4>
+                <p className="text-sm">{staffInfo?.name}</p>
+                <p className="text-sm text-gray-600">
+                  Especialidad: {staffInfo?.specialty}
+                </p>
+              </div>
+            </div>
+
+            {/* Datos del Paciente */}
+            <div className="border-b pb-4">
+              <h4 className="font-semibold mb-2">Datos del Paciente</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm">
+                    <span className="font-medium">Nombre: </span>
+                    {patient.name} {patient.lastName}
+                  </p>
+                  <p className="text-sm">
+                    <span className="font-medium">DNI: </span>
+                    {patient.dni}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm">
+                    <span className="font-medium">Teléfono: </span>
+                    {patient.phone}
+                  </p>
+                  <p className="text-sm">
+                    <span className="font-medium">Dirección: </span>
+                    {patient.address}
                   </p>
                 </div>
               </div>
-              {/* Datos del Paciente */}
-              <div className="border-b pb-4">
-                <h4 className="font-semibold mb-2">Datos del Paciente</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm">
-                      <span className="font-medium">Nombre: </span>
-                      {paciente.name} {paciente.lastName}
-                    </p>
-                    <p className="text-sm">
-                      <span className="font-medium">DNI: </span>
-                      {paciente.dni}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm">
-                      <span className="font-medium">Teléfono: </span>
-                      {paciente.phone}
-                    </p>
-                    <p className="text-sm">
-                      <span className="font-medium">Dirección: </span>
-                      {paciente.address}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {/* Diagnóstico y Medicamentos */}
-              <div className="space-y-4">
-                {/* Diagnóstico */}
+            </div>
+
+            {/* Medicamentos y Servicios */}
+            <div className="space-y-4">
+              {/* Descripción/Diagnóstico */}
+              {prescription.description && (
                 <div>
                   <h4 className="font-semibold mb-2">Diagnóstico</h4>
                   <p className="text-sm bg-gray-50 p-3 rounded">
-                    {prescription.prescriptionDescription}
+                    {prescription.description}
                   </p>
                 </div>
+              )}
 
-                {/* Servicios Adicionales */}
-                {prescription.services && prescription.services.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-2">
-                      Servicios Adicionales
-                    </h4>
-                    <div className="bg-gray-50 p-3 rounded">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="text-sm text-gray-600 border-b">
-                            <th className="text-left py-2">Servicio</th>
-                            <th className="text-left py-2">Descripción</th>
-                            <th className="text-left py-2">Precio</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {prescription.services.map((service, index) => (
-                            <tr key={index} className="border-b last:border-0">
-                              <td className="py-2">{service.nombre}</td>
-                              <td className="py-2">{service.descripcion}</td>
-                              <td className="py-2">S/.{service.precio}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-                                {/* Medicamentos Recetados */}
-                                <div>
-                  <h4 className="font-semibold mb-2">Medicamentos Recetados</h4>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="text-sm text-gray-600 border-b">
-                          <th className="text-left py-2">Medicamento</th>
-                          <th className="text-left py-2">Dosis</th>
-                          <th className="text-left py-2">Frecuencia</th>
+   {/* Medicamentos Recetados */}
+   {prescription.prescriptionMedicaments.length > 0 && (
+              <div>
+                <h4 className="font-semibold mb-2">Medicamentos Recetados</h4>
+                <div className="bg-gray-50 p-3 rounded">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-sm text-gray-600 border-b">
+                        <th className="text-left py-2">Medicamento</th>
+                        <th className="text-left py-2">Cantidad</th>
+                        <th className="text-left py-2">Indicaciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {prescription.prescriptionMedicaments.map((item) => (
+                        <tr key={item.id} className="border-b last:border-0">
+                          <td className="py-2">{item.name}</td>
+                          <td className="py-2">{item.quantity}</td>
+                          <td className="py-2">{item.description}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {prescription.prescriptionItems.map((item, index) => (
-                          <tr key={index} className="border-b last:border-0">
-                            <td className="py-2">{item.nombre}</td>
-                            <td className="py-2">{item.dosis}</td>
-                            <td className="py-2">{item.frecuencia}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                {/* Indicaciones Adicionales */}
-           {/*      {prescription.prescriptionTitle && (
-                  <div>
-                    <h4 className="font-semibold mb-2">
-                      Indicaciones Adicionales
-                    </h4>
-                    <p className="text-sm bg-gray-50 p-3 rounded">
-                      {prescription.prescriptionTitle}
-                    </p>
-                  </div>
-                )} */}
-                <div>
-                  <div className="border-t w-fit pt-2">
-                    <span className="text-sm text-gray-600">
-                      Fecha de emisión: {new Date().toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-end">
-                  <Button
-                    onClick={() => handlePrintPrescription(prescription)}
-                    className="w-full sm:w-auto"
-                  >
-                    <Printer className="w-4 h-4 mr-2" /> Imprimir Receta
-                  </Button>
-                  {/* Fecha y Firma */}
-                  <div className="flex flex-col gap-4 pt-6">
-                    <div className="text-right">
-                      <div className="border-t border-black mt-16 pt-2 inline-block">
-                        <p className="text-sm font-medium">Firma del Médico</p>
-                        <p className="text-xs text-gray-600">
-                          Dr. Alex Flores Valdez
-                        </p>
-                        <p className="text-xs text-gray-600">CMP: 12345</p>
-                      </div>
-                    </div>
-                  </div>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-              {/* <DialogFooter className="">
-                
-              </DialogFooter> */}
+            )}
+
+  {/* Servicios Adicionales */}
+  {prescription.prescriptionServices.length > 0 && (
+              <div>
+                <h4 className="font-semibold mb-2">Servicios Adicionales</h4>
+                <div className="bg-gray-50 p-3 rounded">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-sm text-gray-600 border-b">
+                        <th className="text-left py-2">Servicio</th>
+                        <th className="text-left py-2">Cantidad</th>
+                        <th className="text-left py-2">Descripción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {prescription.prescriptionServices.map((item) => (
+                        <tr key={item.id} className="border-b last:border-0">
+                          <td className="py-2">{item.name}</td>
+                          <td className="py-2">{item.quantity}</td>
+                          <td className="py-2">{item.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+              {/* Fecha y Firma */}
+              <div className="flex justify-between items-end">
+                <div>
+                  <span className="text-sm text-gray-600">
+                    Fecha de emisión: {new Date(prescription.registrationDate).toLocaleDateString()}
+                  </span>
+                </div>
+                <Button onClick={handlePrintPrescription}>
+                  <Printer className="w-4 h-4 mr-2" /> Imprimir Receta
+                </Button>
+              </div>
+
+              <div className="text-right">
+                <div className="border-t border-black mt-16 pt-2 inline-block">
+                  <p className="text-sm font-medium">Firma del Médico</p>
+                  <p className="text-xs text-gray-600">{staffInfo?.name}</p>
+                  {/* Agregar CMP si está disponible en los datos del staff */}
+                </div>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
