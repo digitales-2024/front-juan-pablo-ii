@@ -73,5 +73,5 @@ export interface CalendarEvent {
   updatedAt: Date;
 }
 //TODO: Cambiar a "dia", "semana", "mes"
-export const calendarModes = ['mes'] as const;
+export const calendarModes = ['mes', 'semana'] as const;
 export type Mode = (typeof calendarModes)[number];

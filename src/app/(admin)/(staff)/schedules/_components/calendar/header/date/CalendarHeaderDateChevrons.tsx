@@ -20,9 +20,9 @@ export default function CalendarHeaderDateChevrons() {
 			case "mes":
 				setDate(subMonths(date, 1));
 				break;
-			// case "semana":
-			// 	setDate(subWeeks(date, 1));
-			// 	break;
+			case "semana":
+				setDate(subWeeks(date, 1));
+				break;
 			// case "dia":
 			// 	setDate(subDays(date, 1));
 			// 	break;
@@ -34,9 +34,9 @@ export default function CalendarHeaderDateChevrons() {
 			case "mes":
 				setDate(addMonths(date, 1));
 				break;
-			// case "semana":
-			// 	setDate(addWeeks(date, 1));
-			// 	break;
+			case "semana":
+				setDate(addWeeks(date, 1));
+				break;
 			// case "dia":
 			// 	setDate(addDays(date, 1));
 			// 	break;
