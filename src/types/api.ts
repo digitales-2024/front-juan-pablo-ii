@@ -5630,6 +5630,12 @@ export interface components {
         DeletePatientDto: {
             ids: string[];
         };
+        PrescriptionItemDto: {
+            id: string;
+            name: string;
+            quantity: number;
+            description?: string;
+        };
         CreatePrescriptionDto: {
             /**
              * @description ID de la actualización de historia médica
@@ -5658,30 +5664,28 @@ export interface components {
             registrationDate: string;
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "Paracetamol",
-             *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "Paracetamol",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
-            prescriptionMedicaments?: Record<string, never>;
+            prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "consulta general",
-             *           "Price": "100",
-             *           "description": "recomendado para el paciente"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "consulta general",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
-            prescriptionServices?: Record<string, never>;
+            prescriptionServices?: components["schemas"]["PrescriptionItemDto"][];
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
@@ -5693,6 +5697,12 @@ export interface components {
              */
             purchaseOrderId?: string;
         };
+        PrescriptionItemResponse: {
+            id: string;
+            name: string;
+            quantity: number;
+            description?: string;
+        };
         Prescription: {
             id: string;
             updateHistoryId: string;
@@ -5700,8 +5710,8 @@ export interface components {
             staffId: string;
             patientId: string;
             registrationDate: string;
-            prescriptionMedicaments: Record<string, never>;
-            prescriptionServices: Record<string, never>;
+            prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
+            prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
             description: string;
             purchaseOrderId: string;
             isActive: boolean;
@@ -5734,30 +5744,28 @@ export interface components {
             registrationDate?: string;
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "Paracetamol",
-             *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "Paracetamol",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
-            prescriptionMedicaments?: Record<string, never>;
+            prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "consulta general",
-             *           "Price": "100",
-             *           "description": "recomendado para el paciente"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "consulta general",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
-            prescriptionServices?: Record<string, never>;
+            prescriptionServices?: components["schemas"]["PrescriptionItemDto"][];
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
@@ -5867,6 +5875,7 @@ export interface components {
             medicalLeaveDays: number;
             leaveDescription: string;
             isActive: boolean;
+            createdAt: string;
         };
         UpdateUpdateHistoryDto: {
             /**
