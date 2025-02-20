@@ -98,6 +98,11 @@ export async function createEvent(
   data: CreateEventDto
 ): Promise<BaseApiResponse<Event>> {
   try {
+    console.log('📤 Datos recibidos para crear evento:', {
+      ...data,
+      staffId: data.staffScheduleId,
+      branchId: data.staffScheduleId,
+    });
     const [event, error] = await http.post<BaseApiResponse<Event>>(
       '/events',
       data
@@ -109,6 +114,10 @@ export async function createEvent(
 
     return event;
   } catch (error) {
+    console.error('💥 Error completo:', error);
+    if (error instanceof z.ZodError) {
+      console.error('❌ Errores de validación:', error.errors);
+    }
     if (error instanceof Error) {
       throw new Error(error.message);
     }

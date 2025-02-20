@@ -18,6 +18,7 @@ interface DateTimePickerProps {
 		value: string;
 		onChange: (value: string) => void;
 	};
+	fromDate?: Date;
 }
 
 export function DateTimePicker({ field }: DateTimePickerProps) {
@@ -98,7 +99,7 @@ export function DateTimePicker({ field }: DateTimePickerProps) {
 										size="icon"
 										variant={
 											date &&
-											date.getHours() % 12 === hour % 12
+												date.getHours() % 12 === hour % 12
 												? "default"
 												: "ghost"
 										}
@@ -158,10 +159,10 @@ export function DateTimePicker({ field }: DateTimePickerProps) {
 										size="icon"
 										variant={
 											date &&
-											((ampm === "AM" &&
-												date.getHours() < 12) ||
-												(ampm === "PM" &&
-													date.getHours() >= 12))
+												((ampm === "AM" &&
+													date.getHours() < 12) ||
+													(ampm === "PM" &&
+														date.getHours() >= 12))
 												? "default"
 												: "ghost"
 										}
