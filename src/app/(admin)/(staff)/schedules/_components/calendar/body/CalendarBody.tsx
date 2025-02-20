@@ -8,7 +8,7 @@ export default function CalendarBody() {
 
 	return (
 		<>
-			{/* {mode === "dia" && <CalendarBodyDay />} */}
+			{mode === "dia" && <CalendarBodyDay />}
 			{mode === "semana" && <CalendarBodyWeek />}
 			{mode === "mes" && <CalendarBodyMonth />}
 		</>
