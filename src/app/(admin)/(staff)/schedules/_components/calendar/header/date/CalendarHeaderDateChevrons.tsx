@@ -23,9 +23,9 @@ export default function CalendarHeaderDateChevrons() {
 			case "semana":
 				setDate(subWeeks(date, 1));
 				break;
-			// case "dia":
-			// 	setDate(subDays(date, 1));
-			// 	break;
+			case "dia":
+				setDate(subDays(date, 1));
+				break;
 		}
 	}
 
@@ -37,9 +37,9 @@ export default function CalendarHeaderDateChevrons() {
 			case "semana":
 				setDate(addWeeks(date, 1));
 				break;
-			// case "dia":
-			// 	setDate(addDays(date, 1));
-			// 	break;
+			case "dia":
+				setDate(addDays(date, 1));
+				break;
 		}
 	}
 
