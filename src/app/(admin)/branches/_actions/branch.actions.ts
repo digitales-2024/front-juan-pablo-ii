@@ -23,7 +23,7 @@ const getBranchesHandler = async () => {
   try {
     console.log("📡 Haciendo petición HTTP a /branch");
     const [branches, error] = await http.get<Branch[]>("/branch");
-    console.log("📦 Respuesta:", { branches, error });
+    //console.log("📦 Respuesta:", { branches, error });
 
     if (error) {
       console.error("❌ Error detectado:", error);
@@ -37,7 +37,7 @@ const getBranchesHandler = async () => {
       return { error: 'Respuesta inválida del servidor' };
     }
 
-    console.log("✅ Datos obtenidos correctamente:", branches);
+    //console.log("✅ Datos obtenidos correctamente:", branches);
     return { data: branches };
   } catch (error) {
     console.error("💥 Error en getBranchesHandler:", error);
