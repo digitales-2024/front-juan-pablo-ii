@@ -11,23 +11,24 @@ export type MedicalHistoryPrototype = components["schemas"]["MedicalHistory"];
 export type UpdateHistoryResponsePrototype = components["schemas"]["UpdateHistoryResponse"];
 export type UpdateHistoryDataPrototype = components["schemas"]["UpdateHistoryData"]
 export type UpdateHistoryImagePrototype = components["schemas"]["UpdateHistoryImage"]
-export type UpdateHistoryImage = {
+export type MeidicalHistoryImage = {
     id: string;
     url: string;
 }
-export type UpdateHistoryData = {
+export type MedicalHistoryData = {
+   id: string;
     branch: string;
     service: string;
     staff: string;
-    images?: UpdateHistoryImage[];
+    images?: MeidicalHistoryImage[];
 }
-export type UpdateHistoryResponse = {
+export type MedicalHistoryResponse = {
     id: string;
     patientId: string;
     medicalHistory: Record<string, never>;
     description: string;
     isActive: boolean;
-    updates?: UpdateHistoryData[];
+    updates?: MedicalHistoryData[];
 }
 export type CreateMedicalHistoryDto = components["schemas"]["CreateMedicalHistoryDto"];
 
@@ -41,6 +42,8 @@ export type DeleteMedicalHistoryDto = components["schemas"]["DeleteMedicalHistor
 
 /* tipado para el actualizacion  de la historia  */
 export type UpdateHistory = components["schemas"]["UpdateHistory"];
+/* tipado para agregar el updates este tipado solo sirve para asignar las imagenes en el page  */
+export type UpdateHistoryResponseImage = UpdateHistory & { updates?: MedicalHistoryData[] };
 
 
 //tipado para crear y actualizar la historia medica con la imagen
@@ -63,6 +66,11 @@ export interface UpdateUpdateHistoryFormData {
 export type DeleteUpdateHistoryDto = components["schemas"]["DeleteUpdateHistoryDto"];
 /* tipado para la receta medica */
 export type Prescription = components["schemas"]["Prescription"];
+
+export type PrescriptionPrototype = Prescription;
+export type PrescriptionResponse = Omit<PrescriptionPrototype, 
+'prescriptionMedicaments' | 'prescriptionServices'> & { prescriptionMedicaments: Record<string, string> } & { prescriptionServices: Record<string, string> };
+
 export type CreatePrescriptionDto = components["schemas"]["CreatePrescriptionDto"];
 export type UpdatePrescriptionDto = components["schemas"]["UpdatePrescriptionDto"];
 export type DeletePrescriptionDto = components["schemas"]["DeletePrescriptionDto"];
