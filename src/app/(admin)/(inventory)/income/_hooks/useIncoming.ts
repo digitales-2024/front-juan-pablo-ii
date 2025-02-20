@@ -7,6 +7,7 @@ import {
   reactivateIncoming,
   updateIncoming,
   ListUpdatedDetailedIncomingResponse,
+  updateIncomingStorage,
 } from "../_actions/income.actions";
 import { toast } from "sonner";
 import {
@@ -14,12 +15,18 @@ import {
   DeleteIncomingDto,
   UpdateIncomingDto,
   DetailedIncoming,
+  UpdateIncomingStorageDto
 } from "../_interfaces/income.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
 interface UpdateIncomingVariables {
   id: string;
   data: UpdateIncomingDto;
+}
+
+interface UpdateIncomingStorageVariables {
+  id: string;
+  data: UpdateIncomingStorageDto;
 }
 
 export const useIncoming = () => {
@@ -113,7 +120,45 @@ export const useIncoming = () => {
           );
         }
       );
+      await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
       await queryClient.invalidateQueries({ queryKey: ["stock-storages"] });
+      toast.success("Ingreso actualizado exitosamente");
+    },
+    onError: (error) => {
+      if (
+        error.message.includes("No autorizado") ||
+        error.message.includes("Unauthorized")
+      ) {
+        toast.error("No tienes permisos para realizar esta acción");
+      } else {
+        toast.error(error.message || "Error al actualizar el ingreso");
+      }
+    },
+  });
+
+  const updateIncomingStorageMutation = useMutation<
+    BaseApiResponse<DetailedIncoming>,
+    Error,
+    UpdateIncomingStorageVariables
+  >({
+    mutationFn: async ({ id, data }) => {
+      const response = await updateIncomingStorage(id, data);
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      return response;
+    },
+    onSuccess: async (res) => {
+      queryClient.setQueryData<DetailedIncoming[] | undefined>(
+        ["detailed-incomings"],
+        (oldIncomings) => {
+          if (!oldIncomings) return undefined;
+          return oldIncomings.map((incoming) =>
+            incoming.id === res.data.id ? { ...incoming, ...res.data } : incoming
+          );
+        }
+      );
+      await queryClient.refetchQueries({ queryKey: ["stock-storages"] });
       toast.success("Ingreso actualizado exitosamente");
     },
     onError: (error) => {
@@ -229,6 +274,7 @@ export const useIncoming = () => {
     incomingsQuery,
     createMutation,
     updateMutation,
+    updateIncomingStorageMutation,
     deleteMutation,
     reactivateMutation,
   };

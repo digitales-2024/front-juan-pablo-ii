@@ -53,6 +53,27 @@ export type MovementDto = components['schemas']['OutgoingIncomingMovementDto'];
 export type CreateIncomingDto = components['schemas']['CreateIncomingDtoStorage'];
 export type UpdateIncomingDto = components['schemas']['UpdateIncomingDto'];
 export type DeleteIncomingDto = components['schemas']['DeleteIncomingDto'];
+export type UpdateIncomingStorageDtoPrototype = components['schemas']['UpdateIncomingStorageDto'];
+export type OutgoingIncomingUpdateMovementDto = components['schemas']['OutgoingIncomingUpdateMovementDto'];
+
+export type UpdateIncomingStorageMovementDto = { //Quitamos ell optional
+  productId?: string;
+  quantity: number; //Quitamos el optional
+  buyingPrice?: number;
+  date?: string;
+  state?: boolean;
+  id?: string;
+}
+export type UpdateIncomingStorageDto = {
+  name?: string;
+  description?: string;
+  storageId?: string;
+  date?: string;
+  state?: boolean;
+  referenceId?: string;
+  isTransference?: boolean;
+  movement: UpdateIncomingStorageMovementDto[];
+}
 
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateIncomingDto = DeleteIncomingDto;
@@ -143,5 +164,46 @@ export const updateIncomeSchema = z.object({
   referenceId: z.string().optional(),
 }) satisfies z.ZodType<UpdateIncomingDto>;
 
+// type UpdateIncomingDtoStorage = {
+//   name?: string;
+//   description?: string;
+//   storageId?: string;
+//   date?: string;
+//   state?: boolean;
+//   referenceId?: string;
+//   isTransference?: boolean;
+//   movement?: {
+//     productId?: string;
+//     quantity?: number;
+//     buyingPrice?: number;
+//     date?: string;
+//     state?: boolean;
+//     id?: string;
+//   }[];
+// }
+export const updateIncomingStorageSchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  storageId: z.string().optional(),
+  date: z.coerce.string().optional(),
+  state: z.coerce.boolean().optional(),
+  referenceId: z.string().optional(),
+  isTransference: z.coerce.boolean().optional(),
+  movement: z.array(
+    z.object({
+      productId: z.string().optional(),
+      quantity: z.coerce.number({
+        required_error: "La cantidad es requerida",
+        invalid_type_error: "La cantidad debe ser un número"
+      }).min(1, "Se debe tener al menos una unidad").nonnegative(),
+      buyingPrice: z.coerce.number().optional(),
+      date: z.string().optional(),
+      state: z.coerce.boolean().optional(),
+      id: z.string().optional(),
+    })
+  ).min(1, "Debe contener al menos un elemento"),
+}) satisfies z.ZodType<UpdateIncomingStorageDto>;
+
 export type CreateIncomeInput = z.infer<typeof createIncomeSchema>;
 export type UpdateIncomeInput = z.infer<typeof updateIncomeSchema>;
+export type UpdateIncomingStorageInput = z.infer<typeof updateIncomingStorageSchema>

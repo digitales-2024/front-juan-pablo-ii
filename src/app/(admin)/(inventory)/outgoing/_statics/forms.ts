@@ -1,5 +1,5 @@
-import { ComplexFormStatics, FormStatics } from "@/types/statics/forms";
-import { CreateOutgoingInput, MovementDto, UpdateOutgoingInput } from "../_interfaces/outgoing.interface";
+import { ComplexFormStatics } from "@/types/statics/forms";
+import { CreateOutgoingInput, MovementDto, UpdateOutgoingStorageInput, UpdateOutgoingStorageMovementDto } from "../_interfaces/outgoing.interface";
 
 export const FORMSTATICS: ComplexFormStatics<CreateOutgoingInput, MovementDto> = {
     name: {
@@ -112,7 +112,7 @@ export const FORMSTATICS: ComplexFormStatics<CreateOutgoingInput, MovementDto> =
     },
 }
 
-export const UPDATEFORMSTATICS: FormStatics<UpdateOutgoingInput> = {
+export const UPDATEFORMSTATICS: ComplexFormStatics<UpdateOutgoingStorageInput, UpdateOutgoingStorageMovementDto> = {
     name: {
         required: false,
         label: "Nombre",
@@ -171,5 +171,63 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateOutgoingInput> = {
         placeholder: "Selecciona un almacén",
         emptyMessage: "No se encontraron almacenes",
         name: "referenceId",
+    },
+    movement: {
+        required: true,
+        label: "Movimientos",
+        type: "array",
+        placeholder: "Movimientos",
+        name: "movement",
+        subFields: {
+            id: {
+                required: true,
+                label: "ID",
+                defaultValue: "",
+                type: "text",
+                placeholder: "ID",
+                name: "id",
+            },
+            productId: {
+                required: false,
+                label: "Producto",
+                defaultValue: "",
+                type: "select",
+                placeholder: "Selecciona un producto",
+                emptyMessage: "No se encontraron productos",
+                name: "productId",
+            },
+            quantity: {
+                required: true,
+                label: "Cantidad",
+                defaultValue: 1,
+                type: "number",
+                placeholder: "Cantidad",
+                name: "quantity",
+            },
+            buyingPrice: {
+                required: false,
+                label: "Precio de compra",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Precio de compra",
+                name: "buyingPrice",
+            },
+            date: {
+                required: false,
+                label: "Fecha",
+                defaultValue: undefined,//new Date().toISOString().split("T")[0],
+                type: "date",
+                placeholder: "Fecha",
+                name: "date",
+            },
+            state: {
+                required: false,
+                label: "Estado",
+                defaultValue: "false",
+                type: "checkbox",
+                placeholder: "Estado",
+                name: "state",
+            },
+        },
     },
 }

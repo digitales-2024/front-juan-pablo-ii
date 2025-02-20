@@ -68,6 +68,27 @@ export type MovementDto = components['schemas']['OutgoingIncomingMovementDto'];
 export type CreateOutgoingDto = components['schemas']['CreateOutgoingDtoStorage'];
 export type UpdateOutgoingDto = components['schemas']['UpdateOutgoingDto'];
 export type DeleteOutgoingDto = components['schemas']['DeleteOutgoingDto'];
+export type UpdateOutgoingStorageDtoPrototype = components['schemas']['UpdateOutgoingStorageDto'];
+export type OutgoingIncomingUpdateMovementDto = components['schemas']['OutgoingIncomingUpdateMovementDto'];
+
+export type UpdateOutgoingStorageMovementDto = { //Quitamos ell optional
+  productId?: string;
+  quantity: number; //Quitamos el optional
+  buyingPrice?: number;
+  date?: string;
+  state?: boolean;
+  id?: string;
+}
+export type UpdateOutgoingStorageDto = {
+  name?: string;
+  description?: string;
+  storageId?: string;
+  date?: string;
+  state?: boolean;
+  referenceId?: string;
+  isTransference?: boolean;
+  movement: UpdateOutgoingStorageMovementDto[];
+}
 
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateOutgoingDto = DeleteOutgoingDto;
@@ -136,5 +157,29 @@ export const updateOutgoingSchema = z.object({
   referenceId: z.string().optional(),
 }) satisfies z.ZodType<UpdateOutgoingDto>;
 
+export const updateOutgoingStorageSchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  storageId: z.string().optional(),
+  date: z.coerce.string().optional(),
+  state: z.coerce.boolean().optional(),
+  referenceId: z.string().optional(),
+  isTransference: z.coerce.boolean().optional(),
+  movement: z.array(
+    z.object({
+      id: z.string().optional(), //This must be obligatory
+      productId: z.string().optional(),
+      quantity: z.coerce.number({
+        required_error: "La cantidad es requerida",
+        invalid_type_error: "La cantidad debe ser un número"
+      }).min(1, "Se debe tener al menos una unidad").nonnegative(),
+      buyingPrice: z.coerce.number().optional(),
+      date: z.string().optional(),
+      state: z.coerce.boolean().optional(),
+    })
+  ).min(1, "Debe contener al menos un elemento"),
+});
+
 export type CreateOutgoingInput = z.infer<typeof createOutgoingSchema>;
 export type UpdateOutgoingInput = z.infer<typeof updateOutgoingSchema>;
+export type UpdateOutgoingStorageInput = z.infer<typeof updateOutgoingStorageSchema>;

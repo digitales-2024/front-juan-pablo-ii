@@ -2011,6 +2011,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/incoming/update/incomingStorage/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar ingreso existente */
+        patch: operations["IncomingController_updateIncomingStorage"];
+        trace?: never;
+    };
     "/api/v1/incoming/{id}": {
         parameters: {
             query?: never;
@@ -2147,6 +2164,23 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/outgoing/update/outgoingStorage/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar salida existente */
+        patch: operations["OutgoingController_updateOutgoingStorage"];
         trace?: never;
     };
     "/api/v1/outgoing/{id}": {
@@ -4637,6 +4671,84 @@ export interface components {
             Storage: components["schemas"]["IncomingStorage"];
             Movement: components["schemas"]["IncomingMovement"][];
         };
+        OutgoingIncomingUpdateMovementDto: {
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId?: string;
+            /**
+             * @description Cantidad de producto que se movió
+             * @example 100
+             */
+            quantity?: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
+            /**
+             * Format: date-time
+             * @description Fecha en que ocurrió el evento
+             * @example 2023-12-01T15:30:00Z
+             */
+            date?: string;
+            /**
+             * @description Estado del movimiento
+             * @example false
+             */
+            state?: boolean;
+            id?: string;
+        };
+        UpdateIncomingStorageDto: {
+            /**
+             * @description Nombre del ingreso a almacen
+             * @example Ingreso de regulacion , aumento de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción del ingreso
+             * @example Descripción opcional del ingreso a alamacen
+             */
+            description?: string;
+            /**
+             * @description ID del almacén al que va ser ingresado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha del ingreso
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date?: string;
+            /**
+             * @description Estado del ingreso
+             * @example true
+             */
+            state?: boolean;
+            /**
+             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
+            /**
+             * @description productos a ingresar al almacen y cantidad
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       },
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
+             *         "quantity": 10
+             *       }
+             *     ]
+             */
+            movement?: components["schemas"]["OutgoingIncomingUpdateMovementDto"][];
+        };
         UpdateIncomingDto: {
             /**
              * @description Nombre del ingreso
@@ -4863,6 +4975,55 @@ export interface components {
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
             Movement: components["schemas"]["OutgoingMovement"][];
+        };
+        UpdateOutgoingStorageDto: {
+            /**
+             * @description Nombre de la salida de almacen
+             * @example salida de transferencia , correcion de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción de salida
+             * @example Descripción opcional del salida de alamacen
+             */
+            description?: string;
+            /**
+             * @description ID del almacén del que va ser retirado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de salida
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date?: string;
+            /**
+             * @description Estado de salida
+             * @example true
+             */
+            state?: boolean;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
+            /**
+             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description productos a retirar del almacen y cantidad
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       },
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
+             *         "quantity": 10
+             *       }
+             *     ]
+             */
+            movement?: components["schemas"]["OutgoingIncomingUpdateMovementDto"][];
         };
         UpdateOutgoingDto: {
             /**
@@ -11125,7 +11286,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Storage"][];
+                    "application/json": components["schemas"]["DetailedStorage"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -11996,6 +12157,46 @@ export interface operations {
             };
         };
     };
+    IncomingController_updateIncomingStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateIncomingStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Ingreso actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedIncoming"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     IncomingController_findOne: {
         parameters: {
             query?: never;
@@ -12371,6 +12572,46 @@ export interface operations {
             };
             /** @description Ingreso no encontrado */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_updateOutgoingStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateOutgoingStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Salida actualizada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOutgoing"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

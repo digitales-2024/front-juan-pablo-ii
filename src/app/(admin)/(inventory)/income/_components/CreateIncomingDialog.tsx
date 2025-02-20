@@ -121,8 +121,9 @@ export function CreateIncomingDialog() {
     startCreateTransition(() => {
       createMutation.mutate(input, {
         onSuccess: () => {
-          setOpen(false);
+          handleClearProductList();
           form.reset();
+          setOpen(false);
         },
         onError: (error) => {
           if (error.message.includes("No autorizado")) {

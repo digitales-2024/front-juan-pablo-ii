@@ -7,6 +7,7 @@ import {
   DeleteOutgoingDto,
   CreateOutgoingDto,
   UpdateOutgoingDto,
+  UpdateOutgoingStorageDto,
  } from "../_interfaces/outgoing.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
@@ -137,6 +138,24 @@ export async function updateOutgoing(
 ): Promise<DetailedOutgoingResponse> {
   try {
     const [responseData, error] = await http.patch<DetailedOutgoingResponse>(`/outgoing/${id}`, data);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return responseData;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export async function updateOutgoingStorage(
+  id: string,
+  data: UpdateOutgoingStorageDto
+): Promise<DetailedOutgoingResponse> {
+  try {
+    const [responseData, error] = await http.patch<DetailedOutgoingResponse>(`/outgoing/update/outgoingStorage/${id}`, data);
 
     if (error) {
       return { error: error.message };
