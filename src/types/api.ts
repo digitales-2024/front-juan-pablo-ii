@@ -5652,9 +5652,8 @@ export interface components {
              */
             patientId: string;
             /**
-             * Format: date-time
              * @description Fecha de emisión de la receta
-             * @example 2024-03-15T10:00:00Z
+             * @example 2024-03-15
              */
             registrationDate: string;
             /**
@@ -5664,13 +5663,25 @@ export interface components {
              *         {
              *           "nombre": "Paracetamol",
              *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas",
-             *           "duracion": "5 días"
+             *           "frecuencia": "Cada 8 horas"
              *         }
              *       ]
              *     }
              */
-            prescription: Record<string, never>;
+            prescriptionMedicaments?: Record<string, never>;
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example {
+             *       "medicamentos": [
+             *         {
+             *           "nombre": "consulta general",
+             *           "Price": "100",
+             *           "description": "recomendado para el paciente"
+             *         }
+             *       ]
+             *     }
+             */
+            prescriptionServices?: Record<string, never>;
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
@@ -5688,9 +5699,9 @@ export interface components {
             branchId: string;
             staffId: string;
             patientId: string;
-            /** Format: date-time */
             registrationDate: string;
-            prescription: string;
+            prescriptionMedicaments: Record<string, never>;
+            prescriptionServices: Record<string, never>;
             description: string;
             purchaseOrderId: string;
             isActive: boolean;
@@ -5717,9 +5728,8 @@ export interface components {
              */
             patientId?: string;
             /**
-             * Format: date-time
              * @description Fecha de emisión de la receta
-             * @example 2024-03-15T10:00:00Z
+             * @example 2024-03-15
              */
             registrationDate?: string;
             /**
@@ -5729,13 +5739,25 @@ export interface components {
              *         {
              *           "nombre": "Paracetamol",
              *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas",
-             *           "duracion": "5 días"
+             *           "frecuencia": "Cada 8 horas"
              *         }
              *       ]
              *     }
              */
-            prescription?: Record<string, never>;
+            prescriptionMedicaments?: Record<string, never>;
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example {
+             *       "medicamentos": [
+             *         {
+             *           "nombre": "consulta general",
+             *           "Price": "100",
+             *           "description": "recomendado para el paciente"
+             *         }
+             *       ]
+             *     }
+             */
+            prescriptionServices?: Record<string, never>;
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
