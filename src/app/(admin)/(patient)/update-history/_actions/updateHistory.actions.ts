@@ -11,6 +11,7 @@ import {
   CreateUpdateHistoryFormData,
   UpdateUpdateHistoryFormData,
   PrescriptionResponse,
+  CreatePrescriptionDto
 } from "../_interfaces/updateHistory.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
@@ -19,16 +20,27 @@ export type PatientResponse = Patient | { error: string };
 
 export type PrescriptionResponseBase = PrescriptionResponse | { error: string };
 
-export type MedicalHistoryResponseBase = MedicalHistoryResponse | { error: string };
+export type PrescriptionResponseBaseApiResponse = BaseApiResponse<PrescriptionResponse> | { error: string };
+
+export type CreatePrescriptionDataDto = CreatePrescriptionDto | { error: string };
+
+export type MedicalHistoryResponseBase =
+  | MedicalHistoryResponse
+  | { error: string };
 
 type UpdateMedicalHistoryResponse =
   | BaseApiResponse<MedicalHistory>
   | { error: string };
 
-export type UpdateHistoryResponseBase = UpdateHistory | { error: string };
-export type UpdateHistoryResponseImageResponse = UpdateHistoryResponseImage | { error: string };
+export type UpdateHistoryResponseBase = BaseApiResponse<UpdateHistory> | { error: string };
 
-export type UpdateHistoryResponseData = MedicalHistoryResponse | { error: string };
+export type UpdateHistoryResponseImageResponse =
+  | UpdateHistoryResponseImage
+  | { error: string };
+
+export type UpdateHistoryResponseData =
+  | MedicalHistoryResponse
+  | { error: string };
 
 /**
  * Obtiene una historia por Id historia medica
@@ -94,19 +106,18 @@ export async function updateMedicalHistory(
   }
 }
 
-
-  //funcion para obtener la actualizacion de historia medica por id
-  /**
- * Obtiene una actualizacion de historia por Id actualizacion historia medica
+//funcion para obtener la actualizacion de historia medica por id
+/**
+ * Obtiene una actualizacion de historia por Id actualizacion historia medica con imagenes
  */
 export async function getUpdateHistoryById(
   id: string
 ): Promise<UpdateHistoryResponseImageResponse> {
   try {
-    const [updatelHistory, error] = await http.get<UpdateHistoryResponseImageResponse>(
-      `/medical-history/${id}/complete`
-    );
-    console.log("🚀 ~ updatelHistory en el frontend:", updatelHistory)
+    const [updatelHistory, error] =
+      await http.get<UpdateHistoryResponseImageResponse>(
+        `/update-history/${id}/with-images`
+      );
     if (error) {
       return {
         error:
@@ -121,15 +132,14 @@ export async function getUpdateHistoryById(
     return { error: "Error desconocido" };
   }
 }
-
+//funcion para obtener la receta medica asignada ala actualizacion de historia medica
 export async function getPrescriptionById(
   id: string
 ): Promise<PrescriptionResponseBase> {
   try {
-    const [updatelHistory, error] = await http.get<PrescriptionResponseBase>(
-      `/medical-history/${id}/complete`
+    const [prescription, error] = await http.get<PrescriptionResponseBase>(
+      `/receta/${id}`
     );
-    console.log("🚀 ~ updatelHistory en el frontend:", updatelHistory)
     if (error) {
       return {
         error:
@@ -138,7 +148,25 @@ export async function getPrescriptionById(
             : "Error al obtener la updatelHistory",
       };
     }
-    return updatelHistory;
+
+    return prescription;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+// crear receta medica
+export async function createPrescription(
+  data: CreatePrescriptionDataDto
+): Promise<PrescriptionResponseBaseApiResponse> {
+  try {
+    const [responseData, error] = await http.post<PrescriptionResponseBaseApiResponse>("/receta", data);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return responseData;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido" };
@@ -147,7 +175,12 @@ export async function getPrescriptionById(
 
 //funcion para crear una actualizacion de historia medica con imagen
 
-export async function createUpdateHistory(
+//export type UpdateHistoryResponseBase = BaseApiResponse<UpdateHistory> | { error: string };
+/* export interface CreateUpdateHistoryFormData {
+  data: CreateUpdateHistoryDto;
+  image?: File | null;
+} */
+export async function createUpdateHistoryAction(
   formData: CreateUpdateHistoryFormData
 ): Promise<UpdateHistoryResponseBase> {
   try {
@@ -176,10 +209,11 @@ export async function createUpdateHistory(
       Object.fromEntries(serverFormData.entries())
     );
 
-    const [response, error] = await http.multipartPost<UpdateHistoryResponseBase>(
-      "/update-history/create-with-images",
-      serverFormData
-    );
+    const [response, error] =
+      await http.multipartPost<UpdateHistoryResponseBase>(
+        "/update-history/create-with-images",
+        serverFormData
+      );
 
     if (error) {
       return { error: error.message };
@@ -223,10 +257,11 @@ export async function updateUpdateHistory(
       Object.fromEntries(serverFormData.entries())
     );
 
-    const [response, error] = await http.multipartPatch<UpdateHistoryResponseBase>(
-      `/update-history/${id}/with-images`,
-      serverFormData
-    );
+    const [response, error] =
+      await http.multipartPatch<UpdateHistoryResponseBase>(
+        `/update-history/${id}/with-images`,
+        serverFormData
+      );
 
     if (error) {
       return { error: error.message };
