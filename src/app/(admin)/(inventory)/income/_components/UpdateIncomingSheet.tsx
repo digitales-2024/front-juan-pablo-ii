@@ -24,10 +24,10 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import {
-  UpdateIncomeInput,
   updateIncomeSchema,
   DetailedIncoming,
   UpdateIncomingStorageInput,
+  UpdateIncomingStorageDto,
 } from "../_interfaces/income.interface";
 import {
   AlertCircle,
@@ -95,7 +95,7 @@ export function UpdateIncomingSheet({
 }: UpdateIncomeSheetProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const { updateMutation } = useIncoming();
+  const { updateIncomingStorageMutation } = useIncoming();
   const { activeStoragesQuery: responseStorages } = useStorages();
   const { activeProductsQuery: reponseProducts } = useProducts();
   const selectedProducts = useSelectedProducts();
@@ -282,11 +282,11 @@ export function UpdateIncomingSheet({
     }
   }, [open, handleClearProductList]);
 
-  const onSubmit = async (data: UpdateIncomeInput) => {
-    if (updateMutation.isPending) return;
+  const onSubmit = async (data: UpdateIncomingStorageDto) => {
+    if (updateIncomingStorageMutation.isPending) return;
 
     try {
-      await updateMutation.mutateAsync(
+      await updateIncomingStorageMutation.mutateAsync(
         {
           id: incoming.id,
           data,
@@ -388,6 +388,11 @@ export function UpdateIncomingSheet({
     remove(index);
   };
 
+  const handleOnOpenChange = (open:boolean)=>{
+    handleClearProductList()
+    setOpen(open)
+  }
+
   // const typeProductOptions: Option[] = responseTypeProducts.activeData.map(
   //   (typeProduct) => ({
   //     label: typeProduct.name,
@@ -396,7 +401,7 @@ export function UpdateIncomingSheet({
   // );
 
   return (
-    <Sheet open={isOpen} onOpenChange={setOpen}>
+    <Sheet open={isOpen} onOpenChange={handleOnOpenChange}>
       {showTrigger && (
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -431,8 +436,8 @@ export function UpdateIncomingSheet({
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {showForm && (
-                <div className="p-2 sm:p-1 overflow-auto scrollbar-thin max-h-[calc(80dvh-4rem)] grid md:grid-cols-2 gap-4 animate-fade-left animate-ease-in-out">
-                  <div className="col-span-2">
+                <div className="p-2 sm:p-1 overflow-auto scrollbar-thin max-h-[calc(80dvh-4rem)] grid md:grid-cols-4 gap-4 animate-fade-left animate-ease-in-out">
+                  <div className="col-span-4">
                     <FormItem>
                       <FormLabel>{FORMSTATICS.name.label}</FormLabel>
                       <Input
@@ -452,12 +457,77 @@ export function UpdateIncomingSheet({
                     </FormItem>
                   </div>
 
+                  {/* Fecha */}
+                  <div className="col-span-4">
+                    <FormField
+                      control={form.control}
+                      name={FORMSTATICS.date.name}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col h-full justify-between">
+                          <FormLabel>{FORMSTATICS.date.placeholder}</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    // Verifica si es string
+                                    typeof field.value === "string" ? (
+                                      format(new Date(field.value), "PP", {
+                                        locale: es,
+                                      })
+                                    ) : (
+                                      <span>Escoja una fecha</span>
+                                    )
+                                  ) : (
+                                    <span>Escoja una fecha</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  typeof field.value === "string"
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                onSelect={(val) =>
+                                  field.onChange(val?.toISOString() ?? "")
+                                }
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <CustomFormDescription
+                            required={FORMSTATICS.date.required}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   {/* Campo Storage - Mantener como controlled porque es un AutoComplete */}
                   <FormField
                     control={control}
                     name={FORMSTATICS.storageId.name}
                     render={({ field }) => (
-                      <FormItem className="col-span-2">
+                      <FormItem className="col-span-4">
                         <FormLabel>{FORMSTATICS.storageId.label}</FormLabel>
                         <AutoComplete
                           disabled
@@ -486,17 +556,22 @@ export function UpdateIncomingSheet({
                   />
 
                   {/* Movements Section */}
-                  <div className="flex flex-col gap-4 col-span-2">
+                  <div className="flex flex-col gap-4 col-span-4">
                     <FormLabel>{FORMSTATICS.movement.label}</FormLabel>
                     <Table className="w-full">
-                      <TableCaption>
-                        Lista de productos seleccionados
+                      <TableCaption className="space-y-1">
+                        <span className="inline-block">
+                          Lista de productos seleccionados. 
+                        </span>
+                        <span className="inline-block">
+                          Se asigna el precio de venta como referencia en los nuevos productos que agregue.
+                        </span>
                       </TableCaption>
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-[100px]">Nombre</TableHead>
                           <TableHead>Cantidad</TableHead>
-                          <TableHead className="text-center">Precio</TableHead>
+                          <TableHead className="text-center">Precio Compra</TableHead>
                           <TableHead className="text-center">Total</TableHead>
                           <TableHead className="text-center">
                             Opciones
@@ -527,7 +602,7 @@ export function UpdateIncomingSheet({
                           const total = isNaN(buyingPrice * quantity) ? 0 : buyingPrice * quantity;
 
                           return (
-                            <TableRow key={field.id}>
+                            <TableRow key={field.id} className="animate-fade-down">
                               <TableCell>
                                 <FormItem>
                                   <div>
@@ -651,7 +726,7 @@ export function UpdateIncomingSheet({
                     control={form.control}
                     name={FORMSTATICS.state.name}
                     render={({ field }) => (
-                      <FormItem className="space-y-3">
+                      <FormItem className="space-y-3 col-span-4">
                         <FormLabel className="overflow-hidden text-ellipsis">
                           {FORMSTATICS.state.label}
                         </FormLabel>
@@ -684,73 +759,8 @@ export function UpdateIncomingSheet({
                     )}
                   ></FormField>
 
-                  {/* Fecha */}
-                  <div>
-                    <FormField
-                      control={form.control}
-                      name={FORMSTATICS.date.name}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel>{FORMSTATICS.date.placeholder}</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "w-full pl-3 text-left font-normal",
-                                    !field.value && "text-muted-foreground"
-                                  )}
-                                >
-                                  {field.value ? (
-                                    // Verifica si es string
-                                    typeof field.value === "string" ? (
-                                      format(new Date(field.value), "PP", {
-                                        locale: es,
-                                      })
-                                    ) : (
-                                      <span>Escoja una fecha</span>
-                                    )
-                                  ) : (
-                                    <span>Escoja una fecha</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={
-                                  typeof field.value === "string"
-                                    ? new Date(field.value)
-                                    : undefined
-                                }
-                                onSelect={(val) =>
-                                  field.onChange(val?.toISOString() ?? "")
-                                }
-                                disabled={(date) =>
-                                  date > new Date() ||
-                                  date < new Date("1900-01-01")
-                                }
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <CustomFormDescription
-                            required={FORMSTATICS.date.required}
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
                   {/* Descripción */}
-                  <div className="col-span-2">
+                  <div className="col-span-4">
                     <FormItem>
                       <FormLabel>{FORMSTATICS.description.label}</FormLabel>
                       <Textarea
@@ -802,9 +812,9 @@ export function UpdateIncomingSheet({
                         "text-destructive hover:text-white hover:bg-destructive border border-destructive"
                       )}
                       type="submit"
-                      disabled={updateMutation.isPending}
+                      disabled={updateIncomingStorageMutation.isPending}
                     >
-                      {updateMutation.isPending ? (
+                      {updateIncomingStorageMutation.isPending ? (
                         <>
                           <RefreshCcw className="mr-2 size-4 animate-spin" />
                           Actualizando...
