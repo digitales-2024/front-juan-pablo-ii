@@ -9,7 +9,6 @@ import CalendarHeader from "./header/CalendarHeader";
 import CalendarHeaderDate from "./header/date/CalendarHeaderDate";
 
 export default function Calendar({
-	events,
 	setEvents,
 	mode,
 	setMode,
@@ -19,13 +18,16 @@ export default function Calendar({
 }: CalendarProps) {
 	return (
 		<CalendarProvider
-			events={events}
 			setEvents={setEvents}
 			mode={mode}
 			setMode={setMode}
 			date={date}
 			setDate={setDate}
 			calendarIconIsToday={calendarIconIsToday}
+			filters={{
+				type: 'TURNO',
+				status: 'CONFIRMED'
+			}}
 		>
 			<CalendarHeader>
 				<CalendarHeaderDate />
