@@ -68,6 +68,31 @@ export const useEvents = (filters?: EventFilterParams) => {
     refetchOnWindowFocus: false, // Evitar recargas automáticas
   });
 
+
+
+  const EVENT_CITA_QUERY_KEY = ['calendar-appointments'] as const;
+
+
+  // Filtros normalizados con type: 'CITA' forzado
+  const normalizedCitaFilters = useMemo(() => ({
+    ...filters,
+    type: 'CITA' as const,
+    status: 'CONFIRMED' as const,
+    startDate: filters?.startDate || format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+    endDate: filters?.endDate || format(endOfMonth(new Date()), 'yyyy-MM-dd')
+  }), [filters]);
+
+  // Query principal
+  const eventsCitaQuery = useQuery({
+    queryKey: EVENT_CITA_QUERY_KEY, // Usamos la clave única
+    queryFn: async () => {
+      const res = await getEventsByFilter(normalizedCitaFilters);
+      return res.data || [];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutos
+    gcTime: 1000 * 60 * 30, // 30 minutos
+    refetchOnWindowFocus: false,
+  });
   // Mutación para crear evento
   const createMutation = useMutation<
     BaseApiResponse<Event>,
@@ -228,6 +253,8 @@ export const useEvents = (filters?: EventFilterParams) => {
 
   return {
     eventsQuery,
+    eventsCitaQuery,
+    eventscita: eventsCitaQuery.data,
     events: eventsQuery.data,
     createMutation,
     updateMutation,
