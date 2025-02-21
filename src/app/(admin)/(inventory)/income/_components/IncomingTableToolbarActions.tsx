@@ -5,9 +5,9 @@ import { DeactivateIncomingDialog } from "./DeactivateIncomingDialog";
 import { ReactivateIncomingDialog } from "./ReactivateIncomingDialog";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
-import LoadingDialogForm from "./LoadingDialogForm";
-import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
+import { ToolbarButtonsLoading } from "./errorComponents/ToolbarLoading";
+import { toast } from "sonner";
 
 export interface ProductTableToolbarActionsProps {
   table?: Table<DetailedIncoming>;
@@ -23,37 +23,45 @@ export function IncomingTableToolbarActions({
   const { activeBranchesQuery:responseBranches } = useBranches();
   const { activeStoragesQuery:responseStorages } = useStorages();
   if (responseBranches.isLoading && responseStorages.isLoading) {
-      return <LoadingDialogForm />;
+      return <ToolbarButtonsLoading />;
     } else {
       if (responseBranches.isError) {
+        toast.error("Error al cargar las sucursales, "+responseBranches.error.message, {
+          action: {
+            label: "Recargar",
+            onClick: async () => {
+              await responseBranches.refetch();
+            }
+          }
+        });
         return (
-          <GeneralErrorMessage
-            error={responseBranches.error}
-            reset={responseBranches.refetch}
+          <ToolbarButtonsLoading
           />
         );
       }
       if (!responseBranches.data) {
         return (
-          <GeneralErrorMessage
-            error={new Error("No se encontraron sucursales")}
-            reset={responseBranches.refetch}
+          <ToolbarButtonsLoading
           />
         );
       }
       if(responseStorages.isError){
+        toast.error("Error al cargar los almacenes, "+responseStorages.error.message, {
+          action: {
+            label: "Recargar",
+            onClick: async () => {
+              await responseStorages.refetch();
+            }
+          }
+        });
         return (
-          <GeneralErrorMessage
-            error={responseStorages.error}
-            reset={responseStorages.refetch}
+          <ToolbarButtonsLoading
           />
         )
       }
       if(!responseStorages.data){
         return (
-          <GeneralErrorMessage
-            error={new Error("No se encontraron almacenes")}
-            reset={responseStorages.refetch}
+          <ToolbarButtonsLoading
           />
         );
       }

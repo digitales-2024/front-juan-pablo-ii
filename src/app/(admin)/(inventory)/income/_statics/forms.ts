@@ -1,5 +1,5 @@
-import { ComplexFormStatics, FormStatics } from "@/types/statics/forms";
-import { CreateIncomeInput, MovementDto, UpdateIncomeInput } from "../_interfaces/income.interface";
+import { ComplexFormStatics } from "@/types/statics/forms";
+import { CreateIncomeInput, MovementDto, UpdateIncomingStorageInput, UpdateIncomingStorageMovementDto } from "../_interfaces/income.interface";
 // export const createProductSchema = z.object({
 //   name: z.string().min(1, "El nombre es requerido"), //En el back es opcional, pero considero que debe ser requerido
 //   description: z.string().optional(),
@@ -35,10 +35,10 @@ export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, MovementDto> = {
     },
     storageId: {
         required: true,
-        label: "Almacenamiento",
+        label: "Almacén de destino",
         defaultValue: "",
         type: "select",
-        placeholder: "Selecciona un almacenamiento",
+        placeholder: "Selecciona un almacén",
         emptyMessage: "No se encontraron almacenes",
         name: "storageId",
     },
@@ -90,6 +90,14 @@ export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, MovementDto> = {
                 placeholder: "Cantidad",
                 name: "quantity",
             },
+            buyingPrice: {
+                required: false,
+                label: "Precio de compra",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Precio de compra",
+                name: "buyingPrice",
+            },
             date: {
                 required: false,
                 label: "Fecha",
@@ -118,7 +126,7 @@ export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, MovementDto> = {
 //   state: z.boolean().optional(),
 //   referenceId: z.string().optional(),
 // }) satisfies z.ZodType<UpdateIncomingDto>;
-export const UPDATEFORMSTATICS: FormStatics<UpdateIncomeInput> = {
+export const UPDATEFORMSTATICS: ComplexFormStatics<UpdateIncomingStorageInput, UpdateIncomingStorageMovementDto> = {
     name: {
         required: false,
         label: "Nombre",
@@ -168,4 +176,70 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateIncomeInput> = {
         placeholder: "Referencia",
         name: "referenceId",
     },
+    isTransference: {
+        required: false,
+        label: "¿Es una transferencia?",
+        defaultValue: false,
+        type: "checkbox",
+        placeholder: "Transferencia",
+        name: "isTransference",
+    },
+    movement: {
+        required: true,
+        label: "Movimientos",
+        type: "array",
+        placeholder: "Movimientos",
+        name: "movement",
+        subFields: {
+            id:{
+                required: true,
+                label: "Id",
+                defaultValue: "",
+                type: "text",
+                placeholder: "Id",
+                name: "id",
+            },
+            productId: {
+                required: true,
+                label: "Producto",
+                defaultValue: "",
+                type: "select",
+                placeholder: "Selecciona un producto",
+                emptyMessage: "No se encontraron productos",
+                name: "productId",
+            },
+            quantity: {
+                required: true,
+                label: "Cantidad",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Cantidad",
+                name: "quantity",
+            },
+            buyingPrice: {
+                required: false,
+                label: "Precio de compra",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Precio de compra",
+                name: "buyingPrice",
+            },
+            date: {
+                required: false,
+                label: "Fecha",
+                defaultValue: undefined,//new Date().toISOString().split("T")[0],
+                type: "date",
+                placeholder: "Fecha",
+                name: "date",
+            },
+            state: {
+                required: false,
+                label: "Estado",
+                defaultValue: "false",
+                type: "checkbox",
+                placeholder: "Estado",
+                name: "state",
+            },
+        },
+    }
 }

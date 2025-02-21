@@ -1,11 +1,11 @@
 import { Table } from "@tanstack/react-table";
-import { DetailedTypeStorage } from "../_interfaces/storageTypes.interface";
+import { TypeStorage } from "../_interfaces/storageTypes.interface";
 import { CreateTypeStorageDialog } from "./CreateStorageTypeDialog";
 import { DeactivateTypeStorageDialog } from "./DeactivateStorageTypeDialog";
 import { ReactivateStorageTypeDialog } from "./ReactivateStorageTypeDialog";
 
 export interface TypeStorageTableToolbarActionsProps {
-  table?: Table<DetailedTypeStorage>;
+  table?: Table<TypeStorage>;
 }
 
 export function TypeStorageTableToolbarActions({

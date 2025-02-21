@@ -28,6 +28,8 @@ export function IncomingTable({ data }: IncomingTableProps) {
       columnVisibilityConfig={
         {
           description: false,
+          isActive: false,
+          state: false,
         }
       }
     />

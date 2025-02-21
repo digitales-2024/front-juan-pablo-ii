@@ -23,7 +23,7 @@ export default function PageBranches() {
     notFound();
   }
 
-  console.log("Data in page received:", response.data);
+  //console.log("Data in page received:", response.data);
 
   return (
     <>

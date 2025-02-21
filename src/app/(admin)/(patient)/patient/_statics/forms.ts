@@ -162,6 +162,14 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
 
 
 export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
+  image: {
+    required: false,
+    label: "Imagen",
+    type: "file",
+    placeholder: "Seleccione una imagen",
+    name: "image",
+    defaultValue: "",
+  },
   name: {
     required: false,
     label: "Nombre",

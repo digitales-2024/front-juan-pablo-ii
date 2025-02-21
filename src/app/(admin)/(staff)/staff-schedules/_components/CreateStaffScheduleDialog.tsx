@@ -53,7 +53,7 @@ export function CreateStaffScheduleDialog() {
       endTime: "17:00",
       daysOfWeek: [],
       recurrence: {
-        frequency: "WEEKLY",
+        frequency: "YEARLY",
         interval: 1
       },
       exceptions: [],
@@ -103,9 +103,9 @@ export function CreateStaffScheduleDialog() {
   );
 
   const TriggerButton = () => (
-    <Button 
+    <Button
       onClick={() => setOpen(true)}
-      variant="outline" 
+      variant="outline"
       size="sm"
     >
       <Plus className="size-4 mr-2" aria-hidden="true" />

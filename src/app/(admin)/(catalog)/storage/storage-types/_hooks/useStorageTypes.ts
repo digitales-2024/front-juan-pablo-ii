@@ -10,12 +10,10 @@ import {
   TypeStorageResponse,
   getActiveTypeStorages,
   getDetailedTypeStorages,
-  getDetailedTypeStorageById
 } from "../_actions/storageTypes.actions";
 import { toast } from "sonner";
 import {
   TypeStorage, CreateTypeStorageDto, DeleteTypeStorageDto, UpdateTypeStorageDto,
-  DetailedTypeStorage,
 } from "../_interfaces/storageTypes.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
@@ -109,15 +107,15 @@ export const useTypeStorages = () => {
       }
       return response;
     },
-    onSuccess: async (res) => {
-      const detailedTypeStorage = await getDetailedTypeStorageById(res.data.id);
-      if ("error" in detailedTypeStorage) {
-        throw new Error(detailedTypeStorage.error);
-      }
-      queryClient.setQueryData<DetailedTypeStorage[] | undefined>(
-        ["detailed-typeStorages"], (oldTypeStorages) => {
-          if (!oldTypeStorages) return [...detailedTypeStorage];
-          return [...oldTypeStorages, ...detailedTypeStorage];
+    onSuccess: (res) => {
+      // const detailedTypeStorage = await getDetailedTypeStorageById(res.data.id);
+      // if ("error" in detailedTypeStorage) {
+      //   throw new Error(detailedTypeStorage.error);
+      // }
+      queryClient.setQueryData<TypeStorage[] | undefined>(
+        ["typeStorages"], (oldTypeStorages) => {
+          if (!oldTypeStorages) return [res.data];
+          return [...oldTypeStorages, res.data];
       });
       toast.success(res.message);
     },
@@ -135,15 +133,15 @@ export const useTypeStorages = () => {
       }
       return response;
     },
-    onSuccess: async (res) => {
-      const detailedTypeStorage = await getDetailedTypeStorageById(res.data.id);
-      if ("error" in detailedTypeStorage) {
-        throw new Error(detailedTypeStorage.error);
-      }
-      queryClient.setQueryData<DetailedTypeStorage[] | undefined>(["detailed-typeStorages"], (oldTypeStorages) => {
+    onSuccess: (res) => {
+      // const detailedTypeStorage = await getDetailedTypeStorageById(res.data.id);
+      // if ("error" in detailedTypeStorage) {
+      //   throw new Error(detailedTypeStorage.error);
+      // }
+      queryClient.setQueryData<TypeStorage[] | undefined>(["typeStorages"], (oldTypeStorages) => {
         if (!oldTypeStorages) return undefined;
-        return oldTypeStorages.map((typeStorage) =>
-          typeStorage.id === res.data.id ? {...typeStorage, ...detailedTypeStorage[0]} : typeStorage
+        return oldTypeStorages.map((typeStorage: TypeStorage) =>
+          typeStorage.id === res.data.id ? {...typeStorage, ...res.data} : typeStorage
         );
       });
       toast.success("Tipo de almacenamiento actualizado exitosamente");

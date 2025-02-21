@@ -26,6 +26,7 @@ interface PatientBasicInfoProps {
 }
 
 export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
+  //console .log("paciente en el componente de datos basicos de historia ", paciente);
   return (
     <div className="bg-gray-50/50">
       <div className="container mx-auto py-8">
@@ -60,7 +61,7 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
 
           {/* Main Content */}
           <div className="col-span-1 md:col-span-9">
-            <Tabs defaultValue="medical" className="w-full">
+            <Tabs defaultValue="personal" className="w-full">
               <div className="flex flex-col md:flex-row">
                 <TabsList className="w-full flex flex-col md:flex-row justify-start mb-4 gap-2 h-fit">
                   <TabsTrigger value="medical" className="w-full md:w-auto">

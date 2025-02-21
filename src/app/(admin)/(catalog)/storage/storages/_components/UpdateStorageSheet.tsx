@@ -34,11 +34,13 @@ import { AutoComplete } from "@/components/ui/autocomplete";
 import LoadingDialogForm from "./LoadingDialogForm";
 import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
 import { Option } from "@/types/statics/forms";
-import { UPDATEFORMSTATICS as STATIC_FORM} from "../_statics/forms";
+import { UPDATEFORMSTATICS as STATIC_FORM } from "../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import { METADATA } from "../_statics/metadata";
 import { useTypeStorages } from "../../storage-types/_hooks/useStorageTypes";
 import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
+import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
+import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 
 interface UpdateStoargeSheetProps {
   storage: Storage;
@@ -61,18 +63,21 @@ export function UpdateStorageSheet({
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
-// export const updateStorageSchema = z.object({
-//   name: z.string().optional(),
-//   location: z.string().optional(),
-//   typeStorageId: z.string().optional(),
-// }) satisfies z.ZodType<UpdateStorageDto>;
+  // export const updateStorageSchema = z.object({
+  //   name: z.string().optional(),
+  //   location: z.string().optional(),
+  //   typeStorageId: z.string().optional(),
+  // }) satisfies z.ZodType<UpdateStorageDto>;
 
   const form = useForm<UpdateStorageInput>({
     resolver: zodResolver(updateStorageSchema),
     defaultValues: {
-      name: storage.name??FORMSTATICS.name.defaultValue,
-      location: storage.location??FORMSTATICS.location.defaultValue,
-      typeStorageId: storage.typeStorageId??FORMSTATICS.typeStorageId.defaultValue,
+      name: storage.name ?? FORMSTATICS.name.defaultValue,
+      location: storage.location ?? FORMSTATICS.location.defaultValue,
+      typeStorageId:
+        storage.typeStorageId ?? FORMSTATICS.typeStorageId.defaultValue,
+      branchId: storage.branchId ?? "",
+      staffId: storage.staffId ?? "",
     },
   });
 
@@ -91,7 +96,10 @@ export function UpdateStorageSheet({
             form.reset();
           },
           onError: (error) => {
-            console.error(`Error al actualizar ${METADATA.entityName.toLowerCase()}:`, error);
+            console.error(
+              `Error al actualizar ${METADATA.entityName.toLowerCase()}:`,
+              error
+            );
             if (error.message.includes("No autorizado")) {
               setTimeout(() => {
                 form.reset();
@@ -107,8 +115,14 @@ export function UpdateStorageSheet({
   };
 
   const { activeTypeStoragesQuery: responseStorageTypes } = useTypeStorages();
+  const { activeStaffQuery: responseStaff } = useStaff();
+  const { activeBranchesQuery: responseBranches } = useBranches();
 
-  if (responseStorageTypes.isLoading) {
+  if (
+    responseStorageTypes.isLoading &&
+    responseStaff.isLoading &&
+    responseBranches.isLoading
+  ) {
     return <LoadingDialogForm />;
   } else {
     if (responseStorageTypes.isError) {
@@ -120,18 +134,33 @@ export function UpdateStorageSheet({
       );
     }
     if (!responseStorageTypes.data) {
+      return <LoadingDialogForm />;
+    }
+    if (responseStaff.isError) {
       return (
         <GeneralErrorMessage
-          error={new Error("No se encontraron categorías")}
-          reset={responseStorageTypes.refetch}
+          error={responseStaff.error}
+          reset={responseStaff.refetch}
         />
       );
     }
+    if (!responseStaff.data) {
+      return <LoadingDialogForm />;
+    }
+    if (responseBranches.isError) {
+      return responseBranches.error ? (
+        <GeneralErrorMessage
+          error={responseBranches.error}
+          reset={responseBranches.refetch}
+        />
+      ) : null;
+    }
+    if (!responseBranches.data) {
+      return <LoadingDialogForm />;
+    }
   }
 
-  if (
-    METADATA.dataDependencies &&
-    (responseStorageTypes.data.length === 0) ){
+  if (METADATA.dataDependencies && (responseStorageTypes.data.length === 0|| responseStaff.data.length === 0 || responseBranches.data.length === 0)) {
     return (
       <DataDependencyErrorMessage
         error={
@@ -153,6 +182,18 @@ export function UpdateStorageSheet({
     })
   );
 
+  const staffOptions: Option[] = responseStaff.data.map((staff) => ({
+    label: `${staff.name} ${staff.lastName} - ${staff.staffType.name}`,
+    value: staff.id,
+  }));
+
+  const branchesOptions: Option[] = responseBranches.data.map(
+    (typeProduct) => ({
+      label: typeProduct.name,
+      value: typeProduct.id,
+    })
+  );
+
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
       {showTrigger && (
@@ -164,9 +205,12 @@ export function UpdateStorageSheet({
       )}
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Actualizar {METADATA.entityName.toLowerCase()}</SheetTitle>
+          <SheetTitle>
+            Actualizar {METADATA.entityName.toLowerCase()}
+          </SheetTitle>
           <SheetDescription>
-            Actualiza la información de este(a) {METADATA.entityName.toLowerCase()} y guarda los cambios
+            Actualiza la información de este(a){" "}
+            {METADATA.entityName.toLowerCase()} y guarda los cambios
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">
@@ -193,6 +237,112 @@ export function UpdateStorageSheet({
                     </FormItem>
                   )}
                 />
+                {/* Campo de tipo de almacén */}
+                <FormField
+                  control={form.control}
+                  name={FORMSTATICS.typeStorageId.name}
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>{FORMSTATICS.typeStorageId.label}</FormLabel>
+                      <FormControl>
+                        <AutoComplete
+                          options={storageTypesOptions}
+                          placeholder={FORMSTATICS.typeStorageId.placeholder}
+                          emptyMessage={FORMSTATICS.typeStorageId.emptyMessage!}
+                          value={
+                            storageTypesOptions.find(
+                              (option) => option.value === field.value
+                            ) ?? undefined
+                          }
+                          onValueChange={(option) => {
+                            field.onChange(option?.value || "");
+                          }}
+                        />
+                      </FormControl>
+                      <CustomFormDescription
+                        required={FORMSTATICS.typeStorageId.required}
+                      ></CustomFormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+                {/* Campo de Sucursal */}
+                <FormField
+                  control={form.control}
+                  name={FORMSTATICS.branchId.name}
+                  render={({ field }) => (
+                    <FormItem className="col-span-1">
+                      <FormLabel htmlFor={FORMSTATICS.branchId.name}>{FORMSTATICS.branchId.label}</FormLabel>
+                      <FormControl>
+                        {
+                          branchesOptions.length>0 ? <AutoComplete
+                          options={branchesOptions}
+                          placeholder={FORMSTATICS.branchId.placeholder}
+                          emptyMessage={FORMSTATICS.branchId.emptyMessage??''}
+                          value={
+                            branchesOptions.find(
+                              (option) => option.value === field.value
+                            ) ?? undefined
+                          }
+                          onValueChange={(option) => {
+                            field.onChange(option?.value || "");
+                          }}
+                        /> : (
+                          <Input
+                            disabled={true}
+                            placeholder={FORMSTATICS.branchId.placeholder}
+                            type={FORMSTATICS.branchId.type}
+                          />
+                        )
+                        }
+                      </FormControl>
+                      <CustomFormDescription required={FORMSTATICS.branchId.required}>
+                        { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas. Este campo es opcional</span>}
+                      </CustomFormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Campo de personal */}
+                <FormField
+                  control={form.control}
+                  name={FORMSTATICS.staffId.name}
+                  render={({ field }) => (
+                    <FormItem className="col-span-1">
+                      <FormLabel>
+                        {FORMSTATICS.staffId.label}
+                      </FormLabel>
+                      <FormControl>
+                        {
+                          staffOptions.length>0 ? <AutoComplete
+                          options={staffOptions}
+                          placeholder={FORMSTATICS.staffId.placeholder}
+                          emptyMessage={FORMSTATICS.staffId.emptyMessage??''}
+                          value={
+                            staffOptions.find(
+                              (option) => option.value === field.value
+                            ) ?? undefined
+                          }
+                          onValueChange={(option) => {
+                            field.onChange(option?.value || "");
+                          }}
+                        /> : (
+                          <Input
+                            disabled={true}
+                            placeholder={FORMSTATICS.name.placeholder}
+                            type={FORMSTATICS.staffId.type}
+                          />
+                        )
+                        }
+                      </FormControl>
+                      <CustomFormDescription required={FORMSTATICS.staffId.required}>
+                        { staffOptions.length===0 && <span>No hay personal disponible o activo. Este campo es opcional</span>}
+                      </CustomFormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name={FORMSTATICS.location.name}
@@ -212,37 +362,6 @@ export function UpdateStorageSheet({
                     </FormItem>
                   )}
                 />
-                {/* Campo de tipo de almacén */}
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.typeStorageId.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>
-                        {FORMSTATICS.typeStorageId.label}
-                      </FormLabel>
-                      <FormControl>
-                        <AutoComplete
-                          options={storageTypesOptions}
-                          placeholder={FORMSTATICS.typeStorageId.placeholder}
-                          emptyMessage={FORMSTATICS.typeStorageId.emptyMessage!}
-                          value={
-                            storageTypesOptions.find(
-                              (option) => option.value === field.value
-                            ) ?? undefined
-                          }
-                          onValueChange={(option) => {
-                            field.onChange(option?.value || "");
-                          }}
-                        />
-                      </FormControl>
-                      <CustomFormDescription required={FORMSTATICS.typeStorageId.required}></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
               <SheetFooter>
                 <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                   <SheetClose asChild>
@@ -269,4 +388,3 @@ export function UpdateStorageSheet({
     </Sheet>
   );
 }
-

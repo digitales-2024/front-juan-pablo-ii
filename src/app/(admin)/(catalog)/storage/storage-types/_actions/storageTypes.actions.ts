@@ -1,15 +1,15 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { TypeStorage, CreateTypeStorageDto, UpdateTypeStorageDto, DeleteTypeStorageDto, DetailedTypeStorage } from "../_interfaces/storageTypes.interface";
+import { TypeStorage, CreateTypeStorageDto, UpdateTypeStorageDto, DeleteTypeStorageDto } from "../_interfaces/storageTypes.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
 import { createSafeAction } from "@/utils/createSafeAction";
 
 export type TypeStorageResponse = BaseApiResponse<TypeStorage> | { error: string };
 export type ListTypeStorageResponse = TypeStorage[] | { error: string };
-export type ListDetailedTypeStorageResponse = DetailedTypeStorage[] | { error: string };
-export type DetailedTypeStorageResponse = DetailedTypeStorage[] | { error: string };
+export type ListDetailedTypeStorageResponse = TypeStorage[] | { error: string };
+export type DetailedTypeStorageResponse = TypeStorage[] | { error: string };
 
 const GetTypeStorageSchema = z.object({});
 
@@ -44,7 +44,7 @@ const getTypeStoragesHandler = async () => {
 
 const getActiveTypeStoragesHandler = async () => {
   try {
-    const [typeStorages, error] = await http.get<ListTypeStorageResponse>("/type-storage/detailed");
+    const [typeStorages, error] = await http.get<ListTypeStorageResponse>("/type-storage/active");
     if (error) {
       return {
         error:
