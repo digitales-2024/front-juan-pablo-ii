@@ -167,7 +167,6 @@ export function UpdateMedicalHistoryPatient({
                   {update.prescription && (
                     <div className="mt-4">
                       <Button 
-                        variant="secondary" 
                         className="w-full md:w-auto" 
                         onClick={() => handleShowPrescription(update)}
                       >
