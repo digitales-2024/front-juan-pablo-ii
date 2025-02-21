@@ -37,7 +37,7 @@ import CalendarProvider from './calendar/CalendarProvider';
 // 	status: "CONFIRMED",
 // };
 
-export default function CalendarConsultations() {
+export default function CalendarTurns() {
   const [mode, setMode] = useState<Mode>('mes');
   const [date, setDate] = useState<Date>(new Date());
   const [appliedFilters, setAppliedFilters] = useState<EventFilterParams>({

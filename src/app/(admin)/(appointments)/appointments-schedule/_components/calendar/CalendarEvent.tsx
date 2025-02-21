@@ -1,7 +1,7 @@
 import { format, isSameDay, isSameMonth } from "date-fns";
 import { cn } from "@/lib/utils";
 import { motion, MotionConfig, AnimatePresence } from "framer-motion";
-import { CalendarEvent as CalendarEventType } from "../../_types/CalendarTypes";
+import { CalendarEvent as CalendarEventType } from "@/app/(admin)/(staff)/schedules/_types/CalendarTypes";
 import { useCalendarContext } from "./CalendarContext";
 
 interface EventPosition {
