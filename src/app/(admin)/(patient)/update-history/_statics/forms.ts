@@ -1,8 +1,5 @@
 import { FormStatics } from "@/types/statics/forms";
-import {
-  CreatePatientInput,
-  UpdatePatientInput,
-} from "../_interfaces/patient.interface";
+import { CreatePatientInput, UpdatePatientInput } from "../../patient/_interfaces/patient.interface";
 
 export const FORMSTATICS: FormStatics<CreatePatientInput> = {
   name: {
@@ -162,6 +159,14 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
 
 
 export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
+  image: {
+    required: false,
+    label: "Imagen",
+    type: "file",
+    placeholder: "Seleccione una imagen",
+    name: "image",
+    defaultValue: "",
+  },
   name: {
     required: false,
     label: "Nombre",
