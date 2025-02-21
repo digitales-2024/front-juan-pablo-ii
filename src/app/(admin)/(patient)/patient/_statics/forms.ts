@@ -323,13 +323,6 @@ export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
     name: "patientPhoto",
     defaultValue: "",
   },
-  image: {
-    required: false,
-    label: "Nueva foto",
-    type: "file",
-    placeholder: "Subir nueva imagen",
-    name: "image",
-    defaultValue: "",
-  },
+ 
 };
 
