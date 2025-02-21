@@ -1125,6 +1125,214 @@ export interface paths {
         patch: operations["AppointmentController_reactivateAll"];
         trace?: never;
     };
+    "/api/v1/events/filter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos filtrados */
+        get: operations["EventController_findEventsByFilter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los eventos */
+        get: operations["EventController_findAll"];
+        put?: never;
+        /** Crear nuevo evento */
+        post: operations["EventController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener evento por ID */
+        get: operations["EventController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar evento existente */
+        patch: operations["EventController_update"];
+        trace?: never;
+    };
+    "/api/v1/events/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples eventos */
+        delete: operations["EventController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/events/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples eventos */
+        patch: operations["EventController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/events/{id}/generate-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EventController_generateEvents"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/events/by-schedule/{scheduleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos por ID de horario de staff */
+        get: operations["EventController_findEventsByStaffSchedule"];
+        put?: never;
+        post?: never;
+        /** Eliminar todos los eventos por ID de horario de staff */
+        delete: operations["EventController_deleteEventsByStaffSchedule"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los horarios */
+        get: operations["StaffScheduleController_findAll"];
+        put?: never;
+        /** Crear nuevo horario */
+        post: operations["StaffScheduleController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/filter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Filtrar horarios por criterios (sucursal, personal y días) */
+        get: operations["StaffScheduleController_findByCriteria"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener horario por ID */
+        get: operations["StaffScheduleController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar horario existente */
+        patch: operations["StaffScheduleController_update"];
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples horarios */
+        delete: operations["StaffScheduleController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples horarios */
+        patch: operations["StaffScheduleController_reactivateAll"];
+        trace?: never;
+    };
     "/api/v1/staff-type": {
         parameters: {
             query?: never;
@@ -1629,40 +1837,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/type-storage/detailed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los tipos de almacenamiento activos */
-        get: operations["TypeStorageController_findAllDetailed"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/type-storage/detailed/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener tipo detallado de almacenamiento por ID */
-        get: operations["TypeStorageController_findOneWithRelations"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/type-storage/{id}": {
         parameters: {
             query?: never;
@@ -2045,6 +2219,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/incoming/update/incomingStorage/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar ingreso existente */
+        patch: operations["IncomingController_updateIncomingStorage"];
+        trace?: never;
+    };
     "/api/v1/incoming/{id}": {
         parameters: {
             query?: never;
@@ -2181,6 +2372,23 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/outgoing/update/outgoingStorage/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar salida existente */
+        patch: operations["OutgoingController_updateOutgoingStorage"];
         trace?: never;
     };
     "/api/v1/outgoing/{id}": {
@@ -2403,214 +2611,6 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/api/v1/events/filter": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener eventos filtrados */
-        get: operations["EventController_findEventsByFilter"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/events": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los eventos */
-        get: operations["EventController_findAll"];
-        put?: never;
-        /** Crear nuevo evento */
-        post: operations["EventController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/events/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener evento por ID */
-        get: operations["EventController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar evento existente */
-        patch: operations["EventController_update"];
-        trace?: never;
-    };
-    "/api/v1/events/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples eventos */
-        delete: operations["EventController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/events/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples eventos */
-        patch: operations["EventController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/events/{id}/generate-events": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["EventController_generateEvents"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/events/by-schedule/{scheduleId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener eventos por ID de horario de staff */
-        get: operations["EventController_findEventsByStaffSchedule"];
-        put?: never;
-        post?: never;
-        /** Eliminar todos los eventos por ID de horario de staff */
-        delete: operations["EventController_deleteEventsByStaffSchedule"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff-schedule": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los horarios */
-        get: operations["StaffScheduleController_findAll"];
-        put?: never;
-        /** Crear nuevo horario */
-        post: operations["StaffScheduleController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff-schedule/filter": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Filtrar horarios por criterios (sucursal, personal y días) */
-        get: operations["StaffScheduleController_findByCriteria"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff-schedule/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener horario por ID */
-        get: operations["StaffScheduleController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar horario existente */
-        patch: operations["StaffScheduleController_update"];
-        trace?: never;
-    };
-    "/api/v1/staff-schedule/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples horarios */
-        delete: operations["StaffScheduleController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff-schedule/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples horarios */
-        patch: operations["StaffScheduleController_reactivateAll"];
         trace?: never;
     };
     "/api/v1/time-off": {
@@ -3750,77 +3750,421 @@ export interface components {
         };
         CreateAppointmentDto: {
             /**
-             * @description ID del tipo de cita médica
+             * @description ID del personal médico
+             * @example d424bee1-2574-439e-8db5-eaee510239e1
+             */
+            staffId: string;
+            /**
+             * @description ID del servicio
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            serviceId: string;
+            /**
+             * @description ID de la sucursal
              * @example 38371f66-63ca-4bb1-ac31-d2b165f6514d
              */
-            tipoCitaMedicaId: string;
+            branchId: string;
+            /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId: string;
+            /**
+             * @description Fecha y hora de inicio de la cita
+             * @example 2024-12-25T14:30:00Z
+             */
+            start: string;
+            /**
+             * @description Fecha y hora de fin de la cita
+             * @example 2024-12-25T15:00:00Z
+             */
+            end: string;
+            /**
+             * @description Tipo de cita
+             * @example CONSULTA
+             * @enum {string}
+             */
+            type?: "CONSULTA" | "OTRO";
+            /**
+             * @description Notas adicionales
+             * @example El paciente tiene alergia a la penicilina
+             */
+            notes?: string;
+            /**
+             * @description Estado de la cita
+             * @example PENDING
+             * @enum {string}
+             */
+            status?: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED";
+            /**
+             * @description Motivo de cancelación (si aplica)
+             * @example Paciente canceló
+             */
+            cancellationReason?: string;
+            /**
+             * @description ID de la cita original (si es reprogramación)
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            rescheduledFromId?: string;
+        };
+        Appointment: {
+            id: string;
+            eventId: string;
+            staffId: string;
+            serviceId: string;
+            branchId: string;
+            patientId: string;
+            /** Format: date-time */
+            start: string;
+            /** Format: date-time */
+            end: string;
+            /** @enum {string} */
+            status: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED";
+            /** @enum {string} */
+            type: "CONSULTA" | "OTRO";
+            notes: string;
+            cancellationReason: string;
+            rescheduledFromId: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            staff?: Record<string, never>;
+            service?: Record<string, never>;
+            branch?: Record<string, never>;
+            patient?: Record<string, never>;
+            event?: Record<string, never>;
+        };
+        UpdateAppointmentDto: {
             /**
              * @description ID del personal médico
              * @example d424bee1-2574-439e-8db5-eaee510239e1
              */
-            personalId: string;
+            staffId?: string;
             /**
-             * @description ID de la consulta médica
+             * @description ID del servicio
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            consultaId: string;
+            serviceId?: string;
             /**
-             * @description Fecha y hora de la cita
+             * @description ID de la sucursal
+             * @example 38371f66-63ca-4bb1-ac31-d2b165f6514d
+             */
+            branchId?: string;
+            /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId?: string;
+            /**
+             * @description Fecha y hora de inicio de la cita
              * @example 2024-12-25T14:30:00Z
              */
-            date: string;
+            start?: string;
             /**
-             * @description Descripción o motivo de la cita
-             * @example Control mensual
+             * @description Fecha y hora de fin de la cita
+             * @example 2024-12-25T15:00:00Z
              */
-            description: string;
+            end?: string;
+            /**
+             * @description Tipo de cita
+             * @example CONSULTA
+             * @enum {string}
+             */
+            type?: "CONSULTA" | "OTRO";
+            /**
+             * @description Notas adicionales
+             * @example El paciente tiene alergia a la penicilina
+             */
+            notes?: string;
+            /**
+             * @description Estado de la cita
+             * @example PENDING
+             * @enum {string}
+             */
+            status?: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED";
+            /**
+             * @description Motivo de cancelación (si aplica)
+             * @example Paciente canceló
+             */
+            cancellationReason?: string;
+            /**
+             * @description ID de la cita original (si es reprogramación)
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            rescheduledFromId?: string;
         };
-        Appointment: {
+        DeleteAppointmentsDto: {
+            ids: string[];
+        };
+        Event: Record<string, never>;
+        /**
+         * @description Estado de evento
+         * @enum {string}
+         */
+        EventStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+        CreateEventDto: {
+            /**
+             * @description Título del evento
+             * @example Turno Mañana
+             */
+            title: string;
+            /**
+             * @description Color del evento
+             * @example sky
+             */
+            color: string;
+            /**
+             * @description Tipo de evento
+             * @example TURNO
+             * @enum {string}
+             */
+            type: "TURNO" | "CITA" | "OTRO";
+            /** @example PENDING */
+            status: components["schemas"]["EventStatus"];
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio del evento
+             * @example 2023-11-15T08:00:00Z
+             */
+            start: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin del evento
+             * @example 2023-11-15T11:00:00Z
+             */
+            end: string;
+            /**
+             * @description Motivo de cancelación (opcional)
+             * @example Vacaciones
+             */
+            cancellationReason?: string;
+            /**
+             * @description ID del horario del personal (opcional)
+             * @example uuid-del-horario
+             */
+            staffScheduleId?: string;
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId: string;
+        };
+        UpdateEventDto: {
+            /**
+             * @description Título del evento
+             * @example Turno Mañana
+             */
+            title?: string;
+            /**
+             * @description Color del evento
+             * @example sky
+             */
+            color?: string;
+            /**
+             * @description Tipo de evento
+             * @example TURNO
+             * @enum {string}
+             */
+            type?: "TURNO" | "CITA" | "OTRO";
+            /** @example PENDING */
+            status?: components["schemas"]["EventStatus"];
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio del evento
+             * @example 2023-11-15T08:00:00Z
+             */
+            start?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin del evento
+             * @example 2023-11-15T11:00:00Z
+             */
+            end?: string;
+            /**
+             * @description Motivo de cancelación (opcional)
+             * @example Vacaciones
+             */
+            cancellationReason?: string;
+            /**
+             * @description ID del horario del personal (opcional)
+             * @example uuid-del-horario
+             */
+            staffScheduleId?: string;
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId?: string;
+        };
+        DeleteEventsDto: {
+            /** @description Array de IDs de eventos a eliminar */
+            ids: string[];
+        };
+        RecurrenceDto: {
+            /**
+             * @description Frecuencia de recurrencia
+             * @example WEEKLY
+             * @enum {string}
+             */
+            frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+            /**
+             * @description Intervalo de repetición
+             * @example 1
+             */
+            interval: number;
+            /**
+             * @description Fecha límite de recurrencia en formato YYYY-MM-DD
+             * @example 2024-12-31
+             */
+            until: string;
+        };
+        CreateStaffScheduleDto: {
+            /**
+             * @description ID del personal al que pertenece el horario
+             * @example user-1234
+             */
+            staffId: string;
+            /**
+             * @description ID de la sucursal a la que pertenece el horario
+             * @example branch-5678
+             */
+            branchId: string;
+            /**
+             * @description Título del horario
+             * @default Turno
+             * @example Turno Mañana
+             */
+            title: string;
+            /**
+             * @description Color del horario
+             * @example sky
+             */
+            color: string;
+            /**
+             * @description Hora de inicio en formato HH:mm
+             * @example 08:00
+             */
+            startTime: string;
+            /**
+             * @description Hora de fin en formato HH:mm
+             * @example 17:00
+             */
+            endTime: string;
+            /**
+             * @description Días de la semana en los que es válido el horario
+             * @example [
+             *       "MONDAY",
+             *       "WEDNESDAY"
+             *     ]
+             */
+            daysOfWeek: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /** @description Configuración de recurrencia para el horario */
+            recurrence: components["schemas"]["RecurrenceDto"];
+            /**
+             * @description Fechas excluidas en formato YYYY-MM-DD
+             * @example [
+             *       "2024-05-01"
+             *     ]
+             */
+            exceptions: string[];
+        };
+        StaffSchedule: {
             id: string;
-            tipoCitaMedicaId: string;
-            personalId: string;
-            consultaId: string;
-            /** Format: date-time */
-            date: string;
-            description: string;
+            staffId: string;
+            branchId: string;
+            /** @default Turno */
+            title: string;
+            /** @default sky */
+            color: string;
+            /** @description Hora de inicio en formato HH:mm */
+            startTime: string;
+            /** @description Hora de fin en formato HH:mm */
+            endTime: string;
+            daysOfWeek: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /**
+             * @description Configuración de recurrencia
+             * @example {
+             *       "frequency": "WEEKLY",
+             *       "interval": 1,
+             *       "until": "2024-12-31"
+             *     }
+             */
+            recurrence: Record<string, never>;
+            /**
+             * @description Fechas excluidas en formato YYYY-MM-DD
+             * @example [
+             *       "2024-05-01"
+             *     ]
+             */
+            exceptions: string[];
+            /** @default true */
             isActive: boolean;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            TipoCitaMedica?: Record<string, never>;
-            personal?: Record<string, never>;
-            ConsultaMedica?: Record<string, never>;
-            ProcedimientoMedico?: string[];
         };
-        UpdateAppointmentDto: {
+        UpdateStaffScheduleDto: {
             /**
-             * @description ID del tipo de cita médica
-             * @example 38371f66-63ca-4bb1-ac31-d2b165f6514d
+             * @description ID del personal al que pertenece el horario
+             * @example user-1234
              */
-            tipoCitaMedicaId?: string;
+            staffId?: string;
             /**
-             * @description ID del personal médico
-             * @example d424bee1-2574-439e-8db5-eaee510239e1
+             * @description ID de la sucursal a la que pertenece el horario
+             * @example branch-5678
              */
-            personalId?: string;
+            branchId?: string;
             /**
-             * @description ID de la consulta médica
-             * @example 123e4567-e89b-12d3-a456-426614174000
+             * @description Color del horario
+             * @example sky
              */
-            consultaId?: string;
+            color?: string;
             /**
-             * @description Fecha y hora de la cita
-             * @example 2024-12-25T14:30:00Z
+             * @description Hora de inicio en formato HH:mm
+             * @example 08:00
              */
-            date?: string;
+            startTime?: string;
             /**
-             * @description Descripción o motivo de la cita
-             * @example Control mensual
+             * @description Hora de fin en formato HH:mm
+             * @example 17:00
              */
-            description?: string;
+            endTime?: string;
+            /**
+             * @description Días de la semana en los que es válido el horario
+             * @example [
+             *       "MONDAY",
+             *       "WEDNESDAY"
+             *     ]
+             */
+            daysOfWeek?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
+            /** @description Configuración de recurrencia para el horario */
+            recurrence?: components["schemas"]["RecurrenceDto"];
+            /**
+             * @description Fechas excluidas en formato YYYY-MM-DD
+             * @example [
+             *       "2024-05-01"
+             *     ]
+             */
+            exceptions?: string[];
+            /**
+             * @description Título del horario (requerido)
+             * @example Turno Mañana
+             */
+            title: string;
         };
-        DeleteAppointmentsDto: {
+        DeleteStaffSchedulesDto: {
             ids: string[];
         };
         CreateStaffTypeDto: {
@@ -4317,34 +4661,12 @@ export interface components {
              * @example Almacén destinado a productos listos para su distribución
              */
             description?: string;
-            /**
-             * @description ID de la sucursal si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description ID del personal responsable si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
         };
         TypeStorage: {
             id: string;
             name: string;
             description: string;
-            branchId: string;
-            staffId: string;
             isActive: boolean;
-        };
-        DetailedTypeStorage: {
-            id: string;
-            name: string;
-            description: string;
-            branchId: string;
-            staffId: string;
-            isActive: boolean;
-            branch: components["schemas"]["Branch"];
-            staff: components["schemas"]["Staff"];
         };
         UpdateTypeStorageDto: {
             /**
@@ -4357,16 +4679,6 @@ export interface components {
              * @example Almacén destinado a productos listos para su distribución
              */
             description?: string;
-            /**
-             * @description ID de la sucursal si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description ID del personal responsable si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
         };
         DeleteTypeStorageDto: {
             ids: string[];
@@ -4387,12 +4699,24 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             typeStorageId: string;
+            /**
+             * @description ID de la sucursal si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal responsable si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
         };
         Storage: {
             id: string;
             name: string;
             location: string;
             typeStorageId: string;
+            branchId?: string;
+            staffId?: string;
             isActive: boolean;
         };
         DetailedStorage: {
@@ -4400,8 +4724,12 @@ export interface components {
             name: string;
             location: string;
             typeStorageId: string;
+            branchId?: string;
+            staffId?: string;
             isActive: boolean;
             TypeStorage: components["schemas"]["TypeStorage"];
+            branch: components["schemas"]["Branch"];
+            staff: components["schemas"]["Staff"];
         };
         UpdateStorageDto: {
             /**
@@ -4419,6 +4747,16 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             typeStorageId?: string;
+            /**
+             * @description ID de la sucursal si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal responsable si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
         };
         DeleteStorageDto: {
             ids: string[];
@@ -4537,6 +4875,11 @@ export interface components {
              */
             quantity: number;
             /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
+            /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
              * @example 2023-12-01T15:30:00Z
@@ -4555,6 +4898,8 @@ export interface components {
             outgoingId: string;
             productId: string;
             quantity: number;
+            /** @description Precio de compra del producto */
+            buyingPrice?: number;
             /** Format: date-time */
             date: string;
             state: boolean;
@@ -4585,6 +4930,11 @@ export interface components {
              * @example 100
              */
             quantity?: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
             /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
@@ -4622,6 +4972,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado del ingreso
              * @example false
@@ -4642,21 +4994,22 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
+        };
+        IncomingStorageType: {
+            id: string;
+            name: string;
         };
         IncomingBranch: {
             id: string;
             name: string;
         };
-        IncomingStorageType: {
-            id: string;
-            name: string;
-            branch?: components["schemas"]["IncomingBranch"];
-        };
         IncomingStorage: {
             id: string;
             name: string;
             TypeStorage: components["schemas"]["IncomingStorageType"];
+            branch?: components["schemas"]["IncomingBranch"];
         };
         IncomingWithStorage: {
             id: string;
@@ -4667,6 +5020,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
         };
@@ -4690,6 +5044,7 @@ export interface components {
             /** Format: date-time */
             date: string;
             state: boolean;
+            buyingPrice?: number;
             isActive: boolean;
             Producto: components["schemas"]["IncomingProduct"];
         };
@@ -4702,9 +5057,88 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
             Movement: components["schemas"]["IncomingMovement"][];
+        };
+        OutgoingIncomingUpdateMovementDto: {
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId?: string;
+            /**
+             * @description Cantidad de producto que se movió
+             * @example 100
+             */
+            quantity?: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
+            /**
+             * Format: date-time
+             * @description Fecha en que ocurrió el evento
+             * @example 2023-12-01T15:30:00Z
+             */
+            date?: string;
+            /**
+             * @description Estado del movimiento
+             * @example false
+             */
+            state?: boolean;
+            id?: string;
+        };
+        UpdateIncomingStorageDto: {
+            /**
+             * @description Nombre del ingreso a almacen
+             * @example Ingreso de regulacion , aumento de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción del ingreso
+             * @example Descripción opcional del ingreso a alamacen
+             */
+            description?: string;
+            /**
+             * @description ID del almacén al que va ser ingresado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha del ingreso
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date?: string;
+            /**
+             * @description Estado del ingreso
+             * @example true
+             */
+            state?: boolean;
+            /**
+             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
+            /**
+             * @description productos a ingresar al almacen y cantidad
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       },
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
+             *         "quantity": 10
+             *       }
+             *     ]
+             */
+            movement?: components["schemas"]["OutgoingIncomingUpdateMovementDto"][];
         };
         UpdateIncomingDto: {
             /**
@@ -4728,6 +5162,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado del ingreso
              * @example false
@@ -4753,6 +5189,11 @@ export interface components {
              * @example 100
              */
             quantity: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
             /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
@@ -4797,6 +5238,8 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             referenceId?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description productos a ingresar al almacen y cantidad
              * @example [
@@ -4834,6 +5277,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado de la salida
              * @example false
@@ -4854,21 +5299,22 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
+        };
+        OutgoingStorageType: {
+            id: string;
+            name: string;
         };
         OutgoingBranch: {
             id: string;
             name: string;
         };
-        OutgoingStorageType: {
-            id: string;
-            name: string;
-            branch?: components["schemas"]["OutgoingBranch"];
-        };
         OutgoingStorage: {
             id: string;
             name: string;
             TypeStorage: components["schemas"]["OutgoingStorageType"];
+            branch?: components["schemas"]["OutgoingBranch"];
         };
         OutgoingWithStorage: {
             id: string;
@@ -4879,6 +5325,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
         };
@@ -4902,6 +5349,7 @@ export interface components {
             /** Format: date-time */
             date: string;
             state: boolean;
+            buyingPrice?: number;
             isActive: boolean;
             Producto: components["schemas"]["OutgoingProduct"];
         };
@@ -4914,9 +5362,59 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
             Movement: components["schemas"]["OutgoingMovement"][];
+        };
+        UpdateOutgoingStorageDto: {
+            /**
+             * @description Nombre de la salida de almacen
+             * @example salida de transferencia , correcion de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción de salida
+             * @example Descripción opcional del salida de alamacen
+             */
+            description?: string;
+            /**
+             * @description ID del almacén del que va ser retirado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de salida
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date?: string;
+            /**
+             * @description Estado de salida
+             * @example true
+             */
+            state?: boolean;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
+            /**
+             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description productos a retirar del almacen y cantidad
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       },
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
+             *         "quantity": 10
+             *       }
+             *     ]
+             */
+            movement?: components["schemas"]["OutgoingIncomingUpdateMovementDto"][];
         };
         UpdateOutgoingDto: {
             /**
@@ -4940,6 +5438,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado de la salida
              * @example false
@@ -4977,10 +5477,12 @@ export interface components {
              */
             date: string;
             /**
-             * @description Estado del salida
+             * @description Estado de salida
              * @example true
              */
             state: boolean;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description ID de referencia puede ser un traslado, compra, etc.
              * @example 123e4567-e89b-12d3-a456-426614174000
@@ -5191,276 +5693,6 @@ export interface components {
              *     }
              */
             metadata?: Record<string, never>;
-        };
-        Event: Record<string, never>;
-        /**
-         * @description Estado de evento
-         * @enum {string}
-         */
-        EventStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
-        CreateEventDto: {
-            /**
-             * @description Título del evento
-             * @example Turno Mañana
-             */
-            title: string;
-            /**
-             * @description Color del evento
-             * @example sky
-             */
-            color: string;
-            /**
-             * @description Tipo de evento
-             * @example TURNO
-             * @enum {string}
-             */
-            type: "TURNO" | "CITA" | "OTRO";
-            /** @example PENDING */
-            status: components["schemas"]["EventStatus"];
-            /**
-             * Format: date-time
-             * @description Fecha y hora de inicio del evento
-             * @example 2023-11-15T08:00:00Z
-             */
-            start: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de fin del evento
-             * @example 2023-11-15T11:00:00Z
-             */
-            end: string;
-            /**
-             * @description Motivo de cancelación (opcional)
-             * @example Vacaciones
-             */
-            cancellationReason?: string;
-            /**
-             * @description ID del horario del personal (opcional)
-             * @example uuid-del-horario
-             */
-            staffScheduleId?: string;
-            /**
-             * @description ID del personal asociado
-             * @example uuid-del-personal
-             */
-            staffId: string;
-            /**
-             * @description ID de la sucursal asociada
-             * @example uuid-de-la-sucursal
-             */
-            branchId: string;
-        };
-        UpdateEventDto: {
-            /**
-             * @description Título del evento
-             * @example Turno Mañana
-             */
-            title?: string;
-            /**
-             * @description Color del evento
-             * @example sky
-             */
-            color?: string;
-            /**
-             * @description Tipo de evento
-             * @example TURNO
-             * @enum {string}
-             */
-            type?: "TURNO" | "CITA" | "OTRO";
-            /** @example PENDING */
-            status?: components["schemas"]["EventStatus"];
-            /**
-             * Format: date-time
-             * @description Fecha y hora de inicio del evento
-             * @example 2023-11-15T08:00:00Z
-             */
-            start?: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de fin del evento
-             * @example 2023-11-15T11:00:00Z
-             */
-            end?: string;
-            /**
-             * @description Motivo de cancelación (opcional)
-             * @example Vacaciones
-             */
-            cancellationReason?: string;
-            /**
-             * @description ID del horario del personal (opcional)
-             * @example uuid-del-horario
-             */
-            staffScheduleId?: string;
-            /**
-             * @description ID del personal asociado
-             * @example uuid-del-personal
-             */
-            staffId?: string;
-            /**
-             * @description ID de la sucursal asociada
-             * @example uuid-de-la-sucursal
-             */
-            branchId?: string;
-        };
-        DeleteEventsDto: {
-            /** @description Array de IDs de eventos a eliminar */
-            ids: string[];
-        };
-        RecurrenceDto: {
-            /**
-             * @description Frecuencia de recurrencia
-             * @example WEEKLY
-             * @enum {string}
-             */
-            frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
-            /**
-             * @description Intervalo de repetición
-             * @example 1
-             */
-            interval: number;
-            /**
-             * @description Fecha límite de recurrencia en formato YYYY-MM-DD
-             * @example 2024-12-31
-             */
-            until: string;
-        };
-        CreateStaffScheduleDto: {
-            /**
-             * @description ID del personal al que pertenece el horario
-             * @example user-1234
-             */
-            staffId: string;
-            /**
-             * @description ID de la sucursal a la que pertenece el horario
-             * @example branch-5678
-             */
-            branchId: string;
-            /**
-             * @description Título del horario
-             * @default Turno
-             * @example Turno Mañana
-             */
-            title: string;
-            /**
-             * @description Color del horario
-             * @example sky
-             */
-            color: string;
-            /**
-             * @description Hora de inicio en formato HH:mm
-             * @example 08:00
-             */
-            startTime: string;
-            /**
-             * @description Hora de fin en formato HH:mm
-             * @example 17:00
-             */
-            endTime: string;
-            /**
-             * @description Días de la semana en los que es válido el horario
-             * @example [
-             *       "MONDAY",
-             *       "WEDNESDAY"
-             *     ]
-             */
-            daysOfWeek: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
-            /** @description Configuración de recurrencia para el horario */
-            recurrence: components["schemas"]["RecurrenceDto"];
-            /**
-             * @description Fechas excluidas en formato YYYY-MM-DD
-             * @example [
-             *       "2024-05-01"
-             *     ]
-             */
-            exceptions: string[];
-        };
-        StaffSchedule: {
-            id: string;
-            staffId: string;
-            branchId: string;
-            /** @default Turno */
-            title: string;
-            /** @default sky */
-            color: string;
-            /** @description Hora de inicio en formato HH:mm */
-            startTime: string;
-            /** @description Hora de fin en formato HH:mm */
-            endTime: string;
-            daysOfWeek: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
-            /**
-             * @description Configuración de recurrencia
-             * @example {
-             *       "frequency": "WEEKLY",
-             *       "interval": 1,
-             *       "until": "2024-12-31"
-             *     }
-             */
-            recurrence: Record<string, never>;
-            /**
-             * @description Fechas excluidas en formato YYYY-MM-DD
-             * @example [
-             *       "2024-05-01"
-             *     ]
-             */
-            exceptions: string[];
-            /** @default true */
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpdateStaffScheduleDto: {
-            /**
-             * @description ID del personal al que pertenece el horario
-             * @example user-1234
-             */
-            staffId?: string;
-            /**
-             * @description ID de la sucursal a la que pertenece el horario
-             * @example branch-5678
-             */
-            branchId?: string;
-            /**
-             * @description Color del horario
-             * @example sky
-             */
-            color?: string;
-            /**
-             * @description Hora de inicio en formato HH:mm
-             * @example 08:00
-             */
-            startTime?: string;
-            /**
-             * @description Hora de fin en formato HH:mm
-             * @example 17:00
-             */
-            endTime?: string;
-            /**
-             * @description Días de la semana en los que es válido el horario
-             * @example [
-             *       "MONDAY",
-             *       "WEDNESDAY"
-             *     ]
-             */
-            daysOfWeek?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
-            /** @description Configuración de recurrencia para el horario */
-            recurrence?: components["schemas"]["RecurrenceDto"];
-            /**
-             * @description Fechas excluidas en formato YYYY-MM-DD
-             * @example [
-             *       "2024-05-01"
-             *     ]
-             */
-            exceptions?: string[];
-            /**
-             * @description Título del horario (requerido)
-             * @example Turno Mañana
-             */
-            title: string;
-        };
-        DeleteStaffSchedulesDto: {
-            ids: string[];
         };
         CreateTimeOffDto: {
             /**
@@ -5759,6 +5991,12 @@ export interface components {
         DeletePatientDto: {
             ids: string[];
         };
+        PrescriptionItemDto: {
+            id: string;
+            name: string;
+            quantity: number;
+            description?: string;
+        };
         CreatePrescriptionDto: {
             /**
              * @description ID de la actualización de historia médica
@@ -5781,25 +6019,34 @@ export interface components {
              */
             patientId: string;
             /**
-             * Format: date-time
              * @description Fecha de emisión de la receta
-             * @example 2024-03-15T10:00:00Z
+             * @example 2024-03-15
              */
             registrationDate: string;
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "Paracetamol",
-             *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas",
-             *           "duracion": "5 días"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "Paracetamol",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
-            prescription: Record<string, never>;
+            prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "consulta general",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
+             */
+            prescriptionServices?: components["schemas"]["PrescriptionItemDto"][];
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
@@ -5811,15 +6058,21 @@ export interface components {
              */
             purchaseOrderId?: string;
         };
+        PrescriptionItemResponse: {
+            id: string;
+            name: string;
+            quantity: number;
+            description?: string;
+        };
         Prescription: {
             id: string;
             updateHistoryId: string;
             branchId: string;
             staffId: string;
             patientId: string;
-            /** Format: date-time */
             registrationDate: string;
-            prescription: string;
+            prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
+            prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
             description: string;
             purchaseOrderId: string;
             isActive: boolean;
@@ -5846,25 +6099,34 @@ export interface components {
              */
             patientId?: string;
             /**
-             * Format: date-time
              * @description Fecha de emisión de la receta
-             * @example 2024-03-15T10:00:00Z
+             * @example 2024-03-15
              */
             registrationDate?: string;
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "Paracetamol",
-             *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas",
-             *           "duracion": "5 días"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "Paracetamol",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
-            prescription?: Record<string, never>;
+            prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "consulta general",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
+             */
+            prescriptionServices?: components["schemas"]["PrescriptionItemDto"][];
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
@@ -5974,6 +6236,8 @@ export interface components {
             medicalLeaveDays: number;
             leaveDescription: string;
             isActive: boolean;
+            createdAt: string;
+            updatedAt: string;
         };
         UpdateUpdateHistoryDto: {
             /**
@@ -6078,7 +6342,7 @@ export interface components {
             medicalHistory?: Record<string, never>;
             /**
              * @description Additional description
-             * @example First patient consultation
+             * @example Historia medica del paciente
              */
             description?: string;
         };
@@ -6111,12 +6375,30 @@ export interface components {
             medicalHistory?: Record<string, never>;
             /**
              * @description Additional description
-             * @example First patient consultation
+             * @example Historia medica del paciente
              */
             description?: string;
         };
         DeleteMedicalHistoryDto: {
             ids: string[];
+        };
+        UpdateHistoryImage: {
+            id: string;
+            url: string;
+        };
+        UpdateHistoryData: {
+            branch: string;
+            service: string;
+            staff: string;
+            images?: components["schemas"]["UpdateHistoryImage"][];
+        };
+        UpdateHistoryResponse: {
+            id: string;
+            patientId: string;
+            medicalHistory: Record<string, never>;
+            description: string;
+            isActive: boolean;
+            updates?: components["schemas"]["UpdateHistoryData"][];
         };
     };
     responses: never;
@@ -9409,6 +9691,667 @@ export interface operations {
             };
         };
     };
+    EventController_findEventsByFilter: {
+        parameters: {
+            query?: {
+                /** @description ID del personal para filtrar eventos */
+                staffId?: string;
+                /** @description Tipo del evento (TURNO, CITA, OTRO) */
+                type?: "TURNO" | "CITA" | "OTRO";
+                /** @description ID de la sucursal para filtrar eventos */
+                branchId?: string;
+                /** @description Estado del evento (PENDING, CONFIRMED, CANCELLED, COMPLETED, NO_SHOW) */
+                status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+                /** @description ID del horario del personal para filtrar eventos */
+                staffScheduleId?: string;
+                /** @description Fecha inicial (YYYY-MM-DD) */
+                startDate?: string;
+                /** @description Fecha final (YYYY-MM-DD) */
+                endDate?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de eventos filtrados */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los eventos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateEventDto"];
+            };
+        };
+        responses: {
+            /** @description Evento creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            /** @description Datos de entrada inválidos o evento ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del evento */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Evento encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Evento no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del evento a actualizar */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEventDto"];
+            };
+        };
+        responses: {
+            /** @description Evento actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            /** @description Datos de entrada inválidos o evento no existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteEventsDto"];
+            };
+        };
+        responses: {
+            /** @description Eventos desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description IDs inválidos o eventos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteEventsDto"];
+            };
+        };
+        responses: {
+            /** @description Eventos reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description IDs inválidos o eventos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_generateEvents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_findEventsByStaffSchedule: {
+        parameters: {
+            query?: {
+                /** @description Número de página */
+                page?: number;
+                /** @description Límite de resultados por página (máximo 50) */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                /** @description ID del horario del staff */
+                scheduleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Eventos encontrados para el horario */
+            200: {
+                headers: {
+                    /** @description Número total de registros disponibles */
+                    "X-Total-Count"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_deleteEventsByStaffSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del horario del staff */
+                scheduleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Eventos eliminados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los horarios */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStaffScheduleDto"];
+            };
+        };
+        responses: {
+            /** @description Horario creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_findByCriteria: {
+        parameters: {
+            query?: {
+                /** @description ID de la sucursal para filtrar */
+                branchId?: string;
+                /** @description ID del personal para filtrar */
+                staffId?: string;
+                daysOfWeek?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Horarios encontrados */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del horario */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Horario encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStaffScheduleDto"];
+            };
+        };
+        responses: {
+            /** @description Horario actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffSchedulesDto"];
+            };
+        };
+        responses: {
+            /** @description Horarios desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
+                };
+            };
+            /** @description IDs inválidos o horarios no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffScheduleController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffSchedulesDto"];
+            };
+        };
+        responses: {
+            /** @description Horarios reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffSchedule"][];
+                };
+            };
+            /** @description IDs inválidos o horarios no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     StaffTypeController_findAll: {
         parameters: {
             query?: never;
@@ -10919,84 +11862,6 @@ export interface operations {
             };
         };
     };
-    TypeStorageController_findAllDetailed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de almacenamiento activos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DetailedTypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_findOneWithRelations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del tipo de almacenamiento */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tipo de almacenamiento encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DetailedTypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Tipo de almacenamiento no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     TypeStorageController_findOne: {
         parameters: {
             query?: never;
@@ -11278,7 +12143,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Storage"][];
+                    "application/json": components["schemas"]["DetailedStorage"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -12149,6 +13014,46 @@ export interface operations {
             };
         };
     };
+    IncomingController_updateIncomingStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateIncomingStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Ingreso actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedIncoming"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     IncomingController_findOne: {
         parameters: {
             query?: never;
@@ -12524,6 +13429,46 @@ export interface operations {
             };
             /** @description Ingreso no encontrado */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_updateOutgoingStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateOutgoingStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Salida actualizada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOutgoing"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -12947,663 +13892,6 @@ export interface operations {
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_findEventsByFilter: {
-        parameters: {
-            query?: {
-                /** @description ID del personal para filtrar eventos */
-                staffId?: string;
-                /** @description Tipo del evento (TURNO, CITA, OTRO) */
-                type?: "TURNO" | "CITA" | "OTRO";
-                /** @description ID de la sucursal para filtrar eventos */
-                branchId?: string;
-                /** @description Estado del evento (PENDING, CONFIRMED, CANCELLED, COMPLETED, NO_SHOW) */
-                status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
-                /** @description ID del horario del personal para filtrar eventos */
-                staffScheduleId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de eventos filtrados */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los eventos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateEventDto"];
-            };
-        };
-        responses: {
-            /** @description Evento creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"];
-                };
-            };
-            /** @description Datos de entrada inválidos o evento ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del evento */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Evento encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Evento no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del evento a actualizar */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateEventDto"];
-            };
-        };
-        responses: {
-            /** @description Evento actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"];
-                };
-            };
-            /** @description Datos de entrada inválidos o evento no existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteEventsDto"];
-            };
-        };
-        responses: {
-            /** @description Eventos desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description IDs inválidos o eventos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteEventsDto"];
-            };
-        };
-        responses: {
-            /** @description Eventos reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description IDs inválidos o eventos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_generateEvents: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_findEventsByStaffSchedule: {
-        parameters: {
-            query?: {
-                /** @description Número de página */
-                page?: number;
-                /** @description Límite de resultados por página (máximo 50) */
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description ID del horario del staff */
-                scheduleId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eventos encontrados para el horario */
-            200: {
-                headers: {
-                    /** @description Número total de registros disponibles */
-                    "X-Total-Count"?: number;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EventController_deleteEventsByStaffSchedule: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del horario del staff */
-                scheduleId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Eventos eliminados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffScheduleController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los horarios */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffSchedule"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffScheduleController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateStaffScheduleDto"];
-            };
-        };
-        responses: {
-            /** @description Horario creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffSchedule"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffScheduleController_findByCriteria: {
-        parameters: {
-            query?: {
-                /** @description ID de la sucursal para filtrar */
-                branchId?: string;
-                /** @description ID del personal para filtrar */
-                staffId?: string;
-                daysOfWeek?: unknown;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Horarios encontrados */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffSchedule"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffScheduleController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del horario */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Horario encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffSchedule"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffScheduleController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateStaffScheduleDto"];
-            };
-        };
-        responses: {
-            /** @description Horario actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffSchedule"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffScheduleController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffSchedulesDto"];
-            };
-        };
-        responses: {
-            /** @description Horarios desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffSchedule"][];
-                };
-            };
-            /** @description IDs inválidos o horarios no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffScheduleController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffSchedulesDto"];
-            };
-        };
-        responses: {
-            /** @description Horarios reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffSchedule"][];
-                };
-            };
-            /** @description IDs inválidos o horarios no existen */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -15167,7 +15455,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MedicalHistory"];
+                    "application/json": components["schemas"]["UpdateHistoryResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */

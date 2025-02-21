@@ -4,10 +4,10 @@ import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from "./StorageTypeTableColumns";
 import { TypeStorageTableToolbarActions } from "./ProductTableToolbarActions";
 // import { ListCategoryResponse } from "../_actions/category.actions";
-import { DetailedTypeStorage } from "../_interfaces/storageTypes.interface";
+import { TypeStorage } from "../_interfaces/storageTypes.interface";
 
 interface ProductTableProps {
-  data: DetailedTypeStorage[];
+  data: TypeStorage[];
 }
 
 // name

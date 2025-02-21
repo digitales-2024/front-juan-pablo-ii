@@ -17,15 +17,11 @@ import { CreateTypeStorageInput, UpdateTypeStorageInput } from "../_interfaces/s
 // export const createTypeStorageSchema = z.object({
 //     name: z.string().min(1, "El nombre es requerido"),
 //     description: z.string().optional(),
-//     branchId: z.string().uuid().optional(),
-//     staffId: z.string().uuid().optional(),
 //   }) satisfies z.ZodType<CreateTypeStorageDto>;
 //  export const updateTypeStorageSchema = z.object(
 //     {
 //       name: z.string().optional(),
 //       description: z.string().optional(),
-//       branchId: z.string().uuid().optional(),
-//       staffId: z.string().uuid().optional(),
 //     }
 //   ) satisfies z.ZodType<UpdateTypeStorageDto>;
 
@@ -46,22 +42,6 @@ export const FORMSTATICS: FormStatics<CreateTypeStorageInput> = {
         placeholder: "Descripción",
         name: "description",
     },
-    branchId: {
-        required: true,
-        label: "Sucursal",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Sucursal",
-        name: "branchId",
-    },
-    staffId: {
-        required: true,
-        label: "Personal",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Personal",
-        name: "staffId",
-    },
 }
 
 export const UPDATEFORMSTATICS: FormStatics<UpdateTypeStorageInput> = {
@@ -80,21 +60,5 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateTypeStorageInput> = {
         type: "text",
         placeholder: "Descripción",
         name: "description",
-    },
-    branchId: {
-        required: false,
-        label: "Sucursal",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Sucursal",
-        name: "branchId",
-    },
-    staffId: {
-        required: false,
-        label: "Personal",
-        defaultValue: "",
-        type: "text",
-        placeholder: "Personal",
-        name: "staffId",
     },
 }

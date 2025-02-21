@@ -18,6 +18,9 @@ export function StaffSchedulesTable({ data }: StaffSchedulesTableProps) {
       columns={columns}
       data={data}
       placeholder="Buscar por nombre del personal..."
+      columnVisibilityConfig={{
+        exceptions: false
+      }}
       toolbarActions={(table) => <StaffSchedulesTableToolbarActions table={table} />}
     />
   );

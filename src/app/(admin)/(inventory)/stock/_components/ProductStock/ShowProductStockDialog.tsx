@@ -71,12 +71,12 @@ export function ShowProductStockDialog({
   const TriggerButton = () => (
     <Button
       onClick={() => setOpen(true)}
-      variant="outline"
+      variant="ghost"
       size="sm"
       aria-label="Open menu"
-      className="flex p-2 data-[state=open]:bg-muted text-sm"
+      className="flex p-2 data-[state=open]:bg-muted text-sm bg-primary/10 hover:scale-105 hover:transition-all"
     >
-      <PackageSearch className="text-primary size-7"/>
+      <PackageSearch className="text-primary !size-6"/>
       {SHOW_MOVEMENTS_MESSAGES.button}
     </Button>
   );

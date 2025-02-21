@@ -11,6 +11,14 @@ export const METADATA:PageMetadata = {
 		{
 			dependencyName: "Tipos de Almacén",
 			dependencyUrl: "/storage/storage-types",
+		},
+		{
+			dependencyName: "Sucursales",
+			dependencyUrl: "/branches",
+		},
+		{
+			dependencyName: "Personal",
+			dependencyUrl: "/staff",
 		}
 	]
 } as const;

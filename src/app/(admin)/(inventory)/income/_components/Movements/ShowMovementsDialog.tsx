@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TableProperties } from "lucide-react";
+import { ArrowBigDownDash} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -55,12 +55,12 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
   const TriggerButton = () => (
     <Button
       onClick={() => setOpen(true)}
-      variant="outline"
+      variant="ghost"
       size="sm"
       aria-label="Open menu"
-      className="flex p-2 data-[state=open]:bg-muted text-sm"
+      className="flex p-2 data-[state=open]:bg-muted text-sm bg-primary/10 hover:scale-105 hover:transition-all"
     >
-      <TableProperties className="text-primary size-7"/>
+      <ArrowBigDownDash className="text-primary !size-6"/>
       {SHOW_MOVEMENTS_MESSAGES.button}
     </Button>
   );

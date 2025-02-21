@@ -6,7 +6,7 @@ import { DetailedStorage } from "../_interfaces/storage.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-import { UpdateStorageSheet } from "./UpdateProductSheet";
+import { UpdateStorageSheet } from "./UpdateStorageSheet";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import {
@@ -80,6 +80,30 @@ export const columns: ColumnDef<DetailedStorage>[] = [
     cell: ({ row }) => (
       <span>
         {row.original.TypeStorage?.name || "Sin tipo de almacén"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "branch.name",
+    meta: { title: "Sucursal" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Sucursal" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.branch?.name ?? "Sin Sucursal asociada"}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "staff.name",
+    meta: { title: "Personal" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Personal" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.staff? `${row.original.staff.name} ${row.original.staff.lastName}` : "Sin personal asociado"}
       </span>
     ),
   },
