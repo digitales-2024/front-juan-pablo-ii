@@ -56,8 +56,8 @@ export function CreateTypeStorageDialog() {
     defaultValues: {
       name: "",
       description: "",
-      branchId: "",
-      staffId: "",
+      // branchId: "",
+      // staffId: "",
     },
   });
 

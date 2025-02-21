@@ -42,7 +42,7 @@ const getStoragesHandler = async () => {
 
 const getActiveStoragesHandler = async () => {
   try {
-    const [storages, error] = await http.get<ListStorageResponse>("/storage/active");
+    const [storages, error] = await http.get<ListDetailedStorageResponse>("/storage/active");
     if (error) {
       return {
         error:
@@ -87,9 +87,9 @@ const getDetailedStoragesHandler = async () => {
 
 export const getDetailedStorages = await createSafeAction(GetStorageSchema, getDetailedStoragesHandler);
 
-export async function getStorageById (id: string) : Promise<StorageResponse> {
+export async function getStorageById (id: string) : Promise<ListDetailedStorageResponse> {
   try {
-    const [storage, error] = await http.get<StorageResponse>(`/storage/${id}`);
+    const [storage, error] = await http.get<ListDetailedStorageResponse>(`/storage/detailed/${id}`);
     if (error) {
       return {
         error:

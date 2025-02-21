@@ -37,9 +37,9 @@ import { useProductsStockByStorage, useUpdateProductStockByStorage } from "@/app
 
 const CREATE_PRODUCT_MESSAGES = {
   button: "Añadir producto(s)",
-  title: "Seleccionar productos para lista de movimientos",
+  title: "Seleccionar almacén de origen y productos en stock",
   description:
-    "Selecciona uno o varios productos para añadir a la lista de movimientos.",
+    "Selecciona un alamacen y luego uno o varios productos en stock para añadir a la lista de movimientos.",
   success: "Productos guardados exitosamente",
   submitButton: "Guardar selección",
   cancel: "Cancelar",
@@ -62,7 +62,8 @@ export function SelectProductDialog({
   const [localSelectRows, setLocalSelectRows] = useState<
     OutgoingProducStockForm[]
   >([]);
-  const [selectedStorageId, setSelectedStorageId] = useState<string | null>(null);
+  // const [selectedStorageHasChanged, setSelectedStorageHasChanged] = useState<boolean>(false);
+  const [selectedStorageId, setSelectedStorageId] = useState<string | null>(form.getValues("storageId")??null);
   // const selectedProductsTanstack = useSelectedProducts();
   const { activeStoragesQuery: responseStorage } = useStorages();
 
@@ -75,13 +76,20 @@ export function SelectProductDialog({
     // console.log('oldStateTanstack', selectedProductsTanstack);
     // console.log('handleSave', selectedRows);
     cleanProductStock();
-    dispatch({ type: "append", payload: selectedRows });
+    setSelectedStorageId(null);
+    // if (selectedStorageHasChanged) {
+    //   dispatch({ type: "replace", payload: selectedRows });
+    // } else {
+    //   dispatch({ type: "append", payload: selectedRows });
+    // }
+    dispatch({ type: "replace", payload: selectedRows });
     setOpen(false);
   };
 
   const handleClose = () => {
     //form.reset();
     cleanProductStock();
+    setSelectedStorageId(null);
     setOpen(false);
   };
 
@@ -150,6 +158,11 @@ export function SelectProductDialog({
       }
     }
 
+  // useEffect(()=>
+  //   setSelectedStorageHasChanged(true),
+  //   [selectedStorageId]
+  // )
+
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
@@ -171,6 +184,7 @@ export function SelectProductDialog({
               //     storageId: value,
               //   })
               // }}
+              value={selectedStorageId??undefined}
               onValueChange={
                 async (value) => {
                   setSelectedStorageId(value);
@@ -204,6 +218,7 @@ export function SelectProductDialog({
               </SelectContent>
             </Select>
           </div>
+          { productsStockQuery.isLoading && <LoadingDialogForm />}
           { selectedStorageId && <DataTable
               columns={columns}
               data={productsStockQuery.data??[]}

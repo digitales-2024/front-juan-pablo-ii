@@ -7,7 +7,8 @@ import {
   getOutcomes,
   reactivateOutgoing,
   updateOutgoing,
-  ListUpdatedDetailedOutgoingResponse
+  ListUpdatedDetailedOutgoingResponse,
+  updateOutgoingStorage
 } from "../_actions/outgoing.actions";
 import { toast } from "sonner";
 import {
@@ -15,12 +16,18 @@ import {
   DeleteOutgoingDto,
   UpdateOutgoingDto,
   DetailedOutgoing,
+  UpdateOutgoingStorageDto,
 } from "../_interfaces/outgoing.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
 interface UpdateOutgoingVariables {
   id: string;
   data: UpdateOutgoingDto;
+}
+
+interface UpdateOutgoingStorageVariables {
+  id: string;
+  data: UpdateOutgoingStorageDto;
 }
 
 export const useOutgoing = () => {
@@ -69,12 +76,14 @@ export const useOutgoing = () => {
       // Retornamos directamente la respuesta ya que viene en el formato correcto
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       queryClient.setQueryData<DetailedOutgoing[] | undefined>(
         ["detailed-outcomes"], (oldIncomes) => {
           if (!oldIncomes) return [res.data];
           return [...oldIncomes, res.data];
       });
+      await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
+      await queryClient.refetchQueries({ queryKey: ["stock"] });
       toast.success(res.message);
     },
     onError: (error) => {
@@ -91,20 +100,59 @@ export const useOutgoing = () => {
       }
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       queryClient.setQueryData<DetailedOutgoing[] | undefined>(["detailed-outcomes"], (oldOutcomes) => {
         if (!oldOutcomes) return undefined;
         return oldOutcomes.map((outcome) =>
           outcome.id === res.data.id ? {...outcome, ...res.data} : outcome
         );
       });
-      toast.success("Producto actualizado exitosamente");
+      await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
+      await queryClient.refetchQueries({ queryKey: ["stock-storages"] });
+      toast.success("Salida actualizado exitosamente");
     },
     onError: (error) => {
       if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
-        toast.error(error.message || "Error al actualizar el producto");
+        toast.error(error.message || "Error al actualizar la salida");
+      }
+    },
+  });
+
+  const updateOutgoingStorageMutation = useMutation<
+    BaseApiResponse<DetailedOutgoing>,
+    Error,
+    UpdateOutgoingStorageVariables
+  >({
+    mutationFn: async ({ id, data }) => {
+      const response = await updateOutgoingStorage(id, data);
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      return response;
+    },
+    onSuccess: async (res) => {
+      queryClient.setQueryData<DetailedOutgoing[] | undefined>(
+        ["detailed-outcomes"],
+        (oldOutcomes) => {
+          if (!oldOutcomes) return undefined;
+          return oldOutcomes.map((outcome) =>
+            outcome.id === res.data.id ? { ...outcome, ...res.data } : outcome
+          );
+        }
+      );
+      await queryClient.refetchQueries({ queryKey: ["stock-storages"] });
+      toast.success("Salida actualizada exitosamente");
+    },
+    onError: (error) => {
+      if (
+        error.message.includes("No autorizado") ||
+        error.message.includes("Unauthorized")
+      ) {
+        toast.error("No tienes permisos para realizar esta acción");
+      } else {
+        toast.error(error.message || "Error al actualizar la salida");
       }
     },
   });
@@ -190,6 +238,7 @@ export const useOutgoing = () => {
     outcomesQuery,
     createMutation,
     updateMutation,
+    updateOutgoingStorageMutation,
     deleteMutation,
     reactivateMutation,
   };

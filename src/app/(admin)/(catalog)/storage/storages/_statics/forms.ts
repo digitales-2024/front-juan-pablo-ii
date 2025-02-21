@@ -31,7 +31,7 @@ export const FORMSTATICS: FormStatics<CreateStorageInput> = {
         label: "Nombre",
         defaultValue: "",
         type: "text",
-        placeholder: "Nombre del almacenamiento",
+        placeholder: "Nombre del almacén",
         name: "name",
     },
     location: {
@@ -39,17 +39,33 @@ export const FORMSTATICS: FormStatics<CreateStorageInput> = {
         label: "Ubicación",
         defaultValue: "",
         type: "text",
-        placeholder: "Ubicación del almacenamiento",
+        placeholder: "Ubicación dentro de almacén",
         name: "location",
     },
     typeStorageId: {
         required: true,
-        label: "Tipo de almacenamiento",
+        label: "Tipo de almacén",
         defaultValue: "",
         type: "text",
-        placeholder: "Tipo de almacenamiento",
+        placeholder: "Tipo de almacén",
         name: "typeStorageId",
-    }
+    },
+    branchId: {
+        required: true,
+        label: "Sucursal",
+        defaultValue: "",
+        type: "text",
+        placeholder: "Sucursal",
+        name: "branchId",
+    },
+    staffId: {
+        required: true,
+        label: "Personal",
+        defaultValue: "",
+        type: "text",
+        placeholder: "Personal",
+        name: "staffId",
+    },
 }
 
 export const UPDATEFORMSTATICS: FormStatics<UpdateStorageInput> = {
@@ -58,7 +74,7 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateStorageInput> = {
         label: "Nombre",
         defaultValue: "",
         type: "text",
-        placeholder: "Nombre del almacenamiento",
+        placeholder: "Nombre del almacén",
         name: "name",
     },
     location: {
@@ -66,15 +82,31 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateStorageInput> = {
         label: "Ubicación",
         defaultValue: "",
         type: "text",
-        placeholder: "Ubicación del almacenamiento",
+        placeholder: "Ubicación del almacén",
         name: "location",
     },
     typeStorageId: {
         required: false,
-        label: "Tipo de almacenamiento",
+        label: "Tipo de almacén",
         defaultValue: "",
         type: "text",
-        placeholder: "Tipo de almacenamiento",
+        placeholder: "Tipo de almacén",
         name: "typeStorageId",
-    }
+    },
+    branchId: {
+        required: false,
+        label: "Sucursal",
+        defaultValue: "",
+        type: "text",
+        placeholder: "Sucursal",
+        name: "branchId",
+    },
+    staffId: {
+        required: false,
+        label: "Personal",
+        defaultValue: "",
+        type: "text",
+        placeholder: "Personal",
+        name: "staffId",
+    },
 }

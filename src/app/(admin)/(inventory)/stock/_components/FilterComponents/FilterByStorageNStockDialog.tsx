@@ -2,7 +2,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { Filter, Info, LoaderCircle } from "lucide-react";
+import { Filter, Info, LoaderCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -59,8 +59,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
-import SmallLoading from "../errorComponents/SmallLoading";
-import GeneralErrorMessage from "../errorComponents/GeneralErrorMessage";
 
 export function FilterStockDialog() {
   const FILTER_DIALOG_MESSAGES = {
@@ -199,15 +197,28 @@ export function FilterStockDialog() {
   }
 
   if (!activeStoragesQuery.data) {
-    return <SmallLoading/>;
+    return <Button variant="default"
+    size="sm" disabled>
+      <LoaderCircle className="animate-spin text-primary-foreground" />
+      Cargando
+    </Button>;
   }
 
   if (activeStoragesQuery.isLoading) {
-    return <SmallLoading />;
+    return <Button variant="default"
+    size="sm" disabled>
+      <LoaderCircle className="animate-spin text-primary-foreground" />
+      Cargando
+    </Button>;
   }
 
   if (activeStoragesQuery.isError) {
-    return <GeneralErrorMessage error={activeStoragesQuery.error} reset={activeStoragesQuery.refetch}></GeneralErrorMessage>
+    toast.error("Error al cargar los almacenes, "+activeStoragesQuery.error.message);
+    return <Button variant="default"
+    size="sm" disabled>
+    <X className="text-primary-foreground" />
+    Error
+  </Button>;
   }
 
   const DialogFooterContent = () => (

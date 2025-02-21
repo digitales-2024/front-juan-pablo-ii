@@ -48,23 +48,6 @@ export const columns: ColumnDef<ProductStock>[] = [
     ),
   },
   {
-    accessorKey: "price",
-    meta: {
-      title: "Precio",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Precio" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.price.toLocaleString("es-PE", {
-          style: "currency",
-          currency: "PEN",
-        })}
-        </span>
-    ),
-  },
-  {
     accessorKey: "stock",
     meta: {
       title: "Stock",
@@ -76,6 +59,23 @@ export const columns: ColumnDef<ProductStock>[] = [
       <span>
         {row.original.stock?? ""}
       </span>
+    ),
+  },
+  {
+    accessorKey: "price",
+    meta: {
+      title: "Precio de venta",
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Precio venta" />
+    ),
+    cell: ({ row }) => (
+      <span>
+        {row.original.price.toLocaleString("es-PE", {
+          style: "currency",
+          currency: "PEN",
+        })}
+        </span>
     ),
   },
   {

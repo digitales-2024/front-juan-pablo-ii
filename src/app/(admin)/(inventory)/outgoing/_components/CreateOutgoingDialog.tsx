@@ -35,6 +35,9 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useSelectProductDispatch } from "../_hooks/useSelectProducts";
+import { useIncoming } from "../../income/_hooks/useIncoming";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CREATE_OUTGOING_MESSAGES = {
   button: "Crear salida",
@@ -49,7 +52,9 @@ export function CreateOutgoingDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
+  const queryClient = useQueryClient();
   const { createMutation } = useOutgoing();
+  const { createMutation: incomingCreateMutation } = useIncoming();
   const dispatch = useSelectProductDispatch();
 
   const form = useForm<CreateOutgoingInput>({
@@ -120,8 +125,33 @@ export function CreateOutgoingDialog() {
     startCreateTransition(() => {
       createMutation.mutate(input, {
         onSuccess: () => {
-          setOpen(false);
+          if (input?.isTransference && input?.referenceId) {
+            incomingCreateMutation.mutate({
+              name: input.name,
+              description: input.description,
+              storageId: input.referenceId, //Se envia el almacen de destino
+              date: input.date,
+              state: input.state,
+              referenceId: input.storageId, //Se registra el almacen de salida
+              isTransference: input.isTransference,
+              movement: [...input.movement],
+            }, {
+              onSuccess: async() => {
+
+                await Promise.all([
+                  queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] }),
+                  queryClient.refetchQueries({ queryKey: ["stock"] }),
+                  queryClient.refetchQueries({ queryKey: ["detailed-incomings"] }),
+                ])
+                toast.success("Salida y entrada creadas exitosamente", {})
+              },
+              onError: (error) => {
+                toast.error(error.message || "Error al crear la entrada");
+              },
+            });
+          }
           form.reset();
+          setOpen(false);
         },
         onError: (error) => {
           if (error.message.includes("No autorizado")) {

@@ -10,6 +10,11 @@ export function MovementsTable({ data }: MovementsTableProps) {
     <DataTable
       columns={columns}
       data={data}
+      columnVisibilityConfig={
+        {
+          state:false,
+        }
+      }
     //   columnVisibilityConfig={{
     //     id: true,
     //     date: true,

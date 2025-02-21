@@ -5,6 +5,7 @@ import { OutgoingProducStockForm } from "../../stock/_interfaces/stock.interface
 type State = OutgoingProducStockForm[];
 type Action =
   | { type: "append"; payload: OutgoingProducStockForm[] }
+  | { type: "replace"; payload: OutgoingProducStockForm[] }
   | { type: "remove"; payload: { productId: string }}
   | { type: "clear" };
 
@@ -20,6 +21,9 @@ function reducer(state: State, action: Action): OutgoingProducStockForm[] {
           (newProduct) => !existingIds.has(newProduct.id)
         ),
       ];
+    }
+    case "replace":{
+      return [...action.payload];
     }
     case "remove":
       return (state ?? []).filter((item) => item.id !== action.payload.productId);

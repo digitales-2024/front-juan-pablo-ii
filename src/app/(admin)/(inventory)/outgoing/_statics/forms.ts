@@ -1,5 +1,5 @@
-import { ComplexFormStatics, FormStatics } from "@/types/statics/forms";
-import { CreateOutgoingInput, MovementDto, UpdateOutgoingInput } from "../_interfaces/outgoing.interface";
+import { ComplexFormStatics } from "@/types/statics/forms";
+import { CreateOutgoingInput, MovementDto, UpdateOutgoingStorageInput, UpdateOutgoingStorageMovementDto } from "../_interfaces/outgoing.interface";
 
 export const FORMSTATICS: ComplexFormStatics<CreateOutgoingInput, MovementDto> = {
     name: {
@@ -19,10 +19,10 @@ export const FORMSTATICS: ComplexFormStatics<CreateOutgoingInput, MovementDto> =
     },
     storageId: {
         required: true,
-        label: "Almacenamiento",
+        label: "Almacén de origen",
         defaultValue: "",
         type: "select",
-        placeholder: "Selecciona un almacenamiento",
+        placeholder: "Selecciona un almacén",
         emptyMessage: "No se encontraron almacenes",
         name: "storageId",
     },
@@ -42,12 +42,22 @@ export const FORMSTATICS: ComplexFormStatics<CreateOutgoingInput, MovementDto> =
         placeholder: "Estado",
         name: "state",
     },
+    isTransference:{
+        required: false,
+        label: "¿Es una transferencia?",
+        defaultValue: false,
+        type: "checkbox",
+        placeholder: "Transferencia",
+        name: "isTransference",
+        description: "Si es una transferencia, se debe seleccionar el almacenamiento de destino",
+    },
     referenceId: {
         required: false,
-        label: "Referencia",
+        label: "Almacén de destino",
         defaultValue: "",
         type: "text",
-        placeholder: "Referencia",
+        placeholder: "Selecciona un almacén",
+        emptyMessage: "No se encontraron más almacenes. Cree más almacenes.",
         name: "referenceId",
     },
     movement: {
@@ -74,6 +84,14 @@ export const FORMSTATICS: ComplexFormStatics<CreateOutgoingInput, MovementDto> =
                 placeholder: "Cantidad",
                 name: "quantity",
             },
+            buyingPrice: {
+                required: false,
+                label: "Precio de compra",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Precio de compra",
+                name: "buyingPrice",
+            },
             date: {
                 required: false,
                 label: "Fecha",
@@ -94,7 +112,7 @@ export const FORMSTATICS: ComplexFormStatics<CreateOutgoingInput, MovementDto> =
     },
 }
 
-export const UPDATEFORMSTATICS: FormStatics<UpdateOutgoingInput> = {
+export const UPDATEFORMSTATICS: ComplexFormStatics<UpdateOutgoingStorageInput, UpdateOutgoingStorageMovementDto> = {
     name: {
         required: false,
         label: "Nombre",
@@ -113,10 +131,10 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateOutgoingInput> = {
     },
     storageId: {
         required: false,
-        label: "Almacenamiento",
+        label: "Almacén de origen",
         defaultValue: "",
         type: "select",
-        placeholder: "Selecciona un almacenamiento",
+        placeholder: "Selecciona un almacén",
         emptyMessage: "No se encontraron almacenes",
         name: "storageId",
     },
@@ -136,12 +154,80 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateOutgoingInput> = {
         placeholder: "Estado",
         name: "state",
     },
+    isTransference:{
+        required: false,
+        label: "¿Es una transferencia?",
+        defaultValue: false,
+        type: "checkbox",
+        placeholder: "Transferencia",
+        name: "isTransference",
+        description: "Si es una transferencia, se debe seleccionar el almacenamiento de destino",
+    },
     referenceId: {
         required: false,
-        label: "Referencia",
+        label: "Almacén de destino",
         defaultValue: "",
         type: "text",
-        placeholder: "Referencia",
+        placeholder: "Selecciona un almacén",
+        emptyMessage: "No se encontraron almacenes",
         name: "referenceId",
+    },
+    movement: {
+        required: true,
+        label: "Movimientos",
+        type: "array",
+        placeholder: "Movimientos",
+        name: "movement",
+        subFields: {
+            id: {
+                required: true,
+                label: "ID",
+                defaultValue: "",
+                type: "text",
+                placeholder: "ID",
+                name: "id",
+            },
+            productId: {
+                required: false,
+                label: "Producto",
+                defaultValue: "",
+                type: "select",
+                placeholder: "Selecciona un producto",
+                emptyMessage: "No se encontraron productos",
+                name: "productId",
+            },
+            quantity: {
+                required: true,
+                label: "Cantidad",
+                defaultValue: 1,
+                type: "number",
+                placeholder: "Cantidad",
+                name: "quantity",
+            },
+            buyingPrice: {
+                required: false,
+                label: "Precio de compra",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Precio de compra",
+                name: "buyingPrice",
+            },
+            date: {
+                required: false,
+                label: "Fecha",
+                defaultValue: undefined,//new Date().toISOString().split("T")[0],
+                type: "date",
+                placeholder: "Fecha",
+                name: "date",
+            },
+            state: {
+                required: false,
+                label: "Estado",
+                defaultValue: "false",
+                type: "checkbox",
+                placeholder: "Estado",
+                name: "state",
+            },
+        },
     },
 }

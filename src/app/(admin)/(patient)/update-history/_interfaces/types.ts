@@ -27,11 +27,6 @@ export type Patient = components["schemas"]["Patient"];
     newImages: string[];
     date: string;
   }
-  export interface PrescriptionItem {
-    nombre: string
-    dosis: string
-    frecuencia: string
-  }
 
   //clave y valo de json de historia medica
   export interface Service {
@@ -39,12 +34,7 @@ export type Patient = components["schemas"]["Patient"];
     descripcion: string
     precio: number
   }
-  export interface PrescriptionItem {
-    nombre: string
-    dosis: string
-    frecuencia: string
-  }
-  
+
   export interface PrescriptionData {
     prescription: boolean
     prescriptionTitle?: string

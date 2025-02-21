@@ -4,6 +4,7 @@ import { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,17 +31,20 @@ import {
   useSelectProductDispatch,
 } from "../_hooks/useSelectProducts";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, Trash2 } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown, Trash2 } from "lucide-react";
 import { SelectProductDialog } from "./Movements/FormComponents/SelectMovementDialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { useProductsStock } from "../../stock/_hooks/useProductStock";
+import { OutgoingProducStockForm } from "../../stock/_interfaces/stock.interface";
+import { Switch } from "@/components/ui/switch";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Separator } from "@/components/ui/separator";
 // import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem } from "@/components/ui/select";
 // import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -59,7 +63,7 @@ export function CreateOutgoingForm({
   onSubmit,
   controlledFieldArray,
 }: CreateProductFormProps) {
-  const { register, control, watch } = form;
+  const { register, watch } = form;
   const { fields, append, remove } = controlledFieldArray;
   const watchFieldArray = watch("movement");
   const controlledFields = fields.map((field, index) => {
@@ -93,18 +97,18 @@ export function CreateOutgoingForm({
   }, [syncProducts]);
 
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
-  const STATEPROP_OPTIONS = useMemo(() => {
-    return [
-      {
-        label: "En Proceso",
-        value: false,
-      },
-      {
-        label: "Concretado",
-        value: true,
-      },
-    ];
-  }, []);
+  // const STATEPROP_OPTIONS = useMemo(() => {
+  //   return [
+  //     {
+  //       label: "En Proceso",
+  //       value: false,
+  //     },
+  //     {
+  //       label: "Concretado",
+  //       value: true,
+  //     },
+  //   ];
+  // }, []);
 
   if (responseStorage.isLoading && reponseProducts.isLoading) {
     return <LoadingDialogForm />;
@@ -118,11 +122,16 @@ export function CreateOutgoingForm({
       );
     }
     if (!responseStorage.data) {
+      // toast.error("No se pudo cargar la información de almacenes", {
+      //   action: {
+      //     label: "Recargar",
+      //     onClick: async () => {
+      //       await responseStorage.refetch();
+      //     },
+      //   },
+      // });
       return (
-        <GeneralErrorMessage
-          error={new Error("No se encontraron almacenes")}
-          reset={responseStorage.refetch}
-        />
+        <LoadingDialogForm/>
       );
     }
     if (reponseProducts.isError) {
@@ -134,11 +143,17 @@ export function CreateOutgoingForm({
       ) : null;
     }
     if (!reponseProducts.data) {
+      // toast.error("No se pudo cargar la información de productos", {
+      //   action: {
+      //     label: "Recargar",
+      //     onClick: async () => {
+      //       await reponseProducts.refetch();
+      //     },
+      //   },
+      // });
+
       return (
-        <GeneralErrorMessage
-          error={new Error("No se encontraron products en stock")}
-          reset={reponseProducts.refetch}
-        />
+        <LoadingDialogForm/>
       );
     }
   }
@@ -161,10 +176,12 @@ export function CreateOutgoingForm({
     );
   }
 
-  const storageOptions: Option[] = responseStorage.data.map((category) => ({
-    label: category.name,
-    value: category.id,
-  }));
+  const storageOptions: Option[] = responseStorage.data.map((storage) => {
+    return {
+      label: `${storage.name} - ${storage.branch.name}`,
+      value: storage.id,
+    }
+  });
 
   const handleRemoveProduct = (index: number) => {
     // this removes from the tanstack state management
@@ -184,9 +201,9 @@ export function CreateOutgoingForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-2 gap-4">
+        <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-4 gap-4">
           {/* Campo Nombre */}
-          <div className="col-span-2">
+          <div className="col-span-3">
             <FormItem>
               <FormLabel>{FORMSTATICS.name.label}</FormLabel>
               <Input
@@ -204,12 +221,83 @@ export function CreateOutgoingForm({
             </FormItem>
           </div>
 
+          {/* Fecha */}
+          <div className="col-span-1">
+            {/* <FormItem>
+              <FormLabel>{FORMSTATICS.date.label}</FormLabel>
+              <Input
+                {...register(FORMSTATICS.date.name)}
+                type="date"
+                placeholder={FORMSTATICS.date.placeholder}
+              />
+              <CustomFormDescription required={FORMSTATICS.date.required} />
+              {form.formState.errors.date && (
+              <FormMessage className="text-destructive">
+                {form.formState.errors.date.message}
+              </FormMessage>
+              )}
+            </FormItem> */}
+            <FormField
+              control={form.control}
+              name={FORMSTATICS.date.name}
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="mb-2">{FORMSTATICS.date.placeholder}</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                              // Verifica si es string
+                              typeof field.value === "string"
+                                ? format(new Date(field.value), "PPP", { locale: es })
+                                : field.value instanceof Date
+                                  ? format(field.value, "PPP", { locale: es })
+                                  : <span>Escoja una fecha</span>
+                            ) : (
+                              <span>Escoja una fecha</span>
+                            )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={
+                          typeof field.value === "string"
+                            ? new Date(field.value)
+                            : field.value instanceof Date
+                            ? field.value
+                            : undefined
+                        }
+                        onSelect={(val) => field.onChange(val?.toISOString() ?? "")}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <CustomFormDescription required={FORMSTATICS.date.required} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           {/* Campo Storage - Mantener como controlled porque es un AutoComplete */}
-          <FormField
+          {/* <FormField
             control={control}
             name={FORMSTATICS.storageId.name}
             render={({ field }) => (
-              <FormItem className="col-span-2">
+              <FormItem className="col-span-4">
                 <FormLabel>{FORMSTATICS.storageId.label}</FormLabel>
                 <AutoComplete
                   options={storageOptions}
@@ -222,34 +310,69 @@ export function CreateOutgoingForm({
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
+            <FormField
+            control={form.control}
+            name={FORMSTATICS.storageId.name}
+            render={({ field }) => (
+              <FormItem className="col-span-4">
+              <FormLabel>{FORMSTATICS.storageId.label}</FormLabel>
+              <AutoComplete
+                disabled
+                className="disabled:text-primary"
+                options={storageOptions}
+                placeholder={FORMSTATICS.storageId.placeholder}
+                emptyMessage={FORMSTATICS.storageId.emptyMessage!}
+                value={storageOptions.find((option) => option.value === field.value)}
+                onValueChange={(option) => field.onChange(option?.value || "")}
+              />
+              <CustomFormDescription required={FORMSTATICS.storageId.required} />
+              <FormDescription className="opacity-80">
+                {form.watch(FORMSTATICS.storageId.name) ? <span className="text-primary ">Almacén ya seleccionado</span> : <span className="text-destructive">
+                  Primero, seleccione un producto</span>}
+              </FormDescription>
+              <FormMessage />
+              </FormItem>
+            )}
+            />
 
           {/* Movements Section */}
-          <div className="flex flex-col gap-4 col-span-2">
+            {/* id: string;
+            name: string;
+            precio: number;
+            codigoProducto: string;
+            unidadMedida: string;
+            Stock: ProductStockData[]; */}
+          <div className="flex flex-col gap-4 col-span-4">
             <FormLabel>{FORMSTATICS.movement.label}</FormLabel>
             <Table className="w-full">
-              <TableCaption>Lista de productos seleccionados</TableCaption>
+              <TableCaption>Si escoges otro almacén se reiniciará la lista de productos seleccionados.</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[100px]">Nombre</TableHead>
                     <TableHead>Cantidad</TableHead>
-                    <TableHead className="text-center">Precio</TableHead>
-                    <TableHead className="text-center">Total</TableHead>
+                    <TableHead className="text-center">Stock Almacén</TableHead>
+                    <TableHead className="text-center">Stock Total</TableHead>
                     <TableHead className="text-center">Opciones</TableHead>
                   </TableRow>
                 </TableHeader>
             <TableBody>
               {controlledFields.map((field, index) => {
                 const data = selectedProducts.find((p) => p.id === field.productId);
-                const safeData: Partial<ActiveProduct> = data ?? {};
+                const safeData: Partial<OutgoingProducStockForm> = data ?? {};
                 const safeWatch = watchFieldArray?.[index] ?? {};
 
-                const price = safeData.precio ?? 0;
-                const quantity = safeWatch.quantity ?? 0;
+                //const price = safeData.precio ?? 0;
+
+                const storageSafeWatch = form.watch(FORMSTATICS.storageId.name);
+                const stockStorage = safeData.Stock?.find((stock) => stock.Storage.id === storageSafeWatch);
+                const totalStock = safeData.Stock?.reduce((acc, stock) => acc + stock.stock, 0) ?? 0;
+                const dynamicStock = isNaN((stockStorage?.stock ?? 0) - (safeWatch.quantity ?? 0)) ? (stockStorage?.stock ?? 0) : (stockStorage?.stock ?? 0) - (safeWatch.quantity ?? 0);
+                //const quantity = safeWatch.quantity ?? 0;
 
                 // Manejar NaN o valores inexistentes
-                const total = isNaN(price * quantity) ? 0 : price * quantity;
-                return <TableRow key={field.id}>
+                //const total = isNaN(price * quantity) ? 0 : price * quantity;
+                return <TableRow key={field.id} className="animate-fade-down duration-500">
                 <TableCell>
                   <FormItem>
                     {/* <FormLabel>Producto</FormLabel> */}
@@ -271,7 +394,7 @@ export function CreateOutgoingForm({
                     <Input
                       {...register(`movement.${index}.quantity` as const, {
                       valueAsNumber: true,
-                      validate: value => value >= 0 || "La cantidad no puede ser negativa"
+                      validate: value => value > (stockStorage?.stock??0) ? "La cantidad supera el stock disponible" : true 
                       })}
                       type="number"
                       min="0"
@@ -280,14 +403,17 @@ export function CreateOutgoingForm({
                         if (target.valueAsNumber < 0) {
                           target.value = "0";
                         }
+
+                        if (target.valueAsNumber > (stockStorage?.stock ?? 0)) {
+                          target.value = (stockStorage?.stock ?? 0).toString();
+                        }
                       }}
                     />
                     <FormMessage />
                     </FormItem>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <div>
-                    {/* <FormLabel>Precio</FormLabel> */}
                     <span className="block text-center">{price.toLocaleString("es-PE",
                       {
                         style: "currency",
@@ -297,7 +423,6 @@ export function CreateOutgoingForm({
                 </TableCell>
                 <TableCell>
                   <div>
-                    {/* <FormLabel>Total</FormLabel> */}
                     <span className="block text-center">
                       {
                         total.toLocaleString("es-PE",
@@ -305,6 +430,26 @@ export function CreateOutgoingForm({
                             style: "currency",
                             currency: "PEN"
                           })
+                      }
+                    </span>
+                  </div>
+                </TableCell> */}
+                <TableCell>
+                  <div>
+                    {/* <FormLabel>Stock almacén</FormLabel> */}
+                    <p className="block text-center">{`Alm. "${stockStorage?.Storage.name}" `}{"("}<span className="text-primary font-bold">
+                      {
+                        `${dynamicStock}`
+                      }
+                      </span>{')'}</p>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div>
+                    {/* <FormLabel>Stock total</FormLabel> */}
+                    <span className="block text-center">
+                      {
+                        totalStock
                       }
                     </span>
                   </div>
@@ -350,11 +495,11 @@ export function CreateOutgoingForm({
             </div>
           </div>
           {/* Estado */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name={FORMSTATICS.state.name}
             render={({ field }) => (
-              <FormItem className="space-y-3">
+              <FormItem className="space-y-3 col-span-2">
                 <FormLabel className="overflow-hidden text-ellipsis">{FORMSTATICS.state.label}</FormLabel>
                 <FormControl>
                   <RadioGroup
@@ -379,81 +524,10 @@ export function CreateOutgoingForm({
                 <FormMessage />
               </FormItem>
             )}
-          ></FormField>
-
-          {/* Fecha */}
-          <div>
-            {/* <FormItem>
-              <FormLabel>{FORMSTATICS.date.label}</FormLabel>
-              <Input
-                {...register(FORMSTATICS.date.name)}
-                type="date"
-                placeholder={FORMSTATICS.date.placeholder}
-              />
-              <CustomFormDescription required={FORMSTATICS.date.required} />
-              {form.formState.errors.date && (
-              <FormMessage className="text-destructive">
-                {form.formState.errors.date.message}
-              </FormMessage>
-              )}
-            </FormItem> */}
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.date.name}
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>{FORMSTATICS.date.placeholder}</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                              // Verifica si es string
-                              typeof field.value === "string"
-                                ? format(new Date(field.value), "PPP", { locale: es })
-                                : field.value instanceof Date
-                                  ? format(field.value, "PPP", { locale: es })
-                                  : <span>Escoja una fecha</span>
-                            ) : (
-                              <span>Escoja una fecha</span>
-                            )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={
-                          typeof field.value === "string"
-                            ? new Date(field.value)
-                            : field.value instanceof Date
-                            ? field.value
-                            : undefined
-                        }
-                        onSelect={(val) => field.onChange(val?.toISOString() ?? "")}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <CustomFormDescription required={FORMSTATICS.date.required} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          ></FormField> */}
 
           {/* Descripción */}
-          <div className="col-span-2">
+          <div className="col-span-4">
             <FormItem>
               <FormLabel>{FORMSTATICS.description.label}</FormLabel>
               <Textarea
@@ -468,6 +542,104 @@ export function CreateOutgoingForm({
               )}
             </FormItem>
           </div>
+          <Separator className="col-span-4"></Separator>
+          {/* TRANSFERENCIA */}
+          <div className="col-span-2">
+            <FormField
+                control={form.control}
+                name='isTransference'
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-end justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>{FORMSTATICS.isTransference.label}</FormLabel>
+                      <FormDescription>
+                        {FORMSTATICS.isTransference.description}
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch className="!m-0 "
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <CustomFormDescription required={FORMSTATICS.description.required} />
+                    <FormMessage></FormMessage>
+                  </FormItem>
+                )}
+              />
+          </div>
+
+          {/* Almacen de destino */}
+          {
+            form.watch('isTransference') && (
+              <div className="animate-fade-right animate-duration-500 col-span-2 flex items-end">
+              <FormField
+              control={form.control}
+              name={FORMSTATICS.referenceId.name}
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full">
+                  <FormLabel>{FORMSTATICS.referenceId.label}</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? storageOptions.filter((option)=> option.value !== form.watch('storageId')).find(
+                                (option) => option.value === field.value
+                              )?.label
+                            : FORMSTATICS.referenceId.placeholder}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Buscar ..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>{FORMSTATICS.referenceId.emptyMessage}</CommandEmpty>
+                          <CommandGroup>
+                            {storageOptions.filter((option)=> option.value !== form.watch('storageId')).map((option) => (
+                              <CommandItem
+                                value={option.label}
+                                key={option.value}
+                                onSelect={() => {
+                                  form.setValue("referenceId", option.value)
+                                }}
+                              >
+                                {option.label}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    option.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <CustomFormDescription required={FORMSTATICS.referenceId.required} />
+                  <FormMessage></FormMessage>
+                </FormItem>
+              )}
+            />
+            </div>
+            )
+          }
         </div>
         {children}
       </form>
