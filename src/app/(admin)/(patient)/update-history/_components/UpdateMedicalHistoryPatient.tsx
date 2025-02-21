@@ -29,19 +29,18 @@ export function UpdateMedicalHistoryPatient({
   products,
   patient,
 }: UpdateMedicalHistoryPatientProps) {
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
   const [selectedUpdateId, setSelectedUpdateId] = useState<string | null>(null);
   const [expandedService, setExpandedService] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Función para obtener nombres a partir de IDs
-  const getBranchName = (branchId: string) =>
+  const getBranchName = (branchId: string) => 
     branches.find(branch => branch.id === branchId)?.name ?? 'N/A';
-
-  const getServiceName = (serviceId: string) =>
+  
+  const getServiceName = (serviceId: string) => 
     services.find(service => service.id === serviceId)?.name ?? 'N/A';
-
+  
   const getStaffName = (staffId: string) => {
     const staffMember = staff.find(s => s.id === staffId);
     return staffMember ? `${staffMember.name} ${staffMember.lastName}` : 'N/A';
@@ -65,9 +64,9 @@ export function UpdateMedicalHistoryPatient({
               Historial Médico de Consultas, Servicios y Tratamientos
             </CardTitle>
           </div>
-          <Button
-            className="w-full md:w-auto"
-            onClick={() => setIsHistoryModalOpen(true)}
+          <Button 
+            className="w-full md:w-auto" 
+            onClick={() => setIsPrescriptionModalOpen(true)}
           >
             <Plus className="w-4 h-4 mr-2" /> Agregar Historia
           </Button>
@@ -91,8 +90,8 @@ export function UpdateMedicalHistoryPatient({
                   </span>
                   <Button variant="ghost" size="sm">
                     <Eye className="w-5 h-5" />
-                    {expandedService === update.id ?
-                      <ChevronUp className="w-5 h-5" /> :
+                    {expandedService === update.id ? 
+                      <ChevronUp className="w-5 h-5" /> : 
                       <ChevronDown className="w-5 h-5" />
                     }
                   </Button>
@@ -120,7 +119,7 @@ export function UpdateMedicalHistoryPatient({
                         </span>
                       </div>
                     </div>
-
+                    
                     {update.description && (
                       <div className="col-span-1 md:col-span-2">
                         <div className="flex items-start space-x-3">
@@ -167,9 +166,9 @@ export function UpdateMedicalHistoryPatient({
                   {/* Botón para ver receta */}
                   {update.prescription && (
                     <div className="mt-4">
-                      <Button
-                        variant="secondary"
-                        className="w-full md:w-auto"
+                      <Button 
+                        variant="secondary" 
+                        className="w-full md:w-auto" 
                         onClick={() => handleShowPrescription(update)}
                       >
                         <FileText className="w-4 h-4 mr-2" />
