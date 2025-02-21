@@ -1,35 +1,69 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useUpdateHistory } from "../_hook/useUpdateHistory"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Plus, Stethoscope, PillIcon as Pills, Syringe, Heart, Brain, 
-  Bone, Activity, AlertCircle, PenTool, Baby, Cigarette, Wine, 
-  Dumbbell, FileText, BookHeart, Pencil
-} from "lucide-react"
-import { MedicalHistory } from "../_interfaces/updateHistory.interface"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useUpdateHistory } from "../_hook/useUpdateHistory";
+import {
+  Plus,
+  Stethoscope,
+  PillIcon as Pills,
+  Syringe,
+  Heart,
+  Brain,
+  Bone,
+  Activity,
+  AlertCircle,
+  PenTool,
+  Baby,
+  Cigarette,
+  Wine,
+  Dumbbell,
+  FileText,
+  BookHeart,
+  Pencil,
+} from "lucide-react";
+import { MedicalHistory } from "../_interfaces/updateHistory.interface";
 
 const antecedentesPreDefinidos = [
   { value: "alergias", label: "Alergias", icon: AlertCircle },
   { value: "antecedentes", label: "Antecedentes", icon: FileText },
   { value: "cirugiasPrevias", label: "Cirugías Previas", icon: Stethoscope },
-  { value: "enfermedadesCronicas", label: "Enfermedades Crónicas", icon: Activity },
+  {
+    value: "enfermedadesCronicas",
+    label: "Enfermedades Crónicas",
+    icon: Activity,
+  },
   { value: "medicamentos", label: "Medicamentos Actuales", icon: Pills },
   { value: "vacunas", label: "Historial de Vacunación", icon: Syringe },
   { value: "cardiacos", label: "Antecedentes Cardíacos", icon: Heart },
   { value: "neurologicos", label: "Antecedentes Neurológicos", icon: Brain },
-  { value: "traumatologicos", label: "Antecedentes Traumatológicos", icon: Bone },
+  {
+    value: "traumatologicos",
+    label: "Antecedentes Traumatológicos",
+    icon: Bone,
+  },
   { value: "familiares", label: "Antecedentes Familiares", icon: Baby },
   { value: "habitos", label: "Hábitos y Estilo de Vida", icon: Dumbbell },
   { value: "tabaquismo", label: "Tabaquismo", icon: Cigarette },
   { value: "alcohol", label: "Consumo de Alcohol", icon: Wine },
   { value: "otro", label: "Otro Antecedente", icon: PenTool },
-]
+];
 
 interface MedicalBackgroundProps {
   historialMedico: MedicalHistory;
@@ -68,30 +102,43 @@ export function MedicalBackground({ historialMedico }: MedicalBackgroundProps) {
   };
 
   const handleSubmit = () => {
-    const key = isEditing ? editingKey : 
-      formData.tipo === "otro" ? formData.customTitulo : formData.tipo;
+    const key = isEditing
+      ? editingKey
+      : formData.tipo === "otro"
+      ? formData.customTitulo
+      : formData.tipo;
 
     const updatedHistory = {
       ...historialMedico,
       medicalHistory: {
         ...historialMedico.medicalHistory,
-        [key]: formData.contenido
-      }
+        [key]: formData.contenido,
+      },
     };
+
+    /*     alias) type MedicalHistory = {
+      id: string;
+      patientId: string;
+      medicalHistory: Record<string, never>;
+      description: string;
+      isActive: boolean;
+  } */
 
     updateMutation.mutate({
       id: historialMedico.id,
-      data: updatedHistory
+      data: updatedHistory,
     });
 
     setIsModalOpen(false);
     setFormData({ tipo: "", contenido: "", customTitulo: "" });
   };
 
-  const historialArray = Object.entries(historialMedico.medicalHistory || {}).map(([key, value]) => ({
+  const historialArray = Object.entries(
+    historialMedico.medicalHistory || {}
+  ).map(([key, value]) => ({
     key,
     value,
-    tipo: key
+    tipo: key,
   }));
 
   const getIconForType = (tipo: string) => {
@@ -126,7 +173,9 @@ export function MedicalBackground({ historialMedico }: MedicalBackgroundProps) {
                       <div className="flex items-center gap-2">
                         <Icon className="w-5 h-5 text-primary" />
                         <CardTitle className="text-lg font-medium">
-                          {antecedentesPreDefinidos.find(a => a.value === tipo)?.label ?? key}
+                          {antecedentesPreDefinidos.find(
+                            (a) => a.value === tipo
+                          )?.label ?? key}
                         </CardTitle>
                       </div>
                     </div>
@@ -153,7 +202,9 @@ export function MedicalBackground({ historialMedico }: MedicalBackgroundProps) {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>
-              {isEditing ? "Editar Antecedente Médico" : "Agregar Antecedente Médico"}
+              {isEditing
+                ? "Editar Antecedente Médico"
+                : "Agregar Antecedente Médico"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -174,7 +225,10 @@ export function MedicalBackground({ historialMedico }: MedicalBackgroundProps) {
                   </SelectTrigger>
                   <SelectContent>
                     {antecedentesPreDefinidos.map((antecedente) => (
-                      <SelectItem key={antecedente.value} value={antecedente.value}>
+                      <SelectItem
+                        key={antecedente.value}
+                        value={antecedente.value}
+                      >
                         <div className="flex items-center gap-2">
                           <antecedente.icon className="w-4 h-4" />
                           {antecedente.label}

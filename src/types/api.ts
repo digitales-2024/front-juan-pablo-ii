@@ -2132,23 +2132,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/outgoing/storage": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los ingresos con detalles de almacen */
-        get: operations["OutgoingController_findAllWithStorage"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/outgoing/detailed": {
         parameters: {
             query?: never;
@@ -2329,23 +2312,6 @@ export interface paths {
         };
         /** Obtener todos los productos en stock en todos los almacenes. */
         get: operations["StockController_getProductsStock"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/stock/availableProduct/storage/{storageId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener un producto en stock en todos los almacenes. */
-        get: operations["StockController_getProductStockByStorage"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3892,11 +3858,6 @@ export interface components {
              */
             lastName: string;
             /**
-             * @description Numero de CMP
-             * @example 123456789
-             */
-            cmp?: string;
-            /**
              * @description Número de DNI del personal médico
              * @example 40506070
              */
@@ -3965,8 +3926,6 @@ export interface components {
                  */
                 name?: string;
             };
-            /** @description Número de Colegiatura Médica (CMP) */
-            cmp: string;
         };
         UpdateStaffDto: {
             /**
@@ -3989,11 +3948,6 @@ export interface components {
              * @example Rodríguez
              */
             lastName?: string;
-            /**
-             * @description Numero de CMP
-             * @example 123456789
-             */
-            cmp?: string;
             /**
              * @description Número de DNI del personal médico
              * @example 40506070
@@ -4856,31 +4810,8 @@ export interface components {
             referenceId: string;
             isActive: boolean;
         };
-        OutgoingBranch: {
-            id: string;
-            name: string;
-        };
-        OutgoingStorageType: {
-            id: string;
-            name: string;
-            branch?: components["schemas"]["OutgoingBranch"];
-        };
         OutgoingStorage: {
-            id: string;
             name: string;
-            TypeStorage: components["schemas"]["OutgoingStorageType"];
-        };
-        OutgoingWithStorage: {
-            id: string;
-            name: string;
-            description: string;
-            storageId: string;
-            /** Format: date-time */
-            date: string;
-            state: boolean;
-            referenceId: string;
-            isActive: boolean;
-            Storage: components["schemas"]["OutgoingStorage"];
         };
         OutgoingProduct: {
             id: string;
@@ -5017,23 +4948,6 @@ export interface components {
             staff: string;
             description: string;
             stock: components["schemas"]["ProductStockResponse"][];
-        };
-        StockStorage: {
-            id: string;
-            name: string;
-        };
-        StockProduct: {
-            stock: number;
-            isActive: boolean;
-            Storage: components["schemas"]["StockStorage"];
-        };
-        ProductStock: {
-            id: string;
-            name: string;
-            precio: number;
-            codigoProducto: string;
-            unidadMedida: string;
-            Stock: components["schemas"]["StockProduct"][];
         };
         ProductSaleItemDto: {
             /**
@@ -5193,11 +5107,6 @@ export interface components {
             metadata?: Record<string, never>;
         };
         Event: Record<string, never>;
-        /**
-         * @description Estado de evento
-         * @enum {string}
-         */
-        EventStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
         CreateEventDto: {
             /**
              * @description Título del evento
@@ -5215,8 +5124,6 @@ export interface components {
              * @enum {string}
              */
             type: "TURNO" | "CITA" | "OTRO";
-            /** @example PENDING */
-            status: components["schemas"]["EventStatus"];
             /**
              * Format: date-time
              * @description Fecha y hora de inicio del evento
@@ -5267,8 +5174,6 @@ export interface components {
              * @enum {string}
              */
             type?: "TURNO" | "CITA" | "OTRO";
-            /** @example PENDING */
-            status?: components["schemas"]["EventStatus"];
             /**
              * Format: date-time
              * @description Fecha y hora de inicio del evento
@@ -5759,6 +5664,12 @@ export interface components {
         DeletePatientDto: {
             ids: string[];
         };
+        PrescriptionItemDto: {
+            id: string;
+            name: string;
+            quantity: number;
+            description?: string;
+        };
         CreatePrescriptionDto: {
             /**
              * @description ID de la actualización de historia médica
@@ -5781,25 +5692,34 @@ export interface components {
              */
             patientId: string;
             /**
-             * Format: date-time
              * @description Fecha de emisión de la receta
-             * @example 2024-03-15T10:00:00Z
+             * @example 2024-03-15
              */
             registrationDate: string;
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "Paracetamol",
-             *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas",
-             *           "duracion": "5 días"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "Paracetamol",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
-            prescription: Record<string, never>;
+            prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "consulta general",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
+             */
+            prescriptionServices?: components["schemas"]["PrescriptionItemDto"][];
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
@@ -5811,15 +5731,21 @@ export interface components {
              */
             purchaseOrderId?: string;
         };
+        PrescriptionItemResponse: {
+            id: string;
+            name: string;
+            quantity: number;
+            description?: string;
+        };
         Prescription: {
             id: string;
             updateHistoryId: string;
             branchId: string;
             staffId: string;
             patientId: string;
-            /** Format: date-time */
             registrationDate: string;
-            prescription: string;
+            prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
+            prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
             description: string;
             purchaseOrderId: string;
             isActive: boolean;
@@ -5846,25 +5772,34 @@ export interface components {
              */
             patientId?: string;
             /**
-             * Format: date-time
              * @description Fecha de emisión de la receta
-             * @example 2024-03-15T10:00:00Z
+             * @example 2024-03-15
              */
             registrationDate?: string;
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "Paracetamol",
-             *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas",
-             *           "duracion": "5 días"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "Paracetamol",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
-            prescription?: Record<string, never>;
+            prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "consulta general",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
+             */
+            prescriptionServices?: components["schemas"]["PrescriptionItemDto"][];
             /**
              * @description Descripción o notas adicionales
              * @example Tomar después de las comidas
@@ -5974,6 +5909,7 @@ export interface components {
             medicalLeaveDays: number;
             leaveDescription: string;
             isActive: boolean;
+            createdAt: string;
         };
         UpdateUpdateHistoryDto: {
             /**
@@ -6078,7 +6014,7 @@ export interface components {
             medicalHistory?: Record<string, never>;
             /**
              * @description Additional description
-             * @example First patient consultation
+             * @example Historia medica del paciente
              */
             description?: string;
         };
@@ -6111,12 +6047,30 @@ export interface components {
             medicalHistory?: Record<string, never>;
             /**
              * @description Additional description
-             * @example First patient consultation
+             * @example Historia medica del paciente
              */
             description?: string;
         };
         DeleteMedicalHistoryDto: {
             ids: string[];
+        };
+        UpdateHistoryImage: {
+            id: string;
+            url: string;
+        };
+        UpdateHistoryData: {
+            branch: string;
+            service: string;
+            staff: string;
+            images?: components["schemas"]["UpdateHistoryImage"][];
+        };
+        UpdateHistoryResponse: {
+            id: string;
+            patientId: string;
+            medicalHistory: Record<string, never>;
+            description: string;
+            isActive: boolean;
+            updates?: components["schemas"]["UpdateHistoryData"][];
         };
     };
     responses: never;
@@ -12419,40 +12373,6 @@ export interface operations {
             };
         };
     };
-    OutgoingController_findAllWithStorage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los ingresos con detalles de almacen */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OutgoingWithStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     OutgoingController_findAllWithRelations: {
         parameters: {
             query?: never;
@@ -12830,29 +12750,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Productos en stock en todos los almacenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductStock"][];
-                };
-            };
-        };
-    };
-    StockController_getProductStockByStorage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del producto */
-                storageId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Producto en stock en todos los almacenes */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -15167,7 +15064,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MedicalHistory"];
+                    "application/json": components["schemas"]["UpdateHistoryResponse"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
