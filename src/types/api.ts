@@ -6237,6 +6237,7 @@ export interface components {
             leaveDescription: string;
             isActive: boolean;
             createdAt: string;
+            updatedAt: string;
         };
         UpdateUpdateHistoryDto: {
             /**
