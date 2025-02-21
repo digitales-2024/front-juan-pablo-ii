@@ -110,15 +110,18 @@ export const columns: ColumnDef<StaffSchedule>[] = [
         DAILY: "Diaria",
         WEEKLY: "Semanal",
         MONTHLY: "Mensual",
-        YEARLY: "Anual"
+        YEARLY: "Sin Recurrencia"
       };
       const frequency = recurrence.frequency as "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+
+      if (frequency === "YEARLY") return frequencyMap.YEARLY;
+
       const intervalText = {
         DAILY: { singular: "día", plural: "días" },
         WEEKLY: { singular: "semana", plural: "semanas" },
-        MONTHLY: { singular: "mes", plural: "meses" },
-        YEARLY: { singular: "año", plural: "años" }
+        MONTHLY: { singular: "mes", plural: "meses" }
       }[frequency];
+
       return `${frequencyMap[frequency]} cada ${recurrence.interval} ${recurrence.interval === 1 ? intervalText.singular : intervalText.plural}`;
     },
   },

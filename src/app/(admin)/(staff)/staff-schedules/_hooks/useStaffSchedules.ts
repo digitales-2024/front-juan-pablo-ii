@@ -104,7 +104,7 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
 
       toast.success(res.message);
 
-      if (res.data?.id) {
+      if (res.data?.id && variables.recurrence?.frequency !== 'YEARLY') {
         generateEventsMutation.mutate(res.data.id);
       }
     },

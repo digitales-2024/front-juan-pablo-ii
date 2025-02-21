@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useEvents } from "../../../_hooks/useEvents"
 import { Input } from "@/components/ui/input"
+import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff"
+import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches"
 
 const formSchema = z
   .object({
@@ -49,6 +51,8 @@ export default function CalendarManageEventDialog() {
   const [isEditing, setIsEditing] = React.useState(false)
 
   const { deleteMutation, updateMutation } = useEvents()
+  const { staff } = useStaff()
+  const { branches } = useBranches()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -124,13 +128,17 @@ export default function CalendarManageEventDialog() {
     })
   }
 
+  // Obtener datos completos del staff y sucursal
+  const currentStaff = staff?.find(s => s.id === selectedEvent?.staffId)
+  const currentBranch = branches?.find(b => b.id === selectedEvent?.branchId)
+
   return (
     <Dialog open={manageEventDialogOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <CalendarDays className="h-6 w-6" />
-            Detalles del evento
+            Detalles
           </DialogTitle>
         </DialogHeader>
 
@@ -210,14 +218,14 @@ export default function CalendarManageEventDialog() {
               <EventDetailItem
                 icon={<User className="h-4 w-4" />}
                 label="Personal asignado"
-                value={`${selectedEvent?.staff.name} ${selectedEvent?.staff.lastName}`}
-                subValue={`ID: ${selectedEvent?.staffId}`}
+                value={`${currentStaff?.name} ${currentStaff?.lastName}`}
+                subValue={`${currentStaff?.staffType.name.toUpperCase()}${currentStaff?.cmp ? ` • CMP: ${currentStaff.cmp}` : ''}`}
               />
               <EventDetailItem
                 icon={<MapPin className="h-4 w-4" />}
                 label="Ubicación"
-                value={selectedEvent?.branch?.name ?? "Nombre no disponible"}
-                subValue={`ID: ${selectedEvent?.branchId ?? "N/A"}`}
+                value={currentBranch?.name || "Nombre no disponible"}
+                subValue={currentBranch?.address || "Dirección no disponible"}
               />
               <div className="space-y-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
