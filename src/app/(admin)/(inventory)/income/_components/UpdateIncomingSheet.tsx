@@ -24,10 +24,10 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import {
-  updateIncomeSchema,
   DetailedIncoming,
   UpdateIncomingStorageInput,
   UpdateIncomingStorageDto,
+  updateIncomingStorageSchema,
 } from "../_interfaces/income.interface";
 import {
   AlertCircle,
@@ -164,17 +164,7 @@ export function UpdateIncomingSheet({
     }) ?? [];
 
   const form = useForm<UpdateIncomingStorageInput>({
-    resolver: zodResolver(updateIncomeSchema),
-    // values:{
-    //   movement: incoming.Movement.map((mv) => {return {
-    //     id: mv.id,
-    //     productId: mv.Producto.id,
-    //     quantity: mv.quantity,
-    //     buyingPrice: mv.buyingPrice,
-    //     date: mv.date,
-    //     state: mv.state,
-    //   }})
-    // },
+    resolver: zodResolver(updateIncomingStorageSchema),
     defaultValues: {
       name: incoming.name ?? FORMSTATICS.name.defaultValue,
       storageId: incoming.storageId ?? FORMSTATICS.storageId.defaultValue,
@@ -187,13 +177,6 @@ export function UpdateIncomingSheet({
     },
   });
 
-  // const watchedArray = useWatch<UpdateIncomingStorageDto>({
-  //   control: form.control,
-  //   name: "movement",
-  //   defaultValue: movements,
-  // })
-  // console.log('watchedArray', watchedArray);
-
   const {
     control,
     register,
@@ -201,26 +184,10 @@ export function UpdateIncomingSheet({
     //formState: { errors },,
   } = form;
 
-  // useEffect(() => {
-  //   form.setValue('movement', incoming.Movement.map((mv) => {
-  //     return {
-  //       id: mv.id,
-  //       productId: mv.Producto.id,
-  //       quantity: mv.quantity,
-  //       buyingPrice: mv.buyingPrice,
-  //       date: mv.date,
-  //       state: mv.state,
-  //     }
-  //   }
-  //   ));
-  // }, []);
-
   const watchFieldArray = watch("movement");
-  console.log("watch movement", watchFieldArray);
 
-  const formControl = form.control;
   const fieldArray = useFieldArray({
-    control: formControl,
+    control: control,
     name: "movement",
     rules: {
       minLength: 1,
@@ -283,6 +250,7 @@ export function UpdateIncomingSheet({
   }, [open, handleClearProductList]);
 
   const onSubmit = async (data: UpdateIncomingStorageDto) => {
+    //console.log('dto', data);
     if (updateIncomingStorageMutation.isPending) return;
 
     try {
@@ -331,17 +299,17 @@ export function UpdateIncomingSheet({
       return <LoadingDialogForm />;
     }
     if (reponseProducts.isError) {
-      toast.error(
-        "Error al cargar los productos, " + reponseProducts.error.message,
-        {
-          action: {
-            label: "Recargar",
-            onClick: async () => {
-              await reponseProducts.refetch();
-            },
-          },
-        }
-      );
+      // toast.error(
+      //   "Error al cargar los productos, " + reponseProducts.error.message,
+      //   {
+      //     action: {
+      //       label: "Recargar",
+      //       onClick: async () => {
+      //         await reponseProducts.refetch();
+      //       },
+      //     },
+      //   }
+      // );
       return reponseProducts.error ? (
         <GeneralErrorMessage
           error={reponseProducts.error}
@@ -352,27 +320,11 @@ export function UpdateIncomingSheet({
     if (!reponseProducts.data) {
       return <LoadingDialogForm />;
     }
-    // if (responseTypeProducts.activeIsError) {
-    //   return responseTypeProducts.activeError ? (
-    //     <GeneralErrorMessage
-    //       error={responseTypeProducts.activeError}
-    //       reset={responseTypeProducts.activeRefetch}
-    //     />
-    //   ) : null;
-    // }
-    // if (!responseTypeProducts.activeData) {
-    //   return (
-    //     <GeneralErrorMessage
-    //       error={new Error("No se encontraron subcategorías")}
-    //       reset={responseTypeProducts.activeRefetch}
-    //     />
-    //   );
-    // }
   }
 
-  const storageOptions: Option[] = responseStorages.data.map((category) => ({
-    label: category.name,
-    value: category.id,
+  const storageOptions: Option[] = responseStorages.data.map((storage) => ({
+    label: storage.name,
+    value: storage.id,
   }));
 
   const handleRemoveProduct = (index: number) => {
@@ -392,13 +344,6 @@ export function UpdateIncomingSheet({
     handleClearProductList()
     setOpen(open)
   }
-
-  // const typeProductOptions: Option[] = responseTypeProducts.activeData.map(
-  //   (typeProduct) => ({
-  //     label: typeProduct.name,
-  //     value: typeProduct.id,
-  //   })
-  // );
 
   return (
     <Sheet open={isOpen} onOpenChange={handleOnOpenChange}>
@@ -561,7 +506,7 @@ export function UpdateIncomingSheet({
                     <Table className="w-full">
                       <TableCaption className="space-y-1">
                         <span className="inline-block">
-                          Lista de productos seleccionados. 
+                          Lista de productos seleccionados.
                         </span>
                         <span className="inline-block">
                           Se asigna el precio de venta como referencia en los nuevos productos que agregue.
@@ -689,7 +634,7 @@ export function UpdateIncomingSheet({
                                   </span>
                                 </div>
                               </TableCell>
-                              <TableCell className="flex justify-center">
+                              <TableCell className="flex justify-center items-center">
                                 <Button
                                   type="button"
                                   variant="outline"

@@ -110,20 +110,22 @@ export function SelectProductDialog({
         <DialogTrigger asChild>
           <TriggerButton />
         </DialogTrigger>
-        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)]">
+        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)] overflow-auto">
           <DialogHeader>
             <DialogTitle>{CREATE_PRODUCT_MESSAGES.title}</DialogTitle>
             <DialogDescription>
               {CREATE_PRODUCT_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <DataTable
-            columns={columns}
-            data={data}
-            onRowSelectionChange={(selectedRows) => {
-              setLocalSelectRows(() => [...selectedRows]);
-            }}
-          />
+          <div className="overflow-auto max-h-full">
+            <DataTable
+              columns={columns}
+              data={data}
+              onRowSelectionChange={(selectedRows) => {
+                setLocalSelectRows(() => [...selectedRows]);
+              }}
+            />
+          </div>
           <DialogFooter>
             <DialogFooterContent />
           </DialogFooter>
@@ -144,13 +146,15 @@ export function SelectProductDialog({
             {CREATE_PRODUCT_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <DataTable
-          columns={columns}
-          data={data}
-          onRowSelectionChange={(selectedRows) => {
-            setLocalSelectRows(() => [...selectedRows]);
-          }}
-        />
+        <div className="overflow-auto max-h-[calc(100dvh-12rem)]">
+          <DataTable
+            columns={columns}
+            data={data}
+            onRowSelectionChange={(selectedRows) => {
+              setLocalSelectRows(() => [...selectedRows]);
+            }}
+          />
+        </div>
         <DrawerFooter>
           <DialogFooterContent />
         </DrawerFooter>

@@ -445,7 +445,7 @@ export function CreateIncomingForm({
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="flex justify-center">
+                <TableCell className="flex justify-center items-center">
                   <Button
                     type="button"
                     variant="outline"

@@ -5,22 +5,24 @@ import { PageHeader } from "@/components/PageHeader";
 // import { getBranches } from "./_actions/branch.actions";
 import { notFound } from "next/navigation";
 import { useStorages } from "./_hooks/useStorages";
-import LoadingCategories from "./loading";
+import Loading from "./loading";
 import { METADATA } from "./_statics/metadata";
+import { toast } from "sonner";
 
 export default function PageBranches() {
   const {detailedStoragesQuery: response} = useStorages();
 
   if (response.isLoading) {
-    return <LoadingCategories />;
+    return <Loading />;
   }
 
   if (response.isError) {
+    toast.error("Ocurrió un error al cargar los almacenes");
     notFound();
   }
 
   if (!response.data) {
-    notFound();
+    return <Loading></Loading>;
   }
 
   return (
