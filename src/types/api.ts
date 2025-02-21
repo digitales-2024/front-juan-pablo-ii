@@ -1837,40 +1837,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/type-storage/detailed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los tipos de almacenamiento activos */
-        get: operations["TypeStorageController_findAllDetailed"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/type-storage/detailed/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener tipo detallado de almacenamiento por ID */
-        get: operations["TypeStorageController_findOneWithRelations"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/type-storage/{id}": {
         parameters: {
             query?: never;
@@ -2253,6 +2219,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/incoming/update/incomingStorage/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar ingreso existente */
+        patch: operations["IncomingController_updateIncomingStorage"];
+        trace?: never;
+    };
     "/api/v1/incoming/{id}": {
         parameters: {
             query?: never;
@@ -2389,6 +2372,23 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/outgoing/update/outgoingStorage/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar salida existente */
+        patch: operations["OutgoingController_updateOutgoingStorage"];
         trace?: never;
     };
     "/api/v1/outgoing/{id}": {
@@ -4661,34 +4661,12 @@ export interface components {
              * @example Almacén destinado a productos listos para su distribución
              */
             description?: string;
-            /**
-             * @description ID de la sucursal si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description ID del personal responsable si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
         };
         TypeStorage: {
             id: string;
             name: string;
             description: string;
-            branchId: string;
-            staffId: string;
             isActive: boolean;
-        };
-        DetailedTypeStorage: {
-            id: string;
-            name: string;
-            description: string;
-            branchId: string;
-            staffId: string;
-            isActive: boolean;
-            branch: components["schemas"]["Branch"];
-            staff: components["schemas"]["Staff"];
         };
         UpdateTypeStorageDto: {
             /**
@@ -4701,16 +4679,6 @@ export interface components {
              * @example Almacén destinado a productos listos para su distribución
              */
             description?: string;
-            /**
-             * @description ID de la sucursal si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId?: string;
-            /**
-             * @description ID del personal responsable si es necesario
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            staffId?: string;
         };
         DeleteTypeStorageDto: {
             ids: string[];
@@ -4731,12 +4699,24 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             typeStorageId: string;
+            /**
+             * @description ID de la sucursal si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal responsable si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
         };
         Storage: {
             id: string;
             name: string;
             location: string;
             typeStorageId: string;
+            branchId?: string;
+            staffId?: string;
             isActive: boolean;
         };
         DetailedStorage: {
@@ -4744,8 +4724,12 @@ export interface components {
             name: string;
             location: string;
             typeStorageId: string;
+            branchId?: string;
+            staffId?: string;
             isActive: boolean;
             TypeStorage: components["schemas"]["TypeStorage"];
+            branch: components["schemas"]["Branch"];
+            staff: components["schemas"]["Staff"];
         };
         UpdateStorageDto: {
             /**
@@ -4763,6 +4747,16 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             typeStorageId?: string;
+            /**
+             * @description ID de la sucursal si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId?: string;
+            /**
+             * @description ID del personal responsable si es necesario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            staffId?: string;
         };
         DeleteStorageDto: {
             ids: string[];
@@ -4881,6 +4875,11 @@ export interface components {
              */
             quantity: number;
             /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
+            /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
              * @example 2023-12-01T15:30:00Z
@@ -4899,6 +4898,8 @@ export interface components {
             outgoingId: string;
             productId: string;
             quantity: number;
+            /** @description Precio de compra del producto */
+            buyingPrice?: number;
             /** Format: date-time */
             date: string;
             state: boolean;
@@ -4929,6 +4930,11 @@ export interface components {
              * @example 100
              */
             quantity?: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
             /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
@@ -4966,6 +4972,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado del ingreso
              * @example false
@@ -4986,21 +4994,22 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
+        };
+        IncomingStorageType: {
+            id: string;
+            name: string;
         };
         IncomingBranch: {
             id: string;
             name: string;
         };
-        IncomingStorageType: {
-            id: string;
-            name: string;
-            branch?: components["schemas"]["IncomingBranch"];
-        };
         IncomingStorage: {
             id: string;
             name: string;
             TypeStorage: components["schemas"]["IncomingStorageType"];
+            branch?: components["schemas"]["IncomingBranch"];
         };
         IncomingWithStorage: {
             id: string;
@@ -5011,6 +5020,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
         };
@@ -5034,6 +5044,7 @@ export interface components {
             /** Format: date-time */
             date: string;
             state: boolean;
+            buyingPrice?: number;
             isActive: boolean;
             Producto: components["schemas"]["IncomingProduct"];
         };
@@ -5046,9 +5057,88 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
             Movement: components["schemas"]["IncomingMovement"][];
+        };
+        OutgoingIncomingUpdateMovementDto: {
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId?: string;
+            /**
+             * @description Cantidad de producto que se movió
+             * @example 100
+             */
+            quantity?: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
+            /**
+             * Format: date-time
+             * @description Fecha en que ocurrió el evento
+             * @example 2023-12-01T15:30:00Z
+             */
+            date?: string;
+            /**
+             * @description Estado del movimiento
+             * @example false
+             */
+            state?: boolean;
+            id?: string;
+        };
+        UpdateIncomingStorageDto: {
+            /**
+             * @description Nombre del ingreso a almacen
+             * @example Ingreso de regulacion , aumento de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción del ingreso
+             * @example Descripción opcional del ingreso a alamacen
+             */
+            description?: string;
+            /**
+             * @description ID del almacén al que va ser ingresado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha del ingreso
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date?: string;
+            /**
+             * @description Estado del ingreso
+             * @example true
+             */
+            state?: boolean;
+            /**
+             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
+            /**
+             * @description productos a ingresar al almacen y cantidad
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       },
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
+             *         "quantity": 10
+             *       }
+             *     ]
+             */
+            movement?: components["schemas"]["OutgoingIncomingUpdateMovementDto"][];
         };
         UpdateIncomingDto: {
             /**
@@ -5072,6 +5162,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado del ingreso
              * @example false
@@ -5097,6 +5189,11 @@ export interface components {
              * @example 100
              */
             quantity: number;
+            /**
+             * @description Precio de compra del producto
+             * @example 15.5
+             */
+            buyingPrice?: number;
             /**
              * Format: date-time
              * @description Fecha en que ocurrió el evento
@@ -5141,6 +5238,8 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             referenceId?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description productos a ingresar al almacen y cantidad
              * @example [
@@ -5178,6 +5277,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado de la salida
              * @example false
@@ -5198,21 +5299,22 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
+        };
+        OutgoingStorageType: {
+            id: string;
+            name: string;
         };
         OutgoingBranch: {
             id: string;
             name: string;
         };
-        OutgoingStorageType: {
-            id: string;
-            name: string;
-            branch?: components["schemas"]["OutgoingBranch"];
-        };
         OutgoingStorage: {
             id: string;
             name: string;
             TypeStorage: components["schemas"]["OutgoingStorageType"];
+            branch?: components["schemas"]["OutgoingBranch"];
         };
         OutgoingWithStorage: {
             id: string;
@@ -5223,6 +5325,7 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
         };
@@ -5246,6 +5349,7 @@ export interface components {
             /** Format: date-time */
             date: string;
             state: boolean;
+            buyingPrice?: number;
             isActive: boolean;
             Producto: components["schemas"]["OutgoingProduct"];
         };
@@ -5258,9 +5362,59 @@ export interface components {
             date: string;
             state: boolean;
             referenceId: string;
+            isTransference?: boolean;
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
             Movement: components["schemas"]["OutgoingMovement"][];
+        };
+        UpdateOutgoingStorageDto: {
+            /**
+             * @description Nombre de la salida de almacen
+             * @example salida de transferencia , correcion de stock, etc.
+             */
+            name?: string;
+            /**
+             * @description Descripción de salida
+             * @example Descripción opcional del salida de alamacen
+             */
+            description?: string;
+            /**
+             * @description ID del almacén del que va ser retirado
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de salida
+             * @example 2023-10-01T00:00:00.000Z
+             */
+            date?: string;
+            /**
+             * @description Estado de salida
+             * @example true
+             */
+            state?: boolean;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
+            /**
+             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            referenceId?: string;
+            /**
+             * @description productos a retirar del almacen y cantidad
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5
+             *       },
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174001",
+             *         "quantity": 10
+             *       }
+             *     ]
+             */
+            movement?: components["schemas"]["OutgoingIncomingUpdateMovementDto"][];
         };
         UpdateOutgoingDto: {
             /**
@@ -5284,6 +5438,8 @@ export interface components {
              * @example 2023-10-01T00:00:00.000Z
              */
             date?: string;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description Estado de la salida
              * @example false
@@ -5321,10 +5477,12 @@ export interface components {
              */
             date: string;
             /**
-             * @description Estado del salida
+             * @description Estado de salida
              * @example true
              */
             state: boolean;
+            /** @description Indica si es un traslado entre almacenes */
+            isTransference?: boolean;
             /**
              * @description ID de referencia puede ser un traslado, compra, etc.
              * @example 123e4567-e89b-12d3-a456-426614174000
@@ -11703,84 +11861,6 @@ export interface operations {
             };
         };
     };
-    TypeStorageController_findAllDetailed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de almacenamiento activos */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DetailedTypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TypeStorageController_findOneWithRelations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del tipo de almacenamiento */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tipo de almacenamiento encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DetailedTypeStorage"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Tipo de almacenamiento no encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     TypeStorageController_findOne: {
         parameters: {
             query?: never;
@@ -12062,7 +12142,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Storage"][];
+                    "application/json": components["schemas"]["DetailedStorage"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -12933,6 +13013,46 @@ export interface operations {
             };
         };
     };
+    IncomingController_updateIncomingStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateIncomingStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Ingreso actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedIncoming"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     IncomingController_findOne: {
         parameters: {
             query?: never;
@@ -13308,6 +13428,46 @@ export interface operations {
             };
             /** @description Ingreso no encontrado */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OutgoingController_updateOutgoingStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateOutgoingStorageDto"];
+            };
+        };
+        responses: {
+            /** @description Salida actualizada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOutgoing"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

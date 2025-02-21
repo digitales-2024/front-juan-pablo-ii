@@ -62,7 +62,7 @@ export const columns: ColumnDef<OutgoingMovement>[] = [
       <DataTableColumnHeader column={column} title="Cantidad" />
     ),
     cell: ({ row }) => (
-      <span>
+      <span className="font-bold">
         {row.original.quantity} 
         {/* {row.original.Producto.unidadMedida?? ""} */}
       </span>
@@ -77,7 +77,7 @@ export const columns: ColumnDef<OutgoingMovement>[] = [
       <DataTableColumnHeader column={column} title="Precio" />
     ),
     cell: ({ row }) => (
-      <span>
+      <span className="font-bold">
         {row.original.Producto.precio.toLocaleString("es-PE", {
           style: "currency",
           currency: "PEN",
@@ -94,7 +94,7 @@ export const columns: ColumnDef<OutgoingMovement>[] = [
       <DataTableColumnHeader column={column} title="Total" />
     ),
     cell: ({ row }) => (
-      <span>
+      <span className="font-bold text-primary">
         {Number(row.original.Producto.precio * row.original.quantity).toLocaleString("es-PE", {
           style: "currency",
           currency: "PEN",
@@ -113,7 +113,7 @@ export const columns: ColumnDef<OutgoingMovement>[] = [
     cell: ({ row }) => (
       <span>
         {row.original.date
-          ? format(new Date(row.original.date), "PPp", { locale: es })
+          ? format(new Date(row.original.date), "PP", { locale: es })
           : "Fecha no disponible"}
       </span>
     ),

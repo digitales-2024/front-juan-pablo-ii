@@ -30,16 +30,10 @@ import {
 } from "../_interfaces/storageTypes.interface";
 import { PencilIcon, RefreshCcw } from "lucide-react";
 import { useTypeStorages } from "../_hooks/useStorageTypes";
-import { AutoComplete } from "@/components/ui/autocomplete";
-import LoadingDialogForm from "./LoadingDialogForm";
-import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
 import { Textarea } from "@/components/ui/textarea";
-import { Option } from "@/types/statics/forms";
 import { UPDATEFORMSTATICS as FORMSTATICS} from "../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import { METADATA } from "../_statics/metadata";
-import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
-import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 
 interface UpdateStorageTypeSheetProps {
   typeStorage: TypeStorage;
@@ -87,8 +81,6 @@ export function UpdateStorageTypeSheet({
     defaultValues: {
       name: typeStorage.name ?? FORMSTATICS.name.defaultValue,
       description: typeStorage.description ?? FORMSTATICS.description.defaultValue,
-      branchId: typeStorage.branchId ?? FORMSTATICS.branchId.defaultValue,
-      staffId: typeStorage.staffId ?? FORMSTATICS.staffId.defaultValue,
     },
   });
 
@@ -121,57 +113,6 @@ export function UpdateStorageTypeSheet({
       console.error("Error in onSubmit:", error);
     }
   };
-
-  const { activeStaffQuery: responseStaff } = useStaff();
-  const { activeBranchesQuery: responseBranches } = useBranches();
-  if (responseStaff.isLoading && responseBranches.isLoading) {
-    return <LoadingDialogForm />;
-  } else {
-    if (responseStaff.isError) {
-      return (
-        <GeneralErrorMessage
-          error={responseStaff.error}
-          reset={responseStaff.refetch}
-        />
-      );
-    }
-    if (!responseStaff.data) {
-      return (
-        <GeneralErrorMessage
-          error={new Error("No se encontró personal asociado")}
-          reset={responseStaff.refetch}
-        />
-      );
-    }
-    if (responseBranches.isError) {
-      return responseBranches.error ? (
-        <GeneralErrorMessage
-          error={responseBranches.error}
-          reset={responseBranches.refetch}
-        />
-      ) : null;
-    }
-    if (!responseBranches.data) {
-      return (
-        <GeneralErrorMessage
-          error={new Error("No se encontraron sucursales")}
-          reset={responseBranches.refetch}
-        />
-      );
-    }
-  }
-
-  const staffOptions: Option[] = responseStaff.data.map((category) => ({
-    label: category.name,
-    value: category.id,
-  }));
-
-  const branchesOptions: Option[] = responseBranches.data.map(
-    (typeProduct) => ({
-      label: typeProduct.name,
-      value: typeProduct.id,
-    })
-  );
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
@@ -213,82 +154,6 @@ export function UpdateStorageTypeSheet({
                   </FormItem>
                 )}
               />
-              {/* Campo de Sucursal */}
-              <FormField
-                  control={form.control}
-                  name={FORMSTATICS.branchId.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel htmlFor={FORMSTATICS.branchId.name}>{FORMSTATICS.branchId.label}</FormLabel>
-                      <FormControl>
-                        {
-                          branchesOptions.length>0 ? <AutoComplete
-                          options={branchesOptions}
-                          placeholder={FORMSTATICS.branchId.placeholder}
-                          emptyMessage={FORMSTATICS.branchId.emptyMessage!}
-                          value={
-                            branchesOptions.find(
-                              (option) => option.value === field.value
-                            ) ?? undefined
-                          }
-                          onValueChange={(option) => {
-                            field.onChange(option?.value || "");
-                          }}
-                        /> : (
-                          <Input
-                            disabled={true}
-                            placeholder={FORMSTATICS.branchId.placeholder}
-                            type={FORMSTATICS.branchId.type}
-                          />
-                        )
-                        }
-                      </FormControl>
-                      <CustomFormDescription required={FORMSTATICS.branchId.required}>
-                        { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas. Este campo es opcional</span>}
-                      </CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* Campo de personal */}
-                <FormField
-                  control={form.control}
-                  name={FORMSTATICS.staffId.name}
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>
-                        {FORMSTATICS.staffId.label}
-                      </FormLabel>
-                      <FormControl>
-                        {
-                          staffOptions.length>0 ? <AutoComplete
-                          options={staffOptions}
-                          placeholder={FORMSTATICS.staffId.placeholder}
-                          emptyMessage={FORMSTATICS.staffId.emptyMessage!}
-                          value={
-                            staffOptions.find(
-                              (option) => option.value === field.value
-                            ) ?? undefined
-                          }
-                          onValueChange={(option) => {
-                            field.onChange(option?.value || "");
-                          }}
-                        /> : (
-                          <Input
-                            disabled={true}
-                            placeholder={FORMSTATICS.name.placeholder}
-                            type={FORMSTATICS.staffId.type}
-                          />
-                        )
-                        }
-                      </FormControl>
-                      <CustomFormDescription required={FORMSTATICS.staffId.required}>
-                        { staffOptions.length===0 && <span>No hay personal disponible o activo. Este campo es opcional</span>}
-                      </CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name={FORMSTATICS.description.name}

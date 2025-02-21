@@ -89,6 +89,13 @@ export function useUnifiedStock() {
             }
             break;
           }
+          default:{
+            response = await getStockForAllStorages();
+            if ("error" in response) {
+              toast.error(response.error);
+            }
+            break;
+          }
         }
         if (!response || "error" in response) {
           throw new Error(response?.error || "No se recibió respuesta");

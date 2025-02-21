@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Tipos base de la API
 export type TypeStorage = components['schemas']['TypeStorage'];
-export type DetailedTypeStorage = components['schemas']['DetailedTypeStorage'];
+// export type DetailedTypeStorage = components['schemas']['DetailedTypeStorage'];
 export type CreateTypeStorageDto = components['schemas']['CreateTypeStorageDto'];
 export type UpdateTypeStorageDto = components['schemas']['UpdateTypeStorageDto'];
 export type DeleteTypeStorageDto = components['schemas']['DeleteTypeStorageDto'];
@@ -12,7 +12,7 @@ export type DeleteTypeStorageDto = components['schemas']['DeleteTypeStorageDto']
 export type ReactivateTypeStorageDto = DeleteTypeStorageDto;
 
 // Interfaz para la tabla extendiendo el tipo base
-export interface TypeStorageTableItem extends DetailedTypeStorage {
+export interface TypeStorageTableItem extends TypeStorage {
   selected?: boolean;
 }
 
@@ -20,29 +20,21 @@ export interface TypeStorageTableItem extends DetailedTypeStorage {
 // type CreateTypeStorageDto = {
 //   name: string;
 //   description?: string;
-//   branchId?: string;
-//   staffId?: string;
 // }
 export const createTypeStorageSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   description: z.string().optional(),
-  branchId: z.string(), //Its required event though in the back is optional
-  staffId: z.string(), //Its required event though in the back is optional
 }) satisfies z.ZodType<CreateTypeStorageDto>;
 
 // type UpdateTypeStorageDto = {
 //   name?: string;
 //   description?: string;
-//   branchId?: string;
-//   staffId?: string;
 // }
 
 export const updateTypeStorageSchema = z.object(
   {
     name: z.string().optional(),
     description: z.string().optional(),
-    branchId: z.string().optional(),
-    staffId: z.string().optional(),
   }
 ) satisfies z.ZodType<UpdateTypeStorageDto>;
 

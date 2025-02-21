@@ -7,9 +7,9 @@ import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
 import { ReactivateOutgoingDialog } from "./ReactivateProductDialog";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
-import LoadingDialogForm from "./LoadingDialogForm";
-import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ToolbarButtonsLoading } from "./errorComponents/ToolbarLoading";
+import { toast } from "sonner";
 
 export interface OutgoingTableToolbarActionsProps {
   table?: Table<DetailedOutgoing>;
@@ -22,37 +22,45 @@ export function OutgoingTableToolbarActions({
   const { activeStoragesQuery: responseStorages } = useStorages();
 
   if (responseBranches.isLoading && responseStorages.isLoading) {
-    return <LoadingDialogForm />;
+    return <ToolbarButtonsLoading />;
   } else {
     if (responseBranches.isError) {
+      toast.error("Error al cargar las sucursales, "+responseBranches.error.message, {
+        action: {
+          label: "Recargar",
+          onClick: async () => {
+            await responseBranches.refetch();
+          }
+        }
+      });
       return (
-        <GeneralErrorMessage
-          error={responseBranches.error}
-          reset={responseBranches.refetch}
+        <ToolbarButtonsLoading
         />
       );
     }
     if (!responseBranches.data) {
       return (
-        <GeneralErrorMessage
-          error={new Error("No se encontraron sucursales")}
-          reset={responseBranches.refetch}
+        <ToolbarButtonsLoading
         />
       );
     }
-    if (responseStorages.isError) {
+    if(responseStorages.isError){
+      toast.error("Error al cargar los almacenes, "+responseStorages.error.message, {
+        action: {
+          label: "Recargar",
+          onClick: async () => {
+            await responseStorages.refetch();
+          }
+        }
+      });
       return (
-        <GeneralErrorMessage
-          error={responseStorages.error}
-          reset={responseStorages.refetch}
+        <ToolbarButtonsLoading
         />
-      );
+      )
     }
-    if (!responseStorages.data) {
+    if(!responseStorages.data){
       return (
-        <GeneralErrorMessage
-          error={new Error("No se encontraron almacenes")}
-          reset={responseStorages.refetch}
+        <ToolbarButtonsLoading
         />
       );
     }

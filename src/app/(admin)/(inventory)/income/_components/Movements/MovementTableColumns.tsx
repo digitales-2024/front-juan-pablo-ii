@@ -54,27 +54,12 @@ export const columns: ColumnDef<IncomingMovement>[] = [
     ),
   },
   {
-    accessorKey: "quantity",
+    accessorKey: "Producto.precio",
     meta:{
-      title: "Cantidad"
+      title: "Precio de venta"
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Cantidad" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.quantity} 
-        {/* {row.original.Producto.unidadMedida?? ""} */}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "price",
-    meta:{
-      title: "Precio"
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Precio" />
+      <DataTableColumnHeader column={column} title="Precio Venta" />
     ),
     cell: ({ row }) => (
       <span>
@@ -86,6 +71,40 @@ export const columns: ColumnDef<IncomingMovement>[] = [
     ),
   },
   {
+    accessorKey: "quantity",
+    meta:{
+      title: "Cantidad"
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Cantidad" />
+    ),
+    cell: ({ row }) => (
+      <span className="font-bold">
+        {row.original.quantity} 
+        {/* {row.original.Producto.unidadMedida?? ""} */}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "buyingPrice",
+    meta:{
+      title: "Precio de compra"
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Precio Compra" />
+    ),
+    cell: ({ row }) => (
+      <span className="font-bold">
+        {row.original.buyingPrice
+          ? row.original.buyingPrice.toLocaleString("es-PE", {
+              style: "currency",
+              currency: "PEN",
+            })
+          : "No disponible"}
+      </span>
+    ),
+  },
+  {
     accessorKey: "total",
     meta:{
       title: "Total"
@@ -94,8 +113,8 @@ export const columns: ColumnDef<IncomingMovement>[] = [
       <DataTableColumnHeader column={column} title="Total" />
     ),
     cell: ({ row }) => (
-      <span>
-        {Number(row.original.Producto.precio * row.original.quantity).toLocaleString("es-PE", {
+      <span className="font-bold text-primary">
+        {Number((row.original.buyingPrice ?? 0) * row.original.quantity).toLocaleString("es-PE", {
           style: "currency",
           currency: "PEN",
         })}
@@ -113,7 +132,7 @@ export const columns: ColumnDef<IncomingMovement>[] = [
     cell: ({ row }) => (
       <span>
         {row.original.date
-          ? format(new Date(row.original.date), "PPp", { locale: es })
+          ? format(new Date(row.original.date), "PP", { locale: es })
           : "Fecha no disponible"}
       </span>
     ),
