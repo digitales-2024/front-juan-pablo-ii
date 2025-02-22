@@ -119,6 +119,7 @@ export type CreatePrescriptionDto  = {
   prescriptionServices?: PrescriptionItemDto[];
   description?: string;
   purchaseOrderId?: string;
+  
 }
 export type UpdatePrescriptionDtoPrototype = components["schemas"]["UpdatePrescriptionDto"];
 

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, User, MapPin, FileText, Stethoscope, ImageIcon, ChevronDown, ChevronUp, Eye } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Branch, Patient, PrescriptionResponse, Product, Service, Staff, UpdateHistoryResponseImage } from "../_interfaces/updateHistory.interface";
-import { PrescriptionModal } from "./PrescriptionModal";
+/* import { PrescriptionModal } from "./PrescriptionModal"; */
 
 interface UpdateMedicalHistoryPatientProps {
   updateHistories: UpdateHistoryResponseImage[];
@@ -18,20 +18,36 @@ interface UpdateMedicalHistoryPatientProps {
   patientId?: string;
   patient?: Patient;
   medicalHistoryId?: string;
+  onPrescriptionView: (updateId: string) => void; // Nuevo prop
 }
 
 export function UpdateMedicalHistoryPatient({
   updateHistories,
-  prescriptions,
+
   services,
   staff,
   branches,
-  products,
-  patient,
+
+
+  onPrescriptionView, // Nuevo prop
 }: UpdateMedicalHistoryPatientProps) {
-  const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
-  const [selectedUpdateId, setSelectedUpdateId] = useState<string | null>(null);
-  const [expandedService, setExpandedService] = useState<string | null>(null);
+  // Agregar función de formato de fecha
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    console.log("🚀 ~ formatDate ~ dateString:", dateString)
+    return date.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  // Modificar el estado inicial para que el primer elemento esté expandido
+  const [expandedService, setExpandedService] = useState<string | null>(() => {
+    const reversedHistories = [...updateHistories].reverse();
+    return reversedHistories[0]?.id || null;
+  });
+  
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Función para obtener nombres a partir de IDs
@@ -49,8 +65,7 @@ export function UpdateMedicalHistoryPatient({
   // Función para manejar la visualización de la receta
   const handleShowPrescription = (update: UpdateHistoryResponseImage) => {
     if (update.prescription && update.prescriptionId) {
-      setSelectedUpdateId(update.id);
-      setIsPrescriptionModalOpen(true);
+      onPrescriptionView(update.id);
     }
   };
 
@@ -65,13 +80,13 @@ export function UpdateMedicalHistoryPatient({
             </CardTitle>
           </div>
           <Button 
-            className="w-full md:w-auto" 
-            onClick={() => setIsPrescriptionModalOpen(true)}
+       /*      className="w-full md:w-auto" 
+            onClick={() => setIsPrescriptionModalOpen(true)} */
           >
             <Plus className="w-4 h-4 mr-2" /> Agregar Historia
           </Button>
         </CardHeader>
-
+        {/* <AddHistoryModal isOpen={isHistoryModalOpen} setIsOpen={setIsHistoryModalOpen} onSave={handleAddNewService} /> */}
         <CardContent className="p-4 md:p-6">
           {updateHistories.slice().reverse().map((update) => (
             <Card key={update.id} className="mb-6 overflow-hidden border-t-2 border-t-primary">
@@ -86,7 +101,7 @@ export function UpdateMedicalHistoryPatient({
                 </div>
                 <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
                   <span className="text-base text-muted-foreground">
-                    {new Date(update.createdAt).toLocaleDateString()}
+                    {formatDate(update.createdAt)}
                   </span>
                   <Button variant="ghost" size="sm">
                     <Eye className="w-5 h-5" />
@@ -224,18 +239,7 @@ export function UpdateMedicalHistoryPatient({
         </Dialog>
       </Card>
 
-      {/* Modal de Receta */}
-      <PrescriptionModal
-        isOpen={isPrescriptionModalOpen}
-        setIsOpen={setIsPrescriptionModalOpen}
-        prescriptions={prescriptions}
-        staff={staff}
-        branches={branches}
-        products={products}
-        services={services}
-        patient={patient}
-        updateHistoryId={selectedUpdateId ?? undefined}
-      />
+    
     </>
   );
 }

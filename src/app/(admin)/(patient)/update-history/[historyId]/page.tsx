@@ -1,11 +1,11 @@
 "use client";
 
-//import { useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { PatientBasicInfo } from "../_components/PatientBasicInfo";
 import { MedicalBackground } from "../_components/MedicalBackground";
 import { UpdateMedicalHistoryPatient } from "../_components/UpdateMedicalHistoryPatient";
-//import { PrescriptionModal } from "../_components/PrescriptionModal";
+import { PrescriptionModal } from "../_components/PrescriptionModal";
 //import { PERSONAL_MEDICO, SUCURSAL } from "../_interfaces/constants";
 //import type { Servicio } from "../_interfaces/types";
 import { useUpdateHistory } from "../_hook/useUpdateHistory";
@@ -23,6 +23,14 @@ export default function UpdateHistorySheet() {
     useServicesData,
     useProductData,
   } = useUpdateHistory();
+
+  const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
+  const [selectedUpdateId, setSelectedUpdateId] = useState<string | undefined>();
+
+  const handlePrescriptionView = (updateId: string) => {
+    setSelectedUpdateId(updateId);
+    setIsPrescriptionModalOpen(true);
+  };
 
   // Primera consulta: Obtener historia médica
   const { data, isLoading: isLoadingHistory } =
@@ -220,19 +228,21 @@ export default function UpdateHistorySheet() {
         // ID necesarios para crear nuevos registros
         patientId={patient?.id}
         medicalHistoryId={medicalHistory?.id}
+        onPrescriptionView={handlePrescriptionView} 
       />
 
-      {/* 4. Modal de recetas */}
-   {/*    <PrescriptionModal
+ {/* 4. Modal de recetas */}
+      <PrescriptionModal
         isOpen={isPrescriptionModalOpen}
         setIsOpen={setIsPrescriptionModalOpen}
-        services={servicesData ?? []}
+        prescriptions={prescriptions ?? []}
         staff={staffData ?? []}
         branches={branchesData ?? []}
         products={productsData ?? []}
-        prescriptions={prescriptions ?? []}
+        services={servicesData ?? []}
         patient={patient}
-      /> */}
+        updateHistoryId={selectedUpdateId}
+      />
     </div>
   );
 }
