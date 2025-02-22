@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useMemo, useState, useCallback, useEffect, JSX } from "react";
+import { useMemo, useState, useCallback, useEffect, JSX, useRef } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Form,
@@ -73,9 +73,9 @@ import {
 import { toast } from "sonner";
 import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { OutgoingProducStockForm } from "../../stock/_interfaces/stock.interface";
-import { SelectProductDialog } from "./Movements/FormComponents/SelectMovementDialog";
+// import { SelectProductDialog } from "./Movements/FormComponents/SelectMovementDialog";
 import { UpdateOutgoingSelectProductDialog } from "./Movements/FormComponents/UpdateOutgoingSelectMovementDialog";
-import { useProductStockById } from "../../stock/_hooks/useProductStock";
+import { useStockByStorage } from "../../stock/_hooks/useProductStock";
 
 interface UpdateOutgoingSheetProps {
   outgoing: DetailedOutgoing;
@@ -100,6 +100,7 @@ export function UpdateOutgoingSheet({
   const { updateOutgoingStorageMutation } = useOutgoing();
   const { activeStoragesQuery: responseStorages } = useStorages();
   const { activeProductsQuery: responseProducts } = useProducts();
+  const stockByStorageQuery = useStockByStorage(outgoing.storageId);
   
   const selectedProducts = useSelectedProducts();
   const dispatch = useSelectProductDispatch();
@@ -207,6 +208,11 @@ export function UpdateOutgoingSheet({
 
   const originalMovementsIds = movements.map((mv) => mv.id);
   const originalMovementProductsIds = movements.map((mv) => mv.productId);
+  const mappedOriginalQuantities: Record<string, number> = {};
+  outgoing.Movement.forEach((mv) => {
+    mappedOriginalQuantities[mv.id] = mv.quantity;
+  });
+  const originalQuantitiesRef = useRef<Record<string, number>>(mappedOriginalQuantities);
 
   const syncProducts = useCallback(() => {
     remove();
@@ -302,7 +308,7 @@ export function UpdateOutgoingSheet({
     }
   };
 
-  if (responseStorages.isLoading && responseProducts.isLoading) {
+  if (responseStorages.isLoading && responseProducts.isLoading && stockByStorageQuery.isLoading) {
     return <LoadingDialogForm />;
   } else {
     if (responseStorages.isError) {
@@ -325,6 +331,17 @@ export function UpdateOutgoingSheet({
       ) : null;
     }
     if (!responseProducts.data) {
+      return <LoadingDialogForm />;
+    }
+    if (stockByStorageQuery.isError) {
+      return stockByStorageQuery.error ? (
+        <GeneralErrorMessage
+          error={stockByStorageQuery.error}
+          reset={stockByStorageQuery.refetch}
+        />
+      ) : null;
+    }
+    if (!stockByStorageQuery.data) {
       return <LoadingDialogForm />;
     }
   }
@@ -510,14 +527,40 @@ export function UpdateOutgoingSheet({
                           (p) => p.id === field.productId
                         );
 
-                        const existentProduct: Partial<OutgoingProducStockForm> | null = field.id ? 
+                        //In case is movement to be updated
+                        const existentProduct = field.id ? stockByStorageQuery.data.find((p)=>{
+                          return p.id === field.productId
+                        }) : null;
 
-                        const safeData: Partial<OutgoingProducStockForm> = data ?? {};
+                        const transformedExistentProduct: Partial<OutgoingProducStockForm> | null = existentProduct ? {
+                          id: existentProduct.id,
+                          name: existentProduct.name,
+                          precio: existentProduct.precio,
+                          codigoProducto: existentProduct.codigoProducto,
+                          unidadMedida: existentProduct.unidadMedida,
+                          Stock: existentProduct.Stock ?? [],
+                          storageId: form.watch('storageId'),
+                        } : null;
+
+                        const safeData: Partial<OutgoingProducStockForm> = existentProduct ? (transformedExistentProduct ?? {}) : (data ?? {});
+                        console.log(safeData)
                         const safeWatch = watchFieldArray?.[index] ?? {};
                         const storageSafeWatch = form.watch(FORMSTATICS.storageId.name);
                         const stockStorage = safeData.Stock?.find((stock) => stock.Storage.id === storageSafeWatch);
                         const totalStock = safeData.Stock?.reduce((acc, stock) => acc + stock.stock, 0) ?? 0;
+                        
+                        
                         const dynamicStock = isNaN((stockStorage?.stock ?? 0) - (safeWatch.quantity ?? 0)) ? (stockStorage?.stock ?? 0) : (stockStorage?.stock ?? 0) - (safeWatch.quantity ?? 0);
+
+                        const originalQuantityRef = existentProduct ? originalQuantitiesRef.current[field.id] ?? 0 : 0;
+
+                        const existentProductOriginalStock = existentProduct
+                          ? originalQuantityRef + (stockStorage?.stock ?? 0)
+                          : 0;
+
+                        const existentDynamicStock = isNaN((existentProductOriginalStock ?? 0) - (safeWatch.quantity ?? 0)) ? (existentProductOriginalStock ?? 0) : (existentProductOriginalStock ?? 0) - (safeWatch.quantity ?? 0);
+
+                        const extsitentTotalStock = existentProduct ? totalStock + existentProductOriginalStock : 0;
 
                         //Se obtiene el nombre de los productos originales y los futuros
                         const name =
@@ -582,7 +625,7 @@ export function UpdateOutgoingSheet({
                                 {/* <FormLabel>Stock almacén</FormLabel> */}
                                 <p className="block text-center">{`Alm. "${stockStorage?.Storage.name}" `}{"("}<span className="text-primary font-bold">
                                   {
-                                    `${dynamicStock}`
+                                    `${existentProduct ? existentDynamicStock : dynamicStock}`
                                   }
                                   </span>{')'}</p>
                               </div>
@@ -592,7 +635,7 @@ export function UpdateOutgoingSheet({
                                     {/* <FormLabel>Stock total</FormLabel> */}
                                     <span className="block text-center">
                                     {
-                                        totalStock
+                                        existentProduct ? extsitentTotalStock : totalStock
                                     }
                                     </span>
                                 </div>
