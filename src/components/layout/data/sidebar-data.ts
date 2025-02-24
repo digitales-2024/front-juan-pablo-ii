@@ -48,8 +48,8 @@ export const sidebarData: SidebarData = {
           icon: Home,
         },
         {
-          title: "Consultas",
-          url: "/consultations",
+          title: "Calendario Citas",
+          url: "/appointments-schedule",
           icon: Handshake,
         },
         {
@@ -92,21 +92,21 @@ export const sidebarData: SidebarData = {
               url: "/patient",
               icon: UserPlus,
             },
-/*             {
-              title: "Clientes",
-              url: "/clients",
-              icon: UserRound,
-            }, */
+            /*             {
+                          title: "Clientes",
+                          url: "/clients",
+                          icon: UserRound,
+                        }, */
             {
-              title: "Historias Clinicas",
-              url: "/medical-records",
+              title: "Historial Médico",
+              url: "/history",
               icon: BookPlus,
             },
-            {
-              title: "Recetas médicas",
-              url: "/prescriptions",
-              icon: FileHeart,
-            },
+            /*             {
+                          title: "Recetas médicas",
+                          url: "/prescriptions",
+                          icon: FileHeart,
+                        }, */
           ],
         },
         // {
@@ -201,8 +201,8 @@ export const sidebarData: SidebarData = {
               url: "/staff-schedules",
               icon: Clock,
             },
-            
-           
+
+
           ],
         },
       ],

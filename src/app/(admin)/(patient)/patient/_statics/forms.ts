@@ -24,7 +24,7 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
   dni: {
     required: true,
     label: "DNI",
-    type: "text",
+    type: "number",
     placeholder: "DNI del paciente",
     name: "dni",
     defaultValue: "",
@@ -56,7 +56,7 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
   phone: {
     required: false,
     label: "Celular",
-    type: "text",
+    type: "number",
     placeholder: "Teléfono del paciente",
     name: "phone",
     defaultValue: "",
@@ -73,15 +73,15 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
     required: false,
     label: "Contacto de Emergencia",
     type: "text",
-    placeholder: "Nombre del contacto de emergencia",
+    placeholder: "Nombre y Nro. Celular",
     name: "emergencyContact",
     defaultValue: "",
   },
   emergencyPhone: {
     required: false,
-    label: "Teléfono de Emergencia",
-    type: "text",
-    placeholder: "Teléfono del contacto de emergencia",
+    label: "Celular de Emergencia",
+    type: "number",
+    placeholder: "Nro. de Celular de emergencia",
     name: "emergencyPhone",
     defaultValue: "",
   },
@@ -127,9 +127,9 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
   },
   primaryDoctor: {
     required: false,
-    label: "Médico Principal",
+    label: "Médico de Cabecera",
     type: "text",
-    placeholder: "Nombre del médico principal",
+    placeholder: "Nombre y Nro. Celular",
     name: "primaryDoctor",
     defaultValue: "",
   },
@@ -162,6 +162,14 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
 
 
 export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
+  image: {
+    required: false,
+    label: "Imagen",
+    type: "file",
+    placeholder: "Seleccione una imagen",
+    name: "image",
+    defaultValue: "",
+  },
   name: {
     required: false,
     label: "Nombre",
@@ -309,11 +317,12 @@ export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
   },
   patientPhoto: {
     required: false,
-    label: "Foto del Paciente",
+    label: "Foto actual",
     type: "text",
-    placeholder: "URL de la foto del paciente",
+    placeholder: "URL de la foto existente",
     name: "patientPhoto",
     defaultValue: "",
   },
-
+ 
 };
+

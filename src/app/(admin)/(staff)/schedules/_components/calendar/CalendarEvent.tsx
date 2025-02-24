@@ -29,21 +29,27 @@ function calculateEventPosition(
 	event: CalendarEventType,
 	allEvents: CalendarEventType[]
 ): EventPosition {
-	const overlappingEvents = getOverlappingEvents(event, allEvents);
-	const group = [event, ...overlappingEvents].sort(
+	const safeEvent = {
+		...event,
+		start: new Date(event.start),
+		end: new Date(event.end)
+	};
+
+	const overlappingEvents = getOverlappingEvents(safeEvent, allEvents);
+	const group = [safeEvent, ...overlappingEvents].sort(
 		(a, b) => a.start.getTime() - b.start.getTime()
 	);
-	const position = group.indexOf(event);
+	const position = group.indexOf(safeEvent);
 	const width = `${100 / (overlappingEvents.length + 1)}%`;
 	const left = `${(position * 100) / (overlappingEvents.length + 1)}%`;
 
-	const startHour = event.start.getHours();
-	const startMinutes = event.start.getMinutes();
+	const startHour = safeEvent.start.getHours();
+	const startMinutes = safeEvent.start.getMinutes();
 
-	let endHour = event.end.getHours();
-	let endMinutes = event.end.getMinutes();
+	let endHour = safeEvent.end.getHours();
+	let endMinutes = safeEvent.end.getMinutes();
 
-	if (!isSameDay(event.start, event.end)) {
+	if (!isSameDay(safeEvent.start, safeEvent.end)) {
 		endHour = 23;
 		endMinutes = 59;
 	}
@@ -70,15 +76,15 @@ export default function CalendarEvent({
 	month?: boolean;
 	className?: string;
 }) {
+	console.log('📅 [Event] Renderizado:', event.id, event.start);
 	const { events, setSelectedEvent, setManageEventDialogOpen, date } =
 		useCalendarContext();
 	const style = month ? {} : calculateEventPosition(event, events);
 
 	// Generate a unique key that includes the current month to prevent animation conflicts
 	const isEventInCurrentMonth = isSameMonth(event.start, date);
-	const animationKey = `${event.id}-${
-		isEventInCurrentMonth ? "current" : "adjacent"
-	}`;
+	const animationKey = `${event.id}-${isEventInCurrentMonth ? "current" : "adjacent"
+		}`;
 
 	return (
 		<MotionConfig reducedMotion="user">
@@ -125,9 +131,8 @@ export default function CalendarEvent({
 							ease: "easeOut",
 						},
 					}}
-					layoutId={`event-${animationKey}-${
-						month ? "month" : "day"
-					}`}
+					layoutId={`event-${animationKey}-${month ? "month" : "day"
+						}`}
 				>
 					<motion.div
 						className={cn(

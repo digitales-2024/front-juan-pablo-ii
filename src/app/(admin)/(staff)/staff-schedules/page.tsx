@@ -1,40 +1,34 @@
 "use client";
 
-import { PageHeader } from "@/components/PageHeader";
-import { notFound } from "next/navigation";
-import { useStaffSchedules } from "./_hooks/useStaffSchedules"; // Necesitaremos crear este hook
+import { useStaffSchedules } from "./_hooks/useStaffSchedules";
 import { StaffSchedulesTable } from "./_components/StaffSchedulesTable";
+import Loading from "./loading";
+// import { notFound } from "next/navigation";
 
-export default function PageStaffSchedules() {
-  console.log("🏁 Iniciando PageStaffSchedules");
-  const { staffSchedulesQuery: response } = useStaffSchedules();
-
-  if (response.isError) {
-    if (response.error.message.includes("No autorizado")) {
-      notFound();
-    }
-    return <div>Error: {response.error.message}</div>;
+export default function StaffSchedulesPage() {
+  const { allStaffSchedulesQuery, schedules } = useStaffSchedules({});
+  
+  if (allStaffSchedulesQuery.isLoading) {
+    return <Loading />;
   }
 
-  if (response.isLoading) {
-    return <div>Cargando...</div>;
+  if (allStaffSchedulesQuery.error) {
+    console.error("Error en horarios:", allStaffSchedulesQuery.error);
+    // notFound();
   }
 
-  if (!response.data) {
-    return <div>No hay datos disponibles</div>;
+  if (!allStaffSchedulesQuery.data) {
+    console.error("Datos no disponibles");
+    // notFound();
   }
 
   return (
-    <>
-      <div>
-        <PageHeader
-          title="Horarios del Personal"
-          description="Administra los horarios del personal de tu empresa"
-        />
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Horarios del Personal</h1>
       </div>
-      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-        <StaffSchedulesTable data={response.data} />
-      </div>
-    </>
+      
+      <StaffSchedulesTable data={schedules || []} />
+    </div>
   );
 }

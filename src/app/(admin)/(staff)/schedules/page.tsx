@@ -1,5 +1,5 @@
-import CalendarConsultations from "./_components/CalendarConsultations";
+import CalendarTurns from "./_components/CalendarTurns";
 
 export default function PageConsultations() {
-	return <CalendarConsultations />;
+	return <CalendarTurns />;
 }

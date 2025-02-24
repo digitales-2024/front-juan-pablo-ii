@@ -29,7 +29,7 @@ export const useServices = () => {
     queryFn: async () => {
       console.log("🔄 Iniciando servicesQuery");
       const response = await getServices({});
-      console.log("📥 Respuesta raw de getServices:", response);
+      /* console.log("📥 Respuesta raw de getServices:", response); */
       
       if (!response) {
         console.error("❌ No hay respuesta de getServices");
@@ -41,7 +41,7 @@ export const useServices = () => {
         throw new Error(response.error ?? "Error desconocido");
       }
 
-      console.log("✅ Datos procesados correctamente:", response.data);
+     /*  console.log("✅ Datos procesados correctamente:", response.data); */
       return response.data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
@@ -99,7 +99,6 @@ export const useServices = () => {
   // Mutación para eliminar servicios
   const deleteMutation = useMutation<BaseApiResponse<Service>, Error, DeleteServicesDto>({
     mutationFn: async (data) => {
-      console.log("🚀 Iniciando deleteMutation con:", data);
       const response = await deleteServices(data);
       console.log("📥 Respuesta de deleteServices:", response);
       
@@ -139,7 +138,6 @@ export const useServices = () => {
   // Mutación para reactivar servicios
   const reactivateMutation = useMutation<BaseApiResponse<Service>, Error, DeleteServicesDto>({
     mutationFn: async (data) => {
-      console.log("🚀 Iniciando reactivateMutation con:", data);
       const response = await reactivateServices(data);
       console.log("📥 Respuesta de reactivateServices:", response);
       

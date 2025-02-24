@@ -48,10 +48,14 @@ export function CreateStaffScheduleDialog() {
       staffId: "",
       branchId: "",
       title: "",
-      startTime: "",
-      endTime: "",
+      color: "sky",
+      startTime: "08:00",
+      endTime: "17:00",
       daysOfWeek: [],
-      recurrence: {},
+      recurrence: {
+        frequency: "YEARLY",
+        interval: 1
+      },
       exceptions: [],
     },
   });
@@ -99,9 +103,9 @@ export function CreateStaffScheduleDialog() {
   );
 
   const TriggerButton = () => (
-    <Button 
+    <Button
       onClick={() => setOpen(true)}
-      variant="outline" 
+      variant="outline"
       size="sm"
     >
       <Plus className="size-4 mr-2" aria-hidden="true" />

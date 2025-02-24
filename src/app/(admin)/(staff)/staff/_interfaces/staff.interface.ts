@@ -26,6 +26,7 @@ export const createStaffSchema = z.object({
   birth: z.string().min(1, "La fecha de nacimiento es requerida"),
   email: z.string().email("El email no es válido"),
   phone: z.string().optional(),
+  cmp: z.string().optional(),
 }) satisfies z.ZodType<CreateStaffDto>;
 
 // Schema de validación para actualizar personal

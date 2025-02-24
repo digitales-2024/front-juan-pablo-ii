@@ -23,7 +23,7 @@ const getServicesHandler = async () => {
   try {
     console.log("📡 Haciendo petición HTTP a /service");
     const [services, error] = await http.get<Service[]>("/services");
-    console.log("📦 Respuesta:", { services, error });
+    //console.log("📦 Respuesta:", { services, error });
 
     if (error) {
       console.error("❌ Error detectado:", error);
@@ -33,11 +33,11 @@ const getServicesHandler = async () => {
     }
 
     if (!Array.isArray(services)) {
-      console.error("❌ Services no es un array:", services);
+      //console.error("❌ Services no es un array:", services);
       return { error: 'Respuesta inválida del servidor' };
     }
 
-    console.log("✅ Datos obtenidos correctamente:", services);
+    //console.log("✅ Datos obtenidos correctamente:", services);
     return { data: services };
   } catch (error) {
     console.error("💥 Error en getServicesHandler:", error);

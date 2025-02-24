@@ -11,12 +11,12 @@ interface StaffTableProps {
 
 export function StaffTable({ data }: StaffTableProps) {
   console.log("🎯 Renderizando StaffTable con data:", data);
-  
+
   return (
     <DataTable
       columns={columns}
       data={data}
-      placeholder="Buscar por nombre, apellido o DNI..."
+      placeholder="Buscar por nombre, DNI o CMP..."
       toolbarActions={(table) => <StaffTableToolbarActions table={table} />}
     />
   );

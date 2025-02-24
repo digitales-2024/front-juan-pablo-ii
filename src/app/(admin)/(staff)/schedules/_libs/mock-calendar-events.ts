@@ -15,7 +15,11 @@ export function generateMockEvents(): CalendarEvent[] {
 			isActive: true,
 			isCancelled: false,
 			isBaseEvent: false,
-			recurrence: null,
+			recurrence: {
+				frequency: "DAILY",
+				interval: 1,
+				until: "2025-03-10"
+			},
 			exceptionDates: [],
 			cancellationReason: null,
 			staffScheduleId: "41fe1608-97d5-4b0a-ba84-6ac8f42d69db",
@@ -42,7 +46,11 @@ export function generateMockEvents(): CalendarEvent[] {
 			isActive: true,
 			isCancelled: false,
 			isBaseEvent: false,
-			recurrence: null,
+			recurrence: {
+				frequency: "DAILY",
+				interval: 1,
+				until: "2025-03-10"
+			},
 			exceptionDates: [],
 			cancellationReason: null,
 			staffScheduleId: "41fe1608-97d5-4b0a-ba84-6ac8f42d69db",
@@ -69,7 +77,11 @@ export function generateMockEvents(): CalendarEvent[] {
 			isActive: true,
 			isCancelled: false,
 			isBaseEvent: false,
-			recurrence: null,
+			recurrence: {
+				frequency: "DAILY",
+				interval: 1,
+				until: "2025-03-10"
+			},
 			exceptionDates: [],
 			cancellationReason: null,
 			staffScheduleId: "41fe1608-97d5-4b0a-ba84-6ac8f42d69db",
@@ -96,7 +108,11 @@ export function generateMockEvents(): CalendarEvent[] {
 			isActive: true,
 			isCancelled: false,
 			isBaseEvent: false,
-			recurrence: null,
+			recurrence: {
+				frequency: "DAILY",
+				interval: 1,
+				until: "2025-03-10"
+			},
 			exceptionDates: [],
 			cancellationReason: null,
 			staffScheduleId: "41fe1608-97d5-4b0a-ba84-6ac8f42d69db",

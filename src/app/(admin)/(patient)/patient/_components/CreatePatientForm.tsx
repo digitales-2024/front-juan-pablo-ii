@@ -26,6 +26,12 @@ import {
   Smartphone,
   IdCard,
   PhoneIcon,
+  Globe,
+  Droplet,
+  Shield,
+  Heart,
+  Users,
+  UserRoundPen,
 } from "lucide-react";
 import {
   Select,
@@ -47,8 +53,6 @@ import DatePicker from "react-datepicker";
 import { format, parseISO } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import { es } from "date-fns/locale";
-
-
 
 interface CreatePatientFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -138,7 +142,7 @@ export function CreatePatientForm({
                     {...field}
                     placeholder={FORMSTATICS.name.placeholder}
                     type={FORMSTATICS.name.type}
-                    icon={<User className="w-4 h-4" />}
+                    icon={<UserRoundPen className="w-4 h-4" />}
                   />
                 </FormControl>
                 <CustomFormDescription
@@ -159,7 +163,7 @@ export function CreatePatientForm({
                     {...field}
                     placeholder={FORMSTATICS.lastName.placeholder}
                     type={FORMSTATICS.lastName.type}
-                    icon={<User className="w-4 h-4" />}
+                    icon={<UserRoundPen className="w-4 h-4" />}
                   />
                 </FormControl>
                 <CustomFormDescription
@@ -190,11 +194,11 @@ export function CreatePatientForm({
               </FormItem>
             )}
           />
- <FormField
+          <FormField
             control={form.control}
             name="birthDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem>
                 <FormLabel>{FORMSTATICS.birthDate.label}</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -208,7 +212,9 @@ export function CreatePatientForm({
                         type="button"
                       >
                         {field.value ? (
-                          format(parseISO(field.value), "dd/MM/yyyy", { locale: es })
+                          format(parseISO(field.value), "dd/MM/yyyy", {
+                            locale: es,
+                          })
                         ) : (
                           <span>Seleccione fecha de nacimiento</span>
                         )}
@@ -253,7 +259,8 @@ export function CreatePatientForm({
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="relative pl-10">
+                      <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <SelectValue
                         placeholder={FORMSTATICS.gender.placeholder}
                       />
@@ -264,9 +271,39 @@ export function CreatePatientForm({
                     </SelectContent>
                   </Select>
                 </FormControl>
+                <CustomFormDescription required={FORMSTATICS.gender.required} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="maritalStatus"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{FORMSTATICS.maritalStatus.label}</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="relative pl-10">
+                      <Heart className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <SelectValue
+                        placeholder={FORMSTATICS.maritalStatus.placeholder}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Soltero">Soltero</SelectItem>
+                      <SelectItem value="Casado">Casado</SelectItem>
+                      <SelectItem value="Divorciado">Divorciado</SelectItem>
+                      <SelectItem value="Viudo">Viudo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
                 <CustomFormDescription
-                  required={FORMSTATICS.gender.required}
-                ></CustomFormDescription>
+                  required={FORMSTATICS.maritalStatus.required}
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -295,6 +332,29 @@ export function CreatePatientForm({
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="emergencyPhone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{FORMSTATICS.emergencyPhone.label}</FormLabel>
+                <FormControl>
+                  <InputWithIcon
+                    {...field}
+                    placeholder={FORMSTATICS.emergencyPhone.placeholder}
+                    type={FORMSTATICS.emergencyPhone.type}
+                    icon={<PhoneIcon className="w-4 h-4" />}
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.emergencyPhone.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div>
           <FormField
             control={form.control}
             name="email"
@@ -366,30 +426,6 @@ export function CreatePatientForm({
           />
           <FormField
             control={form.control}
-            name="emergencyPhone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{FORMSTATICS.emergencyPhone.label}</FormLabel>
-                <FormControl>
-                  <InputWithIcon
-                    {...field}
-                    placeholder={FORMSTATICS.emergencyPhone.placeholder}
-                    type={FORMSTATICS.emergencyPhone.type}
-                    icon={<PhoneIcon className="w-4 h-4" />}
-                  />
-                </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.emergencyPhone.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
             name="healthInsurance"
             render={({ field }) => (
               <FormItem>
@@ -399,7 +435,8 @@ export function CreatePatientForm({
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="relative pl-10">
+                      <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <SelectValue
                         placeholder={FORMSTATICS.healthInsurance.placeholder}
                       />
@@ -413,38 +450,7 @@ export function CreatePatientForm({
                 </FormControl>
                 <CustomFormDescription
                   required={FORMSTATICS.healthInsurance.required}
-                ></CustomFormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="maritalStatus"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{FORMSTATICS.maritalStatus.label}</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={FORMSTATICS.maritalStatus.placeholder}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Soltero">Soltero</SelectItem>
-                      <SelectItem value="Casado">Casado</SelectItem>
-                      <SelectItem value="Divorciado">Divorciado</SelectItem>
-                      <SelectItem value="Viudo">Viudo</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.maritalStatus.required}
-                ></CustomFormDescription>
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -507,7 +513,8 @@ export function CreatePatientForm({
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="relative pl-10">
+                      <Droplet className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <SelectValue
                         placeholder={FORMSTATICS.bloodType.placeholder}
                       />
@@ -526,7 +533,7 @@ export function CreatePatientForm({
                 </FormControl>
                 <CustomFormDescription
                   required={FORMSTATICS.bloodType.required}
-                ></CustomFormDescription>
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -566,7 +573,8 @@ export function CreatePatientForm({
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="relative pl-10">
+                      <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <SelectValue
                         placeholder={FORMSTATICS.language.placeholder}
                       />
@@ -581,7 +589,7 @@ export function CreatePatientForm({
                 </FormControl>
                 <CustomFormDescription
                   required={FORMSTATICS.language.required}
-                ></CustomFormDescription>
+                />
                 <FormMessage />
               </FormItem>
             )}

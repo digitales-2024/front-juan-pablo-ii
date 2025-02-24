@@ -84,6 +84,12 @@ export const columns: ColumnDef<Staff>[] = [
     ),
   },
   {
+    accessorKey: "cmp",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="CMP" />
+    ),
+  },
+  {
     accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
@@ -130,21 +136,21 @@ export const columns: ColumnDef<Staff>[] = [
 
       return (
         <div>
-          <UpdateStaffSheet 
-            staff={staff} 
+          <UpdateStaffSheet
+            staff={staff}
             open={showEditSheet}
             onOpenChange={setShowEditSheet}
             showTrigger={false}
           />
           {isActive ? (
-            <DeactivateStaffDialog 
+            <DeactivateStaffDialog
               staff={staff}
               open={showDeactivateDialog}
               onOpenChange={setShowDeactivateDialog}
               showTrigger={false}
             />
           ) : (
-            <ReactivateStaffDialog 
+            <ReactivateStaffDialog
               staff={staff}
               open={showReactivateDialog}
               onOpenChange={setShowReactivateDialog}
@@ -162,7 +168,7 @@ export const columns: ColumnDef<Staff>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onSelect={() => setShowEditSheet(true)}
                 disabled={!isActive}
               >
@@ -173,7 +179,7 @@ export const columns: ColumnDef<Staff>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {isActive ? (
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onSelect={() => setShowDeactivateDialog(true)}
                   className="text-destructive"
                 >
@@ -183,7 +189,7 @@ export const columns: ColumnDef<Staff>[] = [
                   </DropdownMenuShortcut>
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onSelect={() => setShowReactivateDialog(true)}
                   className="text-green-600"
                 >
