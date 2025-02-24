@@ -27,7 +27,7 @@ import { Incoming } from "../_interfaces/income.interface";
 import { AlertCircle, OctagonAlert, RefreshCcw, Trash } from "lucide-react";
 import { useIncoming } from "../_hooks/useIncoming";
 import { toast } from "sonner";
-import { ComponentPropsWithoutRef } from "react";
+import { ComponentPropsWithoutRef, useCallback } from "react";
 import { METADATA } from "../_statics/metadata";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
@@ -58,59 +58,49 @@ export function DeactivateIncomingDialog({
 
   const items = incomings ?? (incoming ? [incoming] : []);
 
-  async function onDelete() {
+  const onDelete = useCallback(async () => {
     const transferenceIds: string[] = [];
     const ids = items.map((item) => {
-      if (item.isTransference) {
-        transferenceIds.push(item.id);
+      if (item.isTransference && item.referenceId && item.outgoingId) {
+        transferenceIds.push(item.outgoingId);
       }
       return item.id;
     });
     try {
       await mutateAsync(
         { ids },
-        {
-          onSuccess: async () => {
-            if (transferenceIds.length > 0) {
-              await outgoingDeleteMutation.mutateAsync(
-                { ids: transferenceIds },
-                {
-                  onSuccess: async () => {
-                    await Promise.all([
-                      queryClient.refetchQueries({
-                        queryKey: ["product-stock-by-storage"],
-                      }),
-                      queryClient.refetchQueries({ queryKey: ["stock"] }),
-                      queryClient.refetchQueries({
-                        queryKey: ["detailed-outcomes"],
-                      }),
-                    ]);
-                    toast.success(
-                      items.length === 1
-                        ? `Transferencia desactivado exitosamente`
-                        : `Transferencias desactivados exitosamente`
-                    );
-                  },
-                  onError: () => {
-                    toast.error(
-                      items.length === 1
-                        ? `Error al desactivar transferencia`
-                        : `Error al desactivar transferencias`
-                    );
-                  },
-                }
-              );
-            }
-          },
-          onError: () => {
-            toast.error(
-              items.length === 1
-                ? `Error al desactivar ${METADATA.entityName}`
-                : `Error al desactivar ${METADATA.entityPluralName}`
-            );
-          }
-        }
+        // {
+        //   onSuccess: async () => {
+            
+        //   },
+        //   onError: () => {
+        //     toast.error(
+        //       items.length === 1
+        //         ? `Error al desactivar ${METADATA.entityName}`
+        //         : `Error al desactivar ${METADATA.entityPluralName}`
+        //     );
+        //   },
+        // }
       );
+      if (transferenceIds.length > 0) {
+        await outgoingDeleteMutation.mutateAsync(
+          { ids: transferenceIds },
+        );
+        await Promise.all([
+          queryClient.refetchQueries({
+            queryKey: ["product-stock-by-storage"],
+          }),
+          queryClient.refetchQueries({ queryKey: ["stock"] }),
+          queryClient.refetchQueries({
+            queryKey: ["detailed-outcomes"],
+          }),
+        ]);
+        toast.success(
+          items.length === 1
+            ? `Transferencia desactivado exitosamente`
+            : `Transferencias desactivados exitosamente`
+        );
+      }
       toast.success(
         items.length === 1
           ? `${METADATA.entityName} desactivado exitosamente`
@@ -118,9 +108,22 @@ export function DeactivateIncomingDialog({
       );
       onSuccess?.();
     } catch (error) {
-      console.log(error);
+      toast.error(
+        items.length === 1
+          ? `Error al desactivar ${METADATA.entityName} o en la transferencia`
+          : `Error al desactivar ${METADATA.entityPluralName} o en las transferencias`
+      );
+      if(error instanceof Error) {
+        toast.error(error.message);
+      }
     }
-  }
+  }, [
+    items,
+    mutateAsync,
+    outgoingDeleteMutation,
+    queryClient,
+    onSuccess,
+  ]);
 
   const STATIC_MESSAGES = {
     title: "Alerta: Integridad del stock en riesgo",

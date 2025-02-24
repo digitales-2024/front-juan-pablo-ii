@@ -32,7 +32,8 @@ import { useOutgoing } from "../../outgoing/_hooks/useOutgoing";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-interface ReactivateIncomingDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+interface ReactivateIncomingDialogProps
+  extends ComponentPropsWithoutRef<typeof AlertDialog> {
   incoming?: DetailedIncoming;
   incomings?: DetailedIncoming[];
   showTrigger?: boolean;
@@ -47,7 +48,9 @@ export function ReactivateIncomingDialog({
   ...props
 }: ReactivateIncomingDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { reactivateMutation: { isPending, mutateAsync } } = useIncoming();
+  const {
+    reactivateMutation: { isPending, mutateAsync },
+  } = useIncoming();
   const { reactivateMutation: outgoingReactivateMutation } = useOutgoing();
   const queryClient = useQueryClient();
 
@@ -56,52 +59,43 @@ export function ReactivateIncomingDialog({
   async function onReactivate() {
     const transferenceIds: string[] = [];
     const ids = items.map((item) => {
-      if (item.isTransference) {
-        transferenceIds.push(item.id);
+      if (item.isTransference && item.referenceId && item.outgoingId) {
+        transferenceIds.push(item.outgoingId);
       }
       return item.id;
     });
     try {
-      await mutateAsync({ ids },
-        {
-          onSuccess: async () => {
-            if (transferenceIds.length > 0) {
-              await outgoingReactivateMutation.mutateAsync({ ids: transferenceIds },{
-                onSuccess: async () => {
-                  await Promise.all([
-                    queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] }),
-                    queryClient.refetchQueries({ queryKey: ["stock"] }),
-                    queryClient.refetchQueries({ queryKey: ["detailed-outcomes"] }),
-                  ])
-                  toast.success(
-                    items.length === 1
-                      ? `Transferencia reactivada exitosamente`
-                      : `Transferencias reactivadas exitosamente`
-                  );
-                },
-                onError: (error) => {
-                  if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
-                    toast.error("No tienes permisos para realizar esta acción");
-                  } else {
-                    toast.error(error.message || "Error al reactivar la/las salida(s)");
-                  }
-                },
-              });
-            }
-          },
-          onError: (error) => {
-            toast.error(error.message || items.length === 1 ? "Error al reactivar el ingreso" : "Error al reactivar los ingresos");
-          }
-        },
-      );
+      await mutateAsync({ ids });
+      if (transferenceIds.length > 0) {
+        await outgoingReactivateMutation.mutateAsync({ ids: transferenceIds });
+        await Promise.all([
+          queryClient.refetchQueries({
+            queryKey: ["product-stock-by-storage"],
+          }),
+          queryClient.refetchQueries({ queryKey: ["stock"] }),
+          queryClient.refetchQueries({ queryKey: ["detailed-outcomes"] }),
+        ]);
+        toast.success(
+          items.length === 1
+            ? `Transferencia reactivada exitosamente`
+            : `Transferencias reactivadas exitosamente`
+        );
+      }
       toast.success(
         items.length === 1
           ? `${METADATA.entityName} reactivado exitosamente`
           : `${METADATA.entityPluralName} reactivados exitosamente`
-      )
+      );
       onSuccess?.();
     } catch (error) {
-      console.log(error);
+      toast.error(
+        items.length === 1
+          ? `Error al desactivar ${METADATA.entityName} o en la transferencia`
+          : `Error al desactivar ${METADATA.entityPluralName} o en las transferencias`
+      );
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     }
   }
 
@@ -122,19 +116,21 @@ export function ReactivateIncomingDialog({
             <AlertDialogDescription>
               Esta acción reactivará a
               <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
+              {items.length === 1
+                ? ` ${METADATA.entityName.toLowerCase()}`
+                : ` ${METADATA.entityPluralName.toLowerCase()}`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
             <AlertDialogCancel asChild>
               <Button variant="outline">Cancelar</Button>
             </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={onReactivate}
-              disabled={isPending}
-            >
+            <AlertDialogAction onClick={onReactivate} disabled={isPending}>
               {isPending && (
-                <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
+                <RefreshCcw
+                  className="mr-2 size-4 animate-spin"
+                  aria-hidden="true"
+                />
               )}
               Reactivar
             </AlertDialogAction>
@@ -160,16 +156,18 @@ export function ReactivateIncomingDialog({
           <DrawerDescription>
             Esta acción reactivará a
             <span className="font-medium"> {items.length}</span>
-            {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}
+            {items.length === 1
+              ? ` ${METADATA.entityName.toLowerCase()}`
+              : ` ${METADATA.entityPluralName.toLowerCase()}`}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
-          <Button
-            onClick={onReactivate}
-            disabled={isPending}
-          >
+          <Button onClick={onReactivate} disabled={isPending}>
             {isPending && (
-              <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
+              <RefreshCcw
+                className="mr-2 size-4 animate-spin"
+                aria-hidden="true"
+              />
             )}
             Reactivar
           </Button>

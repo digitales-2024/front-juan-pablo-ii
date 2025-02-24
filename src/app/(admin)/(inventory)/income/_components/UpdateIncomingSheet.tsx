@@ -278,6 +278,9 @@ export function UpdateIncomingSheet({
           },
         }
       );
+      if (data.isTransference){
+        toast.success('Transferencia realizada exitosamente')
+      }
     } catch (error) {
       // The error is already handled by the mutation
       toast.error("Error in onSubmit" + (error as Error).message);

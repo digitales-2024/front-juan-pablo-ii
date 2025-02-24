@@ -278,6 +278,9 @@ export function UpdateOutgoingSheet({
           id: outgoing.id,
           data: {
             ...data,
+            isTransference: outgoing.isTransference,
+            referenceId: outgoing.referenceId,
+            incomingId: outgoing.incomingId,
             movement: data.movement.map((mv) => ({
               ...mv,
               id: mv.id ?? undefined,
@@ -286,6 +289,7 @@ export function UpdateOutgoingSheet({
         },
         {
           onSuccess: () => {
+            console.log('Entrando a on success en update')
             handleClearProductList();
             form.reset();
             setOpen(false);
@@ -303,6 +307,9 @@ export function UpdateOutgoingSheet({
           },
         }
       );
+      if (data.isTransference){
+        toast.success('Transferencia realizada exitosamente')
+      }
     } catch (error) {
       toast.error("Error in onSubmit" + (error as Error).message);
     }

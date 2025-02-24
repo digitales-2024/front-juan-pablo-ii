@@ -155,7 +155,11 @@ export async function updateOutgoingStorage(
   data: UpdateOutgoingStorageDto
 ): Promise<DetailedOutgoingResponse> {
   try {
-    const [responseData, error] = await http.patch<DetailedOutgoingResponse>(`/outgoing/update/outgoingStorage/${id}`, data);
+    const isTransferenceQuery = data.isTransference ? "?isTransference=true" : "";
+    const url = `/outgoing/update/outgoingStorage/${id}${isTransferenceQuery}`
+    console.log('Update url', url)
+    console.log('data send to back', data)
+    const [responseData, error] = await http.patch<DetailedOutgoingResponse>(url, data);
 
     if (error) {
       return { error: error.message };
