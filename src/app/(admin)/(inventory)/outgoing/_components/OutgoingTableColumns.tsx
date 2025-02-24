@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-import { ReactivateOutgoingDialog } from "./ReactivateProductDialog";
+import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
 import { ShowMovementsDialog } from "./Movements/ShowMovementsDialog";

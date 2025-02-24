@@ -31,6 +31,8 @@ import { ComponentPropsWithoutRef } from "react";
 import { METADATA } from "../_statics/metadata";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { useOutgoing } from "../../outgoing/_hooks/useOutgoing";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface DeactivateIncomingDialogProps
   extends ComponentPropsWithoutRef<typeof AlertDialog> {
@@ -51,13 +53,64 @@ export function DeactivateIncomingDialog({
   const {
     deleteMutation: { isPending, mutateAsync },
   } = useIncoming();
+  const { deleteMutation: outgoingDeleteMutation } = useOutgoing();
+  const queryClient = useQueryClient();
 
   const items = incomings ?? (incoming ? [incoming] : []);
 
   async function onDelete() {
-    const ids = items.map((item) => item.id);
+    const transferenceIds: string[] = [];
+    const ids = items.map((item) => {
+      if (item.isTransference) {
+        transferenceIds.push(item.id);
+      }
+      return item.id;
+    });
     try {
-      await mutateAsync({ ids });
+      await mutateAsync(
+        { ids },
+        {
+          onSuccess: async () => {
+            if (transferenceIds.length > 0) {
+              await outgoingDeleteMutation.mutateAsync(
+                { ids: transferenceIds },
+                {
+                  onSuccess: async () => {
+                    await Promise.all([
+                      queryClient.refetchQueries({
+                        queryKey: ["product-stock-by-storage"],
+                      }),
+                      queryClient.refetchQueries({ queryKey: ["stock"] }),
+                      queryClient.refetchQueries({
+                        queryKey: ["detailed-outcomes"],
+                      }),
+                    ]);
+                    toast.success(
+                      items.length === 1
+                        ? `Transferencia desactivado exitosamente`
+                        : `Transferencias desactivados exitosamente`
+                    );
+                  },
+                  onError: () => {
+                    toast.error(
+                      items.length === 1
+                        ? `Error al desactivar transferencia`
+                        : `Error al desactivar transferencias`
+                    );
+                  },
+                }
+              );
+            }
+          },
+          onError: () => {
+            toast.error(
+              items.length === 1
+                ? `Error al desactivar ${METADATA.entityName}`
+                : `Error al desactivar ${METADATA.entityPluralName}`
+            );
+          }
+        }
+      );
       toast.success(
         items.length === 1
           ? `${METADATA.entityName} desactivado exitosamente`
@@ -119,7 +172,9 @@ export function DeactivateIncomingDialog({
             <Alert className="bg-yellow-100/70 text-yellow-600 border-none !mb-2">
               <div className="flex space-x-2 items-center mb-2">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle className="!mb-0 font-semibold">Precaución</AlertTitle>
+                <AlertTitle className="!mb-0 font-semibold">
+                  Precaución
+                </AlertTitle>
               </div>
               <div className="w-full px-5">
                 <ul className="space-y-1 list-disc">
@@ -168,9 +223,7 @@ export function DeactivateIncomingDialog({
                     aria-hidden="true"
                   />
                 )}
-                {
-                  STATIC_MESSAGES.buttonDeactivate
-                }
+                {STATIC_MESSAGES.buttonDeactivate}
               </span>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -213,7 +266,9 @@ export function DeactivateIncomingDialog({
           <Alert className="bg-yellow-100/70 text-yellow-600 border-none !mb-2">
             <div className="flex space-x-2 items-center mb-2 justify-center sm:justify-start">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle className="font-semibold !mb-0">Precaución</AlertTitle>
+              <AlertTitle className="font-semibold !mb-0">
+                Precaución
+              </AlertTitle>
             </div>
             <div className="w-full px-5">
               <ul className="space-y-1 list-disc text-start">
@@ -231,12 +286,16 @@ export function DeactivateIncomingDialog({
           </Alert>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
-          <Button className={cn(
-                buttonVariants({
-                  variant: "outline",
-                }),
-                "text-destructive hover:text-white hover:bg-destructive border border-destructive"
-              )} onClick={onDelete} disabled={isPending}>
+          <Button
+            className={cn(
+              buttonVariants({
+                variant: "outline",
+              }),
+              "text-destructive hover:text-white hover:bg-destructive border border-destructive"
+            )}
+            onClick={onDelete}
+            disabled={isPending}
+          >
             {isPending && (
               <RefreshCcw
                 className="mr-2 size-4 animate-spin"
@@ -245,12 +304,15 @@ export function DeactivateIncomingDialog({
             )}
             Desactivar
           </Button>
-          <DrawerClose asChild className={cn(
-                buttonVariants({ variant: "default" }),
-                "animate-jump animate-twice animate-duration-1000 animate-ease-linear hover:text-white hover:scale-105 hover:transition-all"
-              )}>
+          <DrawerClose
+            asChild
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "animate-jump animate-twice animate-duration-1000 animate-ease-linear hover:text-white hover:scale-105 hover:transition-all"
+            )}
+          >
             {/* <Button variant="outline">Cancelar</Button> */}
-            <span>{ STATIC_MESSAGES.buttonCancel }</span>
+            <span>{STATIC_MESSAGES.buttonCancel}</span>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

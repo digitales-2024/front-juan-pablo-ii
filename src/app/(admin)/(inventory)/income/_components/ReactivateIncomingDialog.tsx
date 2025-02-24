@@ -28,6 +28,9 @@ import { RefreshCcw, RefreshCcwDot } from "lucide-react";
 import { useIncoming } from "../_hooks/useIncoming";
 import { ComponentPropsWithoutRef } from "react";
 import { METADATA } from "../_statics/metadata";
+import { useOutgoing } from "../../outgoing/_hooks/useOutgoing";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface ReactivateIncomingDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
   incoming?: DetailedIncoming;
@@ -45,13 +48,57 @@ export function ReactivateIncomingDialog({
 }: ReactivateIncomingDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { reactivateMutation: { isPending, mutateAsync } } = useIncoming();
+  const { reactivateMutation: outgoingReactivateMutation } = useOutgoing();
+  const queryClient = useQueryClient();
 
   const items = incomings ?? (incoming ? [incoming] : []);
 
   async function onReactivate() {
-    const ids = items.map((item) => item.id);
+    const transferenceIds: string[] = [];
+    const ids = items.map((item) => {
+      if (item.isTransference) {
+        transferenceIds.push(item.id);
+      }
+      return item.id;
+    });
     try {
-      await mutateAsync({ ids });
+      await mutateAsync({ ids },
+        {
+          onSuccess: async () => {
+            if (transferenceIds.length > 0) {
+              await outgoingReactivateMutation.mutateAsync({ ids: transferenceIds },{
+                onSuccess: async () => {
+                  await Promise.all([
+                    queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] }),
+                    queryClient.refetchQueries({ queryKey: ["stock"] }),
+                    queryClient.refetchQueries({ queryKey: ["detailed-outcomes"] }),
+                  ])
+                  toast.success(
+                    items.length === 1
+                      ? `Transferencia reactivada exitosamente`
+                      : `Transferencias reactivadas exitosamente`
+                  );
+                },
+                onError: (error) => {
+                  if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+                    toast.error("No tienes permisos para realizar esta acción");
+                  } else {
+                    toast.error(error.message || "Error al reactivar la/las salida(s)");
+                  }
+                },
+              });
+            }
+          },
+          onError: (error) => {
+            toast.error(error.message || items.length === 1 ? "Error al reactivar el ingreso" : "Error al reactivar los ingresos");
+          }
+        },
+      );
+      toast.success(
+        items.length === 1
+          ? `${METADATA.entityName} reactivado exitosamente`
+          : `${METADATA.entityPluralName} reactivados exitosamente`
+      )
       onSuccess?.();
     } catch (error) {
       console.log(error);

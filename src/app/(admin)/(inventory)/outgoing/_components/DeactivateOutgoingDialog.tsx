@@ -31,6 +31,8 @@ import { ComponentPropsWithoutRef } from "react";
 import { METADATA } from "../_statics/metadata";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { useIncoming } from "../../income/_hooks/useIncoming";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface DeactivateOutgoingDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
   outgoing?: Outgoing;
@@ -48,6 +50,8 @@ export function DeactivateOutgoingDialog({
 }: DeactivateOutgoingDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { deleteMutation: { isPending, mutateAsync } } = useOutgoing();
+  const { deleteMutation: incomingDeleteMutation } = useIncoming();
+  const queryClient = useQueryClient();
 
   const items = outcomes ?? (outgoing ? [outgoing] : []);
 
@@ -62,9 +66,52 @@ export function DeactivateOutgoingDialog({
   };
 
   async function onDelete() {
-    const ids = items.map((item) => item.id);
+    const transferenceIds: string[] = [];
+    const ids = items.map((item) => {
+      if (item.isTransference) {
+        transferenceIds.push(item.id);
+      }
+      return item.id;
+    });
     try {
-      await mutateAsync({ ids });
+      await mutateAsync({ ids },
+        {
+          onSuccess: async () => {
+            // queryClient.invalidateQueries("outgoing");
+            // Cuando es transferencia, se elimina de incoming tambien
+            if (transferenceIds.length > 0) {
+              await incomingDeleteMutation.mutateAsync({ ids: transferenceIds },{
+                onSuccess: async () => {
+                  await Promise.all([
+                    queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] }),
+                    queryClient.refetchQueries({ queryKey: ["stock"] }),
+                    queryClient.refetchQueries({ queryKey: ["detailed-incomings"] }),
+                  ])
+                  toast.success(
+                    items.length === 1
+                      ? `Transferencia desactivado exitosamente`
+                      : `Transferencias desactivados exitosamente`
+                  );
+                },
+                onError: () => {
+                  toast.error(
+                    items.length === 1
+                      ? `Error al desactivar transferencia`
+                      : `Error al desactivar transferencias`
+                  );
+                }
+              });
+            }
+          },
+          onError: () => {
+            toast.error(
+              items.length === 1
+                ? `Error al desactivar ${METADATA.entityName}`
+                : `Error al desactivar ${METADATA.entityPluralName}`
+            );
+          }
+        }
+      );
       toast.success(
         items.length === 1
           ? `${METADATA.entityName} desactivado exitosamente`

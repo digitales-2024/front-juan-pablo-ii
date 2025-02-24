@@ -125,6 +125,7 @@ export function CreateOutgoingDialog() {
     startCreateTransition(() => {
       createMutation.mutate(input, {
         onSuccess: () => {
+          //Creación de la nueva entrada en el stock del stoarage de destino
           if (input?.isTransference && input?.referenceId) {
             incomingCreateMutation.mutate({
               name: input.name,

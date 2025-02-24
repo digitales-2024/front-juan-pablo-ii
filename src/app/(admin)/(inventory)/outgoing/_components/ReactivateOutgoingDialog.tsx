@@ -28,6 +28,9 @@ import { RefreshCcw, RefreshCcwDot } from "lucide-react";
 import { useOutgoing } from "../_hooks/useOutgoing";
 import { ComponentPropsWithoutRef } from "react";
 import { METADATA } from "../_statics/metadata";
+import { useIncoming } from "../../income/_hooks/useIncoming";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface ReactivateOutgoingDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
   outgoing?: DetailedOutgoing;
@@ -45,13 +48,61 @@ export function ReactivateOutgoingDialog({
 }: ReactivateOutgoingDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { reactivateMutation: { isPending, mutateAsync } } = useOutgoing();
+  const { reactivateMutation: incomingReactivateMutation } = useIncoming();
+  const queryClient = useQueryClient();
 
   const items = outcomes ?? (outgoing ? [outgoing] : []);
 
   async function onReactivate() {
-    const ids = items.map((item) => item.id);
+    const transferenceIds: string[] = [];
+    const ids = items.map((item) => {
+      if (item.isTransference) {
+        transferenceIds.push(item.id);
+      }
+      return item.id;
+    });
     try {
-      await mutateAsync({ ids });
+      await mutateAsync({ ids },
+        {
+          onSuccess: async () => {
+            if (transferenceIds.length > 0) {
+              await incomingReactivateMutation.mutateAsync({ ids: transferenceIds },{
+                onSuccess: async () => {
+                  await Promise.all([
+                    queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] }),
+                    queryClient.refetchQueries({ queryKey: ["stock"] }),
+                    queryClient.refetchQueries({ queryKey: ["detailed-incomings"] }),
+                  ]);
+                  toast.success(
+                    items.length === 1
+                      ? `La transferencia ha sido reactivada exitosamente`
+                      : `Las transferencias han sido reactivadas exitosamente`
+                  );
+                },
+                onError: (error) => {
+                  if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+                    toast.error("No tienes permisos para realizar esta acción");
+                  } else {
+                    toast.error(error.message || `Error al reactivar la/las transferencia`);
+                  }
+                }
+              });
+            }
+          },
+          onError: (error) => {
+            if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+              toast.error("No tienes permisos para realizar esta acción");
+            } else {
+              toast.error(error.message || `Error al reactivar la/las transferencia`);
+            }
+          }
+        }
+      );
+      toast.success(
+        items.length === 1
+          ? `La ${METADATA.entityName.toLowerCase()} ha sido reactivada exitosamente`
+          : `Las ${METADATA.entityPluralName.toLowerCase()} han sido reactivadas exitosamente`
+      );
       onSuccess?.();
     } catch (error) {
       console.log(error);
