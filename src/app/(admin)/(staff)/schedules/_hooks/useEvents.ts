@@ -20,7 +20,7 @@ import {
 import { BaseApiResponse } from '@/types/api/types';
 import { useStaff } from '../../staff/_hooks/useStaff';
 import { useMemo } from 'react';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth, subDays, addDays } from 'date-fns';
 
 interface UpdateEventVariables {
   id: string;
@@ -39,7 +39,7 @@ export interface EventFilterParams {
   disablePagination?: boolean;
 }
 
-// Eliminar getQueryKey y usar clave única
+// Cambiar de string a array constante
 const EVENT_QUERY_KEY = ['calendar-turns'] as const;
 
 export const useEvents = (filters?: EventFilterParams) => {
@@ -51,21 +51,21 @@ export const useEvents = (filters?: EventFilterParams) => {
     ...filters,
     type: 'TURNO' as const,
     status: 'CONFIRMED' as const,
-    startDate: filters?.startDate || format(startOfMonth(new Date()), 'yyyy-MM-dd'),
-    endDate: filters?.endDate || format(endOfMonth(new Date()), 'yyyy-MM-dd')
+    startDate: filters?.startDate || format(subDays(startOfMonth(new Date()), 7), 'yyyy-MM-dd'),
+    endDate: filters?.endDate || format(addDays(endOfMonth(new Date()), 7), 'yyyy-MM-dd')
   }), [filters]);
 
   // Query para obtener eventos con filtros
   const eventsQuery = useQuery({
-    queryKey: EVENT_QUERY_KEY,
+    queryKey: [EVENT_QUERY_KEY, normalizedFilters],
     queryFn: async () => {
-      console.log('🚀 [useEvents] Query iniciada con:', normalizedFilters);
+      console.log('📅 [Events] Fetching:', normalizedFilters);
       const res = await getEventsByFilter(normalizedFilters);
       return res.data || [];
     },
-    staleTime: 1000 * 60 * 5, // 5 minutos
-    gcTime: 1000 * 60 * 30, // Limpiar cache después de 30 minutos
-    refetchOnWindowFocus: false, // Evitar recargas automáticas
+    staleTime: 1000 * 60 * 15, // Aumentar tiempo de frescura
+    gcTime: 1000 * 60 * 30, // Eliminar caché más rápido
+    refetchOnMount: 'always' // Forzar nueva carga al montar
   });
 
 
@@ -167,15 +167,16 @@ export const useEvents = (filters?: EventFilterParams) => {
   >({
     mutationFn: deleteEvents,
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Event[]>(EVENT_QUERY_KEY, (oldEvents = []) =>
-        oldEvents.filter((event) => !variables.ids.includes(event.id))
-      );
-      void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
-      toast.success(
-        variables.ids.length === 1
-          ? 'Evento eliminado exitosamente'
-          : 'Eventos eliminados exitosamente'
-      );
+      // Actualización agresiva de todas las variantes de la query
+      queryClient.getQueriesData<Event[]>({ queryKey: ['calendar-turns'] }).forEach(([key, data]) => {
+        if (data) {
+          queryClient.setQueryData<Event[]>(key,
+            data.filter(event => !variables.ids.includes(event.id))
+          );
+        }
+      });
+
+      toast.success(variables.ids.length === 1 ? 'Evento eliminado' : 'Eventos eliminados');
     },
     onError: (error) => {
       void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
