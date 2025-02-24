@@ -336,8 +336,7 @@ l
     };
 
     // Mutación para crear actualizacion de historia medica
-  
-    const createUpdateHistory = useMutation<
+      const createUpdateHistory = useMutation<
       BaseApiResponse<UpdateHistory>,
       Error,
       CreateUpdateHistoryFormData
