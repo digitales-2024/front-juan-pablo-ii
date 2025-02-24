@@ -124,7 +124,8 @@ export function CreateOutgoingDialog() {
 
     startCreateTransition(() => {
       createMutation.mutate(input, {
-        onSuccess: () => {
+        onSuccess: (res) => {
+          //Creación de la nueva entrada en el stock del stoarage de destino
           if (input?.isTransference && input?.referenceId) {
             incomingCreateMutation.mutate({
               name: input.name,
@@ -134,6 +135,7 @@ export function CreateOutgoingDialog() {
               state: input.state,
               referenceId: input.storageId, //Se registra el almacen de salida
               isTransference: input.isTransference,
+              outgoingId: res.data.id,
               movement: [...input.movement],
             }, {
               onSuccess: async() => {
@@ -142,6 +144,7 @@ export function CreateOutgoingDialog() {
                   queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] }),
                   queryClient.refetchQueries({ queryKey: ["stock"] }),
                   queryClient.refetchQueries({ queryKey: ["detailed-incomings"] }),
+                  queryClient.refetchQueries({ queryKey: ["detailed-outcomes"] }),
                 ])
                 toast.success("Salida y entrada creadas exitosamente", {})
               },

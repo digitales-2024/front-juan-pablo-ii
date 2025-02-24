@@ -59,6 +59,7 @@ export type DetailedOutgoing = {
   state: boolean;
   referenceId: string;
   isTransference?: boolean;
+  incomingId?: string;
   isActive: boolean;
   Storage: OutgoingStorage;
   Movement: OutgoingMovement[];
@@ -86,6 +87,7 @@ export type UpdateOutgoingStorageDto = {
   date?: string;
   state?: boolean;
   referenceId?: string;
+  incomingId?: string;
   isTransference?: boolean;
   movement: UpdateOutgoingStorageMovementDto[];
 }

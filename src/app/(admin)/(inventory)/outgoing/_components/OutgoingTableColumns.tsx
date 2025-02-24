@@ -6,7 +6,7 @@ import { DetailedOutgoing } from "../_interfaces/outgoing.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-// import { UpdateOutgoingSheet } from "./UpdateOutgoingSheet";
+import { UpdateOutgoingSheet } from "./UpdateOutgoingSheet";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import {
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-import { ReactivateOutgoingDialog } from "./ReactivateProductDialog";
+import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
 import { ShowMovementsDialog } from "./Movements/ShowMovementsDialog";
@@ -236,7 +236,9 @@ export const columns: ColumnDef<DetailedOutgoing>[] = [
     cell: function Cell({ row }) {
       const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
-      // const [showEditSheet, setShowEditSheet] = useState(false);
+      const [showEditSheet, setShowEditSheet] = useState(false);
+      // const {} = useProductStockById(row.original.Movement)
+      // const productExistent: OutgoingProducStockForm = 
       const outgoing = row.original;
       const { isActive } = outgoing;
       const isSuperAdmin = true;
@@ -244,14 +246,14 @@ export const columns: ColumnDef<DetailedOutgoing>[] = [
       return (
         <div>
           <div>
-            {/* {showEditSheet && (
+            {showEditSheet && (
               <UpdateOutgoingSheet
                 outgoing={outgoing}
                 open={showEditSheet}
                 onOpenChange={setShowEditSheet}
                 showTrigger={false}
               />
-            )} */}
+            )}
             {showDeleteDialog && (
               <DeactivateOutgoingDialog
                 outgoing={outgoing}
@@ -279,12 +281,12 @@ export const columns: ColumnDef<DetailedOutgoing>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              {/* <DropdownMenuItem
+              <DropdownMenuItem
                 onSelect={() => setShowEditSheet(true)}
                 disabled={!isActive}
               >
                 Editar
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               {isSuperAdmin && (
                 <DropdownMenuItem

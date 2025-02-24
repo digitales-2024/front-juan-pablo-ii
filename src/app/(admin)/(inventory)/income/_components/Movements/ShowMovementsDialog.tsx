@@ -78,7 +78,9 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
               {SHOW_MOVEMENTS_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <MovementsTable data={data}></MovementsTable>
+          <div className="overflow-auto max-h-full">
+            <MovementsTable data={data}></MovementsTable>
+          </div>
           <DialogFooter>
               <DialogFooterContent />
         </DialogFooter>
@@ -103,7 +105,9 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
             {SHOW_MOVEMENTS_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <MovementsTable data={data}></MovementsTable>
+        <div className="overflow-auto max-h-[calc(100dvh-12rem)]">
+          <MovementsTable data={data}></MovementsTable>
+        </div>
           <DrawerFooter>
             <DialogFooterContent />
           </DrawerFooter>

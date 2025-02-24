@@ -43,6 +43,7 @@ export const columns: ColumnDef<OutgoingMovement>[] = [
 //   },
   {
     accessorKey: "Producto.name",
+    size: 5,
     meta:{
       title: "Producto"
     },
