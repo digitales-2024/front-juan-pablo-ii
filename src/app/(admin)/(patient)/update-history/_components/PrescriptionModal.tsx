@@ -36,7 +36,6 @@ export function PrescriptionModal({
   patient,
   updateHistoryId,
 }: PrescriptionModalProps) {
-
   // Encontrar la receta correspondiente
   const prescription = prescriptions.find(
     (p) => p.updateHistoryId === updateHistoryId
@@ -48,7 +47,7 @@ export function PrescriptionModal({
     return staffMember
       ? {
           name: `${staffMember.name} ${staffMember.lastName}`,
-          specialty: staffMember.staffType?.name ?? "No especificado",
+          cmp: `${staffMember.cmp}`,
         }
       : null;
   };
@@ -64,6 +63,19 @@ export function PrescriptionModal({
     }
   };
 
+  // Agregar función de formato de fecha
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString.replace(' ', 'T'));
+    
+    const formatoFecha = date.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
+
+    return `${formatoFecha}`;
+  };
+
   if (!prescription || !patient) return null;
 
   const staffInfo = getStaffInfo(prescription.staffId);
@@ -74,7 +86,7 @@ export function PrescriptionModal({
       <DialogContent className="max-w-3xl">
         <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Receta Médica</DialogTitle>
+            <DialogTitle>Nota Médica</DialogTitle>
           </DialogHeader>
           <div className="space-y-6 p-4">
             {/* Encabezado de la Receta */}
@@ -94,7 +106,7 @@ export function PrescriptionModal({
                 <h4 className="font-semibold">Médico Tratante</h4>
                 <p className="text-sm">{staffInfo?.name}</p>
                 <p className="text-sm text-gray-600">
-                  Especialidad: {staffInfo?.specialty}
+                  Cod: {staffInfo?.cmp}
                 </p>
               </div>
             </div>
@@ -138,37 +150,10 @@ export function PrescriptionModal({
                 </div>
               )}
 
-              {/* Medicamentos Recetados */}
-              {prescription.prescriptionMedicaments.length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-2">Medicamentos Recetados</h4>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="text-sm text-gray-600 border-b">
-                          <th className="text-left py-2">Medicamento</th>
-                          <th className="text-left py-2">Cantidad</th>
-                          <th className="text-left py-2">Indicaciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {prescription.prescriptionMedicaments.map((item) => (
-                          <tr key={item.id} className="border-b last:border-0">
-                            <td className="py-2">{item.name}</td>
-                            <td className="py-2">{item.quantity}</td>
-                            <td className="py-2">{item.description}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
               {/* Servicios Adicionales */}
-              {prescription.prescriptionServices.length > 0 && (
+              {prescription.prescriptionServices?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold mb-2">Servicios Adicionales</h4>
+                  <h4 className="font-semibold mb-2">Servicios Recetados</h4>
                   <div className="bg-gray-50 p-3 rounded">
                     <table className="w-full">
                       <thead>
@@ -182,7 +167,34 @@ export function PrescriptionModal({
                         {prescription.prescriptionServices.map((item) => (
                           <tr key={item.id} className="border-b last:border-0">
                             <td className="py-2">{item.name}</td>
-                            <td className="py-2">{item.quantity}</td>
+                            <td className="py-2">{item.quantity} Uni</td>
+                            <td className="py-2">{item.description}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Medicamentos Recetados */}
+              {prescription.prescriptionMedicaments?.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2">Medicamentos Recetados</h4>
+                  <div className="bg-gray-50 p-3 rounded">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-sm text-gray-600 border-b">
+                          <th className="text-left py-2">Medicamento</th>
+                          <th className="text-left py-2">Cantidad</th>
+                          <th className="text-left py-2">Descripción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {prescription.prescriptionMedicaments.map((item) => (
+                          <tr key={item.id} className="border-b last:border-0">
+                            <td className="py-2">{item.name}</td>
+                            <td className="py-2">{item.quantity} Uni</td>
                             <td className="py-2">{item.description}</td>
                           </tr>
                         ))}
@@ -197,7 +209,7 @@ export function PrescriptionModal({
                 <div>
                   <span className="text-sm text-gray-600">
                     Fecha de emisión:{" "}
-                    {new Date(prescription.registrationDate).toLocaleDateString()}
+                    {formatDate(prescription.registrationDate)}
                   </span>
                 </div>
                 <Button onClick={handlePrintPrescription}>
