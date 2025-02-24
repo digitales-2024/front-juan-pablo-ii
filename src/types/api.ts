@@ -6186,11 +6186,7 @@ export interface components {
              *       "observaciones": "Seguimiento en 7 días"
              *     }
              */
-            updateHistory: Record<string, never>;
-            /**
-             * @description Descripción adicional
-             * @example Paciente presenta mejoría
-             */
+     
             description?: string;
             /**
              * @description Indica si requiere descanso médico
