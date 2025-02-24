@@ -45,13 +45,23 @@ export type UpdateHistory = components["schemas"]["UpdateHistory"];
 /* tipado para agregar el updates este tipado solo sirve para asignar las imagenes en el page  */
 export type UpdateHistoryResponseImage = UpdateHistory & { images?: MeidicalHistoryImage[] };
 
+//tipado para crear el desanso medico 
+ export type MedicalLeaveData = {
+  medicalLeave: boolean
+  medicalLeaveStartDate?: string
+  medicalLeaveEndDate?: string
+  medicalLeaveDays?: number
+  leaveDescription?: string
+  }
+
 
 //tipado para crear y actualizar la historia medica con la imagen
+
 
 export type CreateUpdateHistoryDto = components["schemas"]["CreateUpdateHistoryDto"];
 export interface CreateUpdateHistoryFormData {
   data: CreateUpdateHistoryDto;
-  image?: File | null;
+  image?: File[] | null;
 }
 
 export type UpdateUpdateHistoryDto = components["schemas"]["UpdateUpdateHistoryDto"];
