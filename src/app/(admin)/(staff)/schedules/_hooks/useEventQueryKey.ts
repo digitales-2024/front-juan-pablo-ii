@@ -1,30 +1,14 @@
 import { EventFilterParams } from "./useEvents";
+import { format } from "date-fns";
 
-export const getEventQueryKey = (filters: EventFilterParams, date: Date) => {
-    // Calcular inicio y fin del mes en UTC
-    const utcMonthStart = new Date(
-        Date.UTC(
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            1
-        )
-    ).toISOString().split('T')[0];
-
-    const utcMonthEnd = new Date(
-        Date.UTC(
-            date.getUTCFullYear(),
-            date.getUTCMonth() + 1,
-            0
-        )
-    ).toISOString().split('T')[0];
-
+export const getEventQueryKey = (filters: EventFilterParams, extendedStart: Date, extendedEnd: Date) => {
     return [
-        'events',
+        'calendar-turns',
         {
             ...filters,
-            status: filters.status ?? 'CONFIRMED',
-            startDate: utcMonthStart,
-            endDate: utcMonthEnd
+            startDate: format(extendedStart, 'yyyy-MM-dd'),
+            endDate: format(extendedEnd, 'yyyy-MM-dd'),
+            status: 'CONFIRMED'
         }
     ];
 } 

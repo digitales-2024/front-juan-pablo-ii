@@ -1,4 +1,3 @@
-
 import { components } from "@/types/api";
 // Tipos base de la API
 export type Patient = components["schemas"]["Patient"];
