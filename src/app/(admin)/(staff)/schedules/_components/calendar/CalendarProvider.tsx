@@ -30,20 +30,20 @@ export default function CalendarProvider({
   filters: EventFilterParams
   children: React.ReactNode;
 }) {
+  console.log("✅ [Provider] Montando CalendarProvider");
+
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
   const [manageEventDialogOpen, setManageEventDialogOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null
-  );
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
-  const monthStart = startOfMonth(parentDate);
-  const monthEnd = endOfMonth(parentDate);
-
-  // Ampliar el rango de fechas
-  const extendedStart = subDays(monthStart, 7);
-  const extendedEnd = addDays(monthEnd, 7);
-
-  const queryClient = useQueryClient();
+  const { extendedStart, extendedEnd } = useMemo(() => {
+    const monthStart = startOfMonth(parentDate);
+    const monthEnd = endOfMonth(parentDate);
+    return {
+      extendedStart: subDays(monthStart, 7),
+      extendedEnd: addDays(monthEnd, 7)
+    };
+  }, [parentDate]);
 
   const safeFilters = useMemo(() => ({
     ...filters,
@@ -51,48 +51,104 @@ export default function CalendarProvider({
     endDate: format(extendedEnd, 'yyyy-MM-dd')
   }), [filters, extendedStart, extendedEnd]);
 
-  const { events: filteredEvents, eventsQuery } = useEvents(safeFilters);
+  const queryClient = useQueryClient();
+
+  const { events: turnos, eventsQuery } = useEvents(safeFilters);
+
+  console.log("hola xd", turnos);
+
+  const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([])
+  console.log(filteredEvents);
 
   useEffect(() => {
-    // Actualizar los eventos en el contexto con los filtros aplicados
-    setEvents(filteredEvents || []);
-  }, [filteredEvents]); // Solo ejecutar cuando filteredEvents cambie
+    setFilteredEvents(turnos || []);
+  }, [turnos]);
 
-  console.log('✅ [CalendarProvider] Eventos actualizados:', {
-    count: filteredEvents?.length || 0,
-    lastUpdated: new Date().toISOString()
-  });
+  const contextValue = useMemo(() => ({
+    events: filteredEvents || [],
+    eventsQuery: eventsQuery,
+    currentMonth: parentDate.getMonth(),
+    setEvents,
+    mode,
+    setMode,
+    date: parentDate,
+    setDate: parentSetDate,
+    calendarIconIsToday,
+    newEventDialogOpen,
+    setNewEventDialogOpen,
+    manageEventDialogOpen,
+    setManageEventDialogOpen,
+    selectedEvent,
+    setSelectedEvent,
+    filters: safeFilters,
+  }), [filteredEvents, parentDate, setEvents, mode, setMode, parentSetDate, calendarIconIsToday, newEventDialogOpen, manageEventDialogOpen, selectedEvent, safeFilters]);
+
+  useEffect(() => {
+    if (eventsQuery.isStale || !eventsQuery.data) {
+      eventsQuery.refetch();
+    }
+  }, [safeFilters]);
+
+  useEffect(() => {
+    console.log('🔄 [Provider] Actualizando eventos principales', turnos?.length);
+    if (!turnos) return;
+
+    const parsedEvents = turnos.map(event => ({
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end)
+    }));
+
+    setEvents(parsedEvents);
+    queryClient.setQueryData(['calendar-turns', safeFilters], parsedEvents);
+    queryClient.invalidateQueries({ queryKey: ['calendar-turns'], exact: false });
+  }, [turnos]);
+
+  useEffect(() => {
+    eventsQuery.refetch();
+  }, []);
+
+  useEffect(() => {
+    console.log('📅 [Calendar] Eventos actualizados', {
+      count: filteredEvents?.length || 0,
+      source: eventsQuery.dataUpdatedAt
+        ? 'Caché'
+        : 'Nueva petición'
+    });
+  }, [filteredEvents]);
 
   useEffect(() => {
     console.log('🔥 [CalendarProvider] Filtros seguros:', safeFilters);
-    console.log('🔥 [CalendarProvider] Eventos filtrados:', filteredEvents?.length);
+    console.log('🔄 [CalendarProvider] Eventos filtrados:', filteredEvents?.length);
   }, [safeFilters, filteredEvents]);
 
   useEffect(() => {
-    // Forzar recarga de datos cuando cambian los filtros
-    queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
-  }, [safeFilters, queryClient]);
+    const handleCacheUpdate = () => {
+      const allEvents = queryClient.getQueryData<CalendarEvent[]>(['calendar-turns', safeFilters]) || [];
+      setFilteredEvents(allEvents);
+      setEvents(allEvents);
+    };
+
+    // Escuchar cambios en la caché específica
+    const unsubscribe = queryClient.getQueryCache().subscribe(
+      event => {
+        if (event?.query.queryKey[0] === 'calendar-turns') {
+          handleCacheUpdate();
+        }
+      }
+    );
+
+    return () => unsubscribe();
+  }, [queryClient, safeFilters, setEvents]);
+
+  console.log('🔧 [Provider] Tipo de setEvents:', typeof setEvents);
+  console.log('🔍 Turnos recibidos:', {
+    count: turnos?.length || 0,
+    data: turnos?.map(t => t.title)
+  });
 
   return (
-    <CalendarContext.Provider
-      value={{
-        events: filteredEvents || [],
-        eventsQuery: eventsQuery,
-        currentMonth: parentDate.getMonth(),
-        setEvents,
-        mode,
-        setMode,
-        date: parentDate,
-        setDate: parentSetDate,
-        calendarIconIsToday,
-        newEventDialogOpen,
-        setNewEventDialogOpen,
-        manageEventDialogOpen,
-        setManageEventDialogOpen,
-        selectedEvent,
-        setSelectedEvent,
-        filters: safeFilters,
-      }}>
+    <CalendarContext.Provider value={contextValue}>
       <CalendarNewEventDialog />
       <CalendarManageEventDialog />
       {children}
