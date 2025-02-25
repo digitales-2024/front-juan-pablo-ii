@@ -1,17 +1,47 @@
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { DialogClose } from "@radix-ui/react-dialog"
-import { ImageIcon, X, FileText, User, MapPin, Stethoscope, ClipboardPlus, CalendarHeart } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { CreateUpdateHistoryFormData, CreateUpdateHistoryDto, Service, Staff, Branch, Product, CreatePrescriptionDto, MedicalLeaveData } from "../_interfaces/updateHistory.interface";
-import { AddMedicalLeaveModal } from "./AddMedicalLeaveModal"
-import { AddPrescriptionModal } from "./AddPrescriptionModal"
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { DialogClose } from "@radix-ui/react-dialog";
+import {
+  ImageIcon,
+  X,
+  FileText,
+  User,
+  MapPin,
+  Stethoscope,
+  ClipboardPlus,
+  CalendarHeart,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import {
+  CreateUpdateHistoryFormData,
+  CreateUpdateHistoryDto,
+  Service,
+  Staff,
+  Branch,
+  Product,
+  CreatePrescriptionDto,
+  MedicalLeaveData,
+} from "../_interfaces/updateHistory.interface";
+import { AddMedicalLeaveModal } from "./AddMedicalLeaveModal";
+import { AddPrescriptionModal } from "./AddPrescriptionModal";
 import { useUpdateHistory } from "../_hook/useUpdateHistory";
 
 interface AddHistoryModalProps {
@@ -37,7 +67,8 @@ export function AddHistoryModal({
   patientId,
   medicalHistoryId,
 }: AddHistoryModalProps) {
-  const { createUpdateHistory, createPrescriptionMutation } = useUpdateHistory();
+  const { createUpdateHistory, createPrescriptionMutation } =
+    useUpdateHistory();
 
   // Estado inicial para el formulario
   const [formData, setFormData] = useState<CreateUpdateHistoryDto>({
@@ -59,112 +90,98 @@ export function AddHistoryModal({
   const [showMedicalLeaveModal, setShowMedicalLeaveModal] = useState(false);
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
 
+  // Estado para manejar loading
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Separamos la lógica de creación en funciones independientes
-  const handleCreateHistory = async (historyData: CreateUpdateHistoryDto) => {
-    try {
-      const submitData: CreateUpdateHistoryFormData = {
-        data: {
-          ...historyData,
-          prescription: historyData.prescription,
-          prescriptionId: "",
-        },
-        image: selectedImages.length > 0 ? selectedImages : null
-      };
-
-      return await createUpdateHistory(submitData);
-    } catch (error) {
-      console.error("Error al crear historia médica:", error);
-      throw error;
-    }
-  };
-
-  const handleCreatePrescription = async (prescriptionData: CreatePrescriptionDto, updateHistoryId: string) => {
-    try {
-      const completeData = {
-        ...prescriptionData,
-        updateHistoryId,
-        patientId
-      };
-
-      return await createPrescriptionMutation(completeData);
-    } catch (error) {
-      console.error("Error al crear receta médica:", error);
-      throw error;
-    }
-  };
 
   // Manejador principal del envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setIsSubmitting(true);
+
     try {
-      // 1. Crear la historia médica
-      const newHistory = await handleCreateHistory(formData);
+      // 1. Primero crear la actualización de historia
+      const updateHistoryResponse = await createUpdateHistory.mutateAsync({
+        data: {
+          ...formData,
+          prescription: Boolean(formData.prescriptionData),
+          prescriptionId: "", // Se actualizará después
+        },
+        image: selectedImages.length > 0 ? selectedImages : null,
+      });
 
       // 2. Si hay receta médica, crearla usando el ID de la historia
-      if (formData.prescription && formData.prescriptionData) {
-        const prescriptionResponse = await handleCreatePrescription(
-          formData.prescriptionData,
-          newHistory.id
-        );
+      if (formData.prescriptionData && updateHistoryResponse.data.id) {
+        const prescriptionResponse =
+          await createPrescriptionMutation.mutateAsync({
+            ...formData.prescriptionData,
+            updateHistoryId: updateHistoryResponse.data.id,
+            patientId: formData.patientId,
+            branchId: formData.branchId,
+            staffId: formData.staffId,
+          });
 
-        // Si todo fue exitoso, actualizamos el estado y cerramos
         if (prescriptionResponse) {
-          handleReset();
-          // Aquí limpiamos también el modal de receta
-          setShowPrescriptionModal(false);
+          // Actualizar el estado con el ID de la receta
           onSave({
             data: {
               ...formData,
-              prescriptionId: prescriptionResponse.id
+              prescriptionId: prescriptionResponse.data.id,
             },
-            image: selectedImages.length > 0 ? selectedImages : null
+            image: selectedImages.length > 0 ? selectedImages : null,
           });
         }
       } else {
-        // Si no hay receta, solo limpiamos y cerramos
-        handleReset();
         onSave({
           data: formData,
-          image: selectedImages.length > 0 ? selectedImages : null
+          image: selectedImages.length > 0 ? selectedImages : null,
         });
       }
+
+      // Limpiar todo después de guardar exitosamente
+      handleReset();
+      toast.success("Datos guardados exitosamente");
     } catch (error) {
       console.error("Error en el proceso de creación:", error);
-      // Aquí puedes agregar una notificación de error
+      toast.error("Error al guardar los datos");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   // Actualizamos el handlePrescriptionSave para manejar mejor el estado
   const handlePrescriptionSave = (prescriptionData: CreatePrescriptionDto) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       prescription: true,
       prescriptionData: {
         ...prescriptionData,
-        updateHistoryId: null // Lo estableceremos después de crear la historia
-      }
+        updateHistoryId: null, // Lo estableceremos después de crear la historia
+      },
     }));
     setShowPrescriptionModal(false);
   };
 
   const handleMedicalLeaveSubmit = (data: MedicalLeaveData) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       medicalLeave: data.medicalLeave,
       // Solo añadimos los datos si medicalLeave es true
-      ...(data.medicalLeave ? {
-        medicalLeaveStartDate: data.medicalLeaveStartDate,
-        medicalLeaveEndDate: data.medicalLeaveEndDate,
-        medicalLeaveDays: data.medicalLeaveDays,
-        leaveDescription: data.leaveDescription
-      } : {
-        // Si no hay descanso médico, limpiamos los campos relacionados
-        medicalLeaveStartDate: undefined,
-        medicalLeaveEndDate: undefined,
-        medicalLeaveDays: undefined,
-        leaveDescription: undefined
-      })
+      ...(data.medicalLeave
+        ? {
+            medicalLeaveStartDate: data.medicalLeaveStartDate,
+            medicalLeaveEndDate: data.medicalLeaveEndDate,
+            medicalLeaveDays: data.medicalLeaveDays,
+            leaveDescription: data.leaveDescription,
+          }
+        : {
+            // Si no hay descanso médico, limpiamos los campos relacionados
+            medicalLeaveStartDate: undefined,
+            medicalLeaveEndDate: undefined,
+            medicalLeaveDays: undefined,
+            leaveDescription: undefined,
+          }),
     }));
     setShowMedicalLeaveModal(false);
   };
@@ -173,18 +190,18 @@ export function AddHistoryModal({
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      setSelectedImages(prev => [...prev, ...files]);
-      
+      setSelectedImages((prev) => [...prev, ...files]);
+
       // Crear previsualizaciones
-      const newPreviews = files.map(file => URL.createObjectURL(file));
-      setImagePreviews(prev => [...prev, ...newPreviews]);
+      const newPreviews = files.map((file) => URL.createObjectURL(file));
+      setImagePreviews((prev) => [...prev, ...newPreviews]);
     }
   };
 
   // Remover imagen
   const handleRemoveImage = (index: number) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
-    setImagePreviews(prev => {
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => {
       const newPreviews = prev.filter((_, i) => i !== index);
       // Limpiar URL de objeto
       URL.revokeObjectURL(prev[index]);
@@ -207,11 +224,11 @@ export function AddHistoryModal({
       medicalLeaveStartDate: undefined,
       medicalLeaveEndDate: undefined,
       medicalLeaveDays: undefined,
-      leaveDescription: undefined
+      leaveDescription: undefined,
     });
     setSelectedImages([]);
-    setImagePreviews(prev => {
-      prev.forEach(url => URL.revokeObjectURL(url));
+    setImagePreviews((prev) => {
+      prev.forEach((url) => URL.revokeObjectURL(url));
       return [];
     });
     setShowMedicalLeaveModal(false);
@@ -221,22 +238,22 @@ export function AddHistoryModal({
 
   // Agregar función para limpiar receta médica
   const handleRemovePrescription = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       prescription: false,
-      prescriptionData: undefined
+      prescriptionData: undefined,
     }));
   };
 
   // Agregar función para limpiar descanso médico
   const handleRemoveMedicalLeave = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       medicalLeave: false,
       medicalLeaveStartDate: undefined,
       medicalLeaveEndDate: undefined,
       medicalLeaveDays: undefined,
-      leaveDescription: undefined
+      leaveDescription: undefined,
     }));
   };
 
@@ -246,7 +263,9 @@ export function AddHistoryModal({
         <ScrollArea className="max-h-[calc(100vh-8rem)]">
           <DialogHeader>
             <div className="flex justify-between items-center">
-              <DialogTitle className="text-2xl font-semibold">Agregar Historia Médica</DialogTitle>
+              <DialogTitle className="text-2xl font-semibold">
+                Agregar Historia Médica
+              </DialogTitle>
               <DialogClose asChild>
                 <Button variant="ghost" size="icon">
                   <X className="h-4 w-4" />
@@ -259,13 +278,18 @@ export function AddHistoryModal({
               <CardContent className="p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="serviceId" className="flex items-center gap-2">
+                    <Label
+                      htmlFor="serviceId"
+                      className="flex items-center gap-2"
+                    >
                       <Stethoscope className="h-4 w-4 text-primary" />
                       Servicio
                     </Label>
                     <Select
                       value={formData.serviceId}
-                      onValueChange={(value) => setFormData((prev) => ({ ...prev, serviceId: value }))}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, serviceId: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Seleccione un servicio" />
@@ -280,13 +304,18 @@ export function AddHistoryModal({
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="staffId" className="flex items-center gap-2">
+                    <Label
+                      htmlFor="staffId"
+                      className="flex items-center gap-2"
+                    >
                       <User className="h-4 w-4 text-primary" />
                       Medico
                     </Label>
                     <Select
                       value={formData.staffId}
-                      onValueChange={(value) => setFormData((prev) => ({ ...prev, staffId: value }))}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, staffId: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Seleccione un médico" />
@@ -301,13 +330,18 @@ export function AddHistoryModal({
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="branchId" className="flex items-center gap-2">
+                    <Label
+                      htmlFor="branchId"
+                      className="flex items-center gap-2"
+                    >
                       <MapPin className="h-4 w-4 text-primary" />
                       Sucursal
                     </Label>
                     <Select
                       value={formData.branchId}
-                      onValueChange={(value) => setFormData((prev) => ({ ...prev, branchId: value }))}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, branchId: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Seleccione una sucursal" />
@@ -328,14 +362,22 @@ export function AddHistoryModal({
             <Card>
               <CardContent className="p-6 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="description" className="flex items-center gap-2">
+                  <Label
+                    htmlFor="description"
+                    className="flex items-center gap-2"
+                  >
                     <FileText className="h-4 w-4 text-primary" />
                     Descripción
                   </Label>
                   <Textarea
                     id="description"
                     value={formData.description}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
                     required
                     className="min-h-[100px]"
                     placeholder="Ingrese la descripción de la consulta o servicio..."
@@ -351,7 +393,13 @@ export function AddHistoryModal({
                   Evidencia Fotográfica
                 </Label>
                 <div className="mt-2">
-                  <input type="file" id="images" multiple onChange={handleAddImage} className="hidden" />
+                  <input
+                    type="file"
+                    id="images"
+                    multiple
+                    onChange={handleAddImage}
+                    className="hidden"
+                  />
                   <label
                     htmlFor="images"
                     className="inline-flex items-center justify-center px-4 py-2 border border-dashed rounded-md cursor-pointer hover:bg-muted transition-colors"
@@ -408,8 +456,8 @@ export function AddHistoryModal({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {formData.medicalLeave && (
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className="bg-green-50 text-green-700 hover:bg-green-100 transition-colors px-3 py-1"
                     >
                       Descanso Médico Agregado
@@ -422,7 +470,7 @@ export function AddHistoryModal({
                     </Badge>
                   )}
                   {formData.prescription && (
-                    <Badge 
+                    <Badge
                       variant="outline"
                       className="bg-green-50 text-green-700 hover:bg-green-100 transition-colors px-3 py-1"
                     >
@@ -440,10 +488,16 @@ export function AddHistoryModal({
             </Card>
 
             <DialogFooter>
-              <Button type="button" variant="secondary" onClick={() => setIsOpen(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setIsOpen(false)}
+              >
                 Cancelar
               </Button>
-              <Button type="submit">Guardar Historia</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Guardando..." : "Guardar Historia"}
+              </Button>
             </DialogFooter>
           </form>
         </ScrollArea>
@@ -460,7 +514,6 @@ export function AddHistoryModal({
           medicalLeaveDays: formData.medicalLeaveDays,
           leaveDescription: formData.leaveDescription,
         }}
-
       />
 
       <AddPrescriptionModal
@@ -474,5 +527,5 @@ export function AddHistoryModal({
         patientId={patientId ?? ""}
       />
     </Dialog>
-  )
+  );
 }
