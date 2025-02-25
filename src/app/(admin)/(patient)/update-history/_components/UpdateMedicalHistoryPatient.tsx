@@ -51,6 +51,7 @@ interface UpdateMedicalHistoryPatientProps {
   patient?: Patient;
   medicalHistoryId?: string;
   onPrescriptionView: (updateId: string) => void; // Nuevo prop
+  onHistoryUpdate: () => Promise<void>; // Nuevo prop
 }
 
 export function UpdateMedicalHistoryPatient({
@@ -62,15 +63,27 @@ export function UpdateMedicalHistoryPatient({
   patientId,
   medicalHistoryId,
   onPrescriptionView,
+  onHistoryUpdate,
 }: UpdateMedicalHistoryPatientProps) {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   // Simplificamos este manejador
-  const handleAddNewHistory = (_formData: CreateUpdateHistoryFormData) => {
+  const handleAddNewHistory = async (formData: CreateUpdateHistoryFormData) => {
     try {
+      // Aquí iría tu lógica de creación
+      console.log("🚀 ~ handleAddNewHistory agregada ex ~ formData:", formData);
+
+      // Cerrar el modal
       setIsHistoryModalOpen(false);
+
+      // Llamar a la función del padre para refrescar datos
+      await onHistoryUpdate();
+
+      // Opcional: Mostrar toast de éxito
+     
     } catch (error) {
       console.error("Error al crear historia:", error);
+     
     }
   };
 

@@ -39,7 +39,7 @@ export const useUpdateHistory = () => {
         if (!response || "error" in response) {
           throw new Error(response?.error || "No se encontró la historia");
         }
-        console.log("🚀 ~ queryFn: ~ response:", response);
+     
         return response;
       },
     });
@@ -104,6 +104,7 @@ export const useUpdateHistory = () => {
           return response;
         },
         onSuccess: (res) => {
+          
           queryClient.setQueryData<PrescriptionResponse[]>(["prescription"], (old) => {
             return old ? [...old, res.data] : [res.data];
           });
@@ -115,72 +116,8 @@ export const useUpdateHistory = () => {
         },
       });
 
-  //tipado solo para updates
-  /*     export type MeidicalHistoryImage = {
-      id: string;
-      url: string;
-  }
-  export type MedicalHistoryData = {
-      branch: string;
-      service: string;
-      staff: string;
-      images?: MeidicalHistoryImage[];
-  }
-  export type MedicalHistoryResponse = {
-      id: string;
-      patientId: string;
-      medicalHistory: Record<string, never>;
-      description: string;
-      isActive: boolean;
-      updates?: MedicalHistoryData[];
-  } */
-
-  // Nueva función para obtener toda la data
-
-  /*   🚀 ~ medicalHistory: {
-    id: '5d344610-1aa2-46fd-91c8-ef9f97ce89d7',
-    patientId: 'f399be91-d00f-496d-b97e-7a0294ce1f1d',
-    fullName: 'hola12',
-    medicalHistory: {
-      fumador: 'si dice que lo controla xd',
-      alergias: 'alergico a ...',
-      cardiacos: 'TA ENAMORADO',
-      antecedentes: 'AWEGASWFASWFAWEF',
-      neurologicos: 'MUCHO PIENSA EN ELLA',
-      cirugiasPrevias: 'Appendectomy 2018',
-      enfermedadesCronicas: 'Hypertension'
-    },
-    description: 'First patient consultation',
-    isActive: true,
-    createdAt: '2025-02-14 14:57:48',
-    updatedAt: '2025-02-18 12:08:21',
-    updates: [
-      {
-        id: '01c51058-4e4b-4e3b-af1c-b2933825d811',
-        service: 'consulta general',
-        staff: 'MIguel asdasda',
-        branch: 'cede 1',
-        images: [Array]
-      },
-      {
-        id: '28057476-efdd-4f5d-9bcf-d7d3278ba116',
-        service: 'consulta general',
-        staff: 'alx flores valdez',
-        branch: 'cede 1',
-        images: [Array]=images
-: 
-Array(2)
-0
-: 
-{id: 'ebf4006f-de65-4bc8-a3b5-ad7c7292abba', url: 'https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/fddee54d-e8a6-4ead-a066-78ed1c12b819.png'}
-1
-: 
-{id: 'd7c885c0-d43b-43f0-8dc5-9aebe7174c53', url: 'https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/2b121f69-1dc7-4d41-b824-f3afd92e7849.png'}
-l
-      }
-    ]
-  } */
-     const useDataPatientHistoryUpdatePrescription = (id: string) =>
+  // Query para obtener la historia médica y sus actualizaciones
+      const useDataPatientHistoryUpdatePrescription = (id: string) =>
       useQuery<[MedicalHistoryResponse, Patient, UpdateHistoryResponseImage[], PrescriptionResponse[]], Error>({
         queryKey: ["data-patient-history-update-prescription", id],
         queryFn: async () => {
@@ -213,8 +150,6 @@ l
                 }
     
                 if (updateHistoryResponse.prescription && updateHistoryResponse.prescriptionId) {
-                  console.log("🚀 ~ updates.map ~ prescriptionId:", updateHistoryResponse.prescriptionId)
-                  console.log("🚀 ~ updates.map ~ prescription:", updateHistoryResponse.prescription)
                   const prescriptionResponse = await getPrescriptionById(updateHistoryResponse.prescriptionId);
                   return { 
                     updateHistoryResponse, 
