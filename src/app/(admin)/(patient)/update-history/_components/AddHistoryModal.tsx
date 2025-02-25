@@ -93,6 +93,9 @@ export function AddHistoryModal({
   // Estado para manejar loading
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Estado separado para la receta médica
+  const [prescriptionData, setPrescriptionData] = useState<CreatePrescriptionDto | null>(null);
+
   // Separamos la lógica de creación en funciones independientes
 
   // Manejador principal del envío del formulario
@@ -103,24 +106,19 @@ export function AddHistoryModal({
     try {
       // 1. Primero crear la actualización de historia
       const updateHistoryResponse = await createUpdateHistory.mutateAsync({
-        data: {
-          ...formData,
-          prescription: Boolean(formData.prescriptionData),
-          prescriptionId: "", // Se actualizará después
-        },
+        data: formData, // Aquí solo va la data básica
         image: selectedImages.length > 0 ? selectedImages : null,
       });
 
       // 2. Si hay receta médica, crearla usando el ID de la historia
-      if (formData.prescriptionData && updateHistoryResponse.data.id) {
-        const prescriptionResponse =
-          await createPrescriptionMutation.mutateAsync({
-            ...formData.prescriptionData,
-            updateHistoryId: updateHistoryResponse.data.id,
-            patientId: formData.patientId,
-            branchId: formData.branchId,
-            staffId: formData.staffId,
-          });
+      if (formData.prescription && prescriptionData && updateHistoryResponse.data.id) {
+        const prescriptionResponse = await createPrescriptionMutation.mutateAsync({
+          ...prescriptionData,
+          updateHistoryId: updateHistoryResponse.data.id,
+          patientId: formData.patientId,
+          branchId: formData.branchId,
+          staffId: formData.staffId,
+        });
 
         if (prescriptionResponse) {
           // Actualizar el estado con el ID de la receta
@@ -141,24 +139,21 @@ export function AddHistoryModal({
 
       // Limpiar todo después de guardar exitosamente
       handleReset();
-      toast.success("Datos guardados exitosamente");
+      
     } catch (error) {
       console.error("Error en el proceso de creación:", error);
-      toast.error("Error al guardar los datos");
+ 
     } finally {
       setIsSubmitting(false);
     }
   };
 
   // Actualizamos el handlePrescriptionSave para manejar mejor el estado
-  const handlePrescriptionSave = (prescriptionData: CreatePrescriptionDto) => {
-    setFormData((prev) => ({
+  const handlePrescriptionSave = (data: CreatePrescriptionDto) => {
+    setPrescriptionData(data);
+    setFormData(prev => ({
       ...prev,
-      prescription: true,
-      prescriptionData: {
-        ...prescriptionData,
-        updateHistoryId: null, // Lo estableceremos después de crear la historia
-      },
+      prescription: true // Solo marcamos que existe una receta
     }));
     setShowPrescriptionModal(false);
   };
@@ -226,6 +221,7 @@ export function AddHistoryModal({
       medicalLeaveDays: undefined,
       leaveDescription: undefined,
     });
+    setPrescriptionData(null); // Limpiar datos de receta
     setSelectedImages([]);
     setImagePreviews((prev) => {
       prev.forEach((url) => URL.revokeObjectURL(url));
@@ -238,10 +234,10 @@ export function AddHistoryModal({
 
   // Agregar función para limpiar receta médica
   const handleRemovePrescription = () => {
-    setFormData((prev) => ({
+    setPrescriptionData(null);
+    setFormData(prev => ({
       ...prev,
-      prescription: false,
-      prescriptionData: undefined,
+      prescription: false
     }));
   };
 
@@ -519,7 +515,7 @@ export function AddHistoryModal({
       <AddPrescriptionModal
         isOpen={showPrescriptionModal}
         setIsOpen={setShowPrescriptionModal}
-        onSave={handlePrescriptionSave}
+        onSave={handlePrescriptionSave}// Esta función recibe los datos
         products={products}
         services={services}
         branchId={formData.branchId}

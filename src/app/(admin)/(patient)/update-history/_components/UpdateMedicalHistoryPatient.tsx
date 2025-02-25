@@ -66,7 +66,7 @@ export function UpdateMedicalHistoryPatient({
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   // Simplificamos este manejador
-  const handleAddNewHistory = async (formData: CreateUpdateHistoryFormData) => {
+  const handleAddNewHistory = (_formData: CreateUpdateHistoryFormData) => {
     try {
       setIsHistoryModalOpen(false);
     } catch (error) {

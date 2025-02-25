@@ -186,7 +186,7 @@ export async function createUpdateHistoryAction(
   try {
     const serverFormData = new FormData();
 
-    // Procesar los datos del paciente
+    // Procesar los datos del formulario
     Object.entries(formData.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         serverFormData.append(
@@ -194,26 +194,28 @@ export async function createUpdateHistoryAction(
           typeof value === "object" ? JSON.stringify(value) : String(value)
         );
       } else {
-        serverFormData.append(key, ""); // Asegurarse de que los campos vacíos se envíen como cadenas vacías
+        serverFormData.append(key, "");
       }
     });
 
-    // Procesar la imagen si existe
-    if (formData.image instanceof File) {
-      serverFormData.append("image", formData.image);
+    // Procesar múltiples imágenes
+    if (Array.isArray(formData.image)) {
+      formData.image.forEach((file, _index) => {
+        serverFormData.append(`images`, file); // Usar 'images' en lugar de 'image'
+      });
     }
 
     // Log para verificar los datos antes de enviarlos
-    console.log(
-      "Datos enviados al servidor:",
-      Object.fromEntries(serverFormData.entries())
-    );
+    const formDataEntries = Object.fromEntries(serverFormData.entries());
+    console.log("Datos enviados al servidor:", {
+      ...formDataEntries,
+      images: `${formData.image?.length ?? 0} archivos`, // Log más limpio para las imágenes
+    });
 
-    const [response, error] =
-      await http.multipartPost<UpdateHistoryResponseBase>(
-        "/update-history/create-with-images",
-        serverFormData
-      );
+    const [response, error] = await http.multipartPost<UpdateHistoryResponseBase>(
+      "/update-history/create-with-images",
+      serverFormData
+    );
 
     if (error) {
       return { error: error.message };
@@ -222,7 +224,7 @@ export async function createUpdateHistoryAction(
     return response;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };
-    return { error: "Error desconocido al crear el paciente" };
+    return { error: "Error desconocido al crear la actualización" };
   }
 }
 

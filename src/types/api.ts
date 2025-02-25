@@ -5992,9 +5992,9 @@ export interface components {
             ids: string[];
         };
         PrescriptionItemDto: {
-            id: string;
-            name: string;
-            quantity: number;
+            id?: string;
+            name?: string;
+            quantity?: number;
             description?: string;
         };
         CreatePrescriptionDto: {
@@ -6028,21 +6028,21 @@ export interface components {
              * @example [
              *       {
              *         "id": "123e4567-e89b-12d3-a456-426614174000",
-             *         "nombre": "Paracetamol",
-             *         "cantidad": "1",
-             *         "description": "recomendado para el paciente"
+             *         "name": "Paracetamol",
+             *         "quantity": 1,
+             *         "description": "Recomendado para el paciente"
              *       }
              *     ]
              */
             prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
             /**
-             * @description Detalle de medicamentos y dosificación
+             * @description Detalle de servicios y dosificación
              * @example [
              *       {
              *         "id": "123e4567-e89b-12d3-a456-426614174000",
-             *         "nombre": "consulta general",
-             *         "cantidad": "1",
-             *         "description": "recomendado para el paciente"
+             *         "name": "Consulta general",
+             *         "quantity": 1,
+             *         "description": "Recomendado para el paciente"
              *       }
              *     ]
              */
@@ -6059,9 +6059,9 @@ export interface components {
             purchaseOrderId?: string;
         };
         PrescriptionItemResponse: {
-            id: string;
-            name: string;
-            quantity: number;
+            id?: string;
+            name?: string;
+            quantity?: number;
             description?: string;
         };
         Prescription: {
@@ -6108,21 +6108,21 @@ export interface components {
              * @example [
              *       {
              *         "id": "123e4567-e89b-12d3-a456-426614174000",
-             *         "nombre": "Paracetamol",
-             *         "cantidad": "1",
-             *         "description": "recomendado para el paciente"
+             *         "name": "Paracetamol",
+             *         "quantity": 1,
+             *         "description": "Recomendado para el paciente"
              *       }
              *     ]
              */
             prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
             /**
-             * @description Detalle de medicamentos y dosificación
+             * @description Detalle de servicios y dosificación
              * @example [
              *       {
              *         "id": "123e4567-e89b-12d3-a456-426614174000",
-             *         "nombre": "consulta general",
-             *         "cantidad": "1",
-             *         "description": "recomendado para el paciente"
+             *         "name": "Consulta general",
+             *         "quantity": 1,
+             *         "description": "Recomendado para el paciente"
              *       }
              *     ]
              */
@@ -6186,7 +6186,11 @@ export interface components {
              *       "observaciones": "Seguimiento en 7 días"
              *     }
              */
-     
+            updateHistory?: Record<string, never>;
+            /**
+             * @description Descripción adicional
+             * @example Paciente presenta mejoría
+             */
             description?: string;
             /**
              * @description Indica si requiere descanso médico
@@ -15033,7 +15037,7 @@ export interface operations {
                      *       "tratamiento": "Reposo y medicamentos",
                      *       "observaciones": "Seguimiento en 7 días"
                      *     } */
-                    updateHistory: Record<string, never>;
+                    updateHistory?: Record<string, never>;
                     /** @example Paciente presenta mejoría */
                     description?: string;
                     /** @example false */
