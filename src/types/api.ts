@@ -2944,6 +2944,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/update-history/{id}/update-with-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar historia médica con imágenes */
+        patch: operations["UpdateHistoryController_updateWithImages"];
+        trace?: never;
+    };
     "/api/v1/update-history/{id}/with-images": {
         parameters: {
             query?: never;
@@ -2958,8 +2975,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Actualizar historia médica con imágenes */
-        patch: operations["UpdateHistoryController_updateWithImages"];
+        patch?: never;
         trace?: never;
     };
     "/api/v1/medical-history": {
@@ -15134,42 +15150,6 @@ export interface operations {
             };
         };
     };
-    UpdateHistoryController_findOneWithImages: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Historia médica encontrada con sus imágenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UpdateHistory"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     UpdateHistoryController_updateWithImages: {
         parameters: {
             query?: never;
@@ -15238,6 +15218,42 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateHistoryController_findOneWithImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Historia médica encontrada con sus imágenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateHistory"];
+                };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
