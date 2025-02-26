@@ -212,10 +212,7 @@ export function UpdateMedicalHistoryPatient({
           staffId: selectedUpdate.staffId,
           branchId: selectedUpdate.branchId,
           medicalHistoryId: medicalHistoryId ?? "",
-          updateHistory: { randomId: valRandom } as unknown as Record<
-          string,
-          never
-        >,
+          updateHistory: { randomId: valRandom },
         },
         newImages: newImages, // Usamos newImages directamente
       };
