@@ -7,6 +7,7 @@ import {
   getPrescriptionById,
   createPrescription,
   createUpdateHistoryAction,
+  updateUpdateHistoryAction,
 } from "../_actions/updateHistory.actions";
 //import { toast } from "sonner";
 import {
@@ -18,7 +19,8 @@ import {
   UpdateMedicalHistoryDto,
   UpdateHistoryResponseImage,
   CreatePrescriptionDto,
-  CreateUpdateHistoryFormData
+  CreateUpdateHistoryFormData,
+  UpdateUpdateHistoryFormData,
 } from "../_interfaces/updateHistory.interface";
 import { useBranches } from "../../../branches/_hooks/useBranches"; // Importa la función useBranches
 import { useServices } from "../../../services/_hooks/useServices"; // Importa la función useBranches
@@ -39,7 +41,7 @@ export const useUpdateHistory = () => {
         if (!response || "error" in response) {
           throw new Error(response?.error || "No se encontró la historia");
         }
-     
+
         return response;
       },
     });
@@ -89,106 +91,132 @@ export const useUpdateHistory = () => {
       },
     });
 
-      // Mutación para crear una receta medica
-      const createPrescriptionMutation = useMutation<
-        BaseApiResponse<PrescriptionResponse>,
-        Error,
-        CreatePrescriptionDto
-      >({
-        mutationFn: async (data) => {
-          const response = await createPrescription(data);
-          if ("error" in response) {
-            throw new Error(response.error);
-          }
-          // Retornamos directamente la respuesta ya que viene en el formato correcto
-          return response;
-        },
-        onSuccess: (res) => {
-          
-          queryClient.setQueryData<PrescriptionResponse[]>(["prescription"], (old) => {
-            return old ? [...old, res.data] : [res.data];
-          });
-          
-          toast.success(res.message);
-        },
-        onError: (error) => {
-          toast.error(error.message);
-        },
-      });
+  // Mutación para crear una receta medica
+  const createPrescriptionMutation = useMutation<
+    BaseApiResponse<PrescriptionResponse>,
+    Error,
+    CreatePrescriptionDto
+  >({
+    mutationFn: async (data) => {
+      const response = await createPrescription(data);
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      // Retornamos directamente la respuesta ya que viene en el formato correcto
+      return response;
+    },
+    onSuccess: (res) => {
+      queryClient.setQueryData<PrescriptionResponse[]>(
+        ["prescription"],
+        (old) => {
+          return old ? [...old, res.data] : [res.data];
+        }
+      );
+
+      toast.success(res.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   // Query para obtener la historia médica y sus actualizaciones
-      const useDataPatientHistoryUpdatePrescription = (id: string) =>
-      useQuery<[MedicalHistoryResponse, Patient, UpdateHistoryResponseImage[], PrescriptionResponse[]], Error>({
-        queryKey: ["data-patient-history-update-prescription", id],
-        queryFn: async () => {
-          // 1. Obtener historia médica
-          const medicalHistoryResponse = await getMedicalHistoryById(id);
-          if (!medicalHistoryResponse || "error" in medicalHistoryResponse) {
-            throw new Error(medicalHistoryResponse?.error || "No se encontró la historia");
-          }
-    
-          // 2. Obtener paciente
-          const patientResponse = await getPatientById(medicalHistoryResponse.patientId);
-          if (!patientResponse || "error" in patientResponse) {
-            throw new Error(patientResponse?.error || "No se encontró el paciente");
-          }
-    
-          // 3. Procesar updates si existen
-          const updates = medicalHistoryResponse.updates ?? [];
-          
-          // 4. Obtener actualizaciones y recetas
-          const updateHistoryResponses = await Promise.all(
-            updates.map(async (update) => {
-              try {
-                const updateHistoryResponse = await getUpdateHistoryById(update.id);
-                
-                if (!updateHistoryResponse || "error" in updateHistoryResponse) {
-                  return { 
-                    updateHistoryResponse: null, 
-                    prescriptionResponse: null 
-                  };
-                }
-    
-                if (updateHistoryResponse.prescription && updateHistoryResponse.prescriptionId) {
-                  const prescriptionResponse = await getPrescriptionById(updateHistoryResponse.prescriptionId);
-                  return { 
-                    updateHistoryResponse, 
-                    prescriptionResponse: prescriptionResponse && !("error" in prescriptionResponse) ? prescriptionResponse : null 
-                  };
-                }
-    
-                return { 
-                  updateHistoryResponse, 
-                  prescriptionResponse: null 
-                };
-              } catch (error) {
-                console.error("Error al procesar update:", error);
-                return { 
-                  updateHistoryResponse: null, 
-                  prescriptionResponse: null 
+  const useDataPatientHistoryUpdatePrescription = (id: string) =>
+    useQuery<
+      [
+        MedicalHistoryResponse,
+        Patient,
+        UpdateHistoryResponseImage[],
+        PrescriptionResponse[]
+      ],
+      Error
+    >({
+      queryKey: ["data-patient-history-update-prescription", id],
+      queryFn: async () => {
+        // 1. Obtener historia médica
+        const medicalHistoryResponse = await getMedicalHistoryById(id);
+        if (!medicalHistoryResponse || "error" in medicalHistoryResponse) {
+          throw new Error(
+            medicalHistoryResponse?.error || "No se encontró la historia"
+          );
+        }
+
+        // 2. Obtener paciente
+        const patientResponse = await getPatientById(
+          medicalHistoryResponse.patientId
+        );
+        if (!patientResponse || "error" in patientResponse) {
+          throw new Error(
+            patientResponse?.error || "No se encontró el paciente"
+          );
+        }
+
+        // 3. Procesar updates si existen
+        const updates = medicalHistoryResponse.updates ?? [];
+
+        // 4. Obtener actualizaciones y recetas
+        const updateHistoryResponses = await Promise.all(
+          updates.map(async (update) => {
+            try {
+              const updateHistoryResponse = await getUpdateHistoryById(
+                update.id
+              );
+
+              if (!updateHistoryResponse || "error" in updateHistoryResponse) {
+                return {
+                  updateHistoryResponse: null,
+                  prescriptionResponse: null,
                 };
               }
-            })
-          );
-    
-          // 5. Filtrar resultados
-          const updateHistories = updateHistoryResponses
-            .map(res => res.updateHistoryResponse)
-            .filter((res): res is UpdateHistoryResponseImage => res !== null);
-    
-          const prescriptions = updateHistoryResponses
-            .map(res => res.prescriptionResponse)
-            .filter((res): res is PrescriptionResponse => res !== null);
-    
-          // 6. Retornar datos
-          return [
-            medicalHistoryResponse,
-            patientResponse,
-            updateHistories,
-            prescriptions
-          ];
-        },
-      });
+
+              if (
+                updateHistoryResponse.prescription &&
+                updateHistoryResponse.prescriptionId
+              ) {
+                const prescriptionResponse = await getPrescriptionById(
+                  updateHistoryResponse.prescriptionId
+                );
+                return {
+                  updateHistoryResponse,
+                  prescriptionResponse:
+                    prescriptionResponse && !("error" in prescriptionResponse)
+                      ? prescriptionResponse
+                      : null,
+                };
+              }
+
+              return {
+                updateHistoryResponse,
+                prescriptionResponse: null,
+              };
+            } catch (error) {
+              console.error("Error al procesar update:", error);
+              return {
+                updateHistoryResponse: null,
+                prescriptionResponse: null,
+              };
+            }
+          })
+        );
+
+        // 5. Filtrar resultados
+        const updateHistories = updateHistoryResponses
+          .map((res) => res.updateHistoryResponse)
+          .filter((res): res is UpdateHistoryResponseImage => res !== null);
+
+        const prescriptions = updateHistoryResponses
+          .map((res) => res.prescriptionResponse)
+          .filter((res): res is PrescriptionResponse => res !== null);
+
+        // 6. Retornar datos
+        return [
+          medicalHistoryResponse,
+          patientResponse,
+          updateHistories,
+          prescriptions,
+        ];
+      },
+    });
   // Mutación para actualizar historia médica
   interface UpdateMedicalHistory {
     id: string;
@@ -207,11 +235,11 @@ export const useUpdateHistory = () => {
       }
       return response;
     },
-    onSuccess: async(_, variables) => {
+    onSuccess: async (_, variables) => {
       // Actualizar la caché de la consulta específica
       await queryClient.refetchQueries({
         queryKey: ["data-patient-history-update-prescription", variables.id],
-      })
+      });
 
       toast.success("Historia médica actualizada exitosamente");
     },
@@ -260,48 +288,76 @@ export const useUpdateHistory = () => {
     };
   };
 
-    // Nueva función personalizada para obtener el personal
-    const useProductData = () => {
-      const { productsQuery } = useProducts();
-      return {
-        data: productsQuery.data,
-        error: productsQuery.error,
-        isLoading: productsQuery.isLoading,
-      };
+  // Nueva función personalizada para obtener el personal
+  const useProductData = () => {
+    const { productsQuery } = useProducts();
+    return {
+      data: productsQuery.data,
+      error: productsQuery.error,
+      isLoading: productsQuery.isLoading,
     };
+  };
 
-    // Mutación para crear actualizacion de historia medica
-      const createUpdateHistory = useMutation<
-      BaseApiResponse<UpdateHistory>,
-      Error,
-      CreateUpdateHistoryFormData
-    >({
-      mutationFn: async (formData) => {
-        // Ver los datos antes de pasarlos a la función createPatient
-        //console.log("Datos pasados a la mutación:", formData);
-        const response = await createUpdateHistoryAction(formData);
-        if ("error" in response) {
-          throw new Error(response.error);
-        }
-        return response;
-      },
-      onSuccess: (res) => {
-        queryClient.setQueryData<UpdateHistory[]>(["updateHistory"], (old) => {
-          return old ? [...old, res.data] : [res.data];
-        });
-  
-        toast.success("Actualización creada exitosamente");
-  
-        
-        // Llamar a la función de historia médica para actualizarla
-        //void queryClient.invalidateQueries({ queryKey: ["medical-histories"] });
-   
-      },
-      onError: (error) => {
-        toast.error(error.message || "Error al crear la actualización");
-      },
-    });
+  // Mutación para crear actualizacion de historia medica
+  const createUpdateHistory = useMutation<
+    BaseApiResponse<UpdateHistory>,
+    Error,
+    CreateUpdateHistoryFormData
+  >({
+    mutationFn: async (formData) => {
+      // Ver los datos antes de pasarlos a la función createPatient
+      //console.log("Datos pasados a la mutación:", formData);
+      const response = await createUpdateHistoryAction(formData);
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      return response;
+    },
+    onSuccess: (res) => {
+      queryClient.setQueryData<UpdateHistory[]>(["updateHistory"], (old) => {
+        return old ? [...old, res.data] : [res.data];
+      });
 
+      toast.success("Actualización creada exitosamente");
+
+      // Llamar a la función de historia médica para actualizarla
+      //void queryClient.invalidateQueries({ queryKey: ["medical-histories"] });
+    },
+    onError: (error) => {
+      toast.error(error.message || "Error al crear la actualización");
+    },
+  });
+
+  
+  // // Mutación para actualizar actualizacion de historia medica
+
+  const updateUpdateHistoryMutation = useMutation<
+    BaseApiResponse<UpdateHistory>,
+    Error,
+    { id: string; formData: UpdateUpdateHistoryFormData }
+  >({
+    mutationFn: async ({ id, formData }) => {
+      console.log("🚀 ~ mutationFn use: ~ formData:", formData)
+      console.log("🚀 ~ mutationFn:use ~ id:", id)
+      const response = await updateUpdateHistoryAction(id, formData);
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      return response;
+    },
+    onSuccess: (res) => {
+      // Actualizar la caché
+      queryClient.setQueryData<UpdateHistory[]>(["updateHistory"], (old) => {
+        if (!old) return [res.data];
+        return old.map((item) => (item.id === res.data.id ? res.data : item));
+      });
+
+      toast.success("Imágenes actualizadas exitosamente");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Error al actualizar las imágenes");
+    },
+  });
   return {
     // Queries
     usePatientById, //obtener paciente por id
@@ -319,6 +375,7 @@ export const useUpdateHistory = () => {
 
     // Mutaciones create
     createPrescriptionMutation,
-    createUpdateHistory
+    createUpdateHistory,
+    updateUpdateHistoryMutation,
   };
 };
