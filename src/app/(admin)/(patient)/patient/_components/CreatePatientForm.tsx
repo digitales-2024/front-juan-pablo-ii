@@ -106,7 +106,7 @@ export function CreatePatientForm({
           <div className="relative">
             {/* se debe de enviar un file de imagen */}
             <Avatar className="w-32 h-32">
-              <AvatarImage src={preview ?? ""} />
+              <AvatarImage src={preview ?? ""} className="object-cover" />
               <AvatarFallback>
                 <User className="w-16 h-16" />
               </AvatarFallback>

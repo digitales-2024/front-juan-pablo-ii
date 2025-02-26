@@ -30,10 +30,10 @@ import {
   Stethoscope,
   Clock,
   FileText,
+  ClipboardPenLine,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AddPrescriptionModalProps {
@@ -145,20 +145,20 @@ export function AddPrescriptionModal({
           <DialogHeader>
             <div className="flex justify-between items-center">
               <DialogTitle className="text-2xl font-semibold">
-                Receta Médica
+                Nota Médica
               </DialogTitle>
             </div>
             {/* Switch control */}
             <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg mt-4">
               <div className="flex items-center gap-3">
-                <AlertTriangle
+                <ClipboardPenLine
                   className={`h-5 w-5 ${
                     isPrescriptionActive
                       ? "text-primary"
                       : "text-muted-foreground"
                   }`}
                 />
-                <span className="font-medium">Receta Médica</span>
+                <span className="font-medium">Nota Médica</span>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
@@ -196,107 +196,6 @@ export function AddPrescriptionModal({
                     className="min-h-[100px]"
                   />
                 </div>
-
-                {/* Sección de Medicamentos */}
-                <Card>
-                  <CardContent className="p-4 space-y-4">
-                    <h3 className="font-semibold">Medicamentos</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                      <Select
-                        value={newMedicament.productId}
-                        onValueChange={(value) =>
-                          setNewMedicament((prev) => ({
-                            ...prev,
-                            productId: value,
-                          }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccionar medicamento" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {products.map((product) => (
-                            <SelectItem key={product.id} value={product.id}>
-                              {product.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="number"
-                        placeholder="Cantidad"
-                        value={newMedicament.quantity}
-                        onChange={(e) =>
-                          setNewMedicament((prev) => ({
-                            ...prev,
-                            quantity: parseInt(e.target.value),
-                          }))
-                        }
-                        min={1}
-                      />
-                      <Input
-                        placeholder="Descripción"
-                        value={newMedicament.description}
-                        onChange={(e) =>
-                          setNewMedicament((prev) => ({
-                            ...prev,
-                            description: e.target.value,
-                          }))
-                        }
-                      />
-                      <Button
-                        type="button"
-                        onClick={handleAddMedicament}
-                        disabled={!newMedicament.productId}
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-
-                    {/* Lista de medicamentos agregados */}
-                    <div className="space-y-2">
-                      {formData.prescriptionMedicaments?.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center p-3 bg-muted/50 rounded-lg border"
-                        >
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <Package className="h-4 w-4 text-primary" />
-                              <p className="font-medium">{item.name}</p>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Clock className="h-3 w-3" />
-                              <p>Cantidad: {item.quantity}</p>
-                            </div>
-                            {item.description && (
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <FileText className="h-3 w-3" />
-                                <p>{item.description}</p>
-                              </div>
-                            )}
-                          </div>
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => {
-                              setFormData((prev) => ({
-                                ...prev,
-                                prescriptionMedicaments:
-                                  prev.prescriptionMedicaments?.filter(
-                                    (_, i) => i !== index
-                                  ),
-                              }));
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
                 {/* Sección de Servicios */}
                 <Card>
                   <CardContent className="p-4 space-y-4">
@@ -396,6 +295,106 @@ export function AddPrescriptionModal({
                     </div>
                   </CardContent>
                 </Card>
+                {/* Sección de Medicamentos */}
+                <Card>
+                  <CardContent className="p-4 space-y-4">
+                    <h3 className="font-semibold">Medicamentos</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                      <Select
+                        value={newMedicament.productId}
+                        onValueChange={(value) =>
+                          setNewMedicament((prev) => ({
+                            ...prev,
+                            productId: value,
+                          }))
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar medicamento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {products.map((product) => (
+                            <SelectItem key={product.id} value={product.id}>
+                              {product.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="number"
+                        placeholder="Cantidad"
+                        value={newMedicament.quantity}
+                        onChange={(e) =>
+                          setNewMedicament((prev) => ({
+                            ...prev,
+                            quantity: parseInt(e.target.value),
+                          }))
+                        }
+                        min={1}
+                      />
+                      <Input
+                        placeholder="Descripción"
+                        value={newMedicament.description}
+                        onChange={(e) =>
+                          setNewMedicament((prev) => ({
+                            ...prev,
+                            description: e.target.value,
+                          }))
+                        }
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleAddMedicament}
+                        disabled={!newMedicament.productId}
+                      >
+                        Agregar
+                      </Button>
+                    </div>
+
+                    {/* Lista de medicamentos agregados */}
+                    <div className="space-y-2">
+                      {formData.prescriptionMedicaments?.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center p-3 bg-muted/50 rounded-lg border"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Package className="h-4 w-4 text-primary" />
+                              <p className="font-medium">{item.name}</p>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Clock className="h-3 w-3" />
+                              <p>Cantidad: {item.quantity}</p>
+                            </div>
+                            {item.description && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <FileText className="h-3 w-3" />
+                                <p>{item.description}</p>
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                prescriptionMedicaments:
+                                  prev.prescriptionMedicaments?.filter(
+                                    (_, i) => i !== index
+                                  ),
+                              }));
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>{" "}
+                {/* //fin */}
               </div>
             )}
 
