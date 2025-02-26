@@ -90,6 +90,25 @@ export default function CalendarProvider({
   }, [safeFilters]);
 
   useEffect(() => {
+    const handleCacheUpdate = () => {
+      const newEvents = queryClient.getQueryData<CalendarEvent[]>(['calendar-turns', safeFilters]) || [];
+      setFilteredEvents(newEvents);
+      setEvents(newEvents);
+    };
+
+    // Escuchar cambios en la caché específica
+    const unsubscribe = queryClient.getQueryCache().subscribe(
+      event => {
+        if (event?.query.queryKey[0] === 'calendar-turns') {
+          handleCacheUpdate();
+        }
+      }
+    );
+
+    return () => unsubscribe();
+  }, [queryClient, safeFilters, setEvents]);
+
+  useEffect(() => {
     console.log('🔄 [Provider] Actualizando eventos principales', turnos?.length);
     if (!turnos) return;
 
@@ -99,9 +118,17 @@ export default function CalendarProvider({
       end: new Date(event.end)
     }));
 
+    setFilteredEvents(parsedEvents);
     setEvents(parsedEvents);
+
+    // Actualizar la caché con los nuevos eventos
     queryClient.setQueryData(['calendar-turns', safeFilters], parsedEvents);
-    queryClient.invalidateQueries({ queryKey: ['calendar-turns'], exact: false });
+
+    // Invalidar todas las queries relacionadas
+    queryClient.invalidateQueries({
+      queryKey: ['calendar-turns'],
+      exact: false
+    });
   }, [turnos]);
 
   useEffect(() => {
@@ -123,23 +150,9 @@ export default function CalendarProvider({
   }, [safeFilters, filteredEvents]);
 
   useEffect(() => {
-    const handleCacheUpdate = () => {
-      const allEvents = queryClient.getQueryData<CalendarEvent[]>(['calendar-turns', safeFilters]) || [];
-      setFilteredEvents(allEvents);
-      setEvents(allEvents);
-    };
-
-    // Escuchar cambios en la caché específica
-    const unsubscribe = queryClient.getQueryCache().subscribe(
-      event => {
-        if (event?.query.queryKey[0] === 'calendar-turns') {
-          handleCacheUpdate();
-        }
-      }
-    );
-
-    return () => unsubscribe();
-  }, [queryClient, safeFilters, setEvents]);
+    // Almacenar los filtros actuales
+    queryClient.setQueryData(['calendar-filters'], safeFilters);
+  }, [safeFilters]);
 
   console.log('🔧 [Provider] Tipo de setEvents:', typeof setEvents);
   console.log('🔍 Turnos recibidos:', {

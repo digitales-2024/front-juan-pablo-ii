@@ -127,6 +127,7 @@ export const useEvents = (filters?: EventFilterParams) => {
       toast.success(res.message);
     },
     onError: (error) => {
+
       void queryClient.invalidateQueries({ queryKey: EVENT_QUERY_KEY });
       toast.error(error.message);
     },

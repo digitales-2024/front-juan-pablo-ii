@@ -17,7 +17,6 @@ import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { EventFilterParams } from "../../../../_actions/event.actions";
-import { getEventQueryKey } from "../../../../_hooks/useEventQueryKey";
 import { format, endOfMonth } from "date-fns";
 
 export interface EventFiltersProps {
@@ -82,7 +81,6 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
   };
 
   // Eliminar el filtro de sucursales y usar todas las opciones
-  const filteredBranchOptions = branchOptions;
 
   // Patrón reusable para manejar opciones vacías
   const renderSelectContent = (options: any[], resourceName: string, createPath: string) => {

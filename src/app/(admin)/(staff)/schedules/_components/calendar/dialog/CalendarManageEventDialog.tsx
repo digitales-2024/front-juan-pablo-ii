@@ -11,14 +11,15 @@ import { useCalendarContext } from "../CalendarContext"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { User, MapPin, CalendarDays, Clock, Pencil, Trash, Loader2, X } from "lucide-react"
+import { User, MapPin, CalendarDays, Clock, Pencil, Trash, Loader2, X, Palette } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { useEvents } from "../../../_hooks/useEvents"
+import { EventFilterParams, useEvents } from "../../../_hooks/useEvents"
 import { Input } from "@/components/ui/input"
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff"
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches"
 import { useQueryClient } from "@tanstack/react-query"
+import { CalendarEvent } from "../../../_types/CalendarTypes"
 
 const formSchema = z
   .object({
@@ -91,11 +92,19 @@ export default function CalendarManageEventDialog() {
       { ids: [selectedEvent.id] },
       {
         onSuccess: () => {
+          queryClient.setQueryData<CalendarEvent[]>(['calendar-turns'], (oldEvents) =>
+            oldEvents?.filter(event => event.id !== selectedEvent.id) || []
+          );
+
           queryClient.invalidateQueries({
             queryKey: ['calendar-turns'],
             exact: false,
-            refetchType: 'all'
+            predicate: (query) => {
+              return Array.isArray(query.queryKey) &&
+                query.queryKey[0] === 'calendar-turns';
+            }
           });
+
           handleClose()
         },
         onError: (error) => {
@@ -276,6 +285,26 @@ export default function CalendarManageEventDialog() {
                   <p className="text-sm text-red-500">{form.formState.errors.end.message}</p>
                 )}
               </div>
+              {isEditing && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Palette className="h-4 w-4" />
+                    Color
+                  </Label>
+                  <div className="p-4 bg-accent rounded-lg">
+                    <select
+                      {...form.register("color")}
+                      className="w-full bg-transparent font-medium"
+                    >
+                      <option value="blue">Azul</option>
+                      <option value="red">Rojo</option>
+                      <option value="green">Verde</option>
+                      <option value="yellow">Amarillo</option>
+                      <option value="purple">Morado</option>
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
