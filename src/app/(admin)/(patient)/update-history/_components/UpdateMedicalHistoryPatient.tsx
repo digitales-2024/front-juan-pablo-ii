@@ -18,6 +18,11 @@ import {
   ChevronDown,
   ChevronUp,
   Eye,
+  X,
+  CalendarRange,
+  CalendarCheck,
+  Clock,
+  BedDouble,
 } from "lucide-react";
 import {
   Carousel,
@@ -35,8 +40,11 @@ import {
   Service,
   Staff,
   UpdateHistoryResponseImage,
+  UpdateUpdateHistoryFormData,
 } from "../_interfaces/updateHistory.interface";
 import { AddHistoryModal } from "./AddHistoryModal";
+import { useUpdateHistory } from "../_hook/useUpdateHistory";
+import { v4 as uuidv4 } from "uuid";
 
 /* import { PrescriptionModal } from "./PrescriptionModal"; */
 
@@ -67,6 +75,23 @@ export function UpdateMedicalHistoryPatient({
 }: UpdateMedicalHistoryPatientProps) {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
+  // Agregar estos estados
+  /*  export interface UpdateUpdateHistoryFormData {
+      data: UpdateUpdateHistoryDto;
+      image?: File[] | null;
+    } */
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [selectedUpdateForImages, setSelectedUpdateForImages] = useState<
+    string | null
+  >(null);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [imagesPreviews, setImagesPreviews] = useState<string[]>([]);
+
+  // Agregar nuevo estado para el modal de descanso médico
+  const [showMedicalLeaveModal, setShowMedicalLeaveModal] = useState(false);
+  const [selectedMedicalLeave, setSelectedMedicalLeave] =
+    useState<UpdateHistoryResponseImage | null>(null);
+
   // Simplificamos este manejador
   const handleAddNewHistory = async (formData: CreateUpdateHistoryFormData) => {
     try {
@@ -80,10 +105,8 @@ export function UpdateMedicalHistoryPatient({
       await onHistoryUpdate();
 
       // Opcional: Mostrar toast de éxito
-     
     } catch (error) {
       console.error("Error al crear historia:", error);
-     
     }
   };
 
@@ -108,8 +131,12 @@ export function UpdateMedicalHistoryPatient({
   // Aseguramos que el primer elemento esté expandido al inicio
   const [expandedService, setExpandedService] = useState<string | null>(() => {
     if (updateHistories.length > 0) {
-      const reversedHistories = [...updateHistories].reverse();
-      return reversedHistories[0].id;
+      // Ordenar de la misma manera que en el render
+      const sortedHistories = [...updateHistories].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      return sortedHistories[0].id;
     }
     return null;
   });
@@ -133,6 +160,89 @@ export function UpdateMedicalHistoryPatient({
     if (update.prescription && update.prescriptionId) {
       onPrescriptionView(update.id);
     }
+  };
+
+  // Agregar estas funciones
+  /* export interface UpdateUpdateHistoryFormData {
+      data: UpdateUpdateHistoryDto;
+      image?: File[] | null;
+    } */
+  const handleAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setNewImages((prev) => [...prev, ...files]);
+
+      // Crear previsualizaciones
+      const newPreviews = files.map((file) => URL.createObjectURL(file));
+      setImagesPreviews((prev) => [...prev, ...newPreviews]);
+    }
+  };
+
+  const handleRemoveNewImage = (index: number) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
+    setImagesPreviews((prev) => {
+      const newPreviews = prev.filter((_, i) => i !== index);
+      URL.revokeObjectURL(prev[index]);
+      return newPreviews;
+    });
+  };
+
+  const { updateUpdateHistoryMutation } = useUpdateHistory();
+
+  const handleSaveImages = async () => {
+    if (!selectedUpdateForImages || newImages.length === 0) return;
+
+    // Encontrar el objeto de update usando el ID
+    const selectedUpdate = updateHistories.find(
+      (update) => update.id === selectedUpdateForImages
+    );
+
+    if (!selectedUpdate) return;
+
+    try {
+      // Generar ID aleatorio
+      const valRandom = uuidv4();
+
+      // Crear el objeto de datos según la interfaz que espera
+      const formDataToSend: UpdateUpdateHistoryFormData = {
+        data: {
+          // Aquí van todos los datos necesarios
+          patientId: patientId ?? "",
+          serviceId: selectedUpdate.serviceId,
+          staffId: selectedUpdate.staffId,
+          branchId: selectedUpdate.branchId,
+          medicalHistoryId: medicalHistoryId ?? "",
+          updateHistory: { randomId: valRandom } as unknown as Record<
+          string,
+          never
+        >,
+        },
+        newImages: newImages, // Usamos newImages directamente
+      };
+
+      // Llamar a la mutación con los datos estructurados
+      await updateUpdateHistoryMutation.mutateAsync({
+        id: selectedUpdateForImages,
+        formData: formDataToSend,
+      });
+
+      // Limpiar estados
+      setNewImages([]);
+      setImagesPreviews([]);
+      setIsImageModalOpen(false);
+      setSelectedUpdateForImages(null);
+
+      // Refrescar datos
+      await onHistoryUpdate();
+    } catch (error) {
+      console.error("Error al guardar imágenes:", error);
+    }
+  };
+
+  // Agregar función para manejar la visualización del descanso médico
+  const handleShowMedicalLeave = (update: UpdateHistoryResponseImage) => {
+    setSelectedMedicalLeave(update);
+    setShowMedicalLeaveModal(true);
   };
 
   return (
@@ -166,9 +276,12 @@ export function UpdateMedicalHistoryPatient({
         />
 
         <CardContent className="p-4 md:p-6">
-          {updateHistories
-            .slice()
-            .reverse()
+          {[...updateHistories]
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )
             .map((update) => (
               <Card
                 key={update.id}
@@ -273,8 +386,8 @@ export function UpdateMedicalHistoryPatient({
                     )}
 
                     {/* Botón para ver receta */}
-                    {update.prescription && (
-                      <div className="mt-4">
+                    <div className="flex flex-wrap gap-2">
+                      {update.prescription && (
                         <Button
                           className="w-full md:w-auto"
                           onClick={() => handleShowPrescription(update)}
@@ -282,36 +395,31 @@ export function UpdateMedicalHistoryPatient({
                           <FileText className="w-4 h-4 mr-2" />
                           Ver Receta
                         </Button>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Licencia Médica */}
-                    {update.medicalLeave && (
-                      <div className="mt-6">
-                        <h4 className="font-semibold mb-4">Licencia Médica</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <strong>Fecha Inicio:</strong>{" "}
-                            {update.medicalLeaveStartDate}
-                          </div>
-                          <div>
-                            <strong>Fecha Fin:</strong>{" "}
-                            {update.medicalLeaveEndDate}
-                          </div>
-                          <div>
-                            <strong>Días:</strong> {update.medicalLeaveDays}
-                          </div>
-                          {update.leaveDescription && (
-                            <div className="col-span-2">
-                              <strong>Descripción:</strong>
-                              <p className="mt-2 p-3 bg-gray-50 rounded">
-                                {update.leaveDescription}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
+                      {update.medicalLeave && (
+                        <Button
+                          className="w-full md:w-auto"
+                          variant="outline"
+                          onClick={() => handleShowMedicalLeave(update)}
+                        >
+                          <BedDouble className="w-4 h-4 mr-2" />
+                          Ver Descanso Médico
+                        </Button>
+                      )}
+
+                      <Button
+                        className="w-full md:w-auto"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedUpdateForImages(update.id);
+                          setIsImageModalOpen(true);
+                        }}
+                      >
+                        <ImageIcon className="w-4 h-4 mr-2" />
+                        Agregar Imágenes
+                      </Button>
+                    </div>
                   </CardContent>
                 )}
               </Card>
@@ -333,6 +441,158 @@ export function UpdateMedicalHistoryPatient({
                 alt="Vista detallada"
                 className="w-full object-contain max-h-[70vh] rounded-lg"
               />
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Agregar el modal de imágenes */}
+        <Dialog open={isImageModalOpen} onOpenChange={setIsImageModalOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Agregar Imágenes</DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-center">
+                <input
+                  type="file"
+                  id="newImages"
+                  multiple
+                  accept="image/*"
+                  onChange={handleAddImages}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="newImages"
+                  className="inline-flex items-center justify-center px-4 py-2 border border-dashed rounded-md cursor-pointer hover:bg-muted transition-colors"
+                >
+                  <ImageIcon className="w-5 h-5 mr-2" />
+                  <span>Seleccionar Imágenes</span>
+                </label>
+              </div>
+
+              {imagesPreviews.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {imagesPreviews.map((preview, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full aspect-square object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveNewImage(index)}
+                        className="absolute -top-2 -right-2 p-1 bg-destructive rounded-full text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsImageModalOpen(false);
+                    setNewImages([]);
+                    setImagesPreviews([]);
+                    setSelectedUpdateForImages(null);
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleSaveImages}
+                  disabled={newImages.length === 0}
+                >
+                  Guardar Imágenes
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Descanso Médico */}
+        <Dialog
+          open={showMedicalLeaveModal}
+          onOpenChange={setShowMedicalLeaveModal}
+        >
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <BedDouble className="w-5 h-5 text-primary" />
+                Descanso Médico
+              </DialogTitle>
+            </DialogHeader>
+
+            {selectedMedicalLeave && selectedMedicalLeave.medicalLeave && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex items-start gap-3">
+                    <CalendarCheck className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                    <div>
+                      <p className="font-medium text-sm text-muted-foreground">
+                        Fecha de Inicio
+                      </p>
+                      <p className="text-base">
+                        {formatDate(
+                          selectedMedicalLeave.medicalLeaveStartDate || ""
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <CalendarRange className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                    <div>
+                      <p className="font-medium text-sm text-muted-foreground">
+                        Fecha de Fin
+                      </p>
+                      <p className="text-base">
+                        {formatDate(
+                          selectedMedicalLeave.medicalLeaveEndDate || ""
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                    <div>
+                      <p className="font-medium text-sm text-muted-foreground">
+                        Duración
+                      </p>
+                      <p className="text-base">
+                        {selectedMedicalLeave.medicalLeaveDays}{" "}
+                        {selectedMedicalLeave.medicalLeaveDays === 1
+                          ? "día"
+                          : "días"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {selectedMedicalLeave.leaveDescription && (
+                  <div className="col-span-full">
+                    <div className="flex items-start gap-3">
+                      <FileText className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                        <p className="font-medium text-sm text-muted-foreground mb-1">
+                          Motivo del Descanso
+                        </p>
+                        <p className="p-4 bg-muted border rounded-md text-sm">
+                          {selectedMedicalLeave.leaveDescription}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </DialogContent>
         </Dialog>
