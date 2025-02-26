@@ -65,13 +65,15 @@ export interface CreateUpdateHistoryFormData {
 }
 
 export type UpdateUpdateHistoryDto = components["schemas"]["UpdateUpdateHistoryDto"];
+export type UpdateUpdateHistoryDtoReceive = Omit<UpdateUpdateHistoryDto, 'updateHistory'> & { updateHistory: {
+  randomId: string;
+} };
 
-export interface UpdateUpdateHistoryFormData {
-    data: UpdateUpdateHistoryDto;
-    image?: File | null;
-  }
 //fin
-
+export interface UpdateUpdateHistoryFormData {
+  data: UpdateUpdateHistoryDto;
+  newImages?: File[] | null;
+}
 
 export type DeleteUpdateHistoryDto = components["schemas"]["DeleteUpdateHistoryDto"];
 
