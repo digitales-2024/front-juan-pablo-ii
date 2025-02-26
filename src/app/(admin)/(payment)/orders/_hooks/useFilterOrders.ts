@@ -119,7 +119,7 @@ export function useUnifiedOrders() {
   }, [filter, queryClient]);
 
   // Helpers para actualizar el filtro
-  function setFilterAllStorages() {
+  function setFilterAllOrders() {
     setFilter({ type: "ALL" });
   }
   function setFilterByStatus(orderStatus: OrderStatus) {
@@ -138,7 +138,7 @@ export function useUnifiedOrders() {
     isError: unifiedQuery.isError,
     query: unifiedQuery,
     filter, // Por si quieres leer el tipo de filtro actual
-    setFilterAllStorages,
+    setFilterAllOrders,
     setFilterByStatus,
     setFilterByType,
     setFilterByStatusAndType,

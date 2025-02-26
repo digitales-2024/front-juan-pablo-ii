@@ -97,6 +97,8 @@ export function FilterStockDialog() {
   );
 
   const [open, setOpen] = useState(false);
+  //CONTROLA LAS RERENDIRACIONES DE LOS TABS Y SUS CONTENTS
+  const [activeTab, setActiveTab] = useState(TAB_OPTIONS.ALL_STORAGES.value);
 
   const {
     isLoading,
@@ -271,6 +273,8 @@ export function FilterStockDialog() {
     <div>
     <Tabs
       defaultValue={TAB_OPTIONS.ALL_STORAGES.value}
+      value={activeTab}
+      onValueChange={setActiveTab}
       className="w-full flex flex-col space-y-4"
     >
       <TabsList className="grid w-full grid-cols-2 h-fit">

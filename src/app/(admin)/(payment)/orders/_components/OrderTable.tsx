@@ -1,7 +1,7 @@
 "use client";
 
 import { DataTable } from "@/components/data-table/DataTable";
-import { columns } from "./StorageTableColumns";
+import { columns } from "./OrderTableColumns";
 import { ProductTableToolbarActions } from "./ProductTableToolbarActions";
 // import { ListCategoryResponse } from "../_actions/category.actions";
 import { Order } from "../_interfaces/order.interface";

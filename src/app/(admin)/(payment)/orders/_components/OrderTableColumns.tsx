@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { Order } from "../_interfaces/order.interface";
+import { Order, orderStatusConfig, orderTypeConfig } from "../_interfaces/order.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -18,11 +18,12 @@ import {
 import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { UpdateStorageSheet } from "./UpdateStorageSheet";
-import { ReactivateStorageDialog } from "./ReactivateProductDialog";
-import { DeactivateStorageDialog } from "./DeactivateStorageDialog";
+// import { UpdateStorageSheet } from "./UpdateStorageSheet";
+// import { ReactivateStorageDialog } from "./ReactivateProductDialog";
+// import { DeactivateStorageDialog } from "./DeactivateStorageDialog";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 // import Image from "next/image";
 
 export const columns: ColumnDef<Order>[] = [
@@ -37,9 +38,7 @@ export const columns: ColumnDef<Order>[] = [
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) =>
-            table.toggleAllPageRowsSelected(!!value)
-          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
           className="translate-y-0.5"
         />
@@ -65,56 +64,103 @@ export const columns: ColumnDef<Order>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha" />
     ),
-       cell: ({ row }) => format(new Date(row.original.date), "PPp", { locale: es }),
+    cell: ({ row }) =>
+      format(new Date(row.original.date), "PPp", { locale: es }),
   },
   {
-    accessorKey: "location",
-    meta: { title: "Ubicación" },
+    accessorKey: "type",
+    meta: { title: "Tipo de órden" },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ubicación" />
+      <DataTableColumnHeader column={column} title="Tipo de órden" />
     ),
+    cell: ({ row }) => {
+      // orderTypeConfig
+      // orderStatusConfig
+      const config = orderTypeConfig[row.original.type];
+      const Icon = config.icon;
+      return (
+        // <span>
+        //   {row.original.status || "Sin tipo de almacén"}
+        // </span>
+        <Badge className={cn(config.backgroundColor, config.textColor, config.hoverBgColor, "flex space-x-1 items-center justify-center text-sm")}>
+          <Icon className="size-4" />
+          <span>{config.name}</span>
+        </Badge>
+      );
+    },
   },
   {
-    accessorKey: "TypeStorage",
-    meta: { title: "Tipo de almacén" },
+    accessorKey: "status",
+    meta: { title: "Estado de Órden" },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo de almacén" />
+      <DataTableColumnHeader column={column} title="Estado de Órden" />
+    ),
+    cell: ({ row }) => {
+      // orderTypeConfig
+      // orderStatusConfig
+      const config = orderStatusConfig[row.original.status];
+      const Icon = config.icon;
+      return (
+        // <span>
+        //   {row.original.status || "Sin tipo de almacén"}
+        // </span>
+        <Badge className={cn(config.backgroundColor, config.textColor, config.hoverBgColor, "flex space-x-1 items-center justify-center text-sm")}>
+          <Icon className="size-4"></Icon>
+          <span>{config.name}</span>
+        </Badge>
+      );
+    },
+  },
+  {
+    accessorKey: "tax",
+    meta: { title: "Impuestos" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Impuestos aplicados" />
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.TypeStorage?.name || "Sin tipo de almacén"}
+        {new Intl.NumberFormat("es-PE", {
+          style: "currency",
+          currency: row.original.currency,
+        }).format(row.original.tax)}
       </span>
     ),
   },
   {
-    accessorKey: "branch.name",
-    meta: { title: "Sucursal" },
+    accessorKey: "subtotal",
+    meta: { title: "Subtotal" },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Sucursal" />
+      <DataTableColumnHeader column={column} title="Subtotal" />
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.branch?.name ?? "Sin Sucursal asociada"}
+        {new Intl.NumberFormat("es-PE", {
+          style: "currency",
+          currency: row.original.currency,
+        }).format(row.original.subtotal)}
       </span>
     ),
   },
   {
-    accessorKey: "staff.name",
-    meta: { title: "Personal" },
+    accessorKey: "total",
+    meta: { title: "Total" },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Personal" />
+      <DataTableColumnHeader column={column} title="Total" />
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.staff? `${row.original.staff.name} ${row.original.staff.lastName}` : "Sin personal asociado"}
+        {new Intl.NumberFormat("es-PE", {
+          style: "currency",
+          currency: row.original.currency,
+        }).format(row.original.total)}
       </span>
     ),
   },
   {
     accessorKey: "isActive",
-    meta: { title: "Estado" },
+    meta: { title: "Elim. Lógica" },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title="Elim. Lógica" />
     ),
     cell: ({ row }) => (
       <Badge variant={row.original.isActive ? "success" : "destructive"}>
@@ -148,7 +194,7 @@ export const columns: ColumnDef<Order>[] = [
 
       return (
         <div>
-          <div>
+          {/* <div>
             <UpdateStorageSheet
               storage={storage}
               open={showEditSheet}
@@ -167,7 +213,7 @@ export const columns: ColumnDef<Order>[] = [
               onOpenChange={setShowReactivateDialog}
               showTrigger={false}
             />
-          </div>
+          </div> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -179,7 +225,7 @@ export const columns: ColumnDef<Order>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onSelect={() => setShowEditSheet(true)}
                 disabled={!isActive}
               >

@@ -1,4 +1,5 @@
 import { components } from "@/types/api";
+import { ArrowDownToDot, ArrowUpFromDot, Banknote, CircleX, Divide, DollarSign, Gift, Hourglass, LucideIcon, NotebookPen, PartyPopper, Pill, RefreshCcwDot, RotateCcw, Sliders, Smartphone, Stethoscope, TriangleAlert, Undo2, Wallet } from "lucide-react";
 import { z } from "zod";
 
 // Tipos base de la API
@@ -22,11 +23,157 @@ import { z } from "zod";
 
 export type Order = components['schemas']['Order'];
 export type OrderType = components['schemas']['OrderType'];
+export type OrderStatus = components['schemas']['OrderStatus'];
+
+export type EnumConfig = {
+  name: string;
+  backgroundColor: string;
+  textColor: string;
+  hoverBgColor: string;
+  icon: LucideIcon;
+}
+
+export type EnumOptions<T> = {
+  label: string
+  value: T
+}
+
+export const orderTypeConfig: Record<OrderType, EnumConfig> = {
+  MEDICAL_PRESCRIPTION_ORDER: {
+    name: "Receta médica",
+    backgroundColor: "bg-[#E0F7FA]",
+    hoverBgColor: "hover:bg-[#B2EBF2]",
+    textColor: "text-[#00796B]",
+    icon: Pill,
+  },
+  MEDICAL_CONSULTATION_ORDER: {
+    name: "Consulta médica",
+    backgroundColor: "bg-[#E8F5E9]",
+    hoverBgColor: "hover:bg-[#C8E6C9]",
+    textColor: "text-[#388E3C]",
+    icon: Stethoscope,
+  },
+  PRODUCT_SALE_ORDER: {
+    name: "Venta de productos",
+    backgroundColor: "bg-[#FFF3E0]",
+    hoverBgColor: "hover:bg-[#FFE0B2]",
+    textColor: "text-[#F57C00]",
+    icon: ArrowUpFromDot,
+  },
+  PRODUCT_PURCHASE_ORDER: {
+    name: "Compra de productos",
+    backgroundColor: "bg-[#E3F2FD]",
+    hoverBgColor: "hover:bg-[#BBDEFB]",
+    textColor: "text-[#1976D2]",
+    icon: ArrowDownToDot,
+  },
+}
+export const orderTypeEnumOptions: EnumOptions<OrderType>[] = [
+  {
+    label: "Receta médica",
+    value: "MEDICAL_PRESCRIPTION_ORDER"
+  },
+  {
+    label: "Consulta médica",
+    value: "MEDICAL_CONSULTATION_ORDER"
+  },
+  {
+    label: "Venta de productos",
+    value: "PRODUCT_SALE_ORDER",
+  },
+  {
+    label: "Compra de productos",
+    value: "PRODUCT_PURCHASE_ORDER"
+  }
+]
+
+export const orderStatusConfig: Record<OrderStatus, EnumConfig> = { 
+  DRAFT: {
+    name: "Borrador",
+    backgroundColor: "bg-[#F5F5F5]",
+    hoverBgColor: "hover:bg-[#E0E0E0]",
+    textColor: "text-[#757575]",
+    icon: NotebookPen,
+  },
+  PENDING: {
+    name: "Pendiente",
+    backgroundColor: "bg-[#FFF8E1]",
+    hoverBgColor: "hover:bg-[#FFECB3]",
+    textColor: "text-[#FFA000]",
+    icon: Hourglass,
+  },
+  PROCESSING: {
+    name: "En proceso",
+    backgroundColor: "bg-[#E0F2F1]",
+    hoverBgColor: "hover:bg-[#B2DFDB]",
+    textColor: "text-[#00796B]",
+    icon: RefreshCcwDot,
+  },
+  COMPLETED: {
+    name: "Completado",
+    backgroundColor: "bg-[#E8F5E9]",
+    hoverBgColor: "hover:bg-[#C8E6C9]",
+    textColor: "text-[#388E3C]",
+    icon: PartyPopper,
+  },
+  CANCELLED: {
+    name: "Cancelado",
+    backgroundColor: "bg-[#FFEBEE]",
+    hoverBgColor: "hover:bg-[#FFCDD2]",
+    textColor: "text-[#D32F2F]",
+    icon: CircleX,
+  },
+  REFUNDED: {
+    name: "Reembolsado",
+    backgroundColor: "bg-[#F3E5F5]",
+    hoverBgColor: "hover:bg-[#CE93D8]",
+    textColor: "text-[#8E24AA]",
+    icon: Undo2,
+  },
+  REQUIRES_ATTENTION: {
+    name: "Requiere atención",
+    backgroundColor: "bg-[#FFF3E0]",
+    hoverBgColor: "hover:bg-[#FFE0B2]",
+    textColor: "text-[#F57C00]",
+    icon: TriangleAlert,
+  },
+}
+
+export const orderStatusEnumOptions: EnumOptions<OrderStatus>[] = [
+  {
+    label: "Borrador",
+    value: "DRAFT"
+  },
+  {
+    label: "Pendiente",
+    value: "PENDING"
+  },
+  {
+    label: "En proceso",
+    value: "PROCESSING"
+  },
+  {
+    label: "Completado",
+    value: "COMPLETED"
+  },
+  {
+    label: "Cancelado",
+    value: "CANCELLED"
+  },
+  {
+    label: "Reembolsado",
+    value: "REFUNDED"
+  },
+  {
+    label: "Requiere atención",
+    value: "REQUIRES_ATTENTION"
+  }
+];
+
 export type CreateOrderDto = components['schemas']['CreateOrderDto'];
 export type UpdateOrderDto = components['schemas']['UpdateOrderDto'];
 export type DeleteOrdersDto = components['schemas']['DeleteOrdersDto'];
 export type SubmitDraftOrderDto = components['schemas']['SubmitDraftOrderDto'];
-export type OrderStatus = components['schemas']['OrderStatus'];
 
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateOrderDto = DeleteOrdersDto;
@@ -142,6 +289,109 @@ export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
 //   originalPaymentId?: string;
 // };
 export type Payment = components['schemas']['Payment'];
+export type PaymentStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
+export type PaymentType = "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
+export type PaymentMethod = "CASH" | "BANK_TRANSFER" | "YAPE";
+
+export const paymentStatusConfig: Record<PaymentStatus, EnumConfig> = {
+  PENDING: {
+    name: "Pendiente",
+    backgroundColor: "bg-[#FFF8E1]",
+    hoverBgColor: "hover:bg-[#FFECB3]",
+    textColor: "text-[#FFA000]",
+    icon: Hourglass,
+  },
+  PROCESSING: {
+    name: "En proceso",
+    backgroundColor: "bg-[#E0F2F1]",
+    hoverBgColor: "hover:bg-[#B2DFDB]",
+    textColor: "text-[#00796B]",
+    icon: RefreshCcwDot,
+  },
+  COMPLETED: {
+    name: "Completado",
+    backgroundColor: "bg-[#E8F5E9]",
+    hoverBgColor: "hover:bg-[#C8E6C9]",
+    textColor: "text-[#388E3C]",
+    icon: PartyPopper,
+  },
+  CANCELLED: {
+    name: "Cancelado",
+    backgroundColor: "bg-[#FFEBEE]",
+    hoverBgColor: "hover:bg-[#FFCDD2]",
+    textColor: "text-[#D32F2F]",
+    icon: CircleX,
+  },
+  REFUNDED: {
+    name: "Reembolsado",
+    backgroundColor: "bg-[#F3E5F5]",
+    hoverBgColor: "hover:bg-[#CE93D8]",
+    textColor: "text-[#8E24AA]",
+    icon: Undo2,
+  }
+};
+export const PaymentTypeConfig: Record<PaymentType, EnumConfig> = {
+  REGULAR: {
+    name: "Regular",
+    backgroundColor: "bg-[#E3F2FD]",
+    hoverBgColor: "hover:bg-[#BBDEFB]",
+    textColor: "text-[#1976D2]",
+    icon: DollarSign,
+  },
+  REFUND: {
+    name: "Reembolso",
+    backgroundColor: "bg-[#F3E5F5]",
+    hoverBgColor: "hover:bg-[#E1BEE7]",
+    textColor: "text-[#8E24AA]",
+    icon: RotateCcw,
+  },
+  PARTIAL: {
+    name: "Parcial",
+    backgroundColor: "bg-[#FFF8E1]",
+    hoverBgColor: "hover:bg-[#FFECB3]",
+    textColor: "text-[#FFA000]",
+    icon: Divide,
+  },
+  ADJUSTMENT: {
+    name: "Ajuste",
+    backgroundColor: "bg-[#E0F2F1]",
+    hoverBgColor: "hover:bg-[#B2DFDB]",
+    textColor: "text-[#00796B]",
+    icon: Sliders,
+  },
+  COMPENSATION: {
+    name: "Compensación",
+    backgroundColor: "bg-[#FFF3E0]",
+    hoverBgColor: "hover:bg-[#FFE0B2]",
+    textColor: "text-[#F57C00]",
+    icon: Gift,
+  },
+};
+export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
+  CASH: {
+    name: "Efectivo",
+    backgroundColor: "bg-[#E8F5E9]",
+    hoverBgColor: "hover:bg-[#C8E6C9]",
+    textColor: "text-[#388E3C]",
+    icon: Wallet,
+  },
+  BANK_TRANSFER: {
+    name: "Transferencia bancaria",
+    backgroundColor: "bg-[#E3F2FD]",
+    hoverBgColor: "hover:bg-[#BBDEFB]",
+    textColor: "text-[#1976D2]",
+    icon: Banknote,
+  },
+  YAPE: {
+    name: "Yape",
+    backgroundColor: "bg-[#F3E5F5]",
+    hoverBgColor: "hover:bg-[#E1BEE7]",
+    textColor: "text-[#8E24AA]",
+    icon: Smartphone,
+  },
+};
+
+
 export type CreatePaymentDto = components['schemas']['CreatePaymentDto'];
 export type UpdatePaymentDto = components['schemas']['UpdatePaymentDto'];
 export type DeletePaymentsDto = components['schemas']['DeletePaymentsDto'];

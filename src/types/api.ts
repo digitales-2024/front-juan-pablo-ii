@@ -438,6 +438,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/order/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las órdenes */
+        get: operations["OrderController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/order/type/{type}": {
         parameters: {
             query?: never;
@@ -3310,12 +3327,12 @@ export interface components {
              */
             referenceId: string;
             /**
-             * @description ID del origen de fondos
+             * @description ID del origen de fondos. Por lo general, se refiere al proveeder. No existe entidad proveedor
              * @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
              */
             sourceId?: string;
             /**
-             * @description ID del destino de fondos
+             * @description ID del destino de fondos, por lo general se refiere al almacén de destino
              * @example b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7
              */
             targetId?: string;
@@ -3356,6 +3373,8 @@ export interface components {
              * @example Orden creada para paciente Juan Pérez
              */
             notes?: string;
+            /** @description Estado de eliminación lógica. */
+            isActive: boolean;
             /**
              * @description Metadatos adicionales en formato JSON
              * @example {
@@ -7582,6 +7601,40 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las órdenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
