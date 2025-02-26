@@ -77,6 +77,26 @@ export function useProductsStockByStorage() {
   });
 }
 
+export function useStockByStorage (storageId: string) {
+  return useQuery({
+    queryKey: ["stock-by-storage", storageId],
+    queryFn: async () => {
+      try {
+        const response = await getProductStockByStorage({ storageId });
+        if (!response || "error" in response) {
+          throw new Error(response?.error || "No se recibió respuesta");
+        }
+        return response;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Error desconocido";
+        toast.error(message);
+        return [];
+      }
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
 export function useUpdateProductStock() {
     const queryClient = useQueryClient();
 

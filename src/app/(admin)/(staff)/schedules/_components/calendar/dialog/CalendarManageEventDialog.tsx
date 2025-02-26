@@ -18,6 +18,7 @@ import { useEvents } from "../../../_hooks/useEvents"
 import { Input } from "@/components/ui/input"
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff"
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches"
+import { useQueryClient } from "@tanstack/react-query"
 
 const formSchema = z
   .object({
@@ -53,6 +54,7 @@ export default function CalendarManageEventDialog() {
   const { deleteMutation, updateMutation } = useEvents()
   const { staff } = useStaff()
   const { branches } = useBranches()
+  const queryClient = useQueryClient()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -89,6 +91,11 @@ export default function CalendarManageEventDialog() {
       { ids: [selectedEvent.id] },
       {
         onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ['calendar-turns'],
+            exact: false,
+            refetchType: 'all'
+          });
           handleClose()
         },
         onError: (error) => {

@@ -4975,6 +4975,11 @@ export interface components {
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
             /**
+             * @description ID de referencia para la salida en caso de transferencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            outgoingId?: string;
+            /**
              * @description Estado del ingreso
              * @example false
              */
@@ -4995,6 +5000,7 @@ export interface components {
             state: boolean;
             referenceId: string;
             isTransference?: boolean;
+            outgoingId?: string;
             isActive: boolean;
         };
         IncomingStorageType: {
@@ -5021,6 +5027,7 @@ export interface components {
             state: boolean;
             referenceId: string;
             isTransference?: boolean;
+            outgoingId?: string;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
         };
@@ -5058,6 +5065,7 @@ export interface components {
             state: boolean;
             referenceId: string;
             isTransference?: boolean;
+            outgoingId?: string;
             isActive: boolean;
             Storage: components["schemas"]["IncomingStorage"];
             Movement: components["schemas"]["IncomingMovement"][];
@@ -5126,6 +5134,11 @@ export interface components {
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
             /**
+             * @description ID de referencia para la salida en caso de transferencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            outgoingId?: string;
+            /**
              * @description productos a ingresar al almacen y cantidad
              * @example [
              *       {
@@ -5164,6 +5177,11 @@ export interface components {
             date?: string;
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
+            /**
+             * @description ID de referencia para la salida en caso de transferencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            outgoingId?: string;
             /**
              * @description Estado del ingreso
              * @example false
@@ -5241,6 +5259,11 @@ export interface components {
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
             /**
+             * @description ID de referencia para la salida en caso de transferencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            outgoingId?: string;
+            /**
              * @description productos a ingresar al almacen y cantidad
              * @example [
              *       {
@@ -5280,6 +5303,11 @@ export interface components {
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
             /**
+             * @description ID de referencia para la entrada en caso de transferencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            incomingId?: string;
+            /**
              * @description Estado de la salida
              * @example false
              */
@@ -5300,6 +5328,7 @@ export interface components {
             state: boolean;
             referenceId: string;
             isTransference?: boolean;
+            incomingId?: string;
             isActive: boolean;
         };
         OutgoingStorageType: {
@@ -5326,6 +5355,7 @@ export interface components {
             state: boolean;
             referenceId: string;
             isTransference?: boolean;
+            incomingId?: string;
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
         };
@@ -5363,6 +5393,7 @@ export interface components {
             state: boolean;
             referenceId: string;
             isTransference?: boolean;
+            incomingId?: string;
             isActive: boolean;
             Storage: components["schemas"]["OutgoingStorage"];
             Movement: components["schemas"]["OutgoingMovement"][];
@@ -5402,6 +5433,11 @@ export interface components {
              */
             referenceId?: string;
             /**
+             * @description ID de referencia para la entrada en caso de transferencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            incomingId?: string;
+            /**
              * @description productos a retirar del almacen y cantidad
              * @example [
              *       {
@@ -5440,6 +5476,11 @@ export interface components {
             date?: string;
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
+            /**
+             * @description ID de referencia para la entrada en caso de transferencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            incomingId?: string;
             /**
              * @description Estado de la salida
              * @example false
@@ -5484,10 +5525,15 @@ export interface components {
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
             /**
-             * @description ID de referencia puede ser un traslado, compra, etc.
+             * @description ID de referencia pra el almacén en caso de transferencia
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             referenceId?: string;
+            /**
+             * @description ID de referencia para la entrada en caso de transferencia
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            incomingId?: string;
             /**
              * @description productos a retirar del almacen y cantidad
              * @example [
@@ -13016,7 +13062,9 @@ export interface operations {
     };
     IncomingController_updateIncomingStorage: {
         parameters: {
-            query?: never;
+            query: {
+                isTransference: boolean;
+            };
             header?: never;
             path: {
                 id: string;
@@ -13438,7 +13486,9 @@ export interface operations {
     };
     OutgoingController_updateOutgoingStorage: {
         parameters: {
-            query?: never;
+            query: {
+                isTransference: boolean;
+            };
             header?: never;
             path: {
                 id: string;

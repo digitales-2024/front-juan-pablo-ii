@@ -24,6 +24,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 // import Image from "next/image";
 
 // [
@@ -54,7 +55,7 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
   //   },
   {
     id: "select",
-    size: 10,
+    size: 5,
     header: ({ column }) => (
       <div className="px-2 flex space-x-2 items-center">
         {/* <Checkbox
@@ -211,7 +212,7 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
               <PopoverTrigger asChild>
                 <Button variant="outline" className="max-w-36 h-fit text-wrap">
                     <PackageOpen className="text-primary"></PackageOpen>
-                    Ver almacenes
+                    Ver stock actual
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80">
@@ -227,15 +228,27 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
                     }
                   </div>
                     <ScrollArea className="max-h-40 h-fit overflow-auto">
-                        <div className="grid gap-2">
+                        <div className="rounded-md border">
+                          <Table>
+                          <TableHeader>
+                            <TableRow>
+                            <TableHead>Almacén</TableHead>
+                            <TableHead className="text-right">Stock</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
                             {row.original.Stock.map((stock, idx) => (
-                            <ul key={idx} className="list-disc list-inside">
-                                {/* <div className="w-full"><span className="w-full overflow-hidden text-wrap text-ellipsis">{stock.Storage.name}</span></div>
-                                <div className="flex justify-center"><ArrowBigRightDash></ArrowBigRightDash></div>
-                                <span>{stock.stock}</span> */}
-                                <li>{'Alm. '+ `"${stock.Storage.name}" (${stock.stock})`}</li>
-                            </ul>
+                            <TableRow key={idx}>
+                              <TableCell className="font-medium">
+                              {stock.Storage.name}
+                              </TableCell>
+                              <TableCell className="text-right text-primary font-bold">
+                              {stock.stock}
+                              </TableCell>
+                            </TableRow>
                             ))}
+                          </TableBody>
+                          </Table>
                         </div>
                     </ScrollArea>
                 </div>
@@ -248,10 +261,10 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
   {
     accessorKey: "Stock.stock",
     meta: {
-      title: "Stock Total",
+      title: "Stock General",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Stock Total" />
+      <DataTableColumnHeader column={column} title="Suma Total de Stock" />
     ),
     cell: ({ row }) => {
       const stock = row.original.Stock;
@@ -260,7 +273,7 @@ export const columns: ColumnDef<OutgoingProducStockForm>[] = [
           ? 0
           : stock.reduce((acc, stock) => acc + stock.stock, 0);
       return (
-        <span>
+        <span className="block text-center w-full">
           {totalStock}
           {/* {row.original.Producto.unidadMedida?? ""} */}
         </span>

@@ -74,9 +74,10 @@ interface Servicio {
   newImages: string[];
 }
 
-interface HistorialItem {
+export interface HistorialItem {
   titulo: string;
   contenido: string;
+  tipo?: string;
 }
 
 const SERVICIOS_OPCIONES = [
@@ -123,7 +124,7 @@ export default function PacienteHistoria() {
         { nombre: "Losartan", dosis: "50mg", frecuencia: "Una vez al día" },
         { nombre: "Amlodipino", dosis: "5mg", frecuencia: "Una vez al día" },
       ],
-      description: "el pacciente presenta una erupcion en la piel en la zona de la espalda y cuello se le receta un tratamiento dermatologico para tratar la erupcion en la piel en la zona de la espalda y cuello  ", 
+      description: "el pacciente presenta una erupcion en la piel en la zona de la espalda y cuello se le receta un tratamiento dermatologico para tratar la erupcion en la piel en la zona de la espalda y cuello  ",
       medicalLeave: false,
       newImages: [
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxbgoMzx7izKzehJBf1248szuAVwH8-F-crA&s",
@@ -377,7 +378,7 @@ export default function PacienteHistoria() {
                           className="bg-gray-100 text-gray-900 font-medium"
                         />
                       </div>
-                      
+
                     </div>
 
                     <div>
@@ -426,7 +427,7 @@ export default function PacienteHistoria() {
                                 setNuevoServicio({
                                   ...nuevoServicio,
                                   medicalLeaveStartDate: startDate,
-                                  medicalLeaveDays: endDate 
+                                  medicalLeaveDays: endDate
                                     ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1
                                     : 0
                                 });
@@ -445,7 +446,7 @@ export default function PacienteHistoria() {
                                 setNuevoServicio({
                                   ...nuevoServicio,
                                   medicalLeaveEndDate: endDate,
-                                  medicalLeaveDays: startDate 
+                                  medicalLeaveDays: startDate
                                     ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1
                                     : 0
                                 });
@@ -534,19 +535,19 @@ export default function PacienteHistoria() {
                       )}
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Switch
-                          id="prescription"
-                          checked={nuevoServicio.prescription}
-                          onCheckedChange={(checked) =>
-                            setNuevoServicio({
-                              ...nuevoServicio,
-                              prescription: checked,
-                            })
-                          }
-                        />
-                        <Label htmlFor="prescription">Receta Médica</Label>
-                      </div>
-                      {nuevoServicio.prescription && (
+                      <Switch
+                        id="prescription"
+                        checked={nuevoServicio.prescription}
+                        onCheckedChange={(checked) =>
+                          setNuevoServicio({
+                            ...nuevoServicio,
+                            prescription: checked,
+                          })
+                        }
+                      />
+                      <Label htmlFor="prescription">Receta Médica</Label>
+                    </div>
+                    {nuevoServicio.prescription && (
                       <div className="border rounded-lg p-4 bg-gray-50 space-y-4">
                         <h3 className="font-semibold text-lg mb-2">Detalles de Receta Médica</h3>
                         <div>
@@ -688,7 +689,7 @@ export default function PacienteHistoria() {
                       <strong>Sucursal de Atencion:</strong> {servicio.branchId}
                     </span>
                   </div>
-                                   <div className="col-span-2 flex items-start space-x-2">
+                  <div className="col-span-2 flex items-start space-x-2">
                     <FileText className="w-5 h-5 text-gray-500 mt-1" />
                     <span>
                       <strong>Descripción de la Consulta/ Servicio:</strong>
@@ -784,7 +785,7 @@ export default function PacienteHistoria() {
           {selectedPrescription && (
             <div className="space-y-6 p-4">
               <div className="grid grid-cols-2 gap-4 border-b pb-4">
-                             <div className="flex items-start space-x-4">
+                <div className="flex items-start space-x-4">
                   <img
                     src="https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/1fb4f92d-ff2d-4b39-a3da-9c3139a9c2d0.webp"
                     alt="Logo Hospital"

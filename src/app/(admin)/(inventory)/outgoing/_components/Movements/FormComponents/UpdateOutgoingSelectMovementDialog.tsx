@@ -31,16 +31,16 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import LoadingDialogForm from "../../LoadingDialogForm";
 import GeneralErrorMessage from "../../errorComponents/GeneralErrorMessage";
-import { CreateOutgoingInput } from "../../../_interfaces/outgoing.interface";
+import { UpdateOutgoingStorageInput } from "../../../_interfaces/outgoing.interface";
 import { UseFormReturn } from "react-hook-form";
 import { useProductsStockByStorage, useUpdateProductStockByStorage } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import { Label } from "@/components/ui/label";
 
 const CREATE_PRODUCT_MESSAGES = {
   button: "Añadir producto(s)",
-  title: "Seleccionar almacén de origen y productos en stock",
+  title: "Seleccionar productos en stock",
   description:
-    "Selecciona un almacén y luego uno o varios productos en stock para añadir a la lista de movimientos.",
+    "No puedes cambiar el almacén, pero si puedes añadir otros productos en stock del almacén seleccionado para añadirlos a la lista de movimientos.",
   onZeroStockSelectedItem: "Existen productos seleccionados en este almacén con stock en 0. Estos productos no serán añadidos a la lista de movimientos.",
   success: "Productos guardados exitosamente",
   submitButton: "Guardar selección",
@@ -49,12 +49,13 @@ const CREATE_PRODUCT_MESSAGES = {
 
 interface SelectProductDialogProps
   extends React.HTMLAttributes<HTMLButtonElement> {
-  //data: OutgoingProducStockForm[];
-  form: UseFormReturn<CreateOutgoingInput>;
+  form: UseFormReturn<UpdateOutgoingStorageInput>;
   className?: string;
+  storageId?: string;
 }
-export function SelectProductDialog({
+export function UpdateOutgoingSelectProductDialog({
   //data,
+  storageId,
   form,
   className,
   ...rest
@@ -65,15 +66,6 @@ export function SelectProductDialog({
     OutgoingProducStockForm[]
   >([]);
   const [hasZeroStockRowsSelected, setHasZeroStockRowsSelected] = useState<boolean>(false);
-  // const [selectedStorageHasChanged, setSelectedStorageHasChanged] = useState<boolean>(false);
-  const [selectedStorageId, setSelectedStorageId] = useState<string | null>(form.getValues("storageId")??null);
-  // const selectedProductsTanstack = useSelectedProducts();
-  const { activeStoragesQuery: responseStorage } = useStorages();
-
-  const productsStockQuery = useProductsStockByStorage()
-  const { updateProductStock, cleanProductStock } = useUpdateProductStockByStorage();
-  const dispatch = useSelectProductDispatch();
-  const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const findZeroStockSelectedItems = (selectedRows: OutgoingProducStockForm[], selectedStorageId:string|null) => {
     if (selectedStorageId === null) return;
@@ -102,6 +94,15 @@ export function SelectProductDialog({
     setHasZeroStockRowsSelected(false);
     setLocalSelectRows(() => [...selectedRows]);
   }
+  // const [selectedStorageHasChanged, setSelectedStorageHasChanged] = useState<boolean>(false);
+  const [selectedStorageId, setSelectedStorageId] = useState<string | null>(form.getValues('storageId')??null);
+  // const selectedProductsTanstack = useSelectedProducts();
+  const { activeStoragesQuery: responseStorage } = useStorages();
+
+  const productsStockQuery = useProductsStockByStorage()
+  const { updateProductStock, cleanProductStock } = useUpdateProductStockByStorage();
+  const dispatch = useSelectProductDispatch();
+  const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const handleSave = (selectedRows: OutgoingProducStockForm[]) => {
     cleanProductStock();
@@ -190,7 +191,7 @@ export function SelectProductDialog({
         <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)] overflow-auto">
           <DialogHeader>
             <DialogTitle>{CREATE_PRODUCT_MESSAGES.title}</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-balance">
               {CREATE_PRODUCT_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
@@ -202,6 +203,7 @@ export function SelectProductDialog({
               //     storageId: value,
               //   })
               // }}
+              disabled={!!storageId}
               value={selectedStorageId??undefined}
               onValueChange={
                 async (value) => {
@@ -244,8 +246,8 @@ export function SelectProductDialog({
                 onRowSelectionChange={onRowSelectionChange}
               />
           </div>}
-          <DialogFooter className="space-x-2 space-y-2">
-            {
+          <DialogFooter>
+          {
               hasZeroStockRowsSelected && <p className="w-full flex items-center  text-center text-destructive text-sm text-pretty">
                 <span>{CREATE_PRODUCT_MESSAGES.onZeroStockSelectedItem}</span>
               </p>
@@ -316,16 +318,17 @@ export function SelectProductDialog({
         </div>
         {
           selectedStorageId && <div className="overflow-auto max-h-[calc(100dvh-12rem)]">
-            {productsStockQuery.isLoading && <LoadingDialogForm />}
-           {productsStockQuery.data&&<DataTable
+            <DataTable
             columns={columns}
             data={productsStockQuery.data??[]}
-            onRowSelectionChange={onRowSelectionChange}
-                    />}
+            onRowSelectionChange={(selectedRows) => {
+              setLocalSelectRows(() => [...selectedRows]);
+            }}
+                    />
           </div>
         }
         <DrawerFooter className="space-y-2">
-          {
+        {
               hasZeroStockRowsSelected && <p className="w-full flex items-center  text-center text-destructive text-sm text-pretty">
                 {CREATE_PRODUCT_MESSAGES.onZeroStockSelectedItem}
               </p>
