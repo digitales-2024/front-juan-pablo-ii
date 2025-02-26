@@ -124,7 +124,7 @@ export async function createPatient(
     });
 
     // Procesar la imagen si existe
-    if (formData.image instanceof File) {
+    if (formData.image instanceof File || typeof formData.image === 'string') {
       serverFormData.append("image", formData.image);
     }
 

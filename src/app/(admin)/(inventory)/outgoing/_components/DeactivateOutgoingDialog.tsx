@@ -27,12 +27,15 @@ import { Outgoing } from "../_interfaces/outgoing.interface";
 import { AlertCircle, OctagonAlert, RefreshCcw, Trash } from "lucide-react";
 import { useOutgoing } from "../_hooks/useOutgoing";
 import { toast } from "sonner";
-import { ComponentPropsWithoutRef } from "react";
+import { ComponentPropsWithoutRef, useCallback } from "react";
 import { METADATA } from "../_statics/metadata";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { useIncoming } from "../../income/_hooks/useIncoming";
+import { useQueryClient } from "@tanstack/react-query";
 
-interface DeactivateOutgoingDialogProps extends ComponentPropsWithoutRef<typeof AlertDialog> {
+interface DeactivateOutgoingDialogProps
+  extends ComponentPropsWithoutRef<typeof AlertDialog> {
   outgoing?: Outgoing;
   outcomes?: Outgoing[];
   showTrigger?: boolean;
@@ -47,24 +50,71 @@ export function DeactivateOutgoingDialog({
   ...props
 }: DeactivateOutgoingDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { deleteMutation: { isPending, mutateAsync } } = useOutgoing();
+  const {
+    deleteMutation: { isPending, mutateAsync },
+  } = useOutgoing();
+  const { deleteMutation: incomingDeleteMutation } = useIncoming();
+  const queryClient = useQueryClient();
 
   const items = outcomes ?? (outgoing ? [outgoing] : []);
 
   const STATIC_MESSAGES = {
     title: "Alerta: Integridad del stock en riesgo",
-    description: "Esta acción generará negativos y excedentes en su stock. ¿Está seguro de continuar?",
-    alert: "Recomendamos encarecidamente evitar esta acción, corre el riesgo de corromper la integridad de su stock.",
-    alert2: "Si necesita corregir su inventario, mejor cree nuevas salidas y/o entradas.",
-    alert3: "Si está seguro de que los productos de esta salida no han sido vendidos o utilizados, puede continuar.",
+    description:
+      "Esta acción generará negativos y excedentes en su stock. ¿Está seguro de continuar?",
+    alert:
+      "Recomendamos encarecidamente evitar esta acción, corre el riesgo de corromper la integridad de su stock.",
+    alert2:
+      "Si necesita corregir su inventario, mejor cree nuevas salidas y/o entradas.",
+    alert3:
+      "Si está seguro de que los productos de esta salida no han sido vendidos o utilizados, puede continuar.",
     buttonCancel: "Conservar stock",
     buttonDeactivate: "Desactivar de todos modos",
   };
 
-  async function onDelete() {
-    const ids = items.map((item) => item.id);
+  const onDelete = useCallback(async () => {
+    const transferenceIds: string[] = [];
+    const ids = items.map((item) => {
+      if (item.isTransference && item.referenceId && item.incomingId) {
+        transferenceIds.push(item.incomingId);
+      }
+      return item.id;
+    });
     try {
-      await mutateAsync({ ids });
+      console.log("transferencias: ", transferenceIds);
+      await mutateAsync(
+        { ids }
+        // {
+        //   onSuccess: async () => {
+        //     // queryClient.invalidateQueries("outgoing");
+        //     // Cuando es transferencia, se elimina de incoming tambien
+        //   },
+        //   onError: () => {
+        //     toast.error(
+        //       items.length === 1
+        //         ? `Error al desactivar ${METADATA.entityName}`
+        //         : `Error al desactivar ${METADATA.entityPluralName}`
+        //     );
+        //   },
+        // }
+      );
+      if (transferenceIds.length > 0) {
+        await incomingDeleteMutation.mutateAsync({ ids: transferenceIds });
+        await Promise.all([
+          queryClient.refetchQueries({
+            queryKey: ["product-stock-by-storage"],
+          }),
+          queryClient.refetchQueries({ queryKey: ["stock"] }),
+          queryClient.refetchQueries({
+            queryKey: ["detailed-incomings"],
+          }),
+        ]);
+        toast.success(
+          items.length === 1
+            ? `Transferencia desactivado exitosamente`
+            : `Transferencias desactivados exitosamente`
+        );
+      }
       toast.success(
         items.length === 1
           ? `${METADATA.entityName} desactivado exitosamente`
@@ -72,9 +122,16 @@ export function DeactivateOutgoingDialog({
       );
       onSuccess?.();
     } catch (error) {
-      console.log(error);
+      toast.error(
+        items.length === 1
+          ? `Error al desactivar ${METADATA.entityName}`
+          : `Error al desactivar ${METADATA.entityPluralName}`
+      );
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     }
-  }
+  }, [items, mutateAsync, incomingDeleteMutation, queryClient, onSuccess]);
 
   if (isDesktop) {
     return (
@@ -102,29 +159,47 @@ export function DeactivateOutgoingDialog({
               <AlertDialogDescription className="!mb-2 text-center">
                 Esta acción desactivará a
                 <span className="font-medium"> {items.length}</span>
-                {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}.
+                {items.length === 1
+                  ? ` ${METADATA.entityName.toLowerCase()}`
+                  : ` ${METADATA.entityPluralName.toLowerCase()}`}
+                .
               </AlertDialogDescription>
             </div>
 
             <Alert className="bg-yellow-100/70 text-yellow-600 border-none !mb-2">
               <div className="flex space-x-2 items-center mb-2">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle className="!mb-0 font-semibold">Precaución</AlertTitle>
+                <AlertTitle className="!mb-0 font-semibold">
+                  Precaución
+                </AlertTitle>
               </div>
               <div className="w-full px-5">
                 <ul className="space-y-1 list-disc">
-                  <li><AlertDescription>{STATIC_MESSAGES.alert}</AlertDescription></li>
-                  <li><AlertDescription>{STATIC_MESSAGES.alert2}</AlertDescription></li>
-                  <li><AlertDescription>{STATIC_MESSAGES.alert3}</AlertDescription></li>
+                  <li>
+                    <AlertDescription>{STATIC_MESSAGES.alert}</AlertDescription>
+                  </li>
+                  <li>
+                    <AlertDescription>
+                      {STATIC_MESSAGES.alert2}
+                    </AlertDescription>
+                  </li>
+                  <li>
+                    <AlertDescription>
+                      {STATIC_MESSAGES.alert3}
+                    </AlertDescription>
+                  </li>
                 </ul>
               </div>
             </Alert>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
-            <AlertDialogCancel asChild className={cn(
-              buttonVariants({ variant: "default" }),
-              "animate-jump animate-twice animate-duration-1000 animate-ease-linear hover:text-white hover:scale-105 hover:transition-all"
-            )}>
+            <AlertDialogCancel
+              asChild
+              className={cn(
+                buttonVariants({ variant: "default" }),
+                "animate-jump animate-twice animate-duration-1000 animate-ease-linear hover:text-white hover:scale-105 hover:transition-all"
+              )}
+            >
               <span>{STATIC_MESSAGES.buttonCancel}</span>
             </AlertDialogCancel>
             <AlertDialogAction
@@ -136,7 +211,12 @@ export function DeactivateOutgoingDialog({
               disabled={isPending}
             >
               <span>
-                {isPending && <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />}
+                {isPending && (
+                  <RefreshCcw
+                    className="mr-2 size-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                )}
                 {STATIC_MESSAGES.buttonDeactivate}
               </span>
             </AlertDialogAction>
@@ -171,37 +251,53 @@ export function DeactivateOutgoingDialog({
             <DrawerDescription className="!mb-2 text-center">
               Esta acción desactivará a
               <span className="font-medium"> {items.length}</span>
-              {items.length === 1 ? ` ${METADATA.entityName.toLowerCase()}` : ` ${METADATA.entityPluralName.toLowerCase()}`}.
+              {items.length === 1
+                ? ` ${METADATA.entityName.toLowerCase()}`
+                : ` ${METADATA.entityPluralName.toLowerCase()}`}
+              .
             </DrawerDescription>
           </div>
           <Alert className="bg-yellow-100/70 text-yellow-600 border-none !mb-2">
             <div className="flex space-x-2 items-center mb-2 justify-center sm:justify-start">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle className="font-semibold !mb-0">Precaución</AlertTitle>
+              <AlertTitle className="font-semibold !mb-0">
+                Precaución
+              </AlertTitle>
             </div>
             <div className="w-full px-5">
               <ul className="space-y-1 list-disc text-start">
-                <li><AlertDescription>{STATIC_MESSAGES.alert}</AlertDescription></li>
-                <li><AlertDescription>{STATIC_MESSAGES.alert2}</AlertDescription></li>
-                <li><AlertDescription>{STATIC_MESSAGES.alert3}</AlertDescription></li>
+                <li>
+                  <AlertDescription>{STATIC_MESSAGES.alert}</AlertDescription>
+                </li>
+                <li>
+                  <AlertDescription>{STATIC_MESSAGES.alert2}</AlertDescription>
+                </li>
+                <li>
+                  <AlertDescription>{STATIC_MESSAGES.alert3}</AlertDescription>
+                </li>
               </ul>
             </div>
           </Alert>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
-          <Button 
+          <Button
             className={cn(
               buttonVariants({ variant: "outline" }),
               "text-destructive hover:text-white hover:bg-destructive border border-destructive"
-            )} 
-            onClick={onDelete} 
+            )}
+            onClick={onDelete}
             disabled={isPending}
           >
-            {isPending && <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />}
+            {isPending && (
+              <RefreshCcw
+                className="mr-2 size-4 animate-spin"
+                aria-hidden="true"
+              />
+            )}
             Desactivar
           </Button>
-          <DrawerClose 
-            asChild 
+          <DrawerClose
+            asChild
             className={cn(
               buttonVariants({ variant: "default" }),
               "animate-jump animate-twice animate-duration-1000 animate-ease-linear hover:text-white hover:scale-105 hover:transition-all"

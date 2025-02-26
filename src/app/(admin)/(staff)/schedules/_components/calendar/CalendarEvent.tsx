@@ -76,6 +76,7 @@ export default function CalendarEvent({
 	month?: boolean;
 	className?: string;
 }) {
+	console.log('📅 [Event] Renderizado:', event.id, event.start);
 	const { events, setSelectedEvent, setManageEventDialogOpen, date } =
 		useCalendarContext();
 	const style = month ? {} : calculateEventPosition(event, events);

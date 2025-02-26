@@ -142,8 +142,17 @@ export const useOutgoing = () => {
           );
         }
       );
-      await queryClient.refetchQueries({ queryKey: ["stock-storages"] });
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ["stock-storages"] }),
+        queryClient.refetchQueries({
+          queryKey: ["product-stock-by-storage"],
+        }),
+        queryClient.refetchQueries({ queryKey: ["stock"] }),
+        res.data.isTransference ? queryClient.refetchQueries({ queryKey: ["detailed-incomings"] }) : null,
+      ]);
+      
       toast.success("Salida actualizada exitosamente");
+      void (res.data.isTransference && toast.success("Ingreso actualizado exitosamente"));
     },
     onError: (error) => {
       if (

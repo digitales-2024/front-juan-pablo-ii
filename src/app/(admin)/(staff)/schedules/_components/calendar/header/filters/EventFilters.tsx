@@ -59,17 +59,22 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
 
   useEffect(() => {
     const handler = setTimeout(() => {
+      queryClient.invalidateQueries({
+        queryKey: ['calendar-turns'],
+        exact: false
+      });
       onFilterChange({
         ...filter,
         type: 'TURNO' as const,
         status: 'CONFIRMED' as const
-      } as EventFilterParams);
+      });
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [filter]);
+  }, [filter, queryClient]);
 
   const handleFilterChange = (key: keyof EventFilterParams, value: string) => {
+    console.log('🔎 [Filtros] Cambio detectado:', { key, value });
     setFilter(prev => ({
       ...prev,
       [key]: value === 'todos' ? undefined : value
