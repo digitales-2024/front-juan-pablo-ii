@@ -61,11 +61,15 @@ export const useEvents = (filters?: EventFilterParams) => {
     queryFn: async () => {
       console.log('📅 [Events] Fetching:', normalizedFilters);
       const res = await getEventsByFilter(normalizedFilters);
+      if (!res.data) {
+        console.warn('⚠️ [Events] No se encontraron eventos.');
+      }
       return res.data || [];
     },
     staleTime: 1000 * 60 * 15, // Aumentar tiempo de frescura
     gcTime: 1000 * 60 * 30, // Eliminar caché más rápido
-    refetchOnMount: 'always' // Forzar nueva carga al montar
+    refetchOnMount: true, // Cambiar a true para forzar nueva carga al montar
+    refetchOnWindowFocus: true, // Cambiar a true para forzar nueva carga al enfocar la ventana
   });
 
 
@@ -167,14 +171,10 @@ export const useEvents = (filters?: EventFilterParams) => {
     DeleteEventsDto
   >({
     mutationFn: deleteEvents,
-    onSuccess: (res, variables) => {
-      // Actualización agresiva de todas las variantes de la query
-      queryClient.getQueriesData<Event[]>({ queryKey: ['calendar-turns'] }).forEach(([key, data]) => {
-        if (data) {
-          queryClient.setQueryData<Event[]>(key,
-            data.filter(event => !variables.ids.includes(event.id))
-          );
-        }
+    onSuccess: async (res, variables) => {
+      // Actualizar la caché directamente eliminando el evento
+      queryClient.setQueryData<Event[]>(['calendar-turns'], (oldEvents = []) => {
+        return oldEvents.filter(event => !variables.ids.includes(event.id));
       });
 
       toast.success(variables.ids.length === 1 ? 'Evento eliminado' : 'Eventos eliminados');

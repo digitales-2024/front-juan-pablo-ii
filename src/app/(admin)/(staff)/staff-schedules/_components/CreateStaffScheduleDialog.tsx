@@ -216,14 +216,13 @@ export function CreateStaffScheduleDialog() {
         const calendarFilters = queryClient.getQueryData<EventFilterParams>(['calendar-filters']);
 
         // Invalidar la query específica
-        queryClient.invalidateQueries({
+        queryClient.refetchQueries({
           queryKey: ['calendar-turns', calendarFilters]
         });
 
         // Invalidar también todas las queries relacionadas
-        queryClient.invalidateQueries({
+        queryClient.refetchQueries({
           queryKey: ['calendar-turns'],
-          exact: false
         });
 
         setOpen(false);

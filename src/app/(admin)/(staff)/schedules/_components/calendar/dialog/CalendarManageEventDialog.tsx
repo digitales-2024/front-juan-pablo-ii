@@ -85,33 +85,28 @@ export default function CalendarManageEventDialog() {
     setIsEditing(false)
   }
 
-  const handleDelete = () => {
-    if (!selectedEvent) return
+  const handleDelete = async () => {
+    if (!selectedEvent) return;
 
-    deleteMutation.mutate(
+    console.log('🗑️ [Delete Event] Starting deletion for event:', selectedEvent.id);
+
+    await deleteMutation.mutate(
       { ids: [selectedEvent.id] },
       {
         onSuccess: () => {
-          queryClient.setQueryData<CalendarEvent[]>(['calendar-turns'], (oldEvents) =>
-            oldEvents?.filter(event => event.id !== selectedEvent.id) || []
-          );
-
+          console.log('✅ [Delete Event] Successfully deleted event');
           queryClient.invalidateQueries({
             queryKey: ['calendar-turns'],
-            exact: false,
-            predicate: (query) => {
-              return Array.isArray(query.queryKey) &&
-                query.queryKey[0] === 'calendar-turns';
-            }
+            exact: false
           });
-
-          handleClose()
+          handleClose();
         },
         onError: (error) => {
-          toast.error(error.message)
+          console.error('❌ [Delete Event] Error deleting event:', error);
+          toast.error(error.message);
         },
       },
-    )
+    );
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

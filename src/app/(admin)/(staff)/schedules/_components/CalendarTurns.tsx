@@ -29,7 +29,9 @@ export default function CalendarTurns() {
     }));
   };
 
-
+  useEffect(() => {
+    console.log('🔄 [CalendarTurns] Eventos actualizados:', calendarEvents);
+  }, [calendarEvents]);
 
   // Eliminar completamente la query de useEvents aquí
   return (
