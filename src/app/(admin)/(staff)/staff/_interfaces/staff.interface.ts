@@ -38,4 +38,6 @@ export const updateStaffSchema = z.object({
   birth: z.string().min(1, "La fecha de nacimiento es requerida").optional(),
   email: z.string().email("El email no es válido").optional(),
   phone: z.string().optional(),
+  cmp: z.string().optional(),
+
 }) satisfies z.ZodType<UpdateStaffDto>;
