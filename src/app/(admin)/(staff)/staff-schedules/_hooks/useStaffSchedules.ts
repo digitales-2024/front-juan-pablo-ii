@@ -102,10 +102,24 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
         });
       });
 
+      // Invalidar todas las queries de calendar-turns
+      queryClient.invalidateQueries({
+        queryKey: ['calendar-turns'],
+        exact: false
+      });
+
       toast.success(res.message);
 
       if (res.data?.id && variables.recurrence?.frequency !== 'YEARLY') {
-        generateEventsMutation.mutate(res.data.id);
+        generateEventsMutation.mutate(res.data.id, {
+          onSuccess: () => {
+            // Invalidar nuevamente después de generar los eventos
+            queryClient.invalidateQueries({
+              queryKey: ['calendar-turns'],
+              exact: false
+            });
+          }
+        });
       }
     },
     onError: (error) => {
@@ -203,6 +217,7 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
           query.queryKey[0] === "staff-schedules" &&
           (query.queryKey[1] === undefined || affectedStaffIds.includes((query.queryKey[1] as any)?.staffId))
       });
+      queryClient.invalidateQueries({ queryKey: ['calendar-turns'] });
 
       toast.success(
         variables.ids.length === 1

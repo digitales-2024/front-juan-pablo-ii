@@ -61,12 +61,17 @@ export default function CalendarProvider({
   console.log(filteredEvents);
 
   useEffect(() => {
-    setFilteredEvents(turnos || []);
+    console.log('🔄 [Provider] Eventos recibidos:', turnos);
+    if (turnos) {
+      setFilteredEvents(turnos);
+    } else {
+      console.warn('⚠️ [Provider] No se recibieron eventos.');
+    }
   }, [turnos]);
 
   const contextValue = useMemo(() => ({
     events: filteredEvents || [],
-    eventsQuery: eventsQuery,
+    eventsQuery,
     currentMonth: parentDate.getMonth(),
     setEvents,
     mode,
@@ -84,10 +89,22 @@ export default function CalendarProvider({
   }), [filteredEvents, parentDate, setEvents, mode, setMode, parentSetDate, calendarIconIsToday, newEventDialogOpen, manageEventDialogOpen, selectedEvent, safeFilters]);
 
   useEffect(() => {
-    if (eventsQuery.isStale || !eventsQuery.data) {
+    console.log('🔄 [Provider] Filtros actuales:', safeFilters);
+    console.log('🔄 [Provider] Eventos filtrados:', filteredEvents);
+
+    if (eventsQuery.isStale && !eventsQuery.data) {
+      console.log('🔄 [Provider] Refetching events...');
       eventsQuery.refetch();
     }
-  }, [safeFilters]);
+  }, [safeFilters, eventsQuery]);
+
+  useEffect(() => {
+    console.log('🔄 [Provider] Invalidando query con filtros:', safeFilters);
+    queryClient.invalidateQueries({
+      queryKey: [EVENT_QUERY_KEY, safeFilters],
+      exact: false
+    });
+  }, [parentDate, queryClient]);
 
   useEffect(() => {
     console.log('🔄 [Provider] Actualizando eventos principales', turnos?.length);
@@ -99,14 +116,14 @@ export default function CalendarProvider({
       end: new Date(event.end)
     }));
 
+    setFilteredEvents(parsedEvents);
     setEvents(parsedEvents);
-    queryClient.setQueryData(['calendar-turns', safeFilters], parsedEvents);
-    queryClient.invalidateQueries({ queryKey: ['calendar-turns'], exact: false });
-  }, [turnos]);
 
-  useEffect(() => {
-    eventsQuery.refetch();
-  }, []);
+    // Actualizar la caché con los nuevos eventos
+    queryClient.setQueryData(['calendar-turns', safeFilters], parsedEvents);
+
+    // No es necesario invalidar aquí, ya que estamos actualizando la caché directamente
+  }, [turnos]);
 
   useEffect(() => {
     console.log('📅 [Calendar] Eventos actualizados', {
@@ -123,23 +140,33 @@ export default function CalendarProvider({
   }, [safeFilters, filteredEvents]);
 
   useEffect(() => {
-    const handleCacheUpdate = () => {
-      const allEvents = queryClient.getQueryData<CalendarEvent[]>(['calendar-turns', safeFilters]) || [];
-      setFilteredEvents(allEvents);
-      setEvents(allEvents);
-    };
+    // Almacenar los filtros actuales
+    queryClient.setQueryData(['calendar-filters'], safeFilters);
+  }, [safeFilters]);
 
-    // Escuchar cambios en la caché específica
-    const unsubscribe = queryClient.getQueryCache().subscribe(
-      event => {
-        if (event?.query.queryKey[0] === 'calendar-turns') {
-          handleCacheUpdate();
-        }
-      }
-    );
+  useEffect(() => {
+    if (eventsQuery.data) {
+      setFilteredEvents(eventsQuery.data);
+      setEvents(eventsQuery.data);
+    }
+  }, [eventsQuery.data, setEvents, setFilteredEvents]);
 
-    return () => unsubscribe();
-  }, [queryClient, safeFilters, setEvents]);
+  useEffect(() => {
+    // Invalidar la query cuando cambia el mes
+    queryClient.invalidateQueries({
+      queryKey: ['calendar-turns', safeFilters],
+      exact: false
+    });
+
+    console.log('🔄 [Month Change] Invalidando queries para el nuevo mes');
+  }, [parentDate, queryClient]);
+
+  useEffect(() => {
+    console.log('🔍 [Provider] Query activa:', {
+      queryKey: ['calendar-turns', safeFilters],
+      data: queryClient.getQueryData(['calendar-turns', safeFilters])
+    });
+  }, [safeFilters, queryClient]);
 
   console.log('🔧 [Provider] Tipo de setEvents:', typeof setEvents);
   console.log('🔍 Turnos recibidos:', {
