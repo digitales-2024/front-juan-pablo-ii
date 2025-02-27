@@ -59,7 +59,7 @@ import {
   FilterByType,
   FilterByTypeSchema
 } from "../../_interfaces/filter.interface";
-import { OrderStatus, orderStatusConfig, orderStatusEnumOptions, OrderType, orderTypeEnumOptions } from "../../_interfaces/order.interface";
+import { OrderStatus, orderStatusConfig, orderStatusEnumOptions, OrderType, orderTypeConfig, orderTypeEnumOptions } from "../../_interfaces/order.interface";
 import { cn } from "@/lib/utils";
 
 export function FilterOrderDialog() {
@@ -354,7 +354,7 @@ export function FilterOrderDialog() {
                         orderStatusEnumOptions.map((orderStatus) => {
                           const {backgroundColor, hoverBgColor, icon: Icon, textColor} = orderStatusConfig[orderStatus.value];
                           return (
-                          <SelectItem key={orderStatus.value} value={orderStatus.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2")}>
+                          <SelectItem key={orderStatus.value} value={orderStatus.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2 ")}>
                             <div className="flex space-x-1 items-center justify-center">
                               <Icon className="size-4"></Icon>
                               <span>
@@ -407,11 +407,18 @@ export function FilterOrderDialog() {
                     </FormControl>
                     <SelectContent>
                       {
-                        orderTypeEnumOptions.map((orderType) => (
-                          <SelectItem key={orderType.value} value={orderType.value}>
-                            {orderType.label}
+                        orderTypeEnumOptions.map((orderType) => {
+                          const {backgroundColor, hoverBgColor, icon: Icon, textColor} = orderTypeConfig[orderType.value];
+                          return (
+                          <SelectItem key={orderType.value} value={orderType.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2 ")}>
+                            <div className="flex space-x-1 items-center justify-center">
+                              <Icon className="size-4"></Icon>
+                              <span>
+                                {orderType.label}
+                              </span>
+                            </div>
                           </SelectItem>
-                        ))
+                        )})
                       }
                     </SelectContent>
                   </Select>
@@ -456,11 +463,18 @@ export function FilterOrderDialog() {
                     </FormControl>
                     <SelectContent>
                       {
-                        orderStatusEnumOptions.map((orderStatus) => (
-                          <SelectItem key={orderStatus.value} value={orderStatus.value}>
-                            {orderStatus.label}
+                        orderStatusEnumOptions.map((orderStatus) => {
+                          const {backgroundColor, hoverBgColor, icon: Icon, textColor} = orderStatusConfig[orderStatus.value];
+                          return (
+                          <SelectItem key={orderStatus.value} value={orderStatus.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2 ")}>
+                            <div className="flex space-x-1 items-center justify-center">
+                              <Icon className="size-4"></Icon>
+                              <span>
+                                {orderStatus.label}
+                              </span>
+                            </div>
                           </SelectItem>
-                        ))
+                        )})
                       }
                     </SelectContent>
                   </Select>
@@ -488,11 +502,18 @@ export function FilterOrderDialog() {
                     </FormControl>
                     <SelectContent>
                       {
-                        orderTypeEnumOptions.map((orderType) => (
-                          <SelectItem key={orderType.value} value={orderType.value}>
-                            {orderType.label}
+                        orderTypeEnumOptions.map((orderType) => {
+                          const {backgroundColor, hoverBgColor, icon: Icon, textColor} = orderTypeConfig[orderType.value];
+                          return (
+                          <SelectItem key={orderType.value} value={orderType.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2 ")}>
+                            <div className="flex space-x-1 items-center justify-center">
+                              <Icon className="size-4"></Icon>
+                              <span>
+                                {orderType.label}
+                              </span>
+                            </div>
                           </SelectItem>
-                        ))
+                        )})
                       }
                     </SelectContent>
                   </Select>

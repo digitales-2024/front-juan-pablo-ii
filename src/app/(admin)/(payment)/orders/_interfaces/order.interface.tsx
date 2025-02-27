@@ -30,6 +30,11 @@ export type EnumConfig = {
   backgroundColor: string;
   textColor: string;
   hoverBgColor: string;
+  hoverTextColor?:string
+  importantBgColor?: string;
+  importantHoverBgColor?: string;
+  importantTextColor?: string;
+  importantHoverTextColor?: string;
   icon: LucideIcon;
 }
 
@@ -174,7 +179,6 @@ export type CreateOrderDto = components['schemas']['CreateOrderDto'];
 export type UpdateOrderDto = components['schemas']['UpdateOrderDto'];
 export type DeleteOrdersDto = components['schemas']['DeleteOrdersDto'];
 export type SubmitDraftOrderDto = components['schemas']['SubmitDraftOrderDto'];
-
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateOrderDto = DeleteOrdersDto;
 
