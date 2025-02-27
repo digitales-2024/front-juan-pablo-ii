@@ -1,22 +1,24 @@
 "use client";
 
-import { OrderTable } from "./_components/OrderTable";
 import { PageHeader } from "@/components/PageHeader";
+import { StorageTable } from "./_components/OrderTable";
 // import { getBranches } from "./_actions/branch.actions";
 import Loading from "./loading";
 import { METADATA } from "./_statics/metadata";
 import { toast } from "sonner";
-import { useUnifiedOrders } from "./_hooks/useFilterOrders";
 import { FilterOrderDialog } from "./_components/FilterComponents/FilterOrdersDialog";
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
 import { useCallback } from "react";
+import { PrescriptionsTable } from "./_components/OutgoingTable";
+import { useUnifiedPrescriptions } from "./_hooks/useUnifiedPrescriptions";
 
 export default function PageOrders() {
   const {
     query: response,
-    setFilterAllOrders,
-  } = useUnifiedOrders();
+    setFilterAllPrescriptions,
+    setFilterByDni,
+  } = useUnifiedPrescriptions();
 
   const onSubmitAllStorages = useCallback(() => {
     setFilterAllOrders();
@@ -59,7 +61,7 @@ export default function PageOrders() {
         </Button>
       </div>
       <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-        <OrderTable data={response.data} />
+        <PrescriptionsTable data={response.data} />
       </div>
     </>
   );
