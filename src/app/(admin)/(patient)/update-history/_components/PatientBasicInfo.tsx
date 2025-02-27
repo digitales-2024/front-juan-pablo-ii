@@ -19,7 +19,8 @@ import {
   ScrollText,
  IdCard,
 } from "lucide-react"
-import type { Patient } from "../_interfaces/types"
+import { Patient } from "../_interfaces/updateHistory.interface"
+
 
 interface PatientBasicInfoProps {
   paciente: Patient
@@ -36,7 +37,7 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
             <Card className="h-full flex flex-col border-t-4 border-t-primary">
               <CardContent className="p-6 text-center flex-grow flex flex-col justify-center">
                 <Avatar className="w-24 h-24 sm:w-32 sm:h-32 mx-auto">
-                  <AvatarImage src={paciente.patientPhoto} alt={`${paciente.name} ${paciente.lastName}`} />
+                  <AvatarImage src={paciente.patientPhoto} alt={`${paciente.name} ${paciente.lastName}`}  className="object-cover" />
                   <AvatarFallback>
                     <User className="w-16 h-16" />
                   </AvatarFallback>

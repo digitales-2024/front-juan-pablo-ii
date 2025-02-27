@@ -38,7 +38,7 @@ import {
   BookHeart,
   Pencil,
 } from "lucide-react";
-import { MedicalHistory } from "../_interfaces/updateHistory.interface";
+import { MedicalHistory, UpdateMedicalHistoryDto } from "../_interfaces/updateHistory.interface";
 
 const antecedentesPreDefinidos = [
   { value: "alergias", label: "Alergias", icon: AlertCircle },
@@ -108,8 +108,9 @@ export function MedicalBackground({ historialMedico }: MedicalBackgroundProps) {
       ? formData.customTitulo
       : formData.tipo;
 
-    const updatedHistory = {
-      ...historialMedico,
+    const updatedHistory : UpdateMedicalHistoryDto = {
+      patientId:historialMedico.patientId,
+      description:historialMedico.description,
       medicalHistory: {
         ...historialMedico.medicalHistory,
         [key]: formData.contenido,

@@ -5987,6 +5987,12 @@ export interface components {
         DeletePatientDto: {
             ids: string[];
         };
+        PrescriptionItemDto: {
+            id: string;
+            name: string;
+            quantity: number;
+            description?: string;
+        };
         CreatePrescriptionDto: {
             /**
              * @description ID de la actualización de historia médica
@@ -6016,16 +6022,26 @@ export interface components {
             registrationDate: string;
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "Paracetamol",
-             *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas",
-             *           "duracion": "5 días"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "Paracetamol",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
+             */
+            prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "consulta general",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
             prescription: Record<string, never>;
             /**
@@ -6038,6 +6054,12 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             purchaseOrderId?: string;
+        };
+        PrescriptionItemResponse: {
+            id: string;
+            name: string;
+            quantity: number;
+            description?: string;
         };
         Prescription: {
             id: string;
@@ -6081,16 +6103,26 @@ export interface components {
             registrationDate?: string;
             /**
              * @description Detalle de medicamentos y dosificación
-             * @example {
-             *       "medicamentos": [
-             *         {
-             *           "nombre": "Paracetamol",
-             *           "dosis": "500mg",
-             *           "frecuencia": "Cada 8 horas",
-             *           "duracion": "5 días"
-             *         }
-             *       ]
-             *     }
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "Paracetamol",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
+             */
+            prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
+            /**
+             * @description Detalle de medicamentos y dosificación
+             * @example [
+             *       {
+             *         "id": "123e4567-e89b-12d3-a456-426614174000",
+             *         "nombre": "consulta general",
+             *         "cantidad": "1",
+             *         "description": "recomendado para el paciente"
+             *       }
+             *     ]
              */
             prescription?: Record<string, never>;
             /**
@@ -6152,7 +6184,7 @@ export interface components {
              *       "observaciones": "Seguimiento en 7 días"
              *     }
              */
-            updateHistory: Record<string, never>;
+            updateHistory?: Record<string, never>;
             /**
              * @description Descripción adicional
              * @example Paciente presenta mejoría
@@ -14900,7 +14932,7 @@ export interface operations {
                      *       "tratamiento": "Reposo y medicamentos",
                      *       "observaciones": "Seguimiento en 7 días"
                      *     } */
-                    updateHistory: Record<string, never>;
+                    updateHistory?: Record<string, never>;
                     /** @example Paciente presenta mejoría */
                     description?: string;
                     /** @example false */

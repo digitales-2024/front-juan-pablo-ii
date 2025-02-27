@@ -44,9 +44,9 @@ interface UpdateStaffSheetProps {
 }
 
 
-export function UpdateStaffSheet({ 
-  staff, 
-  open: controlledOpen, 
+export function UpdateStaffSheet({
+  staff,
+  open: controlledOpen,
   onOpenChange,
   showTrigger = true
 }: UpdateStaffSheetProps) {
@@ -67,6 +67,7 @@ export function UpdateStaffSheet({
       email: staff.email,
       phone: staff.phone ?? "",
       staffTypeId: staff.staffTypeId,
+      cmp: staff.cmp ?? "",
     },
   });
 
@@ -146,10 +147,10 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>DNI</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="12345678" 
+                      <Input
+                        placeholder="12345678"
                         maxLength={8}
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -164,8 +165,8 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>Fecha de Nacimiento</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="date" 
+                      <Input
+                        type="date"
                         {...field}
                       />
                     </FormControl>
@@ -181,9 +182,9 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="email"
-                        placeholder="juan.perez@ejemplo.com" 
+                        placeholder="juan.perez@ejemplo.com"
                         {...field}
                       />
                     </FormControl>
@@ -199,8 +200,8 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>Teléfono (opcional)</FormLabel>
                     <FormControl>
-                      <PhoneInput 
-                        placeholder="999888777" 
+                      <PhoneInput
+                        placeholder="999888777"
                         {...field}
                       />
                     </FormControl>
@@ -234,6 +235,23 @@ export function UpdateStaffSheet({
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="cmp"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CMP (opcional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Número de colegiatura"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <SheetFooter>
                 <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                   <SheetClose asChild>
@@ -241,8 +259,8 @@ export function UpdateStaffSheet({
                       Cancelar
                     </Button>
                   </SheetClose>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={updateMutation.isPending}
                   >
                     {updateMutation.isPending ? (
