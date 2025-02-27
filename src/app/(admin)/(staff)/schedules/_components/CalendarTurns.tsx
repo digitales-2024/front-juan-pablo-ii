@@ -30,6 +30,7 @@ export default function CalendarTurns() {
   };
 
   useEffect(() => {
+
     console.log('🔄 [CalendarTurns] Eventos actualizados:', calendarEvents);
   }, [calendarEvents]);
 

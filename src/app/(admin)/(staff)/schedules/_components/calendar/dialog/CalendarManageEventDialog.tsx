@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { User, MapPin, CalendarDays, Clock, Pencil, Trash, Loader2, X, Palette } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { EventFilterParams, useEvents } from "../../../_hooks/useEvents"
+import { EVENT_QUERY_KEY, EventFilterParams, useEvents } from "../../../_hooks/useEvents"
 import { Input } from "@/components/ui/input"
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff"
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches"
@@ -49,7 +49,7 @@ const formSchema = z
   )
 
 export default function CalendarManageEventDialog() {
-  const { manageEventDialogOpen, setManageEventDialogOpen, selectedEvent, setSelectedEvent } = useCalendarContext()
+  const { manageEventDialogOpen, setManageEventDialogOpen, selectedEvent, setSelectedEvent, filters: safeFilters } = useCalendarContext()
   const [isEditing, setIsEditing] = React.useState(false)
 
   const { deleteMutation, updateMutation } = useEvents()
@@ -90,22 +90,22 @@ export default function CalendarManageEventDialog() {
 
     console.log('🗑️ [Delete Event] Starting deletion for event:', selectedEvent.id);
 
-    await deleteMutation.mutate(
+    deleteMutation.mutate(
       { ids: [selectedEvent.id] },
       {
         onSuccess: () => {
-          console.log('✅ [Delete Event] Successfully deleted event');
+          console.log('✅ [Delete Event] Successfully deleted event')
           queryClient.invalidateQueries({
-            queryKey: ['calendar-turns'],
+            queryKey: [EVENT_QUERY_KEY, safeFilters],
             exact: false
-          });
-          handleClose();
+          })
+          handleClose()
         },
         onError: (error) => {
-          console.error('❌ [Delete Event] Error deleting event:', error);
-          toast.error(error.message);
+          console.error('❌ [Delete Event] Error deleting event:', error)
+          toast.error(error.message)
         },
-      },
+      }
     );
   }
 

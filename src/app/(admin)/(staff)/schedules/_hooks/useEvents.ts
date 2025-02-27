@@ -40,7 +40,11 @@ export interface EventFilterParams {
 }
 
 // Cambiar de string a array constante
-const EVENT_QUERY_KEY = ['calendar-turns'] as const;
+export const EVENT_QUERY_KEY = ['calendar-turns'] as const;
+
+// calendarn-turns
+// ['calendar-turns']
+
 
 export const useEvents = (filters?: EventFilterParams) => {
   const queryClient = useQueryClient();
