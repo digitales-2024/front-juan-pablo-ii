@@ -11,14 +11,15 @@ import { useCalendarContext } from "../CalendarContext"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { User, MapPin, CalendarDays, Clock, Pencil, Trash, Loader2, X } from "lucide-react"
+import { User, MapPin, CalendarDays, Clock, Pencil, Trash, Loader2, X, Palette } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { useEvents } from "../../../_hooks/useEvents"
+import { EVENT_QUERY_KEY, EventFilterParams, useEvents } from "../../../_hooks/useEvents"
 import { Input } from "@/components/ui/input"
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff"
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches"
 import { useQueryClient } from "@tanstack/react-query"
+import { CalendarEvent } from "../../../_types/CalendarTypes"
 
 const formSchema = z
   .object({
@@ -48,7 +49,7 @@ const formSchema = z
   )
 
 export default function CalendarManageEventDialog() {
-  const { manageEventDialogOpen, setManageEventDialogOpen, selectedEvent, setSelectedEvent } = useCalendarContext()
+  const { manageEventDialogOpen, setManageEventDialogOpen, selectedEvent, setSelectedEvent, filters: safeFilters } = useCalendarContext()
   const [isEditing, setIsEditing] = React.useState(false)
 
   const { deleteMutation, updateMutation } = useEvents()
@@ -84,25 +85,28 @@ export default function CalendarManageEventDialog() {
     setIsEditing(false)
   }
 
-  const handleDelete = () => {
-    if (!selectedEvent) return
+  const handleDelete = async () => {
+    if (!selectedEvent) return;
+
+    console.log('🗑️ [Delete Event] Starting deletion for event:', selectedEvent.id);
 
     deleteMutation.mutate(
       { ids: [selectedEvent.id] },
       {
         onSuccess: () => {
+          console.log('✅ [Delete Event] Successfully deleted event')
           queryClient.invalidateQueries({
-            queryKey: ['calendar-turns'],
-            exact: false,
-            refetchType: 'all'
-          });
+            queryKey: [EVENT_QUERY_KEY, safeFilters],
+            exact: false
+          })
           handleClose()
         },
         onError: (error) => {
+          console.error('❌ [Delete Event] Error deleting event:', error)
           toast.error(error.message)
         },
-      },
-    )
+      }
+    );
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -276,6 +280,26 @@ export default function CalendarManageEventDialog() {
                   <p className="text-sm text-red-500">{form.formState.errors.end.message}</p>
                 )}
               </div>
+              {isEditing && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Palette className="h-4 w-4" />
+                    Color
+                  </Label>
+                  <div className="p-4 bg-accent rounded-lg">
+                    <select
+                      {...form.register("color")}
+                      className="w-full bg-transparent font-medium"
+                    >
+                      <option value="blue">Azul</option>
+                      <option value="red">Rojo</option>
+                      <option value="green">Verde</option>
+                      <option value="yellow">Amarillo</option>
+                      <option value="purple">Morado</option>
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
