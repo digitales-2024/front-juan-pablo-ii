@@ -122,6 +122,10 @@ export default function CalendarManageEventDialog() {
           color: values.color
         },
       })
+      queryClient.invalidateQueries({
+        queryKey: [EVENT_QUERY_KEY, safeFilters],
+        exact: false
+      })
       setIsEditing(false)
       handleClose()
     } catch (error) {

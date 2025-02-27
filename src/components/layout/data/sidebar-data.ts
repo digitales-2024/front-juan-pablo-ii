@@ -53,8 +53,8 @@ export const sidebarData: SidebarData = {
           icon: Handshake,
         },
         {
-          title: "Citas",
-          url: "/appointments",
+          title: "Consultas",
+          url: "/consultations",
           icon: CalendarPlus,
         },
       ],
