@@ -1,15 +1,20 @@
-import type { ReactNode } from "react"
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils"; // Importa la función cn
 
 interface KPICardProps {
-  title: string
-  value: string
-  description: string
+  title: string;
+  value: string;
+  description: string;
   icon?: ReactNode
+  className?: string
 }
 
-export function KPICard({ title, value, description, icon }: KPICardProps) {
+export function KPICard({ title, value, description, icon, className }: KPICardProps) {
   return (
-    <div className="bg-white p-4 rounded-lg border">
+    <div className={cn(
+      "bg-white p-4 rounded-lg border transition-all", 
+      className
+    )}>
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-sm text-gray-500 mb-1">{title}</h3>
