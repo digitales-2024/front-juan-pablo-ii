@@ -6,7 +6,6 @@ import {
   ClipboardType,
   Clock,
   DollarSign,
-  FileHeart,
   FileText,
   Handshake,
   Home,
