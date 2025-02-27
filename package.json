@@ -54,6 +54,7 @@
 		"react-dom": "^19.0.0",
 		"react-hook-form": "^7.54.2",
 		"react-phone-number-input": "^3.4.11",
+		"recharts": "^2.15.1",
 		"sonner": "^1.7.1",
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7",
@@ -80,5 +81,8 @@
 		"tailwindcss": "^3.4.1",
 		"typescript": "^5",
 		"typescript-eslint": "^8.20.0"
+	},
+	"overrides": {
+		"react-is": "^19.0.0-rc"
 	}
 }
