@@ -24,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
-      const options = { 
+      const options: Intl.DateTimeFormatOptions = { 
         year: 'numeric', 
         month: 'short', 
         day: 'numeric',
