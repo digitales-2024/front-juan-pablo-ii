@@ -52,6 +52,18 @@ export const usePatients = () => {
       enabled: !!id,
     });
 
+  // Nueva función para buscar pacientes
+  const searchPatients = (query: string) => {
+    if (!patientsQuery.data) return [];
+    return patientsQuery.data.filter(patient =>
+      patient.name.toLowerCase().includes(query.toLowerCase()) ||
+      patient.dni.includes(query)
+    ).map(patient => ({
+      value: patient.id,
+      label: `${patient.name} ${patient.lastName || ''}`.trim(), // Mostrar nombre y apellido
+    }));
+  };
+
   // Mutación para crear paciente
 
   const createMutation = useMutation<
@@ -77,7 +89,7 @@ export const usePatients = () => {
 
       // Llamar a la función de historia médica para actualizarla
       void queryClient.invalidateQueries({ queryKey: ["medical-histories"] });
- 
+
     },
     onError: (error) => {
       toast.error(error.message || "Error al crear el paciente");
@@ -199,6 +211,7 @@ export const usePatients = () => {
     patientsQuery,
     usePatientById,
     patients: patientsQuery.data,
+    searchPatients, // Exponer la función de búsqueda
 
     // Mutations
     createMutation,
