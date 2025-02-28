@@ -86,6 +86,7 @@ export function UpdateMedicalHistoryPatient({
   >(null);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [imagesPreviews, setImagesPreviews] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Agregar nuevo estado para el modal de descanso médico
   const [showMedicalLeaveModal, setShowMedicalLeaveModal] = useState(false);
@@ -190,14 +191,18 @@ export function UpdateMedicalHistoryPatient({
   const { updateUpdateHistoryMutation } = useUpdateHistory();
 
   const handleSaveImages = async () => {
-    if (!selectedUpdateForImages || newImages.length === 0) return;
-
+    if (!selectedUpdateForImages || newImages.length === 0 || isSaving) return;
+    setIsSaving(true);
+    
     // Encontrar el objeto de update usando el ID
     const selectedUpdate = updateHistories.find(
       (update) => update.id === selectedUpdateForImages
     );
 
-    if (!selectedUpdate) return;
+    if (!selectedUpdate) {
+      setIsSaving(false);
+      return;
+    }
 
     try {
       // Generar ID aleatorio
@@ -233,6 +238,8 @@ export function UpdateMedicalHistoryPatient({
       await onHistoryUpdate();
     } catch (error) {
       console.error("Error al guardar imágenes:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -505,9 +512,9 @@ export function UpdateMedicalHistoryPatient({
                 <Button
                   type="button"
                   onClick={handleSaveImages}
-                  disabled={newImages.length === 0}
+                  disabled={newImages.length === 0 || isSaving}
                 >
-                  Guardar Imágenes
+                  {isSaving ? "Guardando..." : "Guardar Imágenes"}
                 </Button>
               </div>
             </div>

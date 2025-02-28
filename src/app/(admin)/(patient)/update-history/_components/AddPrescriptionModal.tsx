@@ -176,7 +176,7 @@ export function AddPrescriptionModal({
         <ScrollArea className="max-h-[70vh] px-6 py-4 h-full overflow-auto">
           {/* Contenido scrolleable */}
           <form onSubmit={handleSubmit} className="flex flex-col flex-1">
-            {isPrescriptionActive && (
+            {isPrescriptionActive ? (
               <div className="space-y-6 pr-4">
                 {/* Descripción general */}
                 <div className="space-y-2">
@@ -189,7 +189,7 @@ export function AddPrescriptionModal({
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        description: e.target.value, // Corregido: usar description en lugar de prescriptionDescription
+                        description: e.target.value,
                       }))
                     }
                     placeholder="Indicaciones generales..."
@@ -396,6 +396,14 @@ export function AddPrescriptionModal({
                 </Card>{" "}
                 {/* //fin */}
               </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <ClipboardPenLine className="h-16 w-16 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium mb-2">Nota Médica Desactivada</h3>
+                <p className="text-muted-foreground max-w-md">
+                  Active el interruptor arriba para crear una nueva nota médica con medicamentos y servicios.
+                </p>
+              </div>
             )}
 
             {/* Footer fijo */}
@@ -409,7 +417,7 @@ export function AddPrescriptionModal({
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={!isPrescriptionActive}>
-                  Guardar Receta
+                  {isPrescriptionActive ? "Guardar Receta" : "Receta Desactivada"}
                 </Button>
               </DialogFooter>
             </div>
