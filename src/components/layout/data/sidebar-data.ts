@@ -17,6 +17,7 @@ import {
   PackageOpen,
   PackagePlus,
   PackageSearch,
+  Pill,
   ShieldBan,
   ShieldCheck,
   ShieldPlus,
@@ -133,6 +134,11 @@ export const sidebarData: SidebarData = {
           title: "Gestión de Pagos",
           icon: DollarSign,
           items: [
+            {
+              title: "Recetas",
+              url: "/prescriptions",
+              icon: Pill,
+            },
             {
               title: "Órdenes",
               url: "/orders",

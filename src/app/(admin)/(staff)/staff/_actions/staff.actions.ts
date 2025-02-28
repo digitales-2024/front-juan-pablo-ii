@@ -14,6 +14,7 @@ import { z } from 'zod';
 type CreateStaffResponse = BaseApiResponse | { error: string };
 type UpdateStaffResponse = BaseApiResponse | { error: string };
 type DeleteStaffResponse = BaseApiResponse | { error: string };
+type GetOneStaffResponse = Staff | { error: string };
 
 // Schema para getStaff
 const GetStaffSchema = z.object({});
@@ -56,6 +57,23 @@ const getActiveStaffHandler = async () => {
     return { data: staff };
   } catch (error) {
     console.error("💥 Error en getStaffHandler:", error);
+    return { error: "Error al obtener el personal" };
+  }
+}
+
+export const getStaffById = async (id: string) => {
+  try {
+    const [staff, error] = await http.get<GetOneStaffResponse>(`/staff/${id}`);
+
+    if (error) {
+      return { error: typeof error === 'object' && error !== null && 'message' in error 
+        ? String(error.message) 
+        : 'Error al obtener el personal' };
+    }
+
+    return staff;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
     return { error: "Error al obtener el personal" };
   }
 }

@@ -1,12 +1,11 @@
 "use client";
 
 import { PageHeader } from "@/components/PageHeader";
-import { StorageTable } from "./_components/OrderTable";
 // import { getBranches } from "./_actions/branch.actions";
 import Loading from "./loading";
 import { METADATA } from "./_statics/metadata";
 import { toast } from "sonner";
-import { FilterOrderDialog } from "./_components/FilterComponents/FilterOrdersDialog";
+//import { FilterOrderDialog } from "./_components/FilterComponents/FilterOrdersDialog";
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
 import { useCallback } from "react";
@@ -20,15 +19,15 @@ export default function PageOrders() {
     setFilterByDni,
   } = useUnifiedPrescriptions();
 
-  const onSubmitAllStorages = useCallback(() => {
-    setFilterAllOrders();
+  const onSubmitAllPrescriptions = useCallback(() => {
+    setFilterAllPrescriptions();
     if (response.isError) {
       toast.error("Error al filtrar stock");
     }
     if (response.data) {
       toast.success("Stock filtrado correctamente");
     }
-  }, [setFilterAllOrders]);
+  }, [setFilterAllPrescriptions]);
 
   if (response.isLoading) {
     return <Loading />;
@@ -49,9 +48,9 @@ export default function PageOrders() {
         <PageHeader title={METADATA.title} description={METADATA.description} />
       </div>
       <div className="p-1 flex space-x-3">
-        <FilterOrderDialog></FilterOrderDialog>
+        {/* <FilterOrderDialog></FilterOrderDialog> */}
         <Button
-          onClick={onSubmitAllStorages}
+          onClick={onSubmitAllPrescriptions}
           variant="outline"
           size="sm"
           className="flex items-center space-x-1"

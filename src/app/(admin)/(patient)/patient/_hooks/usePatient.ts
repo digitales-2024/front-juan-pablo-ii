@@ -6,6 +6,7 @@ import {
   reactivatePatient,
   getPatients,
   getPatientById,
+  getPatientByDni,
 } from "../_actions/patient.actions";
 import { toast } from "sonner";
 import {
@@ -51,6 +52,20 @@ export const usePatients = () => {
       },
       enabled: !!id,
     });
+
+    // Query para obtener un paciente específico
+    const usePatientByDNI = (dni: string) =>
+      useQuery<Patient[], Error>({
+        queryKey: ["patient-by-dni", dni],
+        queryFn: async () => {
+          const response = await getPatientByDni(dni);
+          if ("error" in response) {
+            throw new Error(response.error);
+          }
+          return response
+        },
+        enabled: !!dni,
+      });
 
   // Mutación para crear paciente
 
@@ -199,6 +214,7 @@ export const usePatients = () => {
     patientsQuery,
     usePatientById,
     patients: patientsQuery.data,
+    usePatientByDNI,
 
     // Mutations
     createMutation,

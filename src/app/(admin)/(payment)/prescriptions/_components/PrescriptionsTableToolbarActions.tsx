@@ -1,18 +1,16 @@
 import { Table } from "@tanstack/react-table";
-import {
-  DetailedOutgoing,
-} from "../_interfaces/outgoing.interface";
-import { CreateOutgoingDialog } from "./CreateOutgoingDialog";
-import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
-import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
+// import { CreateOutgoingDialog } from "./CreateOutgoingDialog";
+// import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
+// import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToolbarButtonsLoading } from "./errorComponents/ToolbarLoading";
 import { toast } from "sonner";
+import { PrescriptionWithPatient } from "../_interfaces/prescription.interface";
 
 export interface OutgoingTableToolbarActionsProps {
-  table?: Table<DetailedOutgoing>;
+  table?: Table<PrescriptionWithPatient>;
 }
 
 export function OutgoingTableToolbarActions({
@@ -131,7 +129,7 @@ export function OutgoingTableToolbarActions({
           </SelectGroup>
         </SelectContent>
       </Select>
-      <CreateOutgoingDialog />
+      {/* <CreateOutgoingDialog /> */}
     </div>
   );
 }

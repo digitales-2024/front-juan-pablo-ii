@@ -11,7 +11,7 @@ import { PatientPrescriptions, PrescriptionWithPatient, toPrescriptionWithPatien
 export type ListPatientPrescriptionsResponse =
   | PatientPrescriptions[]
   | { error: string };
-  export type ListPrescriptionsWithPatientResponse =
+export type ListPrescriptionsWithPatientResponse =
   | PrescriptionWithPatient[]
   | { error: string };
 export type PatientPrescriptionResponse = PatientPrescriptions | { error: string };
@@ -39,7 +39,7 @@ export async function getPatientsPrescription(limit = 10, offset = 0) {
   try {
     const limitOffsetConfig = `?limit=${limit}&offset=${offset}`;
     const [prescriptionList, error] = await http.get<ListPatientPrescriptionsResponse>(
-      `receta/patients${limitOffsetConfig}`
+      `/receta/patients${limitOffsetConfig}`
     );
     if (error) {
       return {
@@ -60,7 +60,7 @@ export async function getPrescriptionsWithPatient(limit = 10, offset = 0) {
   try {
     const limitOffsetConfig = `?limit=${limit}&offset=${offset}`;
     const [prescriptionList, error] = await http.get<ListPrescriptionsWithPatientResponse>(
-      `receta/patients${limitOffsetConfig}`
+      `/receta/patients${limitOffsetConfig}`
     );
     if (error) {
       return {

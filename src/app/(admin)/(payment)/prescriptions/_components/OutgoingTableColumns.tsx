@@ -2,11 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedOutgoing } from "../_interfaces/outgoing.interface";
+// import { DetailedOutgoing } from "../_interfaces/outgoing.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-import { UpdateOutgoingSheet } from "./UpdateOutgoingSheet";
+// import { UpdateOutgoingSheet } from "./UpdateOutgoingSheet";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import {
@@ -19,24 +19,27 @@ import {
 import { useState } from "react";
 import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
-import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
-import { ShowMovementsDialog } from "./Movements/ShowMovementsDialog";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { StorageMovementDetail } from "./Movements/StorageMovementDetail";
+// import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
+// import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
+// import { ShowMovementsDialog } from "./Movements/ShowMovementsDialog";
+// import { format } from "date-fns";
+// import { es } from "date-fns/locale";
+// import { StorageMovementDetail } from "./Movements/StorageMovementDetail";
+import { PrescriptionWithPatient } from "../_interfaces/prescription.interface";
+import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 // import Image from "next/image";
 
-const STATE_OPTIONS = {
-  true: "Concretado",
-  false: "En proceso",
-};
+// const STATE_OPTIONS = {
+//   true: "Concretado",
+//   false: "En proceso",
+// };
 
-const TRANSFERENCE_OPTIONS = {
-  true: "SI",
-  false: "NO",
-};
-export const columns: ColumnDef<DetailedOutgoing>[] = [
+// const TRANSFERENCE_OPTIONS = {
+//   true: "SI",
+//   false: "NO",
+// };
+
+export const columns: ColumnDef<PrescriptionWithPatient>[] = [
   {
     id: "select",
     size: 10,
@@ -68,141 +71,107 @@ export const columns: ColumnDef<DetailedOutgoing>[] = [
     enablePinning: true,
   },
   {
-    accessorKey: "name",
+    accessorKey: "patient.name",
     meta: {
-      title: "Nombre",
+      title: "Paciente",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nombre" />
+      <DataTableColumnHeader column={column} title="Paciente" />
     ),
     cell: ({ row }) => (
-      <span>
-        {!row.original.name || row.original.name.length == 0
-          ? ""
-          : row.original.name}
+      <span className="capitalize">
+        {`${row.original.patient.name} ${row.original.patient.lastName ?? ''}`}
       </span>
     ),
   },
   {
-    accessorKey: "movements",
+    accessorKey: "prescriptionServices",
     size: 10,
     meta: {
-      title: "Movimientos",
+      title: "Receta",
     },
-    header: () => <div>Movimientos</div>,
+    header: () => <div>Receta</div>,
     cell: ({ row }) => (
       <div>
-        <ShowMovementsDialog
-          data={row.original.Movement}
-          incomingName={row.original.name ?? row.original.id}
-        ></ShowMovementsDialog>
+        {/* <ShowMovementsDialog
+          data={row.original.prescriptionServices}
+        ></ShowMovementsDialog> */}
       </div>
     ),
   },
   {
-    accessorKey: "description",
+    accessorKey: "purchaseOrderId",
+    size: 10,
     meta: {
-      title: "Descripción",
+      title: "Procesar órden",
     },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
-    ),
+    header: () => <div>Procesar órden</div>,
     cell: ({ row }) => (
-      <span>{row.original.description || "Sin descripción"}</span>
+      <div>
+        {/* <ShowMovementsDialog
+          data={row.original.prescriptionServices}
+        ></ShowMovementsDialog> */}
+      </div>
     ),
   },
   {
-    accessorKey: "Storage.name",
+    accessorKey: "patient.dni",
     meta: {
-      title: "Almacén Origen",
+      title: "DNI",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Almacén Origen" />
+      <DataTableColumnHeader column={column} title="DNI" />
     ),
     cell: ({ row }) => (
-      <span>{row.original.Storage.name ?? "Sin Almacen"}</span>
+      <span>{row.original.patient.dni}</span>
     ),
   },
   {
-    accessorKey: "Storage.TypeStorage.name",
+    accessorKey: "patient.phone",
     meta: {
-      title: "Tipo de almacén",
+      title: "Teléfono",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo de almacén" />
+      <DataTableColumnHeader column={column} title="Teléfono" />
+    ),
+    cell: ({ row }) => (
+      <span>{row.original.patient.phone ?? '---'}</span>
+    ),
+  },
+  {
+    accessorKey: "patient.email",
+    meta: {
+      title: "e-mail",
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.Storage.TypeStorage.name ?? "Sin tipo de almacén"}
+        {row.original.patient.email ?? "---"}
       </span>
     ),
   },
   {
-    accessorKey: "Storage.branch.name",
+    accessorKey: "staffId",
     meta: {
-      title: "Sucursal",
+      title: "Personal tratante",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Sucursal" />
+      <DataTableColumnHeader column={column} title="Personal tratante" />
     ),
-    cell: ({ row }) => (
+    cell: ({ row }) => {
+      const {
+        oneStaffQuery
+      } = useStaff()
+      const { data:staff, isLoading, isError } = oneStaffQuery(row.original.staffId)
+      if (isLoading) return <span>Cargando...</span>
+      if (isError) return <span>Error al cargar</span>
+      return (
       <span>
-        {row.original.Storage.branch?.name ?? "Sin sucursal"}
+        {staff ? `${staff.name} ${staff.lastName}` : "No disponible"}
       </span>
-    ),
-  },
-  {
-    accessorKey: "date",
-    meta: {
-      title: "Fecha de egreso",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha de egreso" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.date
-          ? format(new Date(row.original.date), "PP", { locale: es })
-          : "Fecha no disponible"}
-      </span>
-    ),
-  },
-    {
-      accessorKey: "isTransference",
-      meta: {
-        title: "Transferencia",
-      },
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="¿Es transferencia?" />
-      ),
-      cell: ({ row }) => (
-        // <span>
-        //   {row.original.state}
-        // </span>
-        <div className="flex items-center space-x-2">
-          <Badge variant={row.original.isTransference ? "default" : "secondary"}>
-            {row.original.isTransference ? TRANSFERENCE_OPTIONS.true : TRANSFERENCE_OPTIONS.false}
-          </Badge>
-          {(row.original.isTransference && row.original.referenceId && (row.original.referenceId.length>0)) && <StorageMovementDetail storageId={row.original.referenceId}></StorageMovementDetail>}
-        </div>
-      ),
-    },
-  {
-    accessorKey: "state",
-    meta: {
-      title: "Estado",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
-    ),
-    cell: ({ row }) => (
-      // <span>
-      //   {row.original.state}
-      // </span>
-      <Badge variant={row.original.state ? "default" : "secondary"}>
-        {row.original.state ? STATE_OPTIONS.true : STATE_OPTIONS.false}
-      </Badge>
-    ),
+    )},
   },
   {
     accessorKey: "isActive",
@@ -245,7 +214,7 @@ export const columns: ColumnDef<DetailedOutgoing>[] = [
 
       return (
         <div>
-          <div>
+          {/* <div>
             {showEditSheet && (
               <UpdateOutgoingSheet
                 outgoing={outgoing}
@@ -269,7 +238,7 @@ export const columns: ColumnDef<DetailedOutgoing>[] = [
                 onOpenChange={setShowReactivateDialog}
               />
             )}
-          </div>
+          </div> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

@@ -90,7 +90,6 @@ export function useUnifiedPrescriptions() {
     queryClient
       .invalidateQueries({ queryKey: PRESCRIPTION_QUERY_KEY })
       .catch(() => toast.error("Error al actualizar"));
-    console.log("filter hook", filter);
   }, [filter, queryClient]);
 
   // Helpers para actualizar el filtro
