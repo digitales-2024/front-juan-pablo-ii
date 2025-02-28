@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FORMSTATICS as STATIC_FORM } from "../_statics/forms";
+import { FORMSTATICS } from "../_statics/forms"; // Importación directa
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react"; // Removido useMemo ya que no es necesario
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   User,
@@ -56,37 +56,35 @@ import { es } from "date-fns/locale";
 
 interface CreatePatientFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
-  /* botones de envio de formulario */
   children: React.ReactNode;
-  /* hook de formulario */
   form: UseFormReturn<CreatePatientInput>;
-  /* funcion de envio de formulario */
   onSubmit: SubmitHandler<CreatePatientInput>;
 }
+
+// Componente InputWithIcon definido fuera del componente principal
+const InputWithIcon = ({
+  icon,
+  ...props
+}: {
+  icon: React.ReactNode;
+} & React.InputHTMLAttributes<HTMLInputElement>) => (
+  <div className="relative">
+    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+      {icon}
+    </div>
+    <Input className="pl-10" {...props} />
+  </div>
+);
 
 export function CreatePatientForm({
   children,
   form,
   onSubmit,
 }: CreatePatientFormProps) {
-  const FORMSTATICS = useMemo(() => STATIC_FORM, []);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const InputWithIcon = ({
-    icon,
-    ...props
-  }: {
-    icon: React.ReactNode;
-  } & React.InputHTMLAttributes<HTMLInputElement>) => (
-    <div className="relative">
-      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-        {icon}
-      </div>
-      <Input className="pl-10" {...props} />
-    </div>
-  );
-
+  // Función de cambio de archivo extraída del ciclo de render
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -104,7 +102,6 @@ export function CreatePatientForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex justify-center mb-6">
           <div className="relative">
-            {/* se debe de enviar un file de imagen */}
             <Avatar className="w-32 h-32">
               <AvatarImage src={preview ?? ""} className="object-cover" />
               <AvatarFallback>
@@ -130,6 +127,7 @@ export function CreatePatientForm({
           </div>
         </div>
 
+        {/* El resto del formulario queda igual, solo asegurándose de usar InputWithIcon como componente externo */}
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}

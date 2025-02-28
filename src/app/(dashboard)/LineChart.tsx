@@ -1,18 +1,14 @@
-"use client"
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+"use client";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
+import { TrendingUp } from "lucide-react";
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -26,7 +22,7 @@ const chartData = [
   { month: "April", desktop: 73, mobile: 190 },
   { month: "May", desktop: 209, mobile: 130 },
   { month: "June", desktop: 214, mobile: 140 },
-]
+];
 
 const chartConfig = {
   desktop: {
@@ -37,14 +33,19 @@ const chartConfig = {
     label: "Mobile",
     color: "hsl(var(--chart-2))",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function KPILineChartMultiple() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Clientes atendidos</CardTitle>
-      
+      <CardTitle>
+          {" "}
+          <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" />
+           Nuevos pacientes por mes
+          </h3>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -82,7 +83,6 @@ export function KPILineChartMultiple() {
           </LineChart>
         </ChartContainer>
       </CardContent>
-      
     </Card>
-  )
+  );
 }

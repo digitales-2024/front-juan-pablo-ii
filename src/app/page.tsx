@@ -63,7 +63,7 @@ export default function Home() {
           <div>
             <h1 className="text-3xl font-bold text-primary">Dashboard</h1>
             <p className="text-sm text-gray-500 mt-1">
-              Vista general del sistema
+              Inicio general del sistema
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -112,7 +112,7 @@ export default function Home() {
             onClick={() => setActiveTab("analiticas")}
           >
             <LineChart className="h-4 w-4" />
-            Analíticas
+  {/*           Analíticas */}
           </button>
         </div>
 
@@ -137,13 +137,13 @@ export default function Home() {
               />
             </Link>
             <Link
-              href="/clientes"
+              href="/pacintes"
               className="block transition-transform hover:scale-105"
             >
               <KPICard
-                title="Clientes"
+                title="Pacientes"
                 value="235"
-                description="Total de clientes atendidos"
+                description="Total de pacintes atendidos"
                 icon={<Users className="h-5 w-5 text-blue-600" />}
                 className="shadow-md hover:shadow-lg border-l-4 border-l-blue-500"
               />
@@ -155,7 +155,7 @@ export default function Home() {
               <KPICard
                 title="Citas"
                 value="124"
-                description="Total de citas atendidas"
+                description="Total de citas agendadas"
                 icon={<Calendar className="h-5 w-5 text-indigo-600" />}
                 className="shadow-md hover:shadow-lg border-l-4 border-l-indigo-500"
               />
@@ -167,7 +167,7 @@ export default function Home() {
               <KPICard
                 title="Citas pendientes"
                 value="15"
-                description="Citas pendientes el día de hoy"
+                description="Citas pendientes"
                 icon={<AlertTriangle className="h-5 w-5 text-amber-600" />}
                 className="shadow-md hover:shadow-lg border-l-4 border-l-amber-500"
               />
@@ -178,8 +178,8 @@ export default function Home() {
             >
               <KPICard
                 title="Ingreso promedio"
-                value="S/ 98.50"
-                description="Ingreso promedio por médico"
+                value="S/ 998.50"
+                description="Ingreso promedio"
                 icon={<DollarSign className="h-5 w-5 text-purple-600" />}
                 className="shadow-md hover:shadow-lg border-l-4 border-l-purple-500"
               />
@@ -194,10 +194,6 @@ export default function Home() {
               {/* Columna izquierda - 2/3 del ancho */}
               <div className="lg:col-span-2 h-full">
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 h-full flex flex-col">
-                  <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
-                    <BarChart3 className="h-4 w-4 text-primary" />
-                    Ingresos por mes
-                  </h3>
                   <div className="flex-grow">
                     <KPIBarChart />
                   </div>
@@ -207,10 +203,6 @@ export default function Home() {
               {/* Columna derecha - 1/3 del ancho */}
               <div className="h-full">
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 h-full flex flex-col">
-                  <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
-                    <PieChart className="h-4 w-4 text-primary" />
-                    Distribución por servicio
-                  </h3>
                   <div className="flex-grow">
                     <KPIBarChartCustom />
                   </div>
@@ -223,10 +215,6 @@ export default function Home() {
               {/* Columna izquierda - 2/3 del ancho */}
               <div className="lg:col-span-2 h-full">
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 h-full flex flex-col">
-                  <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
-                    <LineChart className="h-4 w-4 text-primary" />
-                    Tendencias anuales
-                  </h3>
                   <div className="flex-grow">
                     <KPILineChartMultiple />
                   </div>
@@ -236,10 +224,6 @@ export default function Home() {
               {/* Columna derecha - 1/3 del ancho */}
               <div className="h-full">
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 h-full flex flex-col">
-                  <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
-                    <BarChart3 className="h-4 w-4 text-primary" />
-                    Comparativa por área
-                  </h3>
                   <div className="flex-grow">
                     <KPIBarChartStacked />
                   </div>
@@ -306,10 +290,6 @@ export default function Home() {
       {/* Componente a ancho completo al pie */}
       <div className="w-full px-6 pb-6 bg-gray-50/50">
         <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 w-full">
-          <h3 className="text-md font-medium text-gray-800 mb-3 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-primary" />
-            Tendencias a lo largo del tiempo
-          </h3>
           <KPIAreaChart />
         </div>
       </div>
