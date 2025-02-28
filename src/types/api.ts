@@ -2630,43 +2630,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/time-off": {
+    "/api/v1/events/filter": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todas las ausencias temporales */
-        get: operations["TimeOffController_findAll"];
+        /** Obtener eventos filtrados */
+        get: operations["EventController_findEventsByFilter"];
         put?: never;
-        /** Crear nueva ausencia temporal */
-        post: operations["TimeOffController_create"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/time-off/{id}": {
+    "/api/v1/events": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener ausencia temporal por ID */
-        get: operations["TimeOffController_findOne"];
+        /** Obtener todos los eventos */
+        get: operations["EventController_findAll"];
+        put?: never;
+        /** Crear nuevo evento */
+        post: operations["EventController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener evento por ID */
+        get: operations["EventController_findOne"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** Actualizar evento existente */
-        patch: operations["TimeOffController_update"];
+        patch: operations["EventController_update"];
         trace?: never;
     };
-    "/api/v1/time-off/remove/all": {
+    "/api/v1/events/remove/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -2677,13 +2694,13 @@ export interface paths {
         put?: never;
         post?: never;
         /** Desactivar múltiples eventos */
-        delete: operations["TimeOffController_deleteMany"];
+        delete: operations["EventController_deleteMany"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/time-off/reactivate/all": {
+    "/api/v1/events/reactivate/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -2697,46 +2714,62 @@ export interface paths {
         options?: never;
         head?: never;
         /** Reactivar múltiples eventos */
-        patch: operations["TimeOffController_reactivateAll"];
+        patch: operations["EventController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/paciente": {
+    "/api/v1/events/{id}/generate-events": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los pacientes */
-        get: operations["PacientController_findAll"];
+        get?: never;
         put?: never;
-        /** Crear nuevo paciente */
-        post: operations["PacientController_create"];
+        post: operations["EventController_generateEvents"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/paciente/{id}": {
+    "/api/v1/staff-schedule": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener paciente por ID */
-        get: operations["PacientController_findOne"];
+        /** Obtener todos los horarios */
+        get: operations["StaffScheduleController_findAll"];
+        put?: never;
+        /** Crear nuevo horario */
+        post: operations["StaffScheduleController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-schedule/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener horario por ID */
+        get: operations["StaffScheduleController_findOne"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        /** Actualizar paciente existente */
-        patch: operations["PacientController_update"];
+        /** Actualizar horario existente */
+        patch: operations["StaffScheduleController_update"];
         trace?: never;
     };
-    "/api/v1/paciente/remove/all": {
+    "/api/v1/staff-schedule/remove/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -2746,14 +2779,14 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Desactivar múltiples pacientes */
-        delete: operations["PacientController_deleteMany"];
+        /** Desactivar múltiples horarios */
+        delete: operations["StaffScheduleController_deleteMany"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/paciente/reactivate/all": {
+    "/api/v1/staff-schedule/reactivate/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -2766,11 +2799,11 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Reactivar múltiples pacientes */
-        patch: operations["PacientController_reactivateAll"];
+        /** Reactivar múltiples horarios */
+        patch: operations["StaffScheduleController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/paciente/create-with-image": {
+    "/api/v1/time-off": {
         parameters: {
             query?: never;
             header?: never;
@@ -6286,10 +6319,9 @@ export interface components {
             staffId: string;
             patientId: string;
             registrationDate: string;
-            prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
-            prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
-            description?: string;
-            purchaseOrderId?: string;
+            prescription: string;
+            description: string;
+            purchaseOrderId: string;
             isActive: boolean;
         };
         PatientPrescriptions: {
