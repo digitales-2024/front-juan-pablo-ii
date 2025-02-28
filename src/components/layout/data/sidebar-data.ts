@@ -6,7 +6,7 @@ import {
   ClipboardType,
   Clock,
   DollarSign,
-  FileHeart,
+
   FileText,
   Handshake,
   Home,
@@ -282,11 +282,11 @@ export const sidebarData: SidebarData = {
               url: "/users",
               icon: User,
             },
-            {
+        /*     {
               title: "Permisos",
               url: "/permissions",
               icon: KeyRound,
-            },
+            }, */
           ],
         },
       ],

@@ -57,10 +57,10 @@ export const columns: ColumnDef<MedicalHistory>[] = [
   {
     id: "id",
     meta: {
-      title: "Boton",
+      title: "Ver",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Boton" />
+      <DataTableColumnHeader column={column} title="Ver" />
     ),
     cell: ({ row }) => {
       const router = useRouter();
@@ -76,7 +76,7 @@ export const columns: ColumnDef<MedicalHistory>[] = [
             disabled={!isActive}
           >
             <ClipboardPlus className="h-4 w-4" />
-            Actualizar
+            Visualizar
           </Button>
         </div>
       );

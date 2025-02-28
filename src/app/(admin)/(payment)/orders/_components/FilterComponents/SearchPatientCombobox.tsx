@@ -10,13 +10,13 @@ type SearchProductComoBoxProps = {
     defaultValue?: string;
 };
 
-export default function SearchProductCombobox({
+export default function SearchPatientCombobox({
     onValueChange,
     defaultValue,
 }: SearchProductComoBoxProps) {
   const DefaultSearchValue = "None"; //IMPORTANT: This value is used to SEND a request to the backend when the search input is empty
   const [value, setValue] = useState(defaultValue);
-  const [label, setLabel] = useState("Busque un producto");
+  const [label, setLabel] = useState("Busque a un PACIENTE por su nro. de DNI");
   const [search, setSearch] = useState(DefaultSearchValue);
 //   const { data } = useQuery({
 //     queryKey: ["regions", search],

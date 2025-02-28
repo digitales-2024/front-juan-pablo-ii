@@ -438,6 +438,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/order/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las órdenes */
+        get: operations["OrderController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/order/type/{type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all orders by type */
+        get: operations["OrderController_findAllByType"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/order/status/{status}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payments by status */
+        get: operations["OrderController_findByStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/order/{id}": {
         parameters: {
             query?: never;
@@ -507,40 +558,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/order/type/{type}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get all orders by type */
-        get: operations["OrderController_findAllByType"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/order/status/{status}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get payments by status */
-        get: operations["OrderController_findByStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/order/{type}/status/{status}": {
         parameters: {
             query?: never;
@@ -570,6 +587,23 @@ export interface paths {
         put?: never;
         /** Crear nuevo pago */
         post: operations["PaymentController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payment/status/{status}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payments by status and type */
+        get: operations["PaymentController_findByStatusAndType"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -707,23 +741,6 @@ export interface paths {
         put?: never;
         /** Process refund for a payment */
         post: operations["PaymentController_refundPayment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/payment/status/{status}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get payments by status and type */
-        get: operations["PaymentController_findByStatusAndType"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2944,6 +2961,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/update-history/{id}/update-with-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar historia médica con imágenes */
+        patch: operations["UpdateHistoryController_updateWithImages"];
+        trace?: never;
+    };
     "/api/v1/update-history/{id}/with-images": {
         parameters: {
             query?: never;
@@ -2958,8 +2992,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Actualizar historia médica con imágenes */
-        patch: operations["UpdateHistoryController_updateWithImages"];
+        patch?: never;
         trace?: never;
     };
     "/api/v1/medical-history": {
@@ -3317,7 +3350,94 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
-        Order: Record<string, never>;
+        Order: {
+            /**
+             * @description ID único de la orden
+             * @example 5f8d0a3e-7d5b-4d3e-a6c4-3a7d9b2d4c1a
+             */
+            id: string;
+            /**
+             * @description Código de referencia de la orden
+             * @example ORD-20240224-001
+             */
+            code?: string;
+            /**
+             * @description Tipo de orden
+             * @example MEDICAL_PRESCRIPTION_ORDER
+             * @enum {string}
+             */
+            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_CONSULTATION_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            /**
+             * @description ID del tipo de movimiento asociado
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            movementTypeId: string;
+            /**
+             * @description ID de referencia externa
+             * @example REF-12345
+             */
+            referenceId: string;
+            /**
+             * @description ID del origen de fondos. Por lo general, se refiere al proveeder. No existe entidad proveedor
+             * @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+             */
+            sourceId?: string;
+            /**
+             * @description ID del destino de fondos, por lo general se refiere al almacén de destino
+             * @example b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7
+             */
+            targetId?: string;
+            /**
+             * @description Estado actual de la orden
+             * @example PENDING
+             * @enum {string}
+             */
+            status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            /**
+             * @description Moneda de la transacción
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Subtotal de la orden (sin impuestos)
+             * @example 150.75
+             */
+            subtotal: number;
+            /**
+             * @description Impuestos aplicados
+             * @example 27.14
+             */
+            tax: number;
+            /**
+             * @description Total a pagar (subtotal + impuestos)
+             * @example 177.89
+             */
+            total: number;
+            /**
+             * Format: date-time
+             * @description Fecha de creación de la orden
+             * @example 2024-02-24T15:30:00Z
+             */
+            date: string;
+            /**
+             * @description Notas adicionales
+             * @example Orden creada para paciente Juan Pérez
+             */
+            notes?: string;
+            /** @description Estado de eliminación lógica. */
+            isActive: boolean;
+            /**
+             * @description Metadatos adicionales en formato JSON
+             * @example {
+             *       "pacienteId": "PAT-12345",
+             *       "medicoId": "DOC-67890",
+             *       "seguro": "Seguro Salud Total"
+             *     }
+             */
+            metadata?: Record<string, never>;
+        };
+        /** @enum {string} */
+        OrderType: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_CONSULTATION_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
         UpdateOrderDto: {
             /**
              * @description Código de la orden (opcional)
@@ -3399,8 +3519,6 @@ export interface components {
              */
             notes?: string;
         };
-        /** @enum {string} */
-        OrderType: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_CONSULTATION_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
         /** @enum {string} */
         OrderStatus: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
         CreatePaymentDto: {
@@ -7710,6 +7828,113 @@ export interface operations {
             };
         };
     };
+    OrderController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las órdenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_findAllByType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                type: components["schemas"]["OrderType"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orders found successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_findByStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Payment status to filter by */
+                status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of payments with the specified status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OrderController_findOne: {
         parameters: {
             query?: never;
@@ -7904,79 +8129,6 @@ export interface operations {
             };
         };
     };
-    OrderController_findAllByType: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                type: components["schemas"]["OrderType"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Orders found successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrderController_findByStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Payment status to filter by */
-                status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of payments with the specified status */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     OrderController_findByStatusType: {
         parameters: {
             query?: never;
@@ -8071,6 +8223,58 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_findByStatusAndType: {
+        parameters: {
+            query?: {
+                /** @description Payment type to filter by */
+                type?: "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
+            };
+            header?: never;
+            path: {
+                /** @description Payment status to filter by */
+                status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of payments with statistics */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        payments?: components["schemas"]["Payment"][];
+                        stats?: {
+                            totalRegular?: number;
+                            totalRefunds?: number;
+                            totalDiscounts?: number;
+                            totalPartialPayments?: number;
+                            netAmount?: number;
+                            paymentCount?: number;
+                            refundCount?: number;
+                            discountCount?: number;
+                        };
+                    };
+                };
+            };
+            /** @description Invalid status or payment type */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8425,58 +8629,6 @@ export interface operations {
                 };
             };
             /** @description Invalid refund request or payment not eligible for refund */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PaymentController_findByStatusAndType: {
-        parameters: {
-            query?: {
-                /** @description Payment type to filter by */
-                type?: "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
-            };
-            header?: never;
-            path: {
-                /** @description Payment status to filter by */
-                status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of payments with statistics */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        payments?: components["schemas"]["Payment"][];
-                        stats?: {
-                            totalRegular?: number;
-                            totalRefunds?: number;
-                            totalDiscounts?: number;
-                            totalPartialPayments?: number;
-                            netAmount?: number;
-                            paymentCount?: number;
-                            refundCount?: number;
-                            discountCount?: number;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid status or payment type */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -15134,42 +15286,6 @@ export interface operations {
             };
         };
     };
-    UpdateHistoryController_findOneWithImages: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Historia médica encontrada con sus imágenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UpdateHistory"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     UpdateHistoryController_updateWithImages: {
         parameters: {
             query?: never;
@@ -15238,6 +15354,42 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateHistoryController_findOneWithImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Historia médica encontrada con sus imágenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateHistory"];
+                };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
