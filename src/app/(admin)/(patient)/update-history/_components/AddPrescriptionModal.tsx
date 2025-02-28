@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   CreatePrescriptionDto,
   Product,
@@ -45,6 +45,7 @@ interface AddPrescriptionModalProps {
   branchId: string;
   staffId: string;
   patientId: string;
+  resetKey?: number; // Nueva prop para forzar el reinicio del componente
 }
 
 export function AddPrescriptionModal({
@@ -56,6 +57,7 @@ export function AddPrescriptionModal({
   branchId,
   staffId,
   patientId,
+  resetKey = 0,
 }: AddPrescriptionModalProps) {
   // Estado para controlar si la receta está activa
   const [isPrescriptionActive, setIsPrescriptionActive] = useState(false);
@@ -70,6 +72,26 @@ export function AddPrescriptionModal({
     prescriptionServices: [],
     description: "",
   });
+
+  // Usar useEffect para reiniciar el formulario cuando cambie resetKey
+  useEffect(() => {
+    if (resetKey > 0) {
+      setIsPrescriptionActive(false);
+      setFormData({
+        updateHistoryId: "",
+        branchId,
+        staffId,
+        patientId,
+        registrationDate: new Date().toISOString().split("T")[0],
+        prescriptionMedicaments: [],
+        prescriptionServices: [],
+        description: "",
+      });
+      // También reiniciar los estados de nuevos items
+      setNewMedicament({ productId: "", quantity: 1, description: "" });
+      setNewService({ serviceId: "", quantity: 1, description: "" });
+    }
+  }, [resetKey, branchId, staffId, patientId]);
 
   // Estados para nuevos items
   const [newMedicament, setNewMedicament] = useState({
