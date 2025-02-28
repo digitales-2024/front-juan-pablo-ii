@@ -419,6 +419,7 @@ export function CreateStaffScheduleDialog() {
             </DialogHeader>
             <div className="space-y-4">
               {!showAdvanced && <ScheduleSelector />}
+
               {showAdvanced && (
                 <>
                   <Button

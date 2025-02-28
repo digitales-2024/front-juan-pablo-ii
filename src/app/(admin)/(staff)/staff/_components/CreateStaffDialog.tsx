@@ -129,6 +129,11 @@ export function CreateStaffDialog() {
               {CREATE_STAFF_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
+          <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+            <p className="font-semibold">
+              Recuerda ingresar el CMP si estás creando un personal médico.
+            </p>
+          </div>
           <CreateStaffForm form={form} onSubmit={handleSubmit}>
             <DialogFooter>
               <DialogFooterContent />
@@ -151,6 +156,11 @@ export function CreateStaffDialog() {
             {CREATE_STAFF_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
+        <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+          <p className="font-semibold">
+            Recuerda ingresar el CMP si estás creando un personal médico.
+          </p>
+        </div>
         <CreateStaffForm form={form} onSubmit={handleSubmit}>
           <DrawerFooter>
             <DialogFooterContent />
