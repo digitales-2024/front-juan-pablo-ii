@@ -7,6 +7,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { BarChart3 } from "lucide-react";
 const chartData = [
   { month: "January", desktop: 186 },
   { month: "February", desktop: 305 },
@@ -31,9 +32,15 @@ const chartConfig = {
 
 export function KPIBarChart() {
   return (
-    <Card >
+    <Card>
       <CardHeader>
-        <CardTitle>Total ingreso por mes</CardTitle>
+        <CardTitle>
+          {" "}
+          <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-primary" />
+            Ingresos generales por mes
+          </h3>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">

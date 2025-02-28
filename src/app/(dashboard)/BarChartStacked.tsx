@@ -1,15 +1,8 @@
 "use client";
 
-
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
-import {
-  Card,
-  CardContent,
-
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -18,6 +11,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { BarChart3 } from "lucide-react";
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -48,7 +42,13 @@ export function KPIBarChartStacked() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pacientes Nuevos por Mes</CardTitle>
+        <CardTitle>
+          {" "}
+          <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-primary" />
+            Comparativa por área
+          </h3>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
