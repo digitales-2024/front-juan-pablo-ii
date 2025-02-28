@@ -21,7 +21,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useSelectProductDispatch } from "../../../_hooks/useSelectProducts";
 // import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
 import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from "./SelectProductTableColumns";
@@ -31,26 +30,30 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import LoadingDialogForm from "../../LoadingDialogForm";
 import GeneralErrorMessage from "../../errorComponents/GeneralErrorMessage";
-import { CreateOutgoingInput } from "../../../_interfaces/outgoing.interface";
 import { UseFormReturn } from "react-hook-form";
 import { useProductsStockByStorage, useUpdateProductStockByStorage } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import { Label } from "@/components/ui/label";
+import { CreateProductPurchaseBillingDto } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
+import { useSelectProductDispatch } from "../../../_hooks/useSelectProducts";
 
 const CREATE_PRODUCT_MESSAGES = {
   button: "Añadir producto(s)",
-  title: "Seleccionar almacén de origen y productos en stock",
+  title: "Seleccionar nuevos productos para procesar una órden de venta.",
   description:
-    "Selecciona un almacén y luego uno o varios productos en stock para añadir a la lista de movimientos.",
+    "Selecciona nuevos productos que figuran en la receta y procederán con la órden de venta.",
   onZeroStockSelectedItem: "Existen productos seleccionados en este almacén con stock en 0. Estos productos no serán añadidos a la lista de movimientos.",
-  success: "Productos guardados exitosamente",
+  success: "Servicios y/o Productos guardados exitosamente",
   submitButton: "Guardar selección",
   cancel: "Cancelar",
 } as const;
 
+// ProductPurchaseItemDto
+// CreateProductPurchaseBillingDto
+
 interface SelectProductDialogProps
   extends React.HTMLAttributes<HTMLButtonElement> {
   //data: OutgoingProducStockForm[];
-  form: UseFormReturn<CreateOutgoingInput>;
+  form: UseFormReturn<CreateProductPurchaseBillingDto>;
   className?: string;
 }
 export function SelectProductDialog({

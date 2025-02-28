@@ -6,6 +6,7 @@ import {
   getBranches,
   reactivateBranches,
   getActiveBranches,
+  getOneBranch,
 } from "../_actions/branch.actions";
 import { toast } from "sonner";
 import {
@@ -15,6 +16,7 @@ import {
   DeleteBranchesDto,
 } from "../_interfaces/branch.interface";
 import { BaseApiResponse } from "@/types/api/types";
+import { th } from "date-fns/locale";
 
 interface UpdateBranchVariables {
   id: string;
@@ -58,6 +60,31 @@ export const useBranches = () => {
       staleTime: 1000 * 60 * 5, // 5 minutos
     });
 
+    const oneBranchQuery = (id:string)=>{
+      const branch = useQuery<Branch, Error>({
+        queryKey: ["branch", id],
+        queryFn: async () => {
+          try {
+            const response = await getOneBranch(id);
+            if (!response) {
+              throw new Error("No se recibió respuesta del servidor");
+            }
+            if (
+              "error" in response
+            ){
+              throw new Error(response.error);
+            }
+            return response;
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "Error desconocido al traer una sucursal";
+            toast.error(message);
+            throw new Error(message);
+          }
+        },
+        staleTime: 1000 * 60 * 5, // 5 minutos
+      });
+      return branch
+    }
   // Mutación para crear sucursal
   const createMutation = useMutation<BaseApiResponse<Branch>, Error, CreateBranchDto>({
     mutationFn: async (data) => {
@@ -193,6 +220,7 @@ export const useBranches = () => {
     branchesQuery,
     activeBranchesQuery,
     branches: branchesQuery.data,
+    oneBranchQuery,
     createMutation,
     updateMutation,
     deleteMutation,

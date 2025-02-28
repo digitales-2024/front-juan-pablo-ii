@@ -2630,60 +2630,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/events/filter": {
+    "/api/v1/time-off": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener eventos filtrados */
-        get: operations["EventController_findEventsByFilter"];
+        /** Obtener todas las ausencias temporales */
+        get: operations["TimeOffController_findAll"];
         put?: never;
-        post?: never;
+        /** Crear nueva ausencia temporal */
+        post: operations["TimeOffController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/events": {
+    "/api/v1/time-off/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los eventos */
-        get: operations["EventController_findAll"];
-        put?: never;
-        /** Crear nuevo evento */
-        post: operations["EventController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/events/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener evento por ID */
-        get: operations["EventController_findOne"];
+        /** Obtener ausencia temporal por ID */
+        get: operations["TimeOffController_findOne"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** Actualizar evento existente */
-        patch: operations["EventController_update"];
+        patch: operations["TimeOffController_update"];
         trace?: never;
     };
-    "/api/v1/events/remove/all": {
+    "/api/v1/time-off/remove/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -2694,13 +2677,13 @@ export interface paths {
         put?: never;
         post?: never;
         /** Desactivar múltiples eventos */
-        delete: operations["EventController_deleteMany"];
+        delete: operations["TimeOffController_deleteMany"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/events/reactivate/all": {
+    "/api/v1/time-off/reactivate/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -2714,79 +2697,63 @@ export interface paths {
         options?: never;
         head?: never;
         /** Reactivar múltiples eventos */
-        patch: operations["EventController_reactivateAll"];
+        patch: operations["TimeOffController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/events/{id}/generate-events": {
+    "/api/v1/paciente": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Obtener todos los pacientes */
+        get: operations["PacientController_findAll"];
         put?: never;
-        post: operations["EventController_generateEvents"];
+        /** Crear nuevo paciente */
+        post: operations["PacientController_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/staff-schedule": {
+    "/api/v1/paciente/dni/{dni}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todos los horarios */
-        get: operations["StaffScheduleController_findAll"];
-        put?: never;
-        /** Crear nuevo horario */
-        post: operations["StaffScheduleController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff-schedule/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener horario por ID */
-        get: operations["StaffScheduleController_findOne"];
+        /** Obtenerun pacinete por su dni */
+        get: operations["PacientController_findByDni"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        /** Actualizar horario existente */
-        patch: operations["StaffScheduleController_update"];
+        patch?: never;
         trace?: never;
     };
-    "/api/v1/staff-schedule/remove/all": {
+    "/api/v1/paciente/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Obtener paciente por ID */
+        get: operations["PacientController_findOne"];
         put?: never;
         post?: never;
-        /** Desactivar múltiples horarios */
-        delete: operations["StaffScheduleController_deleteMany"];
+        delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Actualizar paciente existente */
+        patch: operations["PacientController_update"];
         trace?: never;
     };
-    "/api/v1/staff-schedule/reactivate/all": {
+    "/api/v1/paciente/remove/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -2796,14 +2763,31 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
+        /** Desactivar múltiples pacientes */
+        delete: operations["PacientController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/paciente/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        /** Reactivar múltiples horarios */
-        patch: operations["StaffScheduleController_reactivateAll"];
+        /** Reactivar múltiples pacientes */
+        patch: operations["PacientController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/time-off": {
+    "/api/v1/paciente/create-with-image": {
         parameters: {
             query?: never;
             header?: never;
@@ -6319,9 +6303,10 @@ export interface components {
             staffId: string;
             patientId: string;
             registrationDate: string;
-            prescription: string;
-            description: string;
-            purchaseOrderId: string;
+            prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
+            prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
+            description?: string;
+            purchaseOrderId?: string;
             isActive: boolean;
         };
         PatientPrescriptions: {
@@ -14521,6 +14506,43 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o paciente ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PacientController_findByDni: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description DNI del paciente */
+                dni: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los pacientes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Patient"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;

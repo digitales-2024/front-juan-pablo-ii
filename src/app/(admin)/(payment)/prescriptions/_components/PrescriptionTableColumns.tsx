@@ -27,6 +27,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 // import { StorageMovementDetail } from "./Movements/StorageMovementDetail";
 import { PrescriptionWithPatient } from "../_interfaces/prescription.interface";
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
+import { ShowPrescriptionDetailsDialog } from "./PrescriptionDetails/ShowsPDetailsDialog";
 // import Image from "next/image";
 
 // const STATE_OPTIONS = {
@@ -78,11 +79,12 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Paciente" />
     ),
-    cell: ({ row }) => (
+    cell: ({ row }) => {
+      return (
       <span className="capitalize">
         {`${row.original.patient.name} ${row.original.patient.lastName ?? ''}`}
       </span>
-    ),
+    )}
   },
   {
     accessorKey: "prescriptionServices",
@@ -93,9 +95,7 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
     header: () => <div>Receta</div>,
     cell: ({ row }) => (
       <div>
-        {/* <ShowMovementsDialog
-          data={row.original.prescriptionServices}
-        ></ShowMovementsDialog> */}
+        <ShowPrescriptionDetailsDialog data={row.original}></ShowPrescriptionDetailsDialog>
       </div>
     ),
   },

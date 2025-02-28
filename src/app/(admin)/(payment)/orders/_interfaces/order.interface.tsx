@@ -528,6 +528,21 @@ export type CreateProductPurchaseBillingDto = {
   metadata?: Record<string, never>;
 }
 
+export const paymentMethodOptions: EnumOptions<PaymentMethod>[] = [
+  {
+    label: "Efectivo",
+    value: "CASH",
+  },
+  {
+    label: "Transferencia bancaria",
+    value: "BANK_TRANSFER",
+  },
+  {
+    label: "Yape",
+    value: "YAPE",
+  }
+];
+
 export const createProductSaleBillingSchema = z.object({
   products: z.array(z.object({
     productId: z.string(),

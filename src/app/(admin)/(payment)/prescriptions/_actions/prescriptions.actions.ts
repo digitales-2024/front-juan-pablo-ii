@@ -60,7 +60,7 @@ export async function getPrescriptionsWithPatient(limit = 10, offset = 0) {
   try {
     const limitOffsetConfig = `?limit=${limit}&offset=${offset}`;
     const [prescriptionList, error] = await http.get<ListPrescriptionsWithPatientResponse>(
-      `/receta/patients${limitOffsetConfig}`
+      `/receta/withPatient${limitOffsetConfig}`
     );
     if (error) {
       return {

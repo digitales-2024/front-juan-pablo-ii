@@ -1,7 +1,7 @@
 "use client";
 
 import { DataTable } from "@/components/data-table/DataTable";
-import { columns } from "./OutgoingTableColumns";
+import { columns } from "./PrescriptionTableColumns";
 import { OutgoingTableToolbarActions } from "./PrescriptionsTableToolbarActions";
 // import { ListCategoryResponse } from "../_actions/category.actions";
 import { PrescriptionWithPatient } from "../_interfaces/prescription.interface";
@@ -19,7 +19,6 @@ export function PrescriptionsTable({ data }: PrescriptionTableProps) {
       toolbarActions={(table) => <OutgoingTableToolbarActions table={table} />}
       columnVisibilityConfig={{
         description:false,
-        state:false,
         // isTransference:false,
       }}
     />

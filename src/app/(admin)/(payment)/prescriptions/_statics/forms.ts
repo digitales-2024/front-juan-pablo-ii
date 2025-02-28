@@ -1,6 +1,9 @@
 // import { FormStatics } from "@/types/statics/forms";
 // import { CreateOrderInput, UpdateOrderInput, } from "../_interfaces/order.interface";
 
+import { ComplexFormStatics } from "@/types/statics/forms";
+import { CreateProductSaleBillingInput, ProductSaleItemDto } from "../../orders/_interfaces/order.interface";
+
 // // export const createOrderSchema = z.object({
 // //     code: z.string().optional(),
 // //     type: z.enum(["MEDICAL_PRESCRIPTION_ORDER", "MEDICAL_CONSULTATION_ORDER", "PRODUCT_SALE_ORDER", "PRODUCT_PURCHASE_ORDER"]),
@@ -246,3 +249,122 @@
 //         name: "metadata",
 //     },
 // }
+
+// export const createProductSaleBillingSchema = z.object({
+//   products: z.array(z.object({
+//     productId: z.string(),
+//     quantity: z.number(),
+//   })),
+//   storageId: z.string(),
+//   branchId: z.string(),
+//   storageLocation: z.string().optional(),
+//   batchNumber: z.string().optional(),
+//   referenceId: z.string().optional(),
+//   currency: z.string(),
+//   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+//   notes: z.string().optional(),
+//   metadata: z.record(z.never()).optional(),
+// }) satisfies z.ZodType<CreateProductSaleBillingDto>;
+//export type CreateProductSaleBillingInput = z.infer<typeof createProductSaleBillingSchema>;
+
+//Faltan lo de los servicios
+export const CREATE_PRESCRIPTION_ORDER_FORMSTATICS: ComplexFormStatics<CreateProductSaleBillingInput, ProductSaleItemDto> = {
+    products: {
+        required: true,
+        label: "Productos",
+        type: "array",
+        subFields:{
+            productId: {
+                required: true,
+                label: "Producto",
+                defaultValue: undefined,
+                type: "select",
+                placeholder: "Selecciona un producto",
+                emptyMessage: "No se encontraron productos",
+                name: "productId",
+            },
+            quantity: {
+                required: true,
+                label: "Cantidad",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Cantidad",
+                name: "quantity",
+            },
+        },
+        placeholder: "Productos de la orden",
+        name: "products",
+    },
+    storageId: {
+        required: true,
+        label: "Almacén",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Almacén de la orden",
+        name: "storageId",
+    },
+    branchId: {
+        required: true,
+        label: "Sucursal",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Sucursal de la orden",
+        name: "branchId",
+    },
+    storageLocation: {
+        required: false,
+        label: "Ubicación de almacenamiento",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Ubicación de almacenamiento de la orden",
+        name: "storageLocation",
+    },
+    batchNumber: {
+        required: false,
+        label: "Número de lote",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Número de lote de la orden",
+        name: "batchNumber",
+    },
+    referenceId: {
+        required: false,
+        label: "Referencia",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Referencia de la orden",
+        name: "referenceId",
+    },
+    currency: {
+        required: true,
+        label: "Moneda",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Moneda de la orden",
+        name: "currency",
+    },
+    paymentMethod: {
+        required: true,
+        label: "Método de pago",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Método de pago de la orden",
+        name: "paymentMethod",
+    },
+    notes: {
+        required: false,
+        label: "Notas",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Notas de la orden",
+        name: "notes",
+    },
+    metadata: {
+        required: false,
+        label: "Metadatos",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Metadatos de la orden",
+        name: "metadata",
+    },
+}

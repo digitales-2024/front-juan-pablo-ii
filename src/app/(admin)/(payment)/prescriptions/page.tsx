@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
 import { useCallback } from "react";
-import { PrescriptionsTable } from "./_components/OutgoingTable";
+import { PrescriptionsTable } from "./_components/PrescriptionTable";
 import { useUnifiedPrescriptions } from "./_hooks/useUnifiedPrescriptions";
 
 export default function PageOrders() {
