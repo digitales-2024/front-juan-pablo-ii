@@ -36,6 +36,7 @@ import {
   CreateProductSaleBillingInput,
   createProductSaleBillingSchema,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
+import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
 
 const CREATE_OUTGOING_MESSAGES = {
   button: "Crear salida",
@@ -46,7 +47,11 @@ const CREATE_OUTGOING_MESSAGES = {
   cancel: "Cancelar",
 } as const;
 
-export function CreatePrescriptionBillingProcessDialog() {
+export function CreatePrescriptionBillingProcessDialog({
+  prescription,
+}: {
+  prescription: PrescriptionWithPatient
+}) {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
