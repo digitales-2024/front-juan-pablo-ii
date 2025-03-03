@@ -580,7 +580,6 @@ export function CreatePatientForm({
                     <SelectContent>
                       <SelectItem value="JLBYR">JLBYR</SelectItem>
                       <SelectItem value="Yanahuara">Yanahuara</SelectItem>
-                      {/*                     <SelectItem value="Otro">Otro</SelectItem> */}
                     </SelectContent>
                   </Select>
                 </FormControl>
