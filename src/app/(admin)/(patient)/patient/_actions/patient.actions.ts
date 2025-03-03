@@ -92,7 +92,7 @@ export async function getPatientById(id: string): Promise<PatientResponse> {
   workplace: '',
   bloodType: '',
   primaryDoctor: '',
-  language: '',
+  sucursal: '',
   notes: '',
   image: File {
     size: 3239,

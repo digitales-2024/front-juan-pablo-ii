@@ -6020,7 +6020,7 @@ export interface components {
              * @description Idioma preferido del paciente
              * @example Español
              */
-            language?: string;
+            sucursal?: string;
             /**
              * @description Cualquier otra observación relevante
              * @example Paciente con antecedentes de alergias severas
@@ -6050,7 +6050,7 @@ export interface components {
             workplace: string;
             bloodType: string;
             primaryDoctor: string;
-            language: string;
+            sucursal: string;
             notes: string;
             patientPhoto: string;
             isActive: boolean;
@@ -6140,7 +6140,7 @@ export interface components {
              * @description Idioma preferido del paciente
              * @example Español
              */
-            language?: string;
+            sucursal?: string;
             /**
              * @description Cualquier otra observación relevante
              * @example Paciente con antecedentes de alergias severas
@@ -14620,7 +14620,7 @@ export interface operations {
                     /** @example Dr. Juan Pérez, +51999999999 */
                     primaryDoctor?: string;
                     /** @example Español */
-                    language?: string;
+                    sucursal?: string;
                     /** @example Paciente con antecedentes de alergias severas */
                     notes?: string;
                     /** @example null */
@@ -14707,7 +14707,7 @@ export interface operations {
                     /** @example Dr. Juan Pérez, +51999999999 */
                     primaryDoctor?: string;
                     /** @example Español */
-                    language?: string;
+                    sucursal?: string;
                     /** @example Paciente con antecedentes de alergias severas */
                     notes?: string;
                     /** @example null */

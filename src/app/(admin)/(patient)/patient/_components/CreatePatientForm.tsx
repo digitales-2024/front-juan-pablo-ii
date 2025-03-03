@@ -26,12 +26,12 @@ import {
   Smartphone,
   IdCard,
   PhoneIcon,
-  Globe,
   Droplet,
   Shield,
   Heart,
   Users,
   UserRoundPen,
+  Hospital,
 } from "lucide-react";
 import {
   Select,
@@ -562,31 +562,30 @@ export function CreatePatientForm({
         <div>
           <FormField
             control={form.control}
-            name="language"
+            name="sucursal"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{FORMSTATICS.language.label}</FormLabel>
+                <FormLabel>{FORMSTATICS.sucursal.label}</FormLabel>
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <SelectTrigger className="relative pl-10">
-                      <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Hospital className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <SelectValue
-                        placeholder={FORMSTATICS.language.placeholder}
+                        placeholder={FORMSTATICS.sucursal.placeholder}
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Español">Español</SelectItem>
-                      <SelectItem value="Inglés">Inglés</SelectItem>
-                      <SelectItem value="Quechua">Quechua</SelectItem>
-                      <SelectItem value="Otro">Otro</SelectItem>
+                      <SelectItem value="JLBYR">JLBYR</SelectItem>
+                      <SelectItem value="Yanahuara">Yanahuara</SelectItem>
+                      {/*                     <SelectItem value="Otro">Otro</SelectItem> */}
                     </SelectContent>
                   </Select>
                 </FormControl>
                 <CustomFormDescription
-                  required={FORMSTATICS.language.required}
+                  required={FORMSTATICS.sucursal.required}
                 />
                 <FormMessage />
               </FormItem>
