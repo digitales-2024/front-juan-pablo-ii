@@ -18,6 +18,7 @@ import {
   Languages,
   ScrollText,
  IdCard,
+ Hospital,
 } from "lucide-react"
 import { Patient } from "../_interfaces/updateHistory.interface"
 
@@ -138,9 +139,9 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
                           </div>
                         </div>
                         <div className="space-y-1">
-                          <label className="text-sm font-medium text-muted-foreground">Registro del Paciente</label>
+                          <label className="text-sm font-medium text-muted-foreground">Sucursal de Registro del Paciente</label>
                           <div className="flex items-center space-x-2">
-                            <Languages className="w-5 h-5 text-primary" />
+                            <Hospital className="w-5 h-5 text-primary" />
                             <span className="font-medium">{paciente.sucursal}</span>
                           </div>
                         </div>
