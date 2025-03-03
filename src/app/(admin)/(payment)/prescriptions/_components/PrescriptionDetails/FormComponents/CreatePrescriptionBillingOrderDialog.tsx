@@ -161,9 +161,10 @@ export function CreatePrescriptionBillingProcessDialog({
 
   const handleClose = () => {
     form.reset();
+    handleClearProductList();
     setOpen(false);
   };
-
+  
   //ACtivate only when form errors
   // useEffect(() => {
   //   if (form.formState.errors) {
@@ -221,6 +222,7 @@ export function CreatePrescriptionBillingProcessDialog({
             form={form}
             onSubmit={handleSubmit}
             controlledFieldArray={fieldArray}
+            prescription={prescription}
           >
             {/* <DevelopmentZodError form={form} /> */}
             <DialogFooter>
@@ -248,6 +250,7 @@ export function CreatePrescriptionBillingProcessDialog({
           form={form}
           onSubmit={handleSubmit}
           controlledFieldArray={fieldArray}
+          prescription={prescription}
         >
           {/* <DevelopmentZodError form={form} /> */}
           <DrawerFooter>

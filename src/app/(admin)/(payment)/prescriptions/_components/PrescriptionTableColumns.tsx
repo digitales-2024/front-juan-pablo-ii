@@ -28,6 +28,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PrescriptionWithPatient } from "../_interfaces/prescription.interface";
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 import { ShowPrescriptionDetailsDialog } from "./PrescriptionDetails/ShowsPDetailsDialog";
+import { CreatePrescriptionBillingProcessDialog } from "./PrescriptionDetails/FormComponents/CreatePrescriptionBillingOrderDialog";
 // import Image from "next/image";
 
 // const STATE_OPTIONS = {
@@ -72,6 +73,18 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
     enablePinning: true,
   },
   {
+    accessorKey: "patient.dni",
+    meta: {
+      title: "DNI",
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="DNI" />
+    ),
+    cell: ({ row }) => (
+      <span>{row.original.patient.dni}</span>
+    ),
+  },
+  {
     accessorKey: "patient.name",
     meta: {
       title: "Paciente",
@@ -90,9 +103,9 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
     accessorKey: "prescriptionServices",
     size: 10,
     meta: {
-      title: "Receta",
+      title: "Nota Médica",
     },
-    header: () => <div>Receta</div>,
+    header: () => <div>Nota Médica</div>,
     cell: ({ row }) => (
       <div>
         <ShowPrescriptionDetailsDialog data={row.original}></ShowPrescriptionDetailsDialog>
@@ -111,19 +124,10 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
         {/* <ShowMovementsDialog
           data={row.original.prescriptionServices}
         ></ShowMovementsDialog> */}
+        <CreatePrescriptionBillingProcessDialog
+          prescription={row.original}
+        ></CreatePrescriptionBillingProcessDialog>
       </div>
-    ),
-  },
-  {
-    accessorKey: "patient.dni",
-    meta: {
-      title: "DNI",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="DNI" />
-    ),
-    cell: ({ row }) => (
-      <span>{row.original.patient.dni}</span>
     ),
   },
   {

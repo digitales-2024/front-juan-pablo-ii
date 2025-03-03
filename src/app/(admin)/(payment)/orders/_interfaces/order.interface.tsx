@@ -371,6 +371,7 @@ export const PaymentTypeConfig: Record<PaymentType, EnumConfig> = {
     icon: Gift,
   },
 };
+
 export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
   CASH: {
     name: "Efectivo",
@@ -394,7 +395,6 @@ export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
     icon: Smartphone,
   },
 };
-
 
 export type CreatePaymentDto = components['schemas']['CreatePaymentDto'];
 export type UpdatePaymentDto = components['schemas']['UpdatePaymentDto'];

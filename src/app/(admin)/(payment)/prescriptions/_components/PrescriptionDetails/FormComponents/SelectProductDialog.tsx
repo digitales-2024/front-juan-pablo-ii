@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,8 +34,9 @@ import GeneralErrorMessage from "../../errorComponents/GeneralErrorMessage";
 import { UseFormReturn } from "react-hook-form";
 import { useProductsStockByStorage, useUpdateProductStockByStorage } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import { Label } from "@/components/ui/label";
-import { CreateProductPurchaseBillingDto } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
+import { CreateProductSaleBillingInput } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 import { useSelectProductDispatch } from "../../../_hooks/useSelectProducts";
+import { toast } from "sonner";
 
 const CREATE_PRODUCT_MESSAGES = {
   button: "Añadir producto(s)",
@@ -53,7 +55,7 @@ const CREATE_PRODUCT_MESSAGES = {
 interface SelectProductDialogProps
   extends React.HTMLAttributes<HTMLButtonElement> {
   //data: OutgoingProducStockForm[];
-  form: UseFormReturn<CreateProductPurchaseBillingDto>;
+  form: UseFormReturn<CreateProductSaleBillingInput>;
   className?: string;
 }
 export function SelectProductDialog({
@@ -123,6 +125,55 @@ export function SelectProductDialog({
   const handleUpdateStorageFormField = (storageId: string) => {
     form.setValue("storageId", storageId);
   }
+
+  const storageIdActions = async (storageId:string) => {
+    setSelectedStorageId(storageId);
+    handleUpdateStorageFormField(storageId); //Actualiza el formulario de RHF
+    await updateProductStock({storageId:storageId}); //Actualiza el stock de los productos
+  }
+
+  useEffect(() => {
+    // Extraer el ID del storage
+    const newStorageId = form.watch('storageId');
+    setSelectedStorageId(newStorageId);
+    
+    // Control de ejecución para evitar fetchs innecesarios
+    let isMounted = true;
+    
+    // Definir función async dentro del efecto
+    const fetchProductStock = async () => {
+      try {
+        if (isMounted && newStorageId) {
+          await updateProductStock({storageId: newStorageId});
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Error actualizando producto stock:", error);
+        }
+      }
+    };
+  
+    // Ejecutar la función async si hay un ID válido
+    if (newStorageId) {
+      fetchProductStock().then(
+        () => {
+          if (isMounted) {
+            toast.success("Stock actualizado correctamente");
+          }
+        }
+      ).catch(error => {
+        if (isMounted) {
+          toast.error("Error en fetchProductStock:");
+        }
+      });
+    }
+    
+    // Función de limpieza: evita actualizar estado si el componente ya no está montado
+    return () => {
+      isMounted = false; // Previene actualizaciones de estado después de desmontarse
+    };
+  }, [form.watch('storageId'), updateProductStock, setSelectedStorageId]);
+  
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
@@ -206,13 +257,7 @@ export function SelectProductDialog({
               //   })
               // }}
               value={selectedStorageId??undefined}
-              onValueChange={
-                async (value) => {
-                  setSelectedStorageId(value);
-                  handleUpdateStorageFormField(value);
-                   await updateProductStock({storageId:value});
-                }
-              }
+              onValueChange={storageIdActions}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Seleccione un almacén" />
@@ -285,11 +330,7 @@ export function SelectProductDialog({
               // }}
               value={selectedStorageId??undefined}
               onValueChange={
-                async (value) => {
-                  setSelectedStorageId(value);
-                  handleUpdateStorageFormField(value);
-                   await updateProductStock({storageId:value});
-                }
+                storageIdActions
               }
             >
               <SelectTrigger className="w-full">
