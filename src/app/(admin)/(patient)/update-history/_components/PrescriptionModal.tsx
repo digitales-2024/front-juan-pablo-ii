@@ -1,3 +1,6 @@
+import { useRef, useState } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import {
   Dialog,
   DialogContent,
@@ -36,6 +39,9 @@ export function PrescriptionModal({
   patient,
   updateHistoryId,
 }: PrescriptionModalProps) {
+  const prescriptionRef = useRef<HTMLDivElement>(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
   // Encontrar la receta correspondiente
   const prescription = prescriptions.find(
     (p) => p.updateHistoryId === updateHistoryId
@@ -56,21 +62,71 @@ export function PrescriptionModal({
   const getBranchInfo = (branchId: string) =>
     branches.find((b) => b.id === branchId);
 
-  const handlePrintPrescription = () => {
-    if (prescription) {
-      console.log("Imprimiendo receta:", prescription);
-      // Implementar lógica de impresión
+  const handlePrintPrescription = async () => {
+    if (!prescriptionRef.current) return;
+    setIsGeneratingPDF(true);
+
+    try {
+      // 1. Hacer copia del contenido para no afectar la visualización
+      const printableDiv = prescriptionRef.current.cloneNode(true) as HTMLDivElement;
+
+      // 2. Aplicar estilos de impresión óptimos
+      printableDiv.style.width = "210mm";
+      printableDiv.style.backgroundColor = "#ffffff";
+      printableDiv.style.padding = "10mm";
+
+      // 3. Agregar a DOM temporalmente (invisible)
+      printableDiv.style.position = "absolute";
+      printableDiv.style.left = "-9999px";
+      document.body.appendChild(printableDiv);
+
+      // 4. Esperar a que se apliquen los estilos
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // 5. Capturar con mejor calidad
+      const canvas = await html2canvas(printableDiv, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+      });
+
+      // 6. Limpiar
+      document.body.removeChild(printableDiv);
+
+      // 7. Crear PDF optimizado
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      pdf.addImage(
+        imgData,
+        "PNG",
+        0,
+        0,
+        pdfWidth,
+        pdfHeight
+      );
+
+      pdf.save(`Receta_Medica_${patient?.name}_${patient?.lastName}.pdf`);
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+    } finally {
+      setIsGeneratingPDF(false);
     }
   };
 
   // Agregar función de formato de fecha
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString.replace(' ', 'T'));
-    
+    const date = new Date(dateString.replace(" ", "T"));
+
     const formatoFecha = date.toLocaleDateString("es-ES", {
       day: "numeric",
       month: "short",
-      year: "numeric"
+      year: "numeric",
     });
 
     return `${formatoFecha}`;
@@ -88,7 +144,7 @@ export function PrescriptionModal({
           <DialogHeader>
             <DialogTitle>Nota Médica</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6 p-4">
+          <div className="space-y-6 p-4" ref={prescriptionRef}>
             {/* Encabezado de la Receta */}
             <div className="grid grid-cols-2 gap-4 border-b pb-4">
               <div className="flex items-start space-x-4">
@@ -105,9 +161,7 @@ export function PrescriptionModal({
               <div className="text-right">
                 <h4 className="font-semibold">Médico Tratante</h4>
                 <p className="text-sm">{staffInfo?.name}</p>
-                <p className="text-sm text-gray-600">
-                  Cod: {staffInfo?.cmp}
-                </p>
+                <p className="text-sm text-gray-600">Cod: {staffInfo?.cmp}</p>
               </div>
             </div>
 
@@ -212,8 +266,14 @@ export function PrescriptionModal({
                     {formatDate(prescription.registrationDate)}
                   </span>
                 </div>
-                <Button onClick={handlePrintPrescription}>
-                  <Printer className="w-4 h-4 mr-2" /> Imprimir Receta
+                <Button onClick={handlePrintPrescription} disabled={isGeneratingPDF} className="ml-auto">
+                  {isGeneratingPDF ? (
+                    "Generando PDF..."
+                  ) : (
+                    <>
+                      <Printer className="w-4 h-4 mr-2" /> Imprimir Receta
+                    </>
+                  )}
                 </Button>
               </div>
 
