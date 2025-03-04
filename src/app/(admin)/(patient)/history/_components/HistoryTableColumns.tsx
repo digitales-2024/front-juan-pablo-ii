@@ -82,6 +82,16 @@ export const columns: ColumnDef<MedicalHistory>[] = [
       );
     },
   },
+
+  {
+    accessorKey: "dni",
+    meta: {
+      title: "Dni",
+    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Dni" />
+    ),
+  },
   {
     accessorKey: "fullName",
     meta: {
@@ -91,6 +101,7 @@ export const columns: ColumnDef<MedicalHistory>[] = [
       <DataTableColumnHeader column={column} title="Paciente" />
     ),
   },
+
   {
     accessorKey: "description",
     meta: {
