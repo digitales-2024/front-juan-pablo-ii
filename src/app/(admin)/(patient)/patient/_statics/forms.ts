@@ -133,12 +133,12 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
     name: "primaryDoctor",
     defaultValue: "",
   },
-  language: {
-    required: false,
-    label: "Idioma",
+  sucursal: {
+    required: true,
+    label: "Sucursal de registro al paciente",
     type: "text",
-    placeholder: "Idioma del paciente",
-    name: "language",
+    placeholder: "Sucursal",
+    name: "sucursal",
     defaultValue: "",
   },
   notes: {
@@ -299,12 +299,12 @@ export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
     name: "primaryDoctor",
     defaultValue: "",
   },
-  language: {
-    required: false,
-    label: "Idioma",
+  sucursal: {
+    required: true,
+    label: "El paciente en que sucursal se esta registrando",
     type: "text",
-    placeholder: "Idioma del paciente",
-    name: "language",
+    placeholder: "Sucursal",
+    name: "sucursal",
     defaultValue: "",
   },
   notes: {

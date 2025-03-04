@@ -1,4 +1,4 @@
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
+import { BadgeCheck, /* Bell, */ ChevronsUpDown, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -130,12 +130,12 @@ export function NavUser() {
 									Mi cuenta
 								</Link>
 							</DropdownMenuItem>
-							<DropdownMenuItem asChild>
+					{/* 		<DropdownMenuItem asChild>
 								<Link href="/account/notifications">
 									<Bell />
 									Notificaciones
 								</Link>
-							</DropdownMenuItem>
+							</DropdownMenuItem> */}
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={handleLogout}>
