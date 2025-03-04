@@ -73,6 +73,11 @@ export function AddPrescriptionModal({
   // Estado para controlar si la receta está activa
   const [isPrescriptionActive, setIsPrescriptionActive] = useState(false);
 
+  // Filtrar solo productos con 'VENTA' en usoProducto
+  const ventaProducts = products.filter(
+    (product) => product.usoProducto && product.usoProducto.includes("VENTA")
+  );
+
   const [formData, setFormData] = useState<CreatePrescriptionDto>({
     updateHistoryId: "",
     branchId,
@@ -120,7 +125,9 @@ export function AddPrescriptionModal({
   // Manejadores para agregar items
   const handleAddMedicament = () => {
     if (newMedicament.productId) {
-      const product = products.find((p) => p.id === newMedicament.productId);
+      const product = ventaProducts.find(
+        (p) => p.id === newMedicament.productId
+      );
       if (product) {
         setFormData((prev) => ({
           ...prev,
@@ -401,7 +408,7 @@ export function AddPrescriptionModal({
                               )}
                             >
                               {newMedicament.productId
-                                ? products.find(
+                                ? ventaProducts.find(
                                     (product) =>
                                       product.id === newMedicament.productId
                                   )?.name
@@ -417,7 +424,7 @@ export function AddPrescriptionModal({
                               </CommandEmpty>
                               <CommandList>
                                 <CommandGroup>
-                                  {products.map((product) => (
+                                  {ventaProducts.map((product) => (
                                     <CommandItem
                                       key={product.id}
                                       value={product.name}
