@@ -75,7 +75,7 @@ export function AddPrescriptionModal({
 
   // Filtrar solo productos con 'VENTA' en usoProducto
   const ventaProducts = products.filter(
-    (product) => product.usoProducto && product.usoProducto.includes("VENTA")
+    (product) => product?.usoProducto?.includes("VENTA")
   );
 
   const [formData, setFormData] = useState<CreatePrescriptionDto>({
