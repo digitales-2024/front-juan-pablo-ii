@@ -111,7 +111,7 @@ export default function Home() {
               <KPICard
                 title="Pacientes"
                 value="235"
-                description="Total de pacientes atendidos"
+                description="Total de pacientes registrados"
                 icon={<Users className="h-5 w-5 text-blue-600" />}
                 className="shadow-md hover:shadow-lg border-l-4 border-l-blue-500"
               />
@@ -123,7 +123,7 @@ export default function Home() {
               <KPICard
                 title="Citas"
                 value="124"
-                description="Total de citas agendadas"
+                description="Total de citas registradas"
                 icon={<Calendar className="h-5 w-5 text-indigo-600" />}
                 className="shadow-md hover:shadow-lg border-l-4 border-l-indigo-500"
               />
