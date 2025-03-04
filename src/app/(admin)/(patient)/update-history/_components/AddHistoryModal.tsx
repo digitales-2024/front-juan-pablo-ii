@@ -70,6 +70,11 @@ export function AddHistoryModal({
   const { createUpdateHistory, createPrescriptionMutation } =
     useUpdateHistory();
 
+  // Filtrar solo personal médico (con campo cmp no nulo)
+  const medicalStaff = staff.filter(
+    (staffMember) => staffMember?.cmp !== null && staffMember?.cmp !== undefined && staffMember?.cmp !== ""
+  );
+
   // Estado inicial para el formulario
   const [formData, setFormData] = useState<CreateUpdateHistoryDto>({
     patientId: patientId ?? "",
@@ -329,7 +334,7 @@ export function AddHistoryModal({
                         <SelectValue placeholder="Seleccione un médico" />
                       </SelectTrigger>
                       <SelectContent>
-                        {staff.map((s) => (
+                        {medicalStaff.map((s) => (
                           <SelectItem key={s.id} value={s.id}>
                             {`${s.name} ${s.lastName}`}
                           </SelectItem>
