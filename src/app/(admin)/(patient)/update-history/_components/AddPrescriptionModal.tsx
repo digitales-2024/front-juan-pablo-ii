@@ -16,13 +16,7 @@ import {
   Product,
   Service,
 } from "../_interfaces/updateHistory.interface";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Trash2,
   Pencil,
@@ -31,10 +25,27 @@ import {
   Clock,
   FileText,
   ClipboardPenLine,
+  Check,
+  ChevronsUpDown,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+// Nuevas importaciones
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface AddPrescriptionModalProps {
   isOpen: boolean;
@@ -161,7 +172,7 @@ export function AddPrescriptionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-xl max-h-[85vh] flex flex-col border-t-4 border-t-primary p-0">
+      <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col border-t-4 border-t-primary p-0">
         {/* Header fijo */}
         <div className="px-6 py-4 border-b">
           <DialogHeader>
@@ -222,56 +233,109 @@ export function AddPrescriptionModal({
                 <Card>
                   <CardContent className="p-4 space-y-4">
                     <h3 className="font-semibold">Servicios</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                      <Select
-                        value={newService.serviceId}
-                        onValueChange={(value) =>
-                          setNewService((prev) => ({
-                            ...prev,
-                            serviceId: value,
-                          }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccionar servicio" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {services.map((service) => (
-                            <SelectItem key={service.id} value={service.id}>
-                              {service.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="number"
-                        placeholder="Cantidad"
-                        value={newService.quantity}
-                        onChange={(e) =>
-                          setNewService((prev) => ({
-                            ...prev,
-                            quantity: parseInt(e.target.value),
-                          }))
-                        }
-                        min={1}
-                      />
-                      <Input
-                        placeholder="Descripción"
-                        value={newService.description}
-                        onChange={(e) =>
-                          setNewService((prev) => ({
-                            ...prev,
-                            description: e.target.value,
-                          }))
-                        }
-                      />
-                      <Button
-                        type="button"
-                        onClick={handleAddService}
-                        disabled={!newService.serviceId}
-                      >
-                        Agregar
-                      </Button>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="service-selector">Servicio</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              id="service-selector"
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "justify-between w-full",
+                                !newService.serviceId && "text-muted-foreground"
+                              )}
+                            >
+                              {newService.serviceId
+                                ? services.find(
+                                    (service) =>
+                                      service.id === newService.serviceId
+                                  )?.name
+                                : "Seleccionar servicio"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="p-0 w-[300px]">
+                            <Command>
+                              <CommandInput placeholder="Buscar servicio..." />
+                              <CommandEmpty>
+                                No se encontraron servicios.
+                              </CommandEmpty>
+                              <CommandList>
+                                <CommandGroup>
+                                  {services.map((service) => (
+                                    <CommandItem
+                                      key={service.id}
+                                      value={service.name}
+                                      onSelect={() => {
+                                        setNewService((prev) => ({
+                                          ...prev,
+                                          serviceId: service.id,
+                                        }));
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          newService.serviceId === service.id
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      {service.name}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="service-quantity">Cantidad</Label>
+                          <Input
+                            id="service-quantity"
+                            type="number"
+                            placeholder="Cantidad"
+                            value={newService.quantity}
+                            onChange={(e) =>
+                              setNewService((prev) => ({
+                                ...prev,
+                                quantity: parseInt(e.target.value) || 1,
+                              }))
+                            }
+                            min={1}
+                          />
+                        </div>
+                        <div className="space-y-2 sm:col-span-2">
+                          <Label htmlFor="service-description">
+                            Descripción
+                          </Label>
+                          <div className="flex space-x-2">
+                            <Input
+                              id="service-description"
+                              placeholder="Descripción"
+                              value={newService.description}
+                              onChange={(e) =>
+                                setNewService((prev) => ({
+                                  ...prev,
+                                  description: e.target.value,
+                                }))
+                              }
+                            />
+                            <Button
+                              type="button"
+                              onClick={handleAddService}
+                              disabled={!newService.serviceId}
+                            >
+                              Agregar
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Lista de servicios agregados */}
@@ -321,56 +385,110 @@ export function AddPrescriptionModal({
                 <Card>
                   <CardContent className="p-4 space-y-4">
                     <h3 className="font-semibold">Medicamentos</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                      <Select
-                        value={newMedicament.productId}
-                        onValueChange={(value) =>
-                          setNewMedicament((prev) => ({
-                            ...prev,
-                            productId: value,
-                          }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccionar medicamento" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {products.map((product) => (
-                            <SelectItem key={product.id} value={product.id}>
-                              {product.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="number"
-                        placeholder="Cantidad"
-                        value={newMedicament.quantity}
-                        onChange={(e) =>
-                          setNewMedicament((prev) => ({
-                            ...prev,
-                            quantity: parseInt(e.target.value),
-                          }))
-                        }
-                        min={1}
-                      />
-                      <Input
-                        placeholder="Descripción"
-                        value={newMedicament.description}
-                        onChange={(e) =>
-                          setNewMedicament((prev) => ({
-                            ...prev,
-                            description: e.target.value,
-                          }))
-                        }
-                      />
-                      <Button
-                        type="button"
-                        onClick={handleAddMedicament}
-                        disabled={!newMedicament.productId}
-                      >
-                        Agregar
-                      </Button>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="medicament-selector">Medicamento</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              id="medicament-selector"
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "justify-between w-full",
+                                !newMedicament.productId &&
+                                  "text-muted-foreground"
+                              )}
+                            >
+                              {newMedicament.productId
+                                ? products.find(
+                                    (product) =>
+                                      product.id === newMedicament.productId
+                                  )?.name
+                                : "Seleccionar medicamento"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="p-0 w-[300px]">
+                            <Command>
+                              <CommandInput placeholder="Buscar medicamento..." />
+                              <CommandEmpty>
+                                No se encontraron medicamentos.
+                              </CommandEmpty>
+                              <CommandList>
+                                <CommandGroup>
+                                  {products.map((product) => (
+                                    <CommandItem
+                                      key={product.id}
+                                      value={product.name}
+                                      onSelect={() => {
+                                        setNewMedicament((prev) => ({
+                                          ...prev,
+                                          productId: product.id,
+                                        }));
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          newMedicament.productId === product.id
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      {product.name}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="medicament-quantity">Cantidad</Label>
+                          <Input
+                            id="medicament-quantity"
+                            type="number"
+                            placeholder="Cantidad"
+                            value={newMedicament.quantity}
+                            onChange={(e) =>
+                              setNewMedicament((prev) => ({
+                                ...prev,
+                                quantity: parseInt(e.target.value) || 1,
+                              }))
+                            }
+                            min={1}
+                          />
+                        </div>
+                        <div className="space-y-2 sm:col-span-2">
+                          <Label htmlFor="medicament-description">
+                            Descripción
+                          </Label>
+                          <div className="flex space-x-2">
+                            <Input
+                              id="medicament-description"
+                              placeholder="Descripción"
+                              value={newMedicament.description}
+                              onChange={(e) =>
+                                setNewMedicament((prev) => ({
+                                  ...prev,
+                                  description: e.target.value,
+                                }))
+                              }
+                            />
+                            <Button
+                              type="button"
+                              onClick={handleAddMedicament}
+                              disabled={!newMedicament.productId}
+                            >
+                              Agregar
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Lista de medicamentos agregados */}
@@ -421,9 +539,12 @@ export function AddPrescriptionModal({
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <ClipboardPenLine className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nota Médica Desactivada</h3>
+                <h3 className="text-lg font-medium mb-2">
+                  Nota Médica Desactivada
+                </h3>
                 <p className="text-muted-foreground max-w-md">
-                  Active el interruptor arriba para crear una nueva nota médica con medicamentos y servicios.
+                  Active el interruptor arriba para crear una nueva nota médica
+                  con medicamentos y servicios.
                 </p>
               </div>
             )}
@@ -439,7 +560,9 @@ export function AddPrescriptionModal({
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={!isPrescriptionActive}>
-                  {isPrescriptionActive ? "Guardar Receta" : "Receta Desactivada"}
+                  {isPrescriptionActive
+                    ? "Guardar Receta"
+                    : "Receta Desactivada"}
                 </Button>
               </DialogFooter>
             </div>
