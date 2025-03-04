@@ -297,18 +297,18 @@ export const CREATE_PRESCRIPTION_ORDER_FORMSTATICS: ComplexFormStatics<CreatePro
     },
     storageId: {
         required: true,
-        label: "Almacén",
+        label: "Almacén de origen",
         defaultValue: undefined,
         type: "text",
-        placeholder: "Almacén de la orden",
+        placeholder: "Almacén de origen del producto",
         name: "storageId",
     },
     branchId: {
         required: true,
-        label: "Sucursal",
+        label: "Sucursal de la venta",
         defaultValue: undefined,
         type: "text",
-        placeholder: "Sucursal de la orden",
+        placeholder: "Sucursal que genera la orden",
         name: "branchId",
     },
     storageLocation: {

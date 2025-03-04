@@ -79,10 +79,10 @@ export function CreatePrescriptionBillingProcessDialog({
       raw: true, //to be able to use useFIeldArray
     }),
     defaultValues: {
-      storageId: "",
-      branchId: "",
-      currency: "",
-      paymentMethod: "CASH",
+      storageId: undefined, //required
+      branchId: undefined, //required
+      currency: undefined, //required
+      paymentMethod: "CASH", //required
       storageLocation: undefined,
       batchNumber: undefined,
       referenceId: undefined,
