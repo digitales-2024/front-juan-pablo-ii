@@ -291,27 +291,17 @@ export const CREATE_PRESCRIPTION_ORDER_FORMSTATICS: ComplexFormStatics<CreatePro
                 placeholder: "Cantidad",
                 name: "quantity",
             },
-            storageId:{
-                required: true,
-                label: "Almacén con stock",
-                defaultValue: undefined,
-                type: "select",
-                placeholder: "Selecciona un almacén",
-                emptyMessage: "No se encontraron almacenes",
-                name: "storageId",
-            }
         },
         placeholder: "Productos de la orden",
         name: "products",
     },
-    patientId:{
+    storageId: {
         required: true,
-        label: "Paciente",
+        label: "Almacén de origen",
         defaultValue: undefined,
-        type: "select",
-        placeholder: "Selecciona un paciente",
-        emptyMessage: "No se encontraron pacientes",
-        name: "patientId",
+        type: "text",
+        placeholder: "Almacén de origen del producto",
+        name: "storageId",
     },
     branchId: {
         required: true,

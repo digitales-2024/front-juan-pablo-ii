@@ -51,8 +51,8 @@ export const orderTypeConfig: Record<OrderType, EnumConfig> = {
     textColor: "text-[#00796B]",
     icon: Pill,
   },
-  MEDICAL_CONSULTATION_ORDER: {
-    name: "Consulta médica",
+  MEDICAL_APPOINTMENT_ORDER: {
+    name: "Cita médica",
     backgroundColor: "bg-[#E8F5E9]",
     hoverBgColor: "hover:bg-[#C8E6C9]",
     textColor: "text-[#388E3C]",
@@ -79,8 +79,8 @@ export const orderTypeEnumOptions: EnumOptions<OrderType>[] = [
     value: "MEDICAL_PRESCRIPTION_ORDER"
   },
   {
-    label: "Consulta médica",
-    value: "MEDICAL_CONSULTATION_ORDER"
+    label: "Cita médica",
+    value: "MEDICAL_APPOINTMENT_ORDER"
   },
   {
     label: "Venta de productos",
@@ -205,7 +205,7 @@ export interface StorageTableItem extends Order {
 // Schema de validación para crear/actualizar
 export const createOrderSchema = z.object({
   code: z.string().optional(),
-  type: z.enum(["MEDICAL_PRESCRIPTION_ORDER", "MEDICAL_CONSULTATION_ORDER", "PRODUCT_SALE_ORDER", "PRODUCT_PURCHASE_ORDER"]),
+  type: z.enum(["MEDICAL_PRESCRIPTION_ORDER", "MEDICAL_APPOINTMENT_ORDER", "PRODUCT_SALE_ORDER", "PRODUCT_PURCHASE_ORDER"]),
   movementTypeId: z.string(),
   referenceId: z.string(),
   sourceId: z.string().optional(), //Es la referencia al storage
@@ -236,7 +236,7 @@ export const createOrderSchema = z.object({
 // };
 export const updateOrderSchema = z.object({
   code: z.string().optional(),
-  type: z.enum(["MEDICAL_PRESCRIPTION_ORDER", "MEDICAL_CONSULTATION_ORDER", "PRODUCT_SALE_ORDER", "PRODUCT_PURCHASE_ORDER"]).optional(),
+  type: z.enum(["MEDICAL_PRESCRIPTION_ORDER", "MEDICAL_APPOINTMENT_ORDER", "PRODUCT_SALE_ORDER", "PRODUCT_PURCHASE_ORDER"]).optional(),
   movementTypeId: z.string().optional(),
   referenceId: z.string().optional(),
   sourceId: z.string().optional(),
@@ -493,18 +493,19 @@ export type ProductSaleItemDtoPrototype = components['schemas']['ProductSaleItem
 export type ProductSaleItemDto = {
   productId: string;
   quantity: number;
+  storageId: string;
 };
 export type CreateProductSaleBillingDtoPrototype = components['schemas']['CreateProductSaleBillingDto'];
 export type CreateProductSaleBillingDto = {
-  products: ProductSaleItemDto[];
-  storageId: string;
   branchId: string;
+  patientId: string;
   storageLocation?: string;
   batchNumber?: string;
   referenceId?: string;
   currency: string;
   paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
   notes?: string;
+  products: ProductSaleItemDto[];
   metadata?: Record<string, never>;
 };
 export type ProductPurchaseItemDtoPrototype = components['schemas']['ProductPurchaseItemDto'];
@@ -544,11 +545,11 @@ export const paymentMethodOptions: EnumOptions<PaymentMethod>[] = [
 ];
 
 export const createProductSaleBillingSchema = z.object({
-  storageId: z.string({
-    required_error: "Debe seleccionar un almacén",
-  }),
   branchId: z.string({
     required_error: "Debe seleccionar la sucursal que genera la venta",
+  }),
+  patientId: z.string({
+    required_error: "Debe seleccionar un paciente",
   }),
   storageLocation: z.string().optional(),
   batchNumber: z.string().optional(),
@@ -559,7 +560,10 @@ export const createProductSaleBillingSchema = z.object({
   metadata: z.record(z.never()).optional(),
   products: z.array(z.object({
     productId: z.string(),
-    quantity: z.number(),
+    quantity: z.coerce.number(),
+    storageId: z.string({
+      required_error: "Debe seleccionar un almacén",
+    }),
   })),
 }) satisfies z.ZodType<CreateProductSaleBillingDto>;
 

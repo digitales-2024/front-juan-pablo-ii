@@ -61,6 +61,24 @@ const getActiveStoragesHandler = async () => {
   }
 };
 
+export const getActiveStoragesByBranch = async (branchId: string) => {
+  try {
+    const [storages, error] = await http.get<ListDetailedStorageResponse>("/storage/active/branch/" + branchId);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock de productos",
+      };
+    }
+    return storages;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
+
 export const getStorages = await createSafeAction(GetStorageSchema, getStoragesHandler);
 export const getActiveStorages = await createSafeAction(GetStorageSchema, getActiveStoragesHandler);
 

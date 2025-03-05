@@ -15,14 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { CREATE_PRESCRIPTION_ORDER_FORMSTATICS as STATIC_FORM } from "../../../_statics/forms";
 import { Option } from "@/types/statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import {
   Table,
@@ -41,13 +34,15 @@ import {
   CreateProductSaleBillingInput,
   paymentMethodConfig,
   paymentMethodOptions,
-  ProductSaleItemDto,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 import {
-  useManyProductsStockByStorage,
   useProductsStock,
   useProductStockById,
 } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
+import {
+  useSelectedProducts,
+  useSelectProductDispatch,
+} from "../../../_hooks/useSelectProducts";
 import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
 import {
@@ -58,30 +53,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
-import { OutgoingProducStockForm, OutgoingProductStock } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
+import { OutgoingProducStockForm } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
 import { toast } from "sonner";
 import { SelectProductDialog } from "./SelectProductDialog";
 import LoadingDialogForm from "../../LoadingDialogForm";
 import GeneralErrorMessage from "../../errorComponents/GeneralErrorMessage";
 import { Product } from "@/app/(admin)/(patient)/update-history/_interfaces/updateHistory.interface";
-import { getManyProductsStockByStorage } from "@/app/(admin)/(inventory)/stock/_actions/stock.actions";
-import { UseQueryResult } from "@tanstack/react-query";
 interface CreatePrescriptionOrderFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
   prescription: PrescriptionWithPatient;
-  stockDataQuery: UseQueryResult<OutgoingProductStock[], Error>
-  //originalStorageId: string;
   form: UseFormReturn<CreateProductSaleBillingInput>;
   controlledFieldArray: UseFieldArrayReturn<CreateProductSaleBillingInput>;
   onSubmit: (data: CreateProductSaleBillingInput) => void;
   onDialogClose?: () => void;
 }
-
-type StockParams = {
-  productId: string;
-  storageId: string;
-}[]
 
 export function CreatePrescriptionOrderForm({
   children,
@@ -89,10 +75,9 @@ export function CreatePrescriptionOrderForm({
   form,
   onSubmit,
   controlledFieldArray,
-  stockDataQuery,
 }: CreatePrescriptionOrderFormProps) {
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
-
+  
   // Flags de referencia para evitar bucles
   const didInitializeRef = useRef(false);
   const isCalculatingRef = useRef(false);
@@ -101,9 +86,7 @@ export function CreatePrescriptionOrderForm({
   // Estados básicos
   const [showProductFields, setShowProductFields] = useState(false);
   const [showServicesFields, setShowServicesFields] = useState(true);
-  // const [originalProductsStock, setOriginalProductsStock] = useState<
-  // OutgoingProducStockForm[]
-  // >([]);
+  const [originalProductsStock, setOriginalProductsStock] = useState<OutgoingProducStockForm[]>([]);
   const [showTotals, setShowTotals] = useState(false);
   const [productTotals, setProductTotals] = useState({
     total: 0,
@@ -112,66 +95,64 @@ export function CreatePrescriptionOrderForm({
     totalQuantity: 0,
     totalProducts: 0,
   });
-  const originalProductArrayRef = useRef<ProductSaleItemDto[]>(form.getValues("products"));
-  const productsStockRef = useRef<StockParams>([]);
-  const [productsStock, setProductsStock] = useState<OutgoingProducStockForm[]>(
-    []
-  );
-
+  
   // Hook de formulario
   const { register, watch } = form;
-  const { fields, remove } = controlledFieldArray;
+  const { fields, append, remove } = controlledFieldArray;
   const watchFieldArray = watch("products");
-  // const storageSafeWatch = watch("storageId");
+  const storageSafeWatch = watch("storageId");
 
   // Consultas y estados
   const { activeStoragesQuery: responseStorage } = useStorages();
   const { productStockQuery: reponseProductsStock } = useProductsStock();
-  const { activeProductsQuery: reponseProducts, productsByIdQueries } =
-    useProducts();
+  const { activeProductsQuery: reponseProducts, productsByIdQueries } = useProducts();
   const { activeBranchesQuery: responseBranches } = useBranches();
   const productStockById = useProductStockById();
+  const selectedProducts = useSelectedProducts();
+  const dispatch = useSelectProductDispatch();
 
   const originalProducts = prescription.prescriptionMedicaments;
   const orginalProductsIds = originalProducts.map((product) => product.id);
-  const [isStockPending, startTransition] = useTransition();
+  
+  // Mapeo de productos originales con su stock
+  // const originalProductsStock: OutgoingProducStockForm[] = useMemo(() => {
+  //   return originalProducts.flatMap((product) => {
+  //     if (!product.id) return [];
 
-  const getProductStockByStorage = useCallback(
-    async (params: StockParams) => {
+  //     const { productStockQuery: response } = productStockById(product.id);
 
-      if (params.length === 0) {
-        return [];
+  //     if (response.isError) {
+  //       toast.error(response.error?.message ?? "Error desconocido");
+  //       return [];
+  //     }
+
+  //     if (response.data?.length === 1) {
+  //       return [{
+  //         ...response.data[0],
+  //         storageId: storageSafeWatch,
+  //       }];
+  //     }
+  //     return [];
+  //   });
+
+  // }, [originalProducts, productStockById, storageSafeWatch])
+  useEffect(() => {
+    if (!originalProducts.length) return;
+    
+    const stocks = originalProducts.flatMap((product) => {
+      if (!product.id) return [];
+      const { productStockQuery: response } = productStockById(product.id);
+      if (response.isSuccess && response.data?.length === 1) {
+        return [{...response.data[0], storageId: storageSafeWatch}];
       }
-      
-      params.forEach((param)=>{
-        if (!param.productId || !param.storageId) {
-          toast.error("Se requiere producto y almacén para obtener el stock");
-          return;
-        }
-      })
-
-      return new Promise((resolve) => {
-        startTransition(async () => {
-          try {
-            const response = await getManyProductsStockByStorage(params);
-            if (!response || "error" in response) {
-              throw new Error(response?.error || "No se recibió respuesta");
-            }
-            resolve(response);
-          } catch (error) {
-            const message =
-              error instanceof Error ? error.message : "Error desconocido";
-            toast.error(message);
-            resolve([]);
-          }
-        });
-      });
-    },
-    []
-  );
+      return [];
+    });
+    
+    setOriginalProductsStock(stocks);
+  }, [originalProducts, productStockById, storageSafeWatch]);
 
   // Obtener datos de productos por ID seleccionados - solamente para los productos que ya están en fields
-  const productIds = fields.map((field) => field.productId).filter(Boolean);
+  const productIds = fields.map(field => field.productId).filter(Boolean);
   const productsQueries = productsByIdQueries(productIds);
 
   // Mapeo de datos de productos
@@ -191,35 +172,35 @@ export function CreatePrescriptionOrderForm({
 
   // Estados para gestionar la edición de cantidades
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-
+  
   // Función para calcular totales con debounce integrado
   const calculateTotalsWithDebounce = useCallback(() => {
     // Limpiar cualquier cálculo pendiente
     if (updateTimeoutRef.current) {
       clearTimeout(updateTimeoutRef.current);
     }
-
+    
     // Programar nuevo cálculo con un pequeño retraso
     updateTimeoutRef.current = setTimeout(() => {
       // Evitar cálculos múltiples
       if (isCalculatingRef.current) return;
       isCalculatingRef.current = true;
-
+      
       try {
         const products = form.getValues("products") || [];
-
+        
         if (products.length === 0) {
           setProductTotals({
             total: 0,
             totalIGV: 0,
             totalSubtotal: 0,
             totalQuantity: 0,
-            totalProducts: 0,
+            totalProducts: 0
           });
           setShowTotals(false);
           return;
         }
-
+        
         // Calcular totales
         let total = 0;
         let totalIGV = 0;
@@ -227,32 +208,32 @@ export function CreatePrescriptionOrderForm({
         let totalQuantity = 0;
         let totalProducts = 0;
         const IGV_RATE = 0.18;
-
+        
         products.forEach((field) => {
           const productData = orderProductsDataMap[field.productId];
           if (!productData) return;
-
+          
           const price = productData.precio ?? 0;
           const quantity = field.quantity ?? 0;
           const subtotal = price * quantity;
           const igvAmount = subtotal * IGV_RATE;
-
+          
           total += subtotal + igvAmount;
           totalIGV += igvAmount;
           totalSubtotal += subtotal;
           totalQuantity += quantity;
           totalProducts++;
         });
-
+        
         // Solo actualizar estado una vez al final
         setProductTotals({
           total,
           totalIGV,
           totalSubtotal,
           totalQuantity,
-          totalProducts,
+          totalProducts
         });
-
+        
         setShowTotals(true);
       } catch (error) {
         console.error("Error calculando totales:", error);
@@ -262,100 +243,56 @@ export function CreatePrescriptionOrderForm({
       }
     }, 200); // Reducido a 200ms para sentirse más responsivo
   }, [form, orderProductsDataMap]);
-
+  
   // Inicialización de productos (solo una vez)
-  // const syncProducts = useCallback(() => {
-  //   if(showProductFields && !isStockPending) {
-  //     const stockParams = fields.map((field) => ({
-  //       productId: field.productId,
-  //       storageId: ,
-  //     }));
-  //     productsStockRef.current = stockParams;
-  //     // getProductStockByStorage(stockParams).then((response) => {
-  //     //   setProductsStock(response);
-  //     // });
-  //     // Usar una referencia para evitar múltiples inicializaciones
-  //     if (didInitializeRef.current) return;
-  //     didInitializeRef.current = true;
-
-  //     // Limpiar fields existentes
-  //     handleCleanProducts();
-
-  //     // Añadir productos originales de la receta
-  //     originalProducts.forEach((product) => {
-  //       if (product.id) {
-  //         append({
-  //           productId: product.id,
-  //           quantity: product.quantity ?? 1,
-  //           storageId: 
-  //         });
-  //       }
-  //     });
-
-  //     // // Agregar productos seleccionados que no están en la receta
-  //     // selectedProducts
-  //     //   .filter((product) => !orginalProductsIds.includes(product.id))
-  //     //   .forEach((product) => {
-  //     //     append({
-  //     //       productId: product.id,
-  //     //       quantity: 1,
-  //     //     });
-  //     //   });
-
-  //     // Calcular totales iniciales después de una pequeña espera
-  //     setTimeout(() => calculateTotalsWithDebounce(), 500);
-  //   }
-  // }, [
-  //   append,
-  //   remove,
-  //   originalProducts,
-  //   // showProductFields,
-  //   // selectedProducts,
-  //   orginalProductsIds,
-  //   calculateTotalsWithDebounce,
-  // ]);
-
-  // useEffect(() => {
-  //   syncProducts();
-  // }, [syncProducts, showProductFields]);
-
-  // useEffect(()=>{
-  //   if (!showProductFields) {
-  //     handleCleanProducts();
-  //   }
-  // }, [showProductFields])
-
-  const handleCleanProducts = useCallback(() => {
+  useEffect(() => {
+    // Usar una referencia para evitar múltiples inicializaciones
+    if (didInitializeRef.current) return;
+    didInitializeRef.current = true;
+    
+    // Limpiar fields existentes
     remove();
-    setProductTotals({
-      total: 0,
-      totalIGV: 0,
-      totalSubtotal: 0,
-      totalQuantity: 0,
-      totalProducts: 0,
+    
+    // Añadir productos originales de la receta
+    originalProducts.forEach((product) => {
+      if (product.id) {
+        append({
+          productId: product.id,
+          quantity: product.quantity ?? 1,
+        });
+      }
     });
-    setShowTotals(false);
-  }, [remove]);
+
+    // Agregar productos seleccionados que no están en la receta
+    selectedProducts
+      .filter((product) => !orginalProductsIds.includes(product.id))
+      .forEach((product) => {
+        append({
+          productId: product.id,
+          quantity: 1,
+        });
+      });
+      
+    // Calcular totales iniciales después de una pequeña espera
+    setTimeout(() => calculateTotalsWithDebounce(), 500);
+  }, [append, remove, originalProducts, selectedProducts, orginalProductsIds, calculateTotalsWithDebounce]);
 
   // Manejar eliminación de productos
-  const handleRemoveProduct = useCallback(
-    (index: number) => {
-      // Limpiar estado global
-      // if (fields[index]) {
-      //   dispatch({
-      //     type: "remove",
-      //     payload: { productId: fields[index].productId },
-      //   });
-      // }
+  const handleRemoveProduct = useCallback((index: number) => {
+    // Limpiar estado global
+    if (fields[index]) {
+      dispatch({
+        type: "remove",
+        payload: { productId: fields[index].productId },
+      });
+    }
 
-      // Quitar del formulario
-      remove(index);
-
-      // Recalcular automáticamente los totales
-      calculateTotalsWithDebounce();
-    },
-    [fields, remove, calculateTotalsWithDebounce]
-  );
+    // Quitar del formulario
+    remove(index);
+    
+    // Recalcular automáticamente los totales
+    calculateTotalsWithDebounce();
+  }, [fields, dispatch, remove, calculateTotalsWithDebounce]);
 
   // Efecto para recalcular cuando cambian los productos o sus cantidades
   useEffect(() => {
@@ -365,37 +302,36 @@ export function CreatePrescriptionOrderForm({
     }
   }, [watchFieldArray, calculateTotalsWithDebounce, editingIndex]);
 
-  // // Efecto para recalcular cuando cambia el almacén
-  // useEffect(() => {
-  //   if (didInitializeRef.current && showProductFields) {
-  //     calculateTotalsWithDebounce();
-  //   }
-  // }, [storageSafeWatch, showProductFields, calculateTotalsWithDebounce]);
+  // Efecto para recalcular cuando cambia el almacén
+  useEffect(() => {
+    if (didInitializeRef.current && showProductFields) {
+      calculateTotalsWithDebounce();
+    }
+  }, [storageSafeWatch, showProductFields, calculateTotalsWithDebounce]);
 
-  // // Efecto de limpieza
-  // useEffect(() => {
-  //   return () => {
-  //     if (updateTimeoutRef.current) {
-  //       clearTimeout(updateTimeoutRef.current);
-  //     }
-  //   };
-  // }, []);
+  // Efecto de limpieza
+  useEffect(() => {
+    return () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+    };
+  }, []);
 
-  // // Error handling - sin efectos secundarios
-  // useEffect(() => {
-  //   const hasError = productsQueries.some((q) => q.isError);
-  //   if (hasError) {
-  //     toast.error("Error al obtener los productos", { id: "product-error" });
-  //   }
-  // }, [productsQueries]);
+  // Error handling - sin efectos secundarios
+  useEffect(() => {
+    const hasError = productsQueries.some(q => q.isError);
+    if (hasError) {
+      toast.error("Error al obtener los productos", { id: "product-error" });
+    }
+  }, [productsQueries]);
 
   // Verificación de carga
-  const isLoading =
+  const isLoading = 
     responseStorage.isLoading ||
     reponseProductsStock.isLoading ||
     reponseProducts.isLoading ||
-    responseBranches.isLoading ||
-    stockDataQuery.isLoading;
+    responseBranches.isLoading;
 
   if (isLoading) {
     return <LoadingDialogForm />;
@@ -403,58 +339,27 @@ export function CreatePrescriptionOrderForm({
 
   // Verificación de errores
   if (responseStorage.isError) {
-    return (
-      <GeneralErrorMessage
-        error={responseStorage.error}
-        reset={responseStorage.refetch}
-      />
-    );
+    return <GeneralErrorMessage error={responseStorage.error} reset={responseStorage.refetch} />;
   }
   if (!responseStorage.data) {
     return <LoadingDialogForm />;
   }
   if (reponseProductsStock.isError) {
-    return (
-      <GeneralErrorMessage
-        error={reponseProductsStock.error}
-        reset={reponseProductsStock.refetch}
-      />
-    );
+    return <GeneralErrorMessage error={reponseProductsStock.error} reset={reponseProductsStock.refetch} />;
   }
   if (!reponseProductsStock.data) {
     return <LoadingDialogForm />;
   }
   if (reponseProducts.isError) {
-    return (
-      <GeneralErrorMessage
-        error={reponseProducts.error}
-        reset={reponseProducts.refetch}
-      />
-    );
+    return <GeneralErrorMessage error={reponseProducts.error} reset={reponseProducts.refetch} />;
   }
   if (!reponseProducts.data) {
     return <LoadingDialogForm />;
   }
   if (responseBranches.isError) {
-    return (
-      <GeneralErrorMessage
-        error={responseBranches.error}
-        reset={responseBranches.refetch}
-      />
-    );
+    return <GeneralErrorMessage error={responseBranches.error} reset={responseBranches.refetch} />;
   }
   if (!responseBranches.data) {
-    return <LoadingDialogForm />;
-  }
-  if (stockDataQuery.isError) {
-    return (
-      <GeneralErrorMessage
-        error={stockDataQuery.error}
-        reset={stockDataQuery.refetch}
-      />
-    );
-  }
-  if (!stockDataQuery.data) {
     return <LoadingDialogForm />;
   }
 
@@ -469,18 +374,18 @@ export function CreatePrescriptionOrderForm({
     value: branch.id,
   }));
 
-  // useEffect(() => {
-  //   if (didInitializeRef.current && showProductFields && !isLoading) {
-  //     // Recalcular totales cuando llegan los datos de producto/stock
-  //     calculateTotalsWithDebounce();
-  //   }
-  // }, [
-  //   reponseProductsStock.data,
-  //   reponseProducts.data,
-  //   showProductFields,
-  //   isLoading,
-  //   calculateTotalsWithDebounce,
-  // ]);
+  useEffect(() => {
+    if (didInitializeRef.current && showProductFields && !isLoading) {
+      // Recalcular totales cuando llegan los datos de producto/stock
+      calculateTotalsWithDebounce();
+    }
+  }, [
+    reponseProductsStock.data,
+    reponseProducts.data,
+    showProductFields,
+    isLoading,
+    calculateTotalsWithDebounce
+  ]);
 
   return (
     <Form {...form}>
@@ -521,7 +426,7 @@ export function CreatePrescriptionOrderForm({
               )}
             />
           </div>
-
+          
           {/* Switches para opciones */}
           <FormItem className="flex flex-row items-end justify-between rounded-lg border p-3 shadow-sm col-span-4 sm:col-span-2">
             <div className="space-y-0.5">
@@ -539,7 +444,7 @@ export function CreatePrescriptionOrderForm({
               />
             </FormControl>
           </FormItem>
-
+          
           <FormItem className="flex flex-row items-end justify-between rounded-lg border p-3 shadow-sm col-span-4 sm:col-span-2">
             <div className="space-y-0.5">
               <FormLabel>Venta de productos</FormLabel>
@@ -568,7 +473,7 @@ export function CreatePrescriptionOrderForm({
           {showProductFields && (
             <>
               {/* Selector de almacén */}
-              {/* <div className="col-span-3">
+              <div className="col-span-3">
                 <FormField
                   control={form.control}
                   name="storageId"
@@ -592,10 +497,7 @@ export function CreatePrescriptionOrderForm({
                         </FormControl>
                         <SelectContent>
                           {storageOptions.map((storage) => (
-                            <SelectItem
-                              key={storage.value}
-                              value={storage.value}
-                            >
+                            <SelectItem key={storage.value} value={storage.value}>
                               {storage.label}
                             </SelectItem>
                           ))}
@@ -608,11 +510,11 @@ export function CreatePrescriptionOrderForm({
                     </FormItem>
                   )}
                 />
-              </div> */}
-
+              </div>
+              
               <div className="flex flex-col gap-4 col-span-4">
                 <FormLabel>{FORMSTATICS.products.label}</FormLabel>
-
+                
                 {/* Ya no necesitamos el botón para calcular */}
                 {isCalculatingRef.current && (
                   <div className="w-full p-2 text-center">
@@ -621,13 +523,12 @@ export function CreatePrescriptionOrderForm({
                     </p>
                   </div>
                 )}
-
+                
                 {/* Tabla de productos */}
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-[100px]">Nombre</TableHead>
-                      <TableHead>Almacén</TableHead>
                       <TableHead>Cantidad</TableHead>
                       <TableHead>Precio</TableHead>
                       <TableHead>{"IGV(18%)"}</TableHead>
@@ -647,33 +548,27 @@ export function CreatePrescriptionOrderForm({
                     ) : (
                       fields.map((field, index) => {
                         const IGV = 0.18;
-                        // const data = selectedProducts.find(
-                        //   (p) => p.id === field.productId
-                        // );
-                        // const existentProduct = originalProductsStock.find(
-                        //   (p) => p.id === field.productId
-                        // );
-                        // const safeData: Partial<OutgoingProducStockForm> =
-                        //   existentProduct ?? data ?? {};
-                        // const safeData: Partial<OutgoingProducStockForm> =
-                        // existentProduct ?? data ?? {};
+                        const data = selectedProducts.find(
+                          (p) => p.id === field.productId
+                        );
+                        const existentProduct = originalProductsStock.find(
+                          (p) => p.id === field.productId
+                        );
                         const safeData: Partial<OutgoingProducStockForm> =
-                          stockDataQuery.data.find(
-                            (p) => p.id === field.productId
-                          ) ?? {};
+                          existentProduct ?? data ?? {};
                         const safeWatch = watchFieldArray?.[index] ?? {};
                         const price = safeData.precio ?? 0;
                         const stockStorage = safeData.Stock?.find(
-                          (stock) => stock.Storage.id === field.storageId
+                          (stock) => stock.Storage.id === storageSafeWatch
                         );
-
+                        
                         const dynamicStock = isNaN(
                           (stockStorage?.stock ?? 0) - (safeWatch.quantity ?? 0)
                         )
                           ? stockStorage?.stock ?? 0
                           : (stockStorage?.stock ?? 0) -
                             (safeWatch.quantity ?? 0);
-
+                            
                         const quantity = safeWatch.quantity ?? 0;
                         const priceWithIGV = price * (1 + IGV);
                         const subtotal = isNaN(price * quantity)
@@ -685,17 +580,11 @@ export function CreatePrescriptionOrderForm({
                         const totalIGV = isNaN(price * quantity * IGV)
                           ? 0
                           : price * quantity * IGV;
-
+                          
                         const maxStock = stockStorage?.stock ?? 0;
-                        console.log('product', safeData)
-                        console.log('productId', field.productId)
-                        console.log('')
-
+                          
                         return (
-                          <TableRow
-                            key={field.id}
-                            className="animate-fade-down"
-                          >
+                          <TableRow key={field.id} className="animate-fade-down">
                             <TableCell>
                               <FormItem>
                                 <div>
@@ -713,47 +602,12 @@ export function CreatePrescriptionOrderForm({
                             </TableCell>
                             <TableCell>
                               <FormItem>
-                                <FormField
-                                  control={form.control}
-                                  name={`products.${index}.storageId`}
-                                  render={({ field }) => (
-                                    <Select
-                                      onValueChange={field.onChange}
-                                      value={field.value}
-                                    >
-                                      <FormControl>
-                                        <SelectTrigger className="w-full">
-                                          <SelectValue placeholder="Seleccionar almacén" />
-                                        </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                        {storageOptions.map((storage) => (
-                                          <SelectItem
-                                            key={storage.value}
-                                            value={storage.value}
-                                          >
-                                            {storage.label}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  )}
-                                />
-                                <FormMessage />
-                              </FormItem>
-                            </TableCell>
-                            <TableCell>
-                              <FormItem>
                                 <Input
                                   disabled={
-                                    stockStorage
-                                      ? stockStorage.stock <= 0
-                                      : false
+                                    stockStorage ? stockStorage.stock <= 0 : false
                                   }
                                   type="number"
-                                  {...register(`products.${index}.quantity`, {
-                                    valueAsNumber: true,
-                                  })}
+                                  {...register(`products.${index}.quantity`, { valueAsNumber: true })}
                                   className={cn(
                                     "text-center",
                                     quantity === 0 && "text-muted-foreground"
@@ -818,13 +672,11 @@ export function CreatePrescriptionOrderForm({
                         );
                       })
                     )}
-
+                    
                     {/* Fila de totales (siempre visible si hay productos) */}
                     {showTotals && fields.length > 0 && (
                       <TableRow className="bg-muted/30 font-medium animate-fade-down">
-                        <TableCell colSpan={2} className="font-bold">
-                          TOTALES:
-                        </TableCell>
+                        <TableCell colSpan={2} className="font-bold">TOTALES:</TableCell>
                         <TableCell></TableCell>
                         <TableCell className="font-semibold">
                           {productTotals.totalIGV.toLocaleString("es-PE", {
@@ -838,10 +690,7 @@ export function CreatePrescriptionOrderForm({
                             currency: "PEN",
                           })}
                         </TableCell>
-                        <TableCell
-                          colSpan={2}
-                          className="text-lg text-primary font-bold"
-                        >
+                        <TableCell colSpan={2} className="text-lg text-primary font-bold">
                           {productTotals.total.toLocaleString("es-PE", {
                             style: "currency",
                             currency: "PEN",
@@ -851,7 +700,7 @@ export function CreatePrescriptionOrderForm({
                     )}
                   </TableBody>
                 </Table>
-
+                
                 {/* Dialog para seleccionar productos */}
                 <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
                   <SelectProductDialog form={form} />
@@ -923,7 +772,7 @@ export function CreatePrescriptionOrderForm({
               )}
             />
           </div>
-
+          
           {/* Campo de notas */}
           <div className="col-span-4">
             <FormItem>
@@ -940,7 +789,7 @@ export function CreatePrescriptionOrderForm({
               )}
             </FormItem>
           </div>
-
+          
           <Separator className="col-span-4" />
         </div>
         {/* Contenido adicional (botones de acción) */}

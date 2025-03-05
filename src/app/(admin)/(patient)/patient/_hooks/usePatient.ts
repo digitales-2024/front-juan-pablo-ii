@@ -75,7 +75,7 @@ export const usePatients = () => {
       patient.dni.includes(query)
     ).map(patient => ({
       value: patient.id,
-      label: `${patient.name} ${patient.lastName || ''}`.trim(), // Mostrar nombre y apellido
+      label: `${patient.name} ${patient.lastName ?? ''}`.trim(), // Mostrar nombre y apellido
     }));
   };
 

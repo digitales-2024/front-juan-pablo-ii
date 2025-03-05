@@ -117,6 +117,60 @@ export async function getProductStock ({productId}: {productId:string}) : Promis
   }
 }
 
+export async function getOneProductStockByStorage ({productId, storageId}: {productId:string, storageId: string}) : Promise<GeneralOutgoingProductStock> {
+  try {
+    const [stockList, error] = await http.get<GeneralOutgoingProductStock>(`/stock/availableProduct/${productId}/storage/${storageId}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock de productos",
+      };
+    }
+    return stockList;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export async function getManyProductsStockByStorage (params: {productId:string, storageId: string}[]) : Promise<GeneralOutgoingProductStock> {
+  try {
+    const [stockList, error] = await http.post<GeneralOutgoingProductStock>(`/stock/manyProductsByStorage`, params);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock de productos",
+      };
+    }
+    return stockList;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export async function getManyProductsStock (params: string[]) : Promise<GeneralOutgoingProductStock> {
+  try {
+    const [stockList, error] = await http.post<GeneralOutgoingProductStock>(`/stock/manyProducts`, params);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock de productos",
+      };
+    }
+    return stockList;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
 export async function getProductStockByStorage ({storageId}: {storageId:string}) : Promise<GeneralOutgoingProductStock> {
   try {
     const [stockList, error] = await http.get<GeneralOutgoingProductStock>(`/stock/availableProduct/storage/${storageId}`);
