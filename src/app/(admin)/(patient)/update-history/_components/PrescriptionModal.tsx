@@ -93,7 +93,7 @@ export function PrescriptionModal({
       // Asegurar que la imagen local se carga correctamente
       const logoImg = clonedContent.querySelector('img[alt="Logo Hospital"]') as HTMLImageElement;
       if (logoImg) {
-        logoImg.style.width = "120px"; // Logo más grande
+        logoImg.style.width = "140px"; // Logo más grande
         logoImg.style.height = "auto";
         
         // Asegurar que la imagen esté cargada
@@ -110,38 +110,35 @@ export function PrescriptionModal({
         });
       }
 
-      // Aplicar estilos mejorados para PDF - Más amigable
+      // Aplicar estilos mejorados para PDF - Más profesional y compacto
       const elementsToStyle = clonedContent.querySelectorAll("div, table, h4, p, th, td");
       elementsToStyle.forEach((el: HTMLElement) => {
         if (el.tagName === "H4") {
-          el.style.color = "hsl(197, 99%, 45%)"; // Nuevo color
-          el.style.fontSize = "15px";
-          el.style.marginBottom = "10px"; // Más espacio
-          el.style.borderBottom = "none"; // Sin línea
-          el.style.paddingBottom = "5px";
+          el.style.color = "hsl(197, 99%, 45%)"; // Color específico
+          el.style.fontSize = "14px";
+          el.style.marginBottom = "6px"; // Menos espacio
+          el.style.borderBottom = "none"; 
+          el.style.paddingBottom = "3px";
           el.style.fontWeight = "600";
         } else if (el.classList.contains("bg-gray-50")) {
-          el.style.background = "#f0f8ff"; // Azul más suave
-          el.style.borderRadius = "6px";
-          el.style.border = "none"; // Sin borde
-          el.style.boxShadow = "0 1px 3px rgba(0,0,0,0.05)"; // Sombra sutil
-          el.style.padding = "12px";
+          el.style.background = "#f8faff"; // Azul muy suave
+          el.style.borderRadius = "4px";
+          el.style.border = "none"; 
+          el.style.padding = "8px"; // Menos padding
         } else if (el.tagName === "TABLE") {
-          el.style.borderCollapse = "separate";
-          el.style.borderSpacing = "0 5px"; // Espacio entre filas
+          el.style.borderCollapse = "collapse"; // Más compacto
           el.style.width = "100%";
-          el.style.fontSize = "11px";
+          el.style.fontSize = "10px"; // Más pequeña para compactar
         } else if (el.tagName === "TH") {
-          el.style.backgroundColor = "hsl(197, 85%, 94%)"; // Color más suave
-          el.style.color = "hsl(197, 99%, 25%)"; // Color oscuro para contraste
-          el.style.padding = "8px";
-          el.style.fontSize = "12px";
-          el.style.fontWeight = "500"; // Menos negrita
-          el.style.border = "none"; // Sin bordes
+          el.style.backgroundColor = "hsl(197, 85%, 96%)"; // Color más suave
+          el.style.color = "hsl(197, 99%, 35%)"; // Color oscuro para contraste
+          el.style.padding = "6px 4px"; // Menos padding
+          el.style.fontSize = "10px";
+          el.style.fontWeight = "500"; 
         } else if (el.tagName === "TD") {
-          el.style.padding = "6px 8px";
-          el.style.borderBottom = "1px solid #edf5f9"; // Borde muy sutil
-          el.style.fontSize = "11px";
+          el.style.padding = "4px";
+          el.style.borderBottom = "1px solid #f0f7ff"; // Borde muy sutil
+          el.style.fontSize = "10px";
         }
       });
 
@@ -151,25 +148,24 @@ export function PrescriptionModal({
         el.classList.remove("border-b", "border-t");
         el.style.borderBottom = "none";
         el.style.borderTop = "none";
-        el.style.paddingBottom = "15px"; // Espacio en lugar de líneas
-        el.style.marginBottom = "15px";
+        el.style.paddingBottom = "10px"; // Menos espacio
+        el.style.marginBottom = "10px"; // Menos margen
       });
 
-      // Agregar título centralizado para la receta - Estilo más suave
+      // Agregar título centralizado para la receta - Más arriba y compacto
       const header = document.createElement("div");
       header.style.textAlign = "center";
-      header.style.marginBottom = "15px";
-      header.style.paddingBottom = "8px";
-      header.style.borderBottom = "none"; // Sin línea
+      header.style.marginBottom = "8px"; // Menos espacio
+      header.style.paddingBottom = "0";
+      header.style.marginTop = "-10px"; // Moverlo más arriba
       
-      const title = document.createElement("h2"); // Usar h2 para más impacto
+      const title = document.createElement("h2"); 
       title.textContent = "NOTA MÉDICA";
-      title.style.fontSize = "22px";
+      title.style.fontSize = "18px"; // Más pequeño
       title.style.fontWeight = "bold";
       title.style.color = "hsl(197, 99%, 45%)"; // Color específico
       title.style.margin = "0";
       title.style.fontFamily = "Arial, sans-serif";
-      title.style.letterSpacing = "1px"; // Espaciado entre letras
       
       header.appendChild(title);
       clonedContent.insertBefore(header, clonedContent.firstChild);
@@ -179,36 +175,50 @@ export function PrescriptionModal({
       if (doctorInfo) {
         const doctorTitle = doctorInfo.querySelector('h4');
         if (doctorTitle) {
-          doctorTitle.textContent = "Dr(a)."; // Simplificar
-          doctorTitle.style.fontSize = "12px";
-          doctorTitle.style.color = "#777777";
-          doctorTitle.style.fontWeight = "normal";
+          doctorTitle.textContent = "Médico"; // Más simple
+          doctorTitle.style.fontSize = "11px";
+          doctorTitle.style.color = "hsl(197, 99%, 45%)";
+          doctorTitle.style.fontWeight = "500";
           doctorTitle.style.marginBottom = "2px";
         }
       }
 
-      // Optimizar contenedor principal
+      // Limpiar los textos de los encabezados (quitar los iconos)
+      const sectionTitles = clonedContent.querySelectorAll('h4');
+      sectionTitles.forEach((title) => {
+        if (title.textContent?.includes("👤")) {
+          title.textContent = "Datos del Paciente";
+        } else if (title.textContent?.includes("🔍")) {
+          title.textContent = "Diagnóstico";
+        } else if (title.textContent?.includes("⚕️")) {
+          title.textContent = "Servicios Recetados";
+        } else if (title.textContent?.includes("💊")) {
+          title.textContent = "Medicamentos Recetados";
+        }
+      });
+
+      // Optimizar contenedor principal - Más compacto
       clonedContent.style.fontFamily = "Arial, sans-serif";
-      clonedContent.style.padding = "15mm";
-      clonedContent.style.fontSize = "11px";
-      clonedContent.style.background = "linear-gradient(to bottom, white, #f0f8ff)";
-      clonedContent.style.width = "180mm";
+      clonedContent.style.padding = "10mm"; // Menos padding
+      clonedContent.style.fontSize = "10px"; // Más pequeño
+      clonedContent.style.background = "#ffffff"; // Sin gradiente
+      clonedContent.style.width = "190mm"; // Un poco más ancho
       clonedContent.style.boxSizing = "border-box";
       clonedContent.style.borderRadius = "0";
 
-      // Añadir pequeños toques visuales
-      const sectionTitles = clonedContent.querySelectorAll('h4');
-      sectionTitles.forEach((title) => {
-        // Icono visual sutil usando caracterres Unicode
-        if (title.textContent?.includes("Datos del Paciente")) {
-          title.innerHTML = "👤 Datos del Paciente";
-        } else if (title.textContent?.includes("Diagnóstico")) {
-          title.innerHTML = "🔍 Diagnóstico";
-        } else if (title.textContent?.includes("Servicios Recetados")) {
-          title.innerHTML = "⚕️ Servicios Recetados";
-        } else if (title.textContent?.includes("Medicamentos")) {
-          title.innerHTML = "💊 Medicamentos Recetados";
-        }
+      // Ajustar espaciado entre secciones principales
+      const mainSections = clonedContent.querySelectorAll('.space-y-6, .space-y-4');
+      mainSections.forEach((section: HTMLElement) => {
+        section.classList.remove('space-y-6', 'space-y-4');
+        section.classList.add('space-y-3'); // Menos espacio
+        section.style.gap = "8px";
+      });
+
+      // Ajustar espacios en el grid
+      const gridDivs = clonedContent.querySelectorAll('.grid.gap-4');
+      gridDivs.forEach((grid: HTMLElement) => {
+        grid.classList.remove('gap-4');
+        grid.classList.add('gap-2'); // Menos gap
       });
 
       // Capturar como imagen
@@ -268,30 +278,12 @@ export function PrescriptionModal({
         pdf.setDrawColor(0, 157, 209); // Equivalente a hsl(197, 99%, 45%) en RGB
         pdf.setLineWidth(0.3); // Línea más fina
         
-        // Pequeño detalle en las esquinas en lugar de borde completo
-        const cornerSize = 15; // Tamaño de las esquinas
-        const pageWidth = pdfWidth - 10;
-        const pageHeight = pdf.internal.pageSize.getHeight() - 10;
-        
-        // Esquina superior izquierda
-        pdf.line(5, 5, 5 + cornerSize, 5);
-        pdf.line(5, 5, 5, 5 + cornerSize);
-        
-        // Esquina superior derecha
-        pdf.line(pageWidth, 5, pageWidth - cornerSize, 5);
-        pdf.line(pageWidth, 5, pageWidth, 5 + cornerSize);
-        
-        // Esquina inferior izquierda
-        pdf.line(5, pageHeight, 5 + cornerSize, pageHeight);
-        pdf.line(5, pageHeight, 5, pageHeight - cornerSize);
-        
-        // Esquina inferior derecha
-        pdf.line(pageWidth, pageHeight, pageWidth - cornerSize, pageHeight);
-        pdf.line(pageWidth, pageHeight, pageWidth, pageHeight - cornerSize);
+        // Borde completo pero sutil
+        pdf.rect(5, 5, pdfWidth - 10, pdf.internal.pageSize.getHeight() - 10);
         
         // Añadir pie de página
-        pdf.setFontSize(8);
-        pdf.setTextColor(120, 120, 120); // Gris más claro
+        pdf.setFontSize(7); // Más pequeño
+        pdf.setTextColor(120, 120, 120);
         pdf.text(
           `Nota médica generada el ${new Date().toLocaleDateString("es-PE")}`,
           pdfWidth / 2,
@@ -304,7 +296,7 @@ export function PrescriptionModal({
           pdf.text(
             `Página ${i} de ${pageCount}`,
             pdfWidth / 2,
-            pdf.internal.pageSize.getHeight() - 10,
+            pdf.internal.pageSize.getHeight() - 8,
             { align: "center" }
           );
         }
