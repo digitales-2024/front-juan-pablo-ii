@@ -7,6 +7,8 @@ import {
   Clock,
   DollarSign,
 
+  FileHeart,
+
   FileText,
   Handshake,
   Home,
@@ -18,7 +20,6 @@ import {
   PackageOpen,
   PackagePlus,
   PackageSearch,
-  Pill,
   ShieldBan,
   ShieldCheck,
   ShieldPlus,
@@ -51,12 +52,12 @@ export const sidebarData: SidebarData = {
         {
           title: "Calendario Citas",
           url: "/appointments-schedule",
-          icon: Handshake,
+          icon: CalendarPlus,
         },
         {
           title: "Consultas",
           url: "/consultations",
-          icon: CalendarPlus,
+          icon: Handshake,
         },
       ],
     },
@@ -136,9 +137,9 @@ export const sidebarData: SidebarData = {
           icon: DollarSign,
           items: [
             {
-              title: "Recetas",
+              title: "Notas medicas",
               url: "/prescriptions",
-              icon: Pill,
+              icon: FileHeart,
             },
             {
               title: "Órdenes",
