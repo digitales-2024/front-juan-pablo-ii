@@ -192,7 +192,7 @@ export function PrescriptionModal({
           title.textContent = "Diagnóstico";
         } else if (title.textContent?.includes("⚕️")) {
           title.textContent = "Servicios Recetados";
-        } else if (title.textContent?.includes("💊")) {
+        } else if (title.textContent?.includes("📝")) {
           title.textContent = "Medicamentos Recetados";
         }
       });
@@ -333,53 +333,57 @@ export function PrescriptionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-3xl">
-        <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden">
+        <div className="max-h-[calc(100dvh-8rem)] overflow-y-auto p-2 sm:p-4">
           <DialogHeader>
             <DialogTitle>Nota Médica</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6 p-4" ref={prescriptionRef}>
+          <div className="space-y-6" ref={prescriptionRef}>
             {/* Encabezado de la Receta */}
-            <div className="grid grid-cols-2 gap-4 border-b pb-4">
-              <div className="flex items-start space-x-4">
-                <Image
-               src={logoNota}
-                  alt="Logo Hospital"
-                  className="w-32 object-contain"
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b pb-4">
+              <div className="flex items-start space-x-2 sm:space-x-4">
+                <div className="w-24 sm:w-32 flex-shrink-0">
+                  <Image
+                    src={logoNota}
+                    alt="Logo Hospital"
+                    className="w-full h-auto object-contain"
+                    width={140}
+                    height={70}
+                  />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">{branchInfo?.name}</p>
-                  <p className="text-sm text-gray-600">{branchInfo?.address}</p>
+                  <p className="text-xs sm:text-sm font-medium">{branchInfo?.name}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">{branchInfo?.address}</p>
                 </div>
               </div>
               
-              <div className="text-right">
+              <div className="text-right mt-2 sm:mt-0">
                 <h4 className="font-semibold">Médico Tratante</h4>
-                <p className="text-sm">{staffInfo?.name}</p>
-                <p className="text-sm text-gray-600">Cod: {staffInfo?.cmp}</p>
+                <p className="text-xs sm:text-sm">{staffInfo?.name}</p>
+                <p className="text-xs sm:text-sm text-gray-600">Cod: {staffInfo?.cmp}</p>
               </div>
             </div>
 
             {/* Datos del Paciente */}
             <div className="border-b pb-4">
-              <h4 className="font-semibold mb-2">Datos del Paciente</h4>
-              <div className="grid grid-cols-2 gap-4">
+              <h4 className="font-semibold mb-2">👤 Datos del Paciente</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium">Nombre: </span>
                     {patient.name} {patient.lastName}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium">DNI: </span>
                     {patient.dni}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium">Teléfono: </span>
                     {patient.phone}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium">Dirección: </span>
                     {patient.address}
                   </p>
@@ -392,8 +396,8 @@ export function PrescriptionModal({
               {/* Descripción/Diagnóstico */}
               {prescription.description && (
                 <div>
-                  <h4 className="font-semibold mb-2">Diagnóstico</h4>
-                  <p className="text-sm bg-gray-50 p-3 rounded">
+                  <h4 className="font-semibold mb-2">🔍 Diagnóstico</h4>
+                  <p className="text-xs sm:text-sm bg-gray-50 p-3 rounded">
                     {prescription.description}
                   </p>
                 </div>
@@ -402,11 +406,11 @@ export function PrescriptionModal({
               {/* Servicios Adicionales */}
               {prescription.prescriptionServices?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold mb-2">Servicios Recetados</h4>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <table className="w-full">
+                  <h4 className="font-semibold mb-2">⚕️ Servicios Recetados</h4>
+                  <div className="bg-gray-50 p-2 sm:p-3 rounded overflow-x-auto">
+                    <table className="w-full min-w-[300px]">
                       <thead>
-                        <tr className="text-sm text-gray-600 border-b">
+                        <tr className="text-xs sm:text-sm text-gray-600 border-b">
                           <th className="text-left py-2">Servicio</th>
                           <th className="text-left py-2">Cantidad</th>
                           <th className="text-left py-2">Descripción</th>
@@ -415,9 +419,9 @@ export function PrescriptionModal({
                       <tbody>
                         {prescription.prescriptionServices.map((item) => (
                           <tr key={item.id} className="border-b last:border-0">
-                            <td className="py-2">{item.name}</td>
-                            <td className="py-2">{item.quantity} Uni</td>
-                            <td className="py-2">{item.description}</td>
+                            <td className="py-2 text-xs sm:text-sm">{item.name}</td>
+                            <td className="py-2 text-xs sm:text-sm">{item.quantity} Uni</td>
+                            <td className="py-2 text-xs sm:text-sm">{item.description}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -429,11 +433,11 @@ export function PrescriptionModal({
               {/* Medicamentos Recetados */}
               {prescription.prescriptionMedicaments?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold mb-2">Medicamentos Recetados</h4>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <table className="w-full">
+                  <h4 className="font-semibold mb-2">📝 Medicamentos Recetados</h4>
+                  <div className="bg-gray-50 p-2 sm:p-3 rounded overflow-x-auto">
+                    <table className="w-full min-w-[300px]">
                       <thead>
-                        <tr className="text-sm text-gray-600 border-b">
+                        <tr className="text-xs sm:text-sm text-gray-600 border-b">
                           <th className="text-left py-2">Medicamento</th>
                           <th className="text-left py-2">Cantidad</th>
                           <th className="text-left py-2">Descripción</th>
@@ -442,9 +446,9 @@ export function PrescriptionModal({
                       <tbody>
                         {prescription.prescriptionMedicaments.map((item) => (
                           <tr key={item.id} className="border-b last:border-0">
-                            <td className="py-2">{item.name}</td>
-                            <td className="py-2">{item.quantity} Uni</td>
-                            <td className="py-2">{item.description}</td>
+                            <td className="py-2 text-xs sm:text-sm">{item.name}</td>
+                            <td className="py-2 text-xs sm:text-sm">{item.quantity} Uni</td>
+                            <td className="py-2 text-xs sm:text-sm">{item.description}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -454,17 +458,16 @@ export function PrescriptionModal({
               )}
 
               {/* Fecha y Firma */}
-              <div className="flex justify-between items-end">
-                <div>
-                  <span className="text-sm text-gray-600">
-                    Fecha de emisión:{" "}
-                    {formatDate(prescription.registrationDate)}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mt-4">
+                <div className="mb-3 sm:mb-0">
+                  <span className="text-xs sm:text-sm text-gray-600">
+                    Fecha de emisión: {formatDate(prescription.registrationDate)}
                   </span>
                 </div>
                 <Button
                   onClick={handlePrintPrescription}
                   disabled={isGeneratingPDF}
-                  className="ml-auto"
+                  className="w-full sm:w-auto"
                 >
                   {isGeneratingPDF ? (
                     "Generando PDF..."
@@ -478,7 +481,7 @@ export function PrescriptionModal({
 
               <div className="text-right">
                 <div className="border-t border-black mt-16 pt-2 inline-block">
-                  <p className="text-sm font-medium">Firma del Médico</p>
+                  <p className="text-xs sm:text-sm font-medium">Firma del Médico</p>
                   <p className="text-xs text-gray-600">{staffInfo?.name}</p>
                 </div>
               </div>
