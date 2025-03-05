@@ -1,11 +1,12 @@
 import { Table } from "@tanstack/react-table";
-import { DetailedStorage } from "../_interfaces/order.interface";
-import { CreateStorageDialog } from "./CreateStorageDialog";
-import { DeactivateStorageDialog } from "./DeactivateStorageDialog";
-import { ReactivateStorageDialog } from "./ReactivateProductDialog";
+import { Order } from "../_interfaces/order.interface";
+// import { DetailedStorage } from "../_interfaces/order.interface";
+// import { CreateStorageDialog } from "./CreateStorageDialog";
+// import { DeactivateStorageDialog } from "./DeactivateStorageDialog";
+// import { ReactivateStorageDialog } from "./ReactivateProductDialog";
 
 export interface ProductTableToolbarActionsProps {
-  table?: Table<DetailedStorage>;
+  table?: Table<Order>;
 }
 
 export function ProductTableToolbarActions({

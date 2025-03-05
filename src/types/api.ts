@@ -2718,6 +2718,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/paciente/dni/{dni}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtenerun pacinete por su dni */
+        get: operations["PacientController_findByDni"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/paciente/{id}": {
         parameters: {
             query?: never;
@@ -2816,6 +2833,57 @@ export interface paths {
         put?: never;
         /** Crear nueva receta médica */
         post: operations["PrescriptionController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receta/patients": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener receta médica de los pacientes */
+        get: operations["PrescriptionController_findByPatientsPrescriptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receta/withPatient": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener receta médica de los pacientes */
+        get: operations["PrescriptionController_findByPrescriptionsWithPatients"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receta/patient/{dni}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener receta médica por ID */
+        get: operations["PrescriptionController_findByPatientIdCard"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -6035,7 +6103,7 @@ export interface components {
         Patient: {
             id: string;
             name: string;
-            lastName: string;
+            lastName?: string;
             dni: string;
             birthDate: string;
             gender: string;
@@ -6050,7 +6118,7 @@ export interface components {
             workplace: string;
             bloodType: string;
             primaryDoctor: string;
-            sucursal: string;
+            language: string;
             notes: string;
             patientPhoto: string;
             isActive: boolean;
@@ -6237,9 +6305,48 @@ export interface components {
             registrationDate: string;
             prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
             prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
-            description: string;
-            purchaseOrderId: string;
+            description?: string;
+            purchaseOrderId?: string;
             isActive: boolean;
+        };
+        PatientPrescriptions: {
+            id: string;
+            name: string;
+            lastName?: string;
+            dni: string;
+            birthDate: string;
+            gender: string;
+            address?: string;
+            phone?: string;
+            email?: string;
+            isActive: boolean;
+            Prescription: components["schemas"]["Prescription"][];
+        };
+        PrescriptionPatient: {
+            id: string;
+            name: string;
+            lastName?: string;
+            dni: string;
+            birthDate: string;
+            gender: string;
+            address?: string;
+            phone?: string;
+            email?: string;
+            isActive: boolean;
+        };
+        PrescriptionWithPatient: {
+            id: string;
+            updateHistoryId: string;
+            branchId: string;
+            staffId: string;
+            patientId: string;
+            registrationDate: string;
+            prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
+            prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
+            description?: string;
+            purchaseOrderId?: string;
+            isActive: boolean;
+            patient: components["schemas"]["PrescriptionPatient"];
         };
         UpdatePrescriptionDto: {
             /**
@@ -14414,6 +14521,43 @@ export interface operations {
             };
         };
     };
+    PacientController_findByDni: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description DNI del paciente */
+                dni: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los pacientes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Patient"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     PacientController_findOne: {
         parameters: {
             query?: never;
@@ -14811,6 +14955,138 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PrescriptionController_findByPatientsPrescriptions: {
+        parameters: {
+            query: {
+                limit: number;
+                offset: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recetas médicas encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientPrescriptions"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Recetas médicas no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PrescriptionController_findByPrescriptionsWithPatients: {
+        parameters: {
+            query: {
+                limit: number;
+                offset: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recetas médicas encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrescriptionWithPatient"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Recetas médicas no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PrescriptionController_findByPatientIdCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Número de DNI y deberia tambien el CE */
+                dni: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recetas médicas encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientPrescriptions"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Recetas médicas no encontrada */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

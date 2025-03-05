@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery, useQueries } from "@tanstack/react-query";
 import {
   createProduct,
   updateProduct,
@@ -76,28 +76,56 @@ export const useProducts = () => {
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
-  const oneProductQuery = useQuery({
-    queryKey: ["product", "some-product-id"], // replace "some-product-id" with the actual product id
-    queryFn: async ({ queryKey }) => {
-      const [, id] = queryKey;
-      try{
-        const response: ProductResponse = await getProductById(id);
-        if (!response) {
-          throw new Error("No se recibió respuesta del servidor");
+  const oneProductQuery = (productId: string)=>{
+    return useQuery({
+      queryKey: ["product", productId], // replace "some-product-id" with the actual product id
+      queryFn: async ({ queryKey }) => {
+        const [, id] = queryKey;
+        try{
+          const response: ProductResponse = await getProductById(id);
+          if (!response) {
+            throw new Error("No se recibió respuesta del servidor");
+          }
+          if ('error' in response) {
+            throw new Error(response.error);
+          }
+          if ('data' in response) {
+            return response.data;
+          }
+        } catch (error) {
+          if (error instanceof Error) return { error: error.message };
+          return { error: "Error desconocido" };
         }
-        if ('error' in response) {
-          throw new Error(response.error);
-        }
-        if ('data' in response) {
-          return response.data;
-        }
-      } catch (error) {
-        if (error instanceof Error) return { error: error.message };
-        return { error: "Error desconocido" };
-      }
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  }
+
+  const productsByIdQueries = (ids: string[])=>{
+    return useQueries({
+      queries: ids.map((id) => ({
+        queryKey: ["products", id], // replace "some-product-id" with the actual product id
+        queryFn: async () => {
+          try{
+            const response: ProductResponse = await getProductById(id);
+            if (!response) {
+              throw new Error("No se recibió respuesta del servidor");
+            }
+            if ('error' in response) {
+              throw new Error(response.error);
+            }
+            if ('data' in response) {
+              return response.data;
+            }
+          } catch (error) {
+            if (error instanceof Error) return { error: error.message };
+            return { error: "Error desconocido" };
+          }
+        },
+        staleTime: 1000 * 60 * 5, // 5 minutos
+      })),
+    });
+  }
 
   const searchProductsByIndexedName = (name:string)=>(
     useQuery({
@@ -267,6 +295,7 @@ export const useProducts = () => {
     activeProductsQuery,
     searchProductsByIndexedName,
     // products: productsQuery.data,
+    productsByIdQueries,
     oneProductQuery,
     createMutation,
     updateMutation,

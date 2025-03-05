@@ -371,6 +371,7 @@ export const PaymentTypeConfig: Record<PaymentType, EnumConfig> = {
     icon: Gift,
   },
 };
+
 export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
   CASH: {
     name: "Efectivo",
@@ -394,7 +395,6 @@ export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
     icon: Smartphone,
   },
 };
-
 
 export type CreatePaymentDto = components['schemas']['CreatePaymentDto'];
 export type UpdatePaymentDto = components['schemas']['UpdatePaymentDto'];
@@ -528,13 +528,28 @@ export type CreateProductPurchaseBillingDto = {
   metadata?: Record<string, never>;
 }
 
+export const paymentMethodOptions: EnumOptions<PaymentMethod>[] = [
+  {
+    label: "Efectivo",
+    value: "CASH",
+  },
+  {
+    label: "Transferencia Bancaria",
+    value: "BANK_TRANSFER",
+  },
+  {
+    label: "Billetera Digital",
+    value: "YAPE",
+  }
+];
+
 export const createProductSaleBillingSchema = z.object({
-  products: z.array(z.object({
-    productId: z.string(),
-    quantity: z.number(),
-  })),
-  storageId: z.string(),
-  branchId: z.string(),
+  storageId: z.string({
+    required_error: "Debe seleccionar un almacén",
+  }),
+  branchId: z.string({
+    required_error: "Debe seleccionar la sucursal que genera la venta",
+  }),
   storageLocation: z.string().optional(),
   batchNumber: z.string().optional(),
   referenceId: z.string().optional(),
@@ -542,6 +557,10 @@ export const createProductSaleBillingSchema = z.object({
   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
   notes: z.string().optional(),
   metadata: z.record(z.never()).optional(),
+  products: z.array(z.object({
+    productId: z.string(),
+    quantity: z.number(),
+  })),
 }) satisfies z.ZodType<CreateProductSaleBillingDto>;
 
 export const createProductPurchaseBillingSchema = z.object({
