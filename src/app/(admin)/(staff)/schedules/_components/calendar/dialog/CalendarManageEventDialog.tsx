@@ -20,6 +20,7 @@ import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff"
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches"
 import { useQueryClient } from "@tanstack/react-query"
 import { CalendarEvent } from "../../../_types/CalendarTypes"
+import { colorOptions } from "@/app/(admin)/(appointments)/appointments-schedule/_components/calendar/calendarTailwindClasses"
 
 const formSchema = z
   .object({
@@ -121,6 +122,10 @@ export default function CalendarManageEventDialog() {
           end: values.end,
           color: values.color
         },
+      })
+      queryClient.invalidateQueries({
+        queryKey: [EVENT_QUERY_KEY, safeFilters],
+        exact: false
       })
       setIsEditing(false)
       handleClose()
@@ -280,26 +285,6 @@ export default function CalendarManageEventDialog() {
                   <p className="text-sm text-red-500">{form.formState.errors.end.message}</p>
                 )}
               </div>
-              {isEditing && (
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium flex items-center gap-2">
-                    <Palette className="h-4 w-4" />
-                    Color
-                  </Label>
-                  <div className="p-4 bg-accent rounded-lg">
-                    <select
-                      {...form.register("color")}
-                      className="w-full bg-transparent font-medium"
-                    >
-                      <option value="blue">Azul</option>
-                      <option value="red">Rojo</option>
-                      <option value="green">Verde</option>
-                      <option value="yellow">Amarillo</option>
-                      <option value="purple">Morado</option>
-                    </select>
-                  </div>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>

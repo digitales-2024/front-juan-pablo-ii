@@ -70,6 +70,11 @@ export function AddHistoryModal({
   const { createUpdateHistory, createPrescriptionMutation } =
     useUpdateHistory();
 
+  // Filtrar solo personal médico (con campo cmp no nulo)
+  const medicalStaff = staff.filter(
+    (staffMember) => staffMember?.cmp !== null && staffMember?.cmp !== undefined && staffMember?.cmp !== ""
+  );
+
   // Estado inicial para el formulario
   const [formData, setFormData] = useState<CreateUpdateHistoryDto>({
     patientId: patientId ?? "",
@@ -96,6 +101,8 @@ export function AddHistoryModal({
   // Estado separado para la receta médica
   const [prescriptionData, setPrescriptionData] = useState<CreatePrescriptionDto | null>(null);
 
+  const [prescriptionResetKey, setPrescriptionResetKey] = useState(0);
+  const [medicalLeaveResetKey, setMedicalLeaveResetKey] = useState(0); // Nuevo estado para descanso médico
   // Separamos la lógica de creación en funciones independientes
 
   // Manejador principal del envío del formulario
@@ -230,19 +237,26 @@ export function AddHistoryModal({
     setShowMedicalLeaveModal(false);
     setShowPrescriptionModal(false);
     setIsOpen(false);
+    setPrescriptionResetKey(prev => prev + 1); // Incrementar para forzar reseteo
+    setMedicalLeaveResetKey(prev => prev + 1); // Incrementar también el reset key del descanso médico
   };
 
   // Agregar función para limpiar receta médica
   const handleRemovePrescription = () => {
+    // Solo limpiamos los datos de prescripción
     setPrescriptionData(null);
     setFormData(prev => ({
       ...prev,
       prescription: false
+      // No tocamos los campos de descanso médico aquí
     }));
+    // Incrementar SOLO el resetKey de prescripción
+    setPrescriptionResetKey(prev => prev + 1);
   };
 
   // Agregar función para limpiar descanso médico
   const handleRemoveMedicalLeave = () => {
+    // Solo limpiamos los campos de descanso médico
     setFormData((prev) => ({
       ...prev,
       medicalLeave: false,
@@ -250,7 +264,10 @@ export function AddHistoryModal({
       medicalLeaveEndDate: undefined,
       medicalLeaveDays: undefined,
       leaveDescription: undefined,
+      // No tocamos prescription ni prescriptionData aquí
     }));
+    // Incrementar SOLO el resetKey de descanso médico
+    setMedicalLeaveResetKey(prev => prev + 1);
   };
 
   return (
@@ -317,7 +334,7 @@ export function AddHistoryModal({
                         <SelectValue placeholder="Seleccione un médico" />
                       </SelectTrigger>
                       <SelectContent>
-                        {staff.map((s) => (
+                        {medicalStaff.map((s) => (
                           <SelectItem key={s.id} value={s.id}>
                             {`${s.name} ${s.lastName}`}
                           </SelectItem>
@@ -438,7 +455,7 @@ export function AddHistoryModal({
                     className="w-full sm:w-auto flex items-center gap-2"
                   >
                     <ClipboardPlus className="w-4 h-4" />
-                    Agregar Receta Médica
+                    Agregar Nota Médica
                   </Button>
                   <Button
                     type="button"
@@ -454,7 +471,7 @@ export function AddHistoryModal({
                   {formData.medicalLeave && (
                     <Badge
                       variant="outline"
-                      className="bg-green-50 text-green-700 hover:bg-green-100 transition-colors px-3 py-1"
+                      className="bg-green-50 text-yellow-700 hover:bg-green-100 transition-colors px-3 py-1"
                     >
                       Descanso Médico Agregado
                       <button
@@ -470,7 +487,7 @@ export function AddHistoryModal({
                       variant="outline"
                       className="bg-green-50 text-green-700 hover:bg-green-100 transition-colors px-3 py-1"
                     >
-                      Receta Médica Agregada
+                      Nota Médica Agregada
                       <button
                         onClick={handleRemovePrescription}
                         className="ml-2 hover:text-red-600"
@@ -510,6 +527,7 @@ export function AddHistoryModal({
           medicalLeaveDays: formData.medicalLeaveDays,
           leaveDescription: formData.leaveDescription,
         }}
+        resetKey={medicalLeaveResetKey} // Nueva prop para resetear el componente
       />
 
       <AddPrescriptionModal
@@ -521,6 +539,7 @@ export function AddHistoryModal({
         branchId={formData.branchId}
         staffId={formData.staffId}
         patientId={patientId ?? ""}
+        resetKey={prescriptionResetKey}
       />
     </Dialog>
   );

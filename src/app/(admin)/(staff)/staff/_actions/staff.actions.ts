@@ -1,11 +1,11 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { 
-  Staff, 
-  CreateStaffDto, 
-  UpdateStaffDto, 
-  DeleteStaffDto 
+import {
+  Staff,
+  CreateStaffDto,
+  UpdateStaffDto,
+  DeleteStaffDto
 } from "../_interfaces/staff.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { createSafeAction } from '@/utils/createSafeAction';
@@ -24,15 +24,17 @@ const getStaffHandler = async () => {
     const [staff, error] = await http.get<Staff[]>("/staff");
 
     if (error) {
-      return { error: typeof error === 'object' && error !== null && 'message' in error 
-        ? String(error.message) 
-        : 'Error al obtener el personal' };
+      return {
+        error: typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : 'Error al obtener el personal'
+      };
     }
 
     if (!Array.isArray(staff)) {
       return { error: 'Respuesta inválida del servidor' };
     }
-    
+
     return { data: staff };
   } catch (error) {
     console.error("💥 Error en getStaffHandler:", error);
@@ -45,15 +47,17 @@ const getActiveStaffHandler = async () => {
     const [staff, error] = await http.get<Staff[]>("/staff/active");
 
     if (error) {
-      return { error: typeof error === 'object' && error !== null && 'message' in error 
-        ? String(error.message) 
-        : 'Error al obtener el personal' };
+      return {
+        error: typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : 'Error al obtener el personal'
+      };
     }
 
     if (!Array.isArray(staff)) {
       return { error: 'Respuesta inválida del servidor' };
     }
-    
+
     return { data: staff };
   } catch (error) {
     console.error("💥 Error en getStaffHandler:", error);
@@ -85,6 +89,7 @@ export async function createStaff(
   data: CreateStaffDto
 ): Promise<CreateStaffResponse> {
   try {
+    console.log(data);
     const [staff, error] = await http.post<BaseApiResponse>("/staff", data);
 
     if (error) {
@@ -93,6 +98,8 @@ export async function createStaff(
       }
       return { error: error.message };
     }
+    console.log(staff);
+
 
     return staff;
   } catch (error) {

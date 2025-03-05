@@ -15,6 +15,11 @@ import { CalendarDays, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 export default function Consultation() {
 	const [showForm, setShowForm] = useState(false);
 	const [allowPastDates, setAllowPastDates] = useState(false);
+	const [showAvailableDays, setShowAvailableDays] = useState(false);
+	const [showAvailableHours, setShowAvailableHours] = useState(false);
+	const [selectedStaffId, setSelectedStaffId] = useState("");
+	const [selectedBranchId, setSelectedBranchId] = useState("");
+	const [selectedDate, setSelectedDate] = useState(new Date());
 
 	const form = useForm<ConsultationSchema>({
 		resolver: zodResolver(consultationsSchema),
@@ -22,15 +27,32 @@ export default function Consultation() {
 			time: "",
 			date: new Date(),
 			serviceId: "",
-			patientId: "",
 			description: "",
+			staffId: "",
+			branchId: "",
 		},
 	});
 
-	const selectedDate = form.watch("date");
 	const selectedTime = form.watch("time");
 
 	const canContinueToForm = selectedDate && selectedTime;
+
+	const handleStaffChange = (staffId: string) => {
+		console.log("Cambiando ID de personal a:", staffId);
+		setSelectedStaffId(staffId);
+	};
+
+	const handleBranchChange = (branchId: string) => {
+		console.log("Cambiando ID de sucursal a:", branchId);
+		setSelectedBranchId(branchId);
+	};
+
+	const handleMonthChange = (date: Date) => {
+		setSelectedDate(date);
+		console.log("Mes cambiado a:", date);
+		console.log("ID de personal actual:", selectedStaffId);
+		console.log("ID de sucursal actual:", selectedBranchId);
+	};
 
 	return (
 		<Card className="w-full p-8 rounded-lg max-w-7xl mx-auto shadow">
@@ -55,23 +77,50 @@ export default function Consultation() {
 					</Button>
 				</div>
 				<div className="flex items-center gap-2">
-					<Switch
+					{/* <Switch
 						id="allow-past"
 						checked={allowPastDates}
 						onCheckedChange={setAllowPastDates}
 					/>
-					<Label htmlFor="allow-past">Permitir fechas pasadas</Label>
+					<Label htmlFor="allow-past">Permitir fechas pasadas</Label> */}
+				</div>
+				<div className="flex items-center gap-2">
+					<Switch
+						id="show-available-days"
+						checked={showAvailableDays}
+						onCheckedChange={setShowAvailableDays}
+					/>
+					<Label htmlFor="show-available-days">Mostrar solo días disponibles</Label>
+				</div>
+				<div className="flex items-center gap-2">
+					<Switch
+						id="show-available-hours"
+						checked={showAvailableHours}
+						onCheckedChange={setShowAvailableHours}
+					/>
+					<Label htmlFor="show-available-hours">Mostrar horas disponibles</Label>
 				</div>
 			</div>
 
 			<div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] w-full  gap-8">
-				<LeftPanel date={selectedDate} time={selectedTime} />
+				<LeftPanel
+					date={selectedDate}
+					time={selectedTime}
+					onStaffChange={handleStaffChange}
+					onBranchChange={handleBranchChange}
+				/>
 				<div className="relative">
 					{!showForm ? (
 						<div className="pb-12">
 							<ConsultationCalendarTime
 								form={form}
 								allowPastDates={allowPastDates}
+								showAvailableDays={showAvailableDays}
+								showAvailableHours={showAvailableHours}
+								selectedStaffId={selectedStaffId}
+								selectedBranchId={selectedBranchId}
+								selectedDate={selectedDate}
+								onMonthChange={handleMonthChange}
 							/>
 							{canContinueToForm && (
 								<div className="absolute bottom-0 right-0 mt-4">

@@ -110,7 +110,7 @@ export async function getPatientByDni (dni:string) {
   workplace: '',
   bloodType: '',
   primaryDoctor: '',
-  language: '',
+  sucursal: '',
   notes: '',
   image: File {
     size: 3239,
