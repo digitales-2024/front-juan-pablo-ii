@@ -86,6 +86,7 @@ export function CreatePrescriptionOrderForm({
   // Estados básicos
   const [showProductFields, setShowProductFields] = useState(false);
   const [showServicesFields, setShowServicesFields] = useState(true);
+  const [originalProductsStock, setOriginalProductsStock] = useState<OutgoingProducStockForm[]>([]);
   const [showTotals, setShowTotals] = useState(false);
   const [productTotals, setProductTotals] = useState({
     total: 0,
@@ -114,25 +115,41 @@ export function CreatePrescriptionOrderForm({
   const orginalProductsIds = originalProducts.map((product) => product.id);
   
   // Mapeo de productos originales con su stock
-  const originalProductsStock: OutgoingProducStockForm[] =
-    originalProducts.flatMap((product) => {
+  // const originalProductsStock: OutgoingProducStockForm[] = useMemo(() => {
+  //   return originalProducts.flatMap((product) => {
+  //     if (!product.id) return [];
+
+  //     const { productStockQuery: response } = productStockById(product.id);
+
+  //     if (response.isError) {
+  //       toast.error(response.error?.message ?? "Error desconocido");
+  //       return [];
+  //     }
+
+  //     if (response.data?.length === 1) {
+  //       return [{
+  //         ...response.data[0],
+  //         storageId: storageSafeWatch,
+  //       }];
+  //     }
+  //     return [];
+  //   });
+
+  // }, [originalProducts, productStockById, storageSafeWatch])
+  useEffect(() => {
+    if (!originalProducts.length) return;
+    
+    const stocks = originalProducts.flatMap((product) => {
       if (!product.id) return [];
-
       const { productStockQuery: response } = productStockById(product.id);
-
-      if (response.isError) {
-        toast.error(response.error?.message ?? "Error desconocido");
-        return [];
-      }
-
-      if (response.data?.length === 1) {
-        return [{
-          ...response.data[0],
-          storageId: storageSafeWatch,
-        }];
+      if (response.isSuccess && response.data?.length === 1) {
+        return [{...response.data[0], storageId: storageSafeWatch}];
       }
       return [];
     });
+    
+    setOriginalProductsStock(stocks);
+  }, [originalProducts, productStockById, storageSafeWatch]);
 
   // Obtener datos de productos por ID seleccionados - solamente para los productos que ya están en fields
   const productIds = fields.map(field => field.productId).filter(Boolean);
@@ -155,37 +172,6 @@ export function CreatePrescriptionOrderForm({
 
   // Estados para gestionar la edición de cantidades
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [localQuantities, setLocalQuantities] = useState<Record<string, string>>({});
-  const previousValuesRef = useRef<Record<string, number>>({});
-  
-  // Función para manejar el inicio de edición de cantidad
-  const handleQuantityFocus = useCallback((index: number, currentValue: number) => {
-    setEditingIndex(index);
-    // Guardar el valor actual antes de la edición
-    previousValuesRef.current[index] = currentValue;
-    // Establecer el valor local para la edición
-    setLocalQuantities(prev => ({
-      ...prev,
-      [index]: currentValue > 0 ? String(currentValue) : ''
-    }));
-  }, []);
-  
-  // Función para manejar cambios locales en la cantidad
-  const handleQuantityChange = useCallback((index: number, value: string) => {
-    // Actualizar el valor local inmediatamente
-    setLocalQuantities(prev => ({
-      ...prev,
-      [index]: value
-    }));
-    
-    // Convertir a número y validar
-    const numValue = value === '' ? previousValuesRef.current[index] || 0 : Number(value);
-    
-    // Actualizar el valor en el formulario solo si es un número válido
-    if (!isNaN(numValue)) {
-      form.setValue(`products.${index}.quantity`, numValue, { shouldValidate: false });
-    }
-  }, [form]);
   
   // Función para calcular totales con debounce integrado
   const calculateTotalsWithDebounce = useCallback(() => {
@@ -258,45 +244,6 @@ export function CreatePrescriptionOrderForm({
     }, 200); // Reducido a 200ms para sentirse más responsivo
   }, [form, orderProductsDataMap]);
   
-  // Función para finalizar la edición - CORREGIDA PARA EVITAR RESETEO A 0
-  const handleQuantityBlur = useCallback((index: number, maxStock: number) => {
-    const currentValue = localQuantities[index];
-    const previousValue = previousValuesRef.current[index] || 0;
-    
-    try {
-      // Si el campo está vacío, restaurar el valor anterior
-      if (currentValue === '' || currentValue === undefined) {
-        form.setValue(`products.${index}.quantity`, previousValue, { shouldValidate: true });
-      } else {
-        // Hay un valor, convertirlo a número y validar límites
-        let numValue = Number(currentValue);
-        
-        if (isNaN(numValue)) {
-          // Si no es un número válido, usar el valor anterior
-          numValue = previousValue;
-        } else if (numValue < 0) {
-          numValue = 0;
-        } else if (numValue > maxStock) {
-          numValue = maxStock;
-          toast.info(`Cantidad ajustada al máximo disponible (${maxStock})`);
-        }
-        
-        // Actualizar el formulario con el valor validado
-        form.setValue(`products.${index}.quantity`, numValue, { shouldValidate: true });
-      }
-    } catch (error) {
-      console.error("Error al procesar cantidad:", error);
-      // En caso de error, mantener el valor anterior
-      form.setValue(`products.${index}.quantity`, previousValue, { shouldValidate: true });
-    } finally {
-      // Salir del modo de edición
-      setEditingIndex(null);
-      
-      // Programar cálculo de totales después de actualizar cantidad
-      setTimeout(() => calculateTotalsWithDebounce(), 10);
-    }
-  }, [form, localQuantities, calculateTotalsWithDebounce]);
-
   // Inicialización de productos (solo una vez)
   useEffect(() => {
     // Usar una referencia para evitar múltiples inicializaciones
@@ -426,6 +373,19 @@ export function CreatePrescriptionOrderForm({
     label: branch.name,
     value: branch.id,
   }));
+
+  useEffect(() => {
+    if (didInitializeRef.current && showProductFields && !isLoading) {
+      // Recalcular totales cuando llegan los datos de producto/stock
+      calculateTotalsWithDebounce();
+    }
+  }, [
+    reponseProductsStock.data,
+    reponseProducts.data,
+    showProductFields,
+    isLoading,
+    calculateTotalsWithDebounce
+  ]);
 
   return (
     <Form {...form}>
@@ -621,7 +581,6 @@ export function CreatePrescriptionOrderForm({
                           ? 0
                           : price * quantity * IGV;
                           
-                        const isEditing = editingIndex === index;
                         const maxStock = stockStorage?.stock ?? 0;
                           
                         return (
@@ -647,21 +606,11 @@ export function CreatePrescriptionOrderForm({
                                   disabled={
                                     stockStorage ? stockStorage.stock <= 0 : false
                                   }
-                                  type="text"
-                                  // Siempre mostrar el valor actual, sea 0 o positivo
-                                  value={isEditing ? localQuantities[index] || '' : quantity ? quantity.toString() : '0'}
-                                  onFocus={() => handleQuantityFocus(index, quantity)}
-                                  onChange={(e) => handleQuantityChange(index, e.target.value)}
-                                  onBlur={() => handleQuantityBlur(index, maxStock)}
-                                  onClick={(e) => {
-                                    // Seleccionar todo el texto al hacer click y activar edición
-                                    handleQuantityFocus(index, quantity);
-                                    (e.target as HTMLInputElement).select();
-                                  }}
+                                  type="number"
+                                  {...register(`products.${index}.quantity`, { valueAsNumber: true })}
                                   className={cn(
                                     "text-center",
-                                    isEditing && "border-primary",
-                                    quantity === 0 && !isEditing && "text-muted-foreground"
+                                    quantity === 0 && "text-muted-foreground"
                                   )}
                                   placeholder="0"
                                 />
