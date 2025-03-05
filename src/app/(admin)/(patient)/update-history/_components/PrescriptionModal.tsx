@@ -93,7 +93,7 @@ export function PrescriptionModal({
       // Asegurar que la imagen local se carga correctamente
       const logoImg = clonedContent.querySelector('img[alt="Logo Hospital"]') as HTMLImageElement;
       if (logoImg) {
-        logoImg.style.width = "80px";
+        logoImg.style.width = "120px"; // Logo más grande
         logoImg.style.height = "auto";
         
         // Asegurar que la imagen esté cargada
@@ -110,61 +110,106 @@ export function PrescriptionModal({
         });
       }
 
-      // Aplicar estilos mejorados para PDF
+      // Aplicar estilos mejorados para PDF - Más amigable
       const elementsToStyle = clonedContent.querySelectorAll("div, table, h4, p, th, td");
       elementsToStyle.forEach((el: HTMLElement) => {
         if (el.tagName === "H4") {
-          el.style.color = "hsl(216, 92%, 60%)";
-          el.style.fontSize = "14px";
-          el.style.marginBottom = "5px";
-          el.style.borderBottom = "1px solid hsl(216, 92%, 80%)";
-          el.style.paddingBottom = "3px";
+          el.style.color = "hsl(197, 99%, 45%)"; // Nuevo color
+          el.style.fontSize = "15px";
+          el.style.marginBottom = "10px"; // Más espacio
+          el.style.borderBottom = "none"; // Sin línea
+          el.style.paddingBottom = "5px";
+          el.style.fontWeight = "600";
         } else if (el.classList.contains("bg-gray-50")) {
-          el.style.background = "#f0f7ff";
-          el.style.borderRadius = "4px";
-          el.style.border = "1px solid #d1e5ff";
-          el.style.padding = "6px";
+          el.style.background = "#f0f8ff"; // Azul más suave
+          el.style.borderRadius = "6px";
+          el.style.border = "none"; // Sin borde
+          el.style.boxShadow = "0 1px 3px rgba(0,0,0,0.05)"; // Sombra sutil
+          el.style.padding = "12px";
         } else if (el.tagName === "TABLE") {
-          el.style.borderCollapse = "collapse";
+          el.style.borderCollapse = "separate";
+          el.style.borderSpacing = "0 5px"; // Espacio entre filas
           el.style.width = "100%";
-          el.style.fontSize = "10px";
+          el.style.fontSize = "11px";
         } else if (el.tagName === "TH") {
-          el.style.backgroundColor = "hsl(216, 92%, 95%)";
-          el.style.color = "hsl(216, 92%, 40%)";
-          el.style.padding = "4px";
-          el.style.fontSize = "10px";
+          el.style.backgroundColor = "hsl(197, 85%, 94%)"; // Color más suave
+          el.style.color = "hsl(197, 99%, 25%)"; // Color oscuro para contraste
+          el.style.padding = "8px";
+          el.style.fontSize = "12px";
+          el.style.fontWeight = "500"; // Menos negrita
+          el.style.border = "none"; // Sin bordes
         } else if (el.tagName === "TD") {
-          el.style.padding = "3px";
-          el.style.borderBottom = "1px solid #eee";
-          el.style.fontSize = "10px";
+          el.style.padding = "6px 8px";
+          el.style.borderBottom = "1px solid #edf5f9"; // Borde muy sutil
+          el.style.fontSize = "11px";
         }
       });
 
-      // Agregar título centralizado para la receta
+      // Eliminar bordes agresivos
+      const borderElements = clonedContent.querySelectorAll(".border-b, .border-t");
+      borderElements.forEach((el: HTMLElement) => {
+        el.classList.remove("border-b", "border-t");
+        el.style.borderBottom = "none";
+        el.style.borderTop = "none";
+        el.style.paddingBottom = "15px"; // Espacio en lugar de líneas
+        el.style.marginBottom = "15px";
+      });
+
+      // Agregar título centralizado para la receta - Estilo más suave
       const header = document.createElement("div");
       header.style.textAlign = "center";
-      header.style.marginBottom = "8px";
-      header.style.borderBottom = "2px solid hsl(216, 92%, 60%)";
-      header.style.paddingBottom = "4px";
+      header.style.marginBottom = "15px";
+      header.style.paddingBottom = "8px";
+      header.style.borderBottom = "none"; // Sin línea
       
-      const title = document.createElement("h3");
+      const title = document.createElement("h2"); // Usar h2 para más impacto
       title.textContent = "NOTA MÉDICA";
-      title.style.fontSize = "16px";
+      title.style.fontSize = "22px";
       title.style.fontWeight = "bold";
-      title.style.color = "hsl(216, 92%, 60%)";
+      title.style.color = "hsl(197, 99%, 45%)"; // Color específico
       title.style.margin = "0";
+      title.style.fontFamily = "Arial, sans-serif";
+      title.style.letterSpacing = "1px"; // Espaciado entre letras
       
       header.appendChild(title);
       clonedContent.insertBefore(header, clonedContent.firstChild);
 
+      // Mejorar la sección del médico tratante
+      const doctorInfo = clonedContent.querySelector('.text-right');
+      if (doctorInfo) {
+        const doctorTitle = doctorInfo.querySelector('h4');
+        if (doctorTitle) {
+          doctorTitle.textContent = "Dr(a)."; // Simplificar
+          doctorTitle.style.fontSize = "12px";
+          doctorTitle.style.color = "#777777";
+          doctorTitle.style.fontWeight = "normal";
+          doctorTitle.style.marginBottom = "2px";
+        }
+      }
+
       // Optimizar contenedor principal
       clonedContent.style.fontFamily = "Arial, sans-serif";
-      clonedContent.style.padding = "10mm";
+      clonedContent.style.padding = "15mm";
       clonedContent.style.fontSize = "11px";
-      clonedContent.style.background = "linear-gradient(to bottom, white, #f8faff)";
-      clonedContent.style.width = "190mm";
+      clonedContent.style.background = "linear-gradient(to bottom, white, #f0f8ff)";
+      clonedContent.style.width = "180mm";
       clonedContent.style.boxSizing = "border-box";
       clonedContent.style.borderRadius = "0";
+
+      // Añadir pequeños toques visuales
+      const sectionTitles = clonedContent.querySelectorAll('h4');
+      sectionTitles.forEach((title) => {
+        // Icono visual sutil usando caracterres Unicode
+        if (title.textContent?.includes("Datos del Paciente")) {
+          title.innerHTML = "👤 Datos del Paciente";
+        } else if (title.textContent?.includes("Diagnóstico")) {
+          title.innerHTML = "🔍 Diagnóstico";
+        } else if (title.textContent?.includes("Servicios Recetados")) {
+          title.innerHTML = "⚕️ Servicios Recetados";
+        } else if (title.textContent?.includes("Medicamentos")) {
+          title.innerHTML = "💊 Medicamentos Recetados";
+        }
+      });
 
       // Capturar como imagen
       const canvas = await html2canvas(clonedContent, {
@@ -214,27 +259,59 @@ export function PrescriptionModal({
         }
       }
       
-      // Añadir borde decorativo en cada página
+      // Añadir borde decorativo más delicado en cada página
       const pageCount = pdf.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         pdf.setPage(i);
-        pdf.setDrawColor(65, 105, 225);
-        pdf.setLineWidth(0.5);
-        pdf.rect(5, 5, pdfWidth - 10, pdf.internal.pageSize.getHeight() - 10);
+        
+        // Borde más sutil con color personalizado
+        pdf.setDrawColor(0, 157, 209); // Equivalente a hsl(197, 99%, 45%) en RGB
+        pdf.setLineWidth(0.3); // Línea más fina
+        
+        // Pequeño detalle en las esquinas en lugar de borde completo
+        const cornerSize = 15; // Tamaño de las esquinas
+        const pageWidth = pdfWidth - 10;
+        const pageHeight = pdf.internal.pageSize.getHeight() - 10;
+        
+        // Esquina superior izquierda
+        pdf.line(5, 5, 5 + cornerSize, 5);
+        pdf.line(5, 5, 5, 5 + cornerSize);
+        
+        // Esquina superior derecha
+        pdf.line(pageWidth, 5, pageWidth - cornerSize, 5);
+        pdf.line(pageWidth, 5, pageWidth, 5 + cornerSize);
+        
+        // Esquina inferior izquierda
+        pdf.line(5, pageHeight, 5 + cornerSize, pageHeight);
+        pdf.line(5, pageHeight, 5, pageHeight - cornerSize);
+        
+        // Esquina inferior derecha
+        pdf.line(pageWidth, pageHeight, pageWidth - cornerSize, pageHeight);
+        pdf.line(pageWidth, pageHeight, pageWidth, pageHeight - cornerSize);
         
         // Añadir pie de página
         pdf.setFontSize(8);
-        pdf.setTextColor(100, 100, 100);
+        pdf.setTextColor(120, 120, 120); // Gris más claro
         pdf.text(
-          `Receta médica generada el ${new Date().toLocaleDateString("es-PE")} - Página ${i} de ${pageCount}`,
+          `Nota médica generada el ${new Date().toLocaleDateString("es-PE")}`,
           pdfWidth / 2,
           pdf.internal.pageSize.getHeight() - 5,
           { align: "center" }
         );
+        
+        // Si hay más de una página, añadir indicador
+        if (pageCount > 1) {
+          pdf.text(
+            `Página ${i} de ${pageCount}`,
+            pdfWidth / 2,
+            pdf.internal.pageSize.getHeight() - 10,
+            { align: "center" }
+          );
+        }
       }
       
       // Guardar PDF
-      pdf.save(`Receta_Medica_${patient?.name}_${patient?.lastName}.pdf`);
+      pdf.save(`Nota_Medica_${patient?.name}_${patient?.lastName}.pdf`);
       
     } catch (error) {
       console.error("Error al generar PDF:", error);
