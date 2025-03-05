@@ -121,7 +121,7 @@ export function PrescriptionModal({
         newImg.src = logoImg.src;
         newImg.alt = "Logo Hospital";
         // Para A5, ajustamos el tamaño proporcionalmente
-        newImg.style.width = "180px"; // Tamaño para A5
+        newImg.style.width = "90px"; // Reducido a la mitad (era 180px)
         newImg.style.height = "auto";
         newImg.style.maxWidth = "100%";
         newImg.style.objectFit = "contain";
