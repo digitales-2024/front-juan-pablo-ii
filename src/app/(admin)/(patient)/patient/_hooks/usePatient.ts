@@ -226,6 +226,8 @@ export const usePatients = () => {
     patientsQuery,
     usePatientById,
     patients: patientsQuery.data,
+    usePatientByDNI,
+    searchPatients,
 
     // Mutations
     createMutation,
