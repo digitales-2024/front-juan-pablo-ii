@@ -97,7 +97,7 @@ export default function ConsultationForm({
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Información de la Consulta</CardTitle>
+				<CardTitle>Detalles de la Consulta</CardTitle>
 				<CardDescription>
 					Por favor, completa tus datos para agendar la consulta.
 				</CardDescription>
@@ -109,45 +109,45 @@ export default function ConsultationForm({
 				>
 					<CardContent className="space-y-4">
 						<div className="grid grid-cols-2 gap-4">
-						<FormField
-							control={form.control}
-							name="date"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Fecha</FormLabel>
-									<FormControl>
-										<Input
-											value={format(
-												field.value,
-												"yyyy-MM-dd"
-											)}
-											readOnly
-											className="cursor-not-allowed"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="time"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Hora</FormLabel>
-									<FormControl>
-										<Input
-											{...field}
-											readOnly
-											className="cursor-not-allowed"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+							<FormField
+								control={form.control}
+								name="date"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Fecha</FormLabel>
+										<FormControl>
+											<Input
+												value={format(
+													field.value,
+													"yyyy-MM-dd"
+												)}
+												readOnly
+												className="cursor-not-allowed"
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="time"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Hora</FormLabel>
+										<FormControl>
+											<Input
+												{...field}
+												readOnly
+												className="cursor-not-allowed"
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 						</div>
-						<FormField
+						{/* <FormField
 							control={form.control}
 							name="serviceId"
 							render={({ field }) => (
@@ -201,7 +201,7 @@ export default function ConsultationForm({
 									<FormMessage />
 								</FormItem>
 							)}
-						/>
+						/> */}
 
 						<FormField
 							control={form.control}
