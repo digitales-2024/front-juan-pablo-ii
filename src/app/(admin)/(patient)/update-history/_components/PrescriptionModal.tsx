@@ -102,9 +102,7 @@ export function PrescriptionModal({
       const logoImgContainer = clonedContent.querySelector(
         ".w-24.sm\\:w-32.flex-shrink-0"
       );
-      const logoImg = clonedContent.querySelector(
-        'img[alt="Logo Hospital"]'
-      ) as HTMLImageElement;
+      const logoImg = clonedContent.querySelector<HTMLImageElement>('img[alt="Logo Hospital"]')!;
 
       if (logoImgContainer && logoImg) {
         // Eliminar restricciones de tamaño en el contenedor
@@ -163,36 +161,38 @@ export function PrescriptionModal({
       const elementsToStyle = clonedContent.querySelectorAll(
         "div, table, h4, p, th, td"
       );
-      elementsToStyle.forEach((el: HTMLElement) => {
-        if (el.tagName === "H4") {
-          el.style.color = corporateColor; // Color corporativo
-          el.style.fontSize = "12px"; // Más pequeño para A5
-          el.style.marginBottom = "3px"; // Menos espacio
-          el.style.borderBottom = "none";
-          el.style.paddingBottom = "2px";
-          el.style.fontWeight = "600";
-        } else if (el.classList.contains("bg-gray-50")) {
-          el.style.background = "#f8faff"; // Azul muy suave
-          el.style.borderRadius = "4px";
-          el.style.border = "none";
-          el.style.padding = "6px"; // Menos padding
-        } else if (el.tagName === "TABLE") {
-          el.style.borderCollapse = "collapse"; // Más compacto
-          el.style.width = "100%";
-          el.style.fontSize = "9px"; // Aún más pequeña para A5
-        } else if (el.tagName === "TH") {
-          el.style.backgroundColor = "hsla(197, 85%, 96%, 0.7)"; // Color más suave
-          el.style.color = "hsl(197, 99%, 35%)"; // Color oscuro para contraste
-          el.style.padding = "4px 3px"; // Menos padding
-          el.style.fontSize = "9px";
-          el.style.fontWeight = "500";
-        } else if (el.tagName === "TD") {
-          el.style.padding = "3px";
-          el.style.borderBottom = "1px solid #f0f7ff"; // Borde muy sutil
-          el.style.fontSize = "9px"; // Más pequeño para A5
-        } else if (el.tagName === "P") {
-          el.style.fontSize = "9px"; // Más pequeño para A5
-          el.style.margin = "2px 0";
+      elementsToStyle.forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        
+        if (htmlEl.tagName === "H4") {
+          htmlEl.style.color = corporateColor;
+          htmlEl.style.fontSize = "12px";
+          htmlEl.style.marginBottom = "3px";
+          htmlEl.style.borderBottom = "none";
+          htmlEl.style.paddingBottom = "2px";
+          htmlEl.style.fontWeight = "600";
+        } else if (htmlEl.classList.contains("bg-gray-50")) {
+          htmlEl.style.background = "#f8faff";
+          htmlEl.style.borderRadius = "4px";
+          htmlEl.style.border = "none";
+          htmlEl.style.padding = "6px";
+        } else if (htmlEl.tagName === "TABLE") {
+          htmlEl.style.borderCollapse = "collapse";
+          htmlEl.style.width = "100%";
+          htmlEl.style.fontSize = "9px";
+        } else if (htmlEl.tagName === "TH") {
+          htmlEl.style.backgroundColor = "hsla(197, 85%, 96%, 0.7)";
+          htmlEl.style.color = "hsl(197, 99%, 35%)";
+          htmlEl.style.padding = "4px 3px";
+          htmlEl.style.fontSize = "9px";
+          htmlEl.style.fontWeight = "500";
+        } else if (htmlEl.tagName === "TD") {
+          htmlEl.style.padding = "3px";
+          htmlEl.style.borderBottom = "1px solid #f0f7ff";
+          htmlEl.style.fontSize = "9px";
+        } else if (htmlEl.tagName === "P") {
+          htmlEl.style.fontSize = "9px";
+          htmlEl.style.margin = "2px 0";
         }
       });
 
@@ -223,10 +223,11 @@ export function PrescriptionModal({
       const otherBorderElements = clonedContent.querySelectorAll(
         ".border-b:not(:first-child):not(:nth-child(2)), .border-t:not(.border-t.border-black.mt-16)"
       );
-      otherBorderElements.forEach((el: HTMLElement) => {
-        el.classList.remove("border-b", "border-t");
-        el.style.borderBottom = "none";
-        el.style.borderTop = "none";
+      otherBorderElements.forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.classList.remove("border-b", "border-t");
+        htmlEl.style.borderBottom = "none";
+        htmlEl.style.borderTop = "none";
       });
 
       // Preservar el borde de la firma con el color corporativo
@@ -245,12 +246,13 @@ export function PrescriptionModal({
 
       // Agregar líneas adicionales a elementos de sección para mayor coherencia
       const sectionDivs = clonedContent.querySelectorAll(".space-y-4 > div");
-      sectionDivs.forEach((section: HTMLElement, index) => {
+      sectionDivs.forEach((section, index) => {
+        const htmlSection = section as HTMLElement;
         if (index > 0 && index < sectionDivs.length - 2) {
           // No aplicar a primera ni últimas secciones
-          section.style.borderBottom = `1px dotted hsla(${corporateColorRGB}, 0.3)`;
-          section.style.paddingBottom = "6px"; // Menos para A5
-          section.style.marginBottom = "6px"; // Menos para A5
+          htmlSection.style.borderBottom = `1px dotted hsla(${corporateColorRGB}, 0.3)`;
+          htmlSection.style.paddingBottom = "6px"; // Menos para A5
+          htmlSection.style.marginBottom = "6px"; // Menos para A5
         }
       });
 
@@ -312,17 +314,19 @@ export function PrescriptionModal({
       const mainSections = clonedContent.querySelectorAll(
         ".space-y-6, .space-y-4"
       );
-      mainSections.forEach((section: HTMLElement) => {
-        section.classList.remove("space-y-6", "space-y-4");
-        section.classList.add("space-y-2"); // Menos espacio para A5
-        section.style.gap = "4px"; // Aún menos espacio
+      mainSections.forEach((section) => {
+        const htmlSection = section as HTMLElement;
+        htmlSection.classList.remove("space-y-6", "space-y-4");
+        htmlSection.classList.add("space-y-2"); // Menos espacio para A5
+        htmlSection.style.gap = "4px"; // Aún menos espacio
       });
 
       // Ajustar espacios en el grid
       const gridDivs = clonedContent.querySelectorAll(".grid.gap-4");
-      gridDivs.forEach((grid: HTMLElement) => {
-        grid.classList.remove("gap-4");
-        grid.classList.add("gap-1"); // Menos gap para A5
+      gridDivs.forEach((grid) => {
+        const htmlGrid = grid as HTMLElement;
+        htmlGrid.classList.remove("gap-4");
+        htmlGrid.classList.add("gap-1"); // Menos gap para A5
       });
 
       // Capturar como imagen con mayor calidad
