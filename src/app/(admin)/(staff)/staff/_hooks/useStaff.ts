@@ -6,6 +6,7 @@ import {
   getStaff,
   reactivateStaff,
   getACtiveStaff,
+  getStaffById,
 } from "../_actions/staff.actions";
 import { toast } from "sonner";
 import {
@@ -29,7 +30,7 @@ export const useStaff = () => {
     queryKey: ["staff"],
     queryFn: async () => {
       const response = await getStaff({});
-      
+
       if (!response) {
         throw new Error("No se recibió respuesta del servidor");
       }
@@ -43,27 +44,53 @@ export const useStaff = () => {
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
-    // Query para obtener el personal activo
-    const activeStaffQuery = useQuery({
-      queryKey: ["active-staff"],
+  // Query para obtener el personal activo
+  const activeStaffQuery = useQuery({
+    queryKey: ["active-staff"],
+    queryFn: async () => {
+      const response = await getACtiveStaff({});
+
+      if (!response) {
+        throw new Error("No se recibió respuesta del servidor");
+      }
+
+      if (response.error || !response.data) {
+        throw new Error(response.error ?? "Error desconocido");
+      }
+
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+
+  const oneStaffQuery = (id: string) =>
+    useQuery<Staff, Error>({
+      queryKey: ["staff", id],
       queryFn: async () => {
-        const response = await getACtiveStaff({});
-        
-        if (!response) {
-          throw new Error("No se recibió respuesta del servidor");
+        try {
+          const response = await getStaffById(id);
+          if ("error" in response) {
+            throw new Error(response.error);
+          }
+          if (!response) {
+            throw new Error("No se encontró el personal");
+          }
+          return response;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Error desconocido al traer personal";
+          toast.error(message);
+          throw new Error(message);
         }
-  
-        if (response.error || !response.data) {
-          throw new Error(response.error ?? "Error desconocido");
-        }
-  
-        return response.data;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos
+      enabled: !!id,
     });
 
   // Mutación para crear personal
-  const createMutation = useMutation<BaseApiResponse<Staff>, Error, CreateStaffDto>({
+  const createMutation = useMutation<
+    BaseApiResponse<Staff>,
+    Error,
+    CreateStaffDto
+  >({
     mutationFn: async (data) => {
       const response = await createStaff(data);
       if ("error" in response) {
@@ -80,11 +107,15 @@ export const useStaff = () => {
     },
     onError: (error) => {
       toast.error(error.message);
-    }
+    },
   });
 
   // Mutación para actualizar personal
-  const updateMutation = useMutation<BaseApiResponse<Staff>, Error, UpdateStaffVariables>({
+  const updateMutation = useMutation<
+    BaseApiResponse<Staff>,
+    Error,
+    UpdateStaffVariables
+  >({
     mutationFn: async ({ id, data }) => {
       const response = await updateStaff(id, data);
       if ("error" in response) {
@@ -103,7 +134,10 @@ export const useStaff = () => {
     },
     onError: (error) => {
       console.error("💥 Error en la mutación:", error);
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+      if (
+        error.message.includes("No autorizado") ||
+        error.message.includes("Unauthorized")
+      ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
         toast.error(error.message || "Error al actualizar el personal");
@@ -112,10 +146,14 @@ export const useStaff = () => {
   });
 
   // Mutación para eliminar personal
-  const deleteMutation = useMutation<BaseApiResponse<Staff>, Error, DeleteStaffDto>({
+  const deleteMutation = useMutation<
+    BaseApiResponse<Staff>,
+    Error,
+    DeleteStaffDto
+  >({
     mutationFn: async (data) => {
       const response = await deleteStaff(data);
-      
+
       if ("error" in response) {
         throw new Error(response.error);
       }
@@ -139,7 +177,10 @@ export const useStaff = () => {
       );
     },
     onError: (error) => {
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+      if (
+        error.message.includes("No autorizado") ||
+        error.message.includes("Unauthorized")
+      ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
         toast.error(error.message || "Error al desactivar el personal");
@@ -148,10 +189,14 @@ export const useStaff = () => {
   });
 
   // Mutación para reactivar personal
-  const reactivateMutation = useMutation<BaseApiResponse<Staff>, Error, DeleteStaffDto>({
+  const reactivateMutation = useMutation<
+    BaseApiResponse<Staff>,
+    Error,
+    DeleteStaffDto
+  >({
     mutationFn: async (data) => {
       const response = await reactivateStaff(data);
-      
+
       if ("error" in response) {
         throw new Error(response.error);
       }
@@ -175,7 +220,10 @@ export const useStaff = () => {
       );
     },
     onError: (error) => {
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+      if (
+        error.message.includes("No autorizado") ||
+        error.message.includes("Unauthorized")
+      ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
         toast.error(error.message || "Error al reactivar el personal");
@@ -187,6 +235,7 @@ export const useStaff = () => {
     staffQuery,
     activeStaffQuery,
     staff: staffQuery.data,
+    oneStaffQuery,
     createMutation,
     updateMutation,
     deleteMutation,

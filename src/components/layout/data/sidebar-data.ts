@@ -7,6 +7,8 @@ import {
   Clock,
   DollarSign,
 
+  FileHeart,
+
   FileText,
   Handshake,
   Home,
@@ -50,12 +52,12 @@ export const sidebarData: SidebarData = {
         {
           title: "Calendario Citas",
           url: "/appointments-schedule",
-          icon: Handshake,
+          icon: CalendarPlus,
         },
         {
           title: "Consultas",
           url: "/consultations",
-          icon: CalendarPlus,
+          icon: Handshake,
         },
       ],
     },
@@ -134,6 +136,11 @@ export const sidebarData: SidebarData = {
           title: "Gestión de Pagos",
           icon: DollarSign,
           items: [
+            {
+              title: "Notas medicas",
+              url: "/prescriptions",
+              icon: FileHeart,
+            },
             {
               title: "Órdenes",
               url: "/orders",

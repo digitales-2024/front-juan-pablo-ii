@@ -25,7 +25,7 @@ export type FormFieldStatics<T> = {
     placeholder: string;
     type: HTMLInputTypeAttribute;
     isNotEditable?: boolean;
-    defaultValue?: string | number | boolean ; //Change according to necessity
+    defaultValue?: string | number | boolean | undefined ; //Change according to necessity
     description?: string;
     emptyMessage?: string; //In case of a search select
 }

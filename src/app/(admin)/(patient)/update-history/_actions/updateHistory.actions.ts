@@ -185,7 +185,7 @@ export async function createUpdateHistoryAction(
 ): Promise<UpdateHistoryResponseBase> {
   try {
     const serverFormData = new FormData();
-
+    console.log('formdata', formData)
     // Procesar los datos del formulario
     Object.entries(formData.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {

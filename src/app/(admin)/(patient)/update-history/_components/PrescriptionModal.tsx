@@ -17,6 +17,8 @@ import {
   Service,
   Staff,
 } from "../_interfaces/updateHistory.interface";
+import logoNota from "@/assets/images/logoNota.jpg";
+import Image from "next/image";
 
 interface PrescriptionModalProps {
   isOpen: boolean;
@@ -67,53 +69,253 @@ export function PrescriptionModal({
     setIsGeneratingPDF(true);
 
     try {
-      // 1. Hacer copia del contenido para no afectar la visualización
-      const printableDiv = prescriptionRef.current.cloneNode(true) as HTMLDivElement;
+      // Crear una nueva versión del contenido optimizada para PDF
+      const clonedContent = prescriptionRef.current.cloneNode(true) as HTMLElement;
+      
+      // Remover el botón de impresión
+      const buttonElement = clonedContent.querySelector("button");
+      if (buttonElement) {
+        const parentElement = buttonElement.closest(".flex.justify-between");
+        if (parentElement) {
+          parentElement.removeChild(buttonElement);
+        }
+      }
 
-      // 2. Aplicar estilos de impresión óptimos
-      printableDiv.style.width = "210mm";
-      printableDiv.style.backgroundColor = "#ffffff";
-      printableDiv.style.padding = "10mm";
+      // Configurar el contenedor para captura
+      const tempContainer = document.createElement("div");
+      tempContainer.appendChild(clonedContent);
+      tempContainer.style.position = "absolute";
+      tempContainer.style.left = "-9999px";
+      tempContainer.style.top = "-9999px";
+      tempContainer.style.width = "210mm"; // Ancho A4
+      document.body.appendChild(tempContainer);
 
-      // 3. Agregar a DOM temporalmente (invisible)
-      printableDiv.style.position = "absolute";
-      printableDiv.style.left = "-9999px";
-      document.body.appendChild(printableDiv);
+      // Asegurar que la imagen local se carga correctamente
+      const logoImg = clonedContent.querySelector('img[alt="Logo Hospital"]') as HTMLImageElement;
+      if (logoImg) {
+        logoImg.style.width = "120px"; // Logo más grande
+        logoImg.style.height = "auto";
+        
+        // Asegurar que la imagen esté cargada
+        await new Promise<void>((resolve) => {
+          if (logoImg.complete) {
+            resolve();
+          } else {
+            logoImg.onload = () => resolve();
+            logoImg.onerror = () => {
+              console.error("Error al cargar la imagen del logo");
+              resolve();
+            };
+          }
+        });
+      }
 
-      // 4. Esperar a que se apliquen los estilos
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      // 5. Capturar con mejor calidad
-      const canvas = await html2canvas(printableDiv, {
-        scale: 2.5,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#ffffff",
-        logging: false,
+      // Aplicar estilos mejorados para PDF - Más amigable
+      const elementsToStyle = clonedContent.querySelectorAll("div, table, h4, p, th, td");
+      elementsToStyle.forEach((el: HTMLElement) => {
+        if (el.tagName === "H4") {
+          el.style.color = "hsl(197, 99%, 45%)"; // Nuevo color
+          el.style.fontSize = "15px";
+          el.style.marginBottom = "10px"; // Más espacio
+          el.style.borderBottom = "none"; // Sin línea
+          el.style.paddingBottom = "5px";
+          el.style.fontWeight = "600";
+        } else if (el.classList.contains("bg-gray-50")) {
+          el.style.background = "#f0f8ff"; // Azul más suave
+          el.style.borderRadius = "6px";
+          el.style.border = "none"; // Sin borde
+          el.style.boxShadow = "0 1px 3px rgba(0,0,0,0.05)"; // Sombra sutil
+          el.style.padding = "12px";
+        } else if (el.tagName === "TABLE") {
+          el.style.borderCollapse = "separate";
+          el.style.borderSpacing = "0 5px"; // Espacio entre filas
+          el.style.width = "100%";
+          el.style.fontSize = "11px";
+        } else if (el.tagName === "TH") {
+          el.style.backgroundColor = "hsl(197, 85%, 94%)"; // Color más suave
+          el.style.color = "hsl(197, 99%, 25%)"; // Color oscuro para contraste
+          el.style.padding = "8px";
+          el.style.fontSize = "12px";
+          el.style.fontWeight = "500"; // Menos negrita
+          el.style.border = "none"; // Sin bordes
+        } else if (el.tagName === "TD") {
+          el.style.padding = "6px 8px";
+          el.style.borderBottom = "1px solid #edf5f9"; // Borde muy sutil
+          el.style.fontSize = "11px";
+        }
       });
 
-      // 6. Limpiar
-      document.body.removeChild(printableDiv);
+      // Eliminar bordes agresivos
+      const borderElements = clonedContent.querySelectorAll(".border-b, .border-t");
+      borderElements.forEach((el: HTMLElement) => {
+        el.classList.remove("border-b", "border-t");
+        el.style.borderBottom = "none";
+        el.style.borderTop = "none";
+        el.style.paddingBottom = "15px"; // Espacio en lugar de líneas
+        el.style.marginBottom = "15px";
+      });
 
-      // 7. Crear PDF optimizado
-      const imgData = canvas.toDataURL("image/png");
+      // Agregar título centralizado para la receta - Estilo más suave
+      const header = document.createElement("div");
+      header.style.textAlign = "center";
+      header.style.marginBottom = "15px";
+      header.style.paddingBottom = "8px";
+      header.style.borderBottom = "none"; // Sin línea
+      
+      const title = document.createElement("h2"); // Usar h2 para más impacto
+      title.textContent = "NOTA MÉDICA";
+      title.style.fontSize = "22px";
+      title.style.fontWeight = "bold";
+      title.style.color = "hsl(197, 99%, 45%)"; // Color específico
+      title.style.margin = "0";
+      title.style.fontFamily = "Arial, sans-serif";
+      title.style.letterSpacing = "1px"; // Espaciado entre letras
+      
+      header.appendChild(title);
+      clonedContent.insertBefore(header, clonedContent.firstChild);
+
+      // Mejorar la sección del médico tratante
+      const doctorInfo = clonedContent.querySelector('.text-right');
+      if (doctorInfo) {
+        const doctorTitle = doctorInfo.querySelector('h4');
+        if (doctorTitle) {
+          doctorTitle.textContent = "Dr(a)."; // Simplificar
+          doctorTitle.style.fontSize = "12px";
+          doctorTitle.style.color = "#777777";
+          doctorTitle.style.fontWeight = "normal";
+          doctorTitle.style.marginBottom = "2px";
+        }
+      }
+
+      // Optimizar contenedor principal
+      clonedContent.style.fontFamily = "Arial, sans-serif";
+      clonedContent.style.padding = "15mm";
+      clonedContent.style.fontSize = "11px";
+      clonedContent.style.background = "linear-gradient(to bottom, white, #f0f8ff)";
+      clonedContent.style.width = "180mm";
+      clonedContent.style.boxSizing = "border-box";
+      clonedContent.style.borderRadius = "0";
+
+      // Añadir pequeños toques visuales
+      const sectionTitles = clonedContent.querySelectorAll('h4');
+      sectionTitles.forEach((title) => {
+        // Icono visual sutil usando caracterres Unicode
+        if (title.textContent?.includes("Datos del Paciente")) {
+          title.innerHTML = "👤 Datos del Paciente";
+        } else if (title.textContent?.includes("Diagnóstico")) {
+          title.innerHTML = "🔍 Diagnóstico";
+        } else if (title.textContent?.includes("Servicios Recetados")) {
+          title.innerHTML = "⚕️ Servicios Recetados";
+        } else if (title.textContent?.includes("Medicamentos")) {
+          title.innerHTML = "💊 Medicamentos Recetados";
+        }
+      });
+
+      // Capturar como imagen
+      const canvas = await html2canvas(clonedContent, {
+        scale: 2,
+        logging: false,
+        backgroundColor: "#ffffff",
+      });
+      
+      document.body.removeChild(tempContainer);
+      
+      // Generar PDF
       const pdf = new jsPDF("p", "mm", "a4");
-
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
+      
+      // Calcular altura proporcional
+      const aspectRatio = canvas.height / canvas.width;
+      const pdfHeight = pdfWidth * aspectRatio;
+      
+      // Añadir imagen al PDF
       pdf.addImage(
-        imgData,
+        canvas.toDataURL("image/png"),
         "PNG",
         0,
         0,
         pdfWidth,
         pdfHeight
       );
-
-      pdf.save(`Receta_Medica_${patient?.name}_${patient?.lastName}.pdf`);
+      
+      // Manejar múltiples páginas si es necesario
+      if (pdfHeight > 287) {
+        let heightLeft = pdfHeight - 287;
+        let position = -287;
+        
+        while (heightLeft > 0) {
+          pdf.addPage();
+          pdf.addImage(
+            canvas.toDataURL("image/png"),
+            "PNG",
+            0,
+            position,
+            pdfWidth,
+            pdfHeight
+          );
+          
+          position -= 287;
+          heightLeft -= 287;
+        }
+      }
+      
+      // Añadir borde decorativo más delicado en cada página
+      const pageCount = pdf.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        
+        // Borde más sutil con color personalizado
+        pdf.setDrawColor(0, 157, 209); // Equivalente a hsl(197, 99%, 45%) en RGB
+        pdf.setLineWidth(0.3); // Línea más fina
+        
+        // Pequeño detalle en las esquinas en lugar de borde completo
+        const cornerSize = 15; // Tamaño de las esquinas
+        const pageWidth = pdfWidth - 10;
+        const pageHeight = pdf.internal.pageSize.getHeight() - 10;
+        
+        // Esquina superior izquierda
+        pdf.line(5, 5, 5 + cornerSize, 5);
+        pdf.line(5, 5, 5, 5 + cornerSize);
+        
+        // Esquina superior derecha
+        pdf.line(pageWidth, 5, pageWidth - cornerSize, 5);
+        pdf.line(pageWidth, 5, pageWidth, 5 + cornerSize);
+        
+        // Esquina inferior izquierda
+        pdf.line(5, pageHeight, 5 + cornerSize, pageHeight);
+        pdf.line(5, pageHeight, 5, pageHeight - cornerSize);
+        
+        // Esquina inferior derecha
+        pdf.line(pageWidth, pageHeight, pageWidth - cornerSize, pageHeight);
+        pdf.line(pageWidth, pageHeight, pageWidth, pageHeight - cornerSize);
+        
+        // Añadir pie de página
+        pdf.setFontSize(8);
+        pdf.setTextColor(120, 120, 120); // Gris más claro
+        pdf.text(
+          `Nota médica generada el ${new Date().toLocaleDateString("es-PE")}`,
+          pdfWidth / 2,
+          pdf.internal.pageSize.getHeight() - 5,
+          { align: "center" }
+        );
+        
+        // Si hay más de una página, añadir indicador
+        if (pageCount > 1) {
+          pdf.text(
+            `Página ${i} de ${pageCount}`,
+            pdfWidth / 2,
+            pdf.internal.pageSize.getHeight() - 10,
+            { align: "center" }
+          );
+        }
+      }
+      
+      // Guardar PDF
+      pdf.save(`Nota_Medica_${patient?.name}_${patient?.lastName}.pdf`);
+      
     } catch (error) {
       console.error("Error al generar PDF:", error);
+      alert("Ocurrió un error al generar el PDF. Por favor intente nuevamente.");
     } finally {
       setIsGeneratingPDF(false);
     }
@@ -148,8 +350,8 @@ export function PrescriptionModal({
             {/* Encabezado de la Receta */}
             <div className="grid grid-cols-2 gap-4 border-b pb-4">
               <div className="flex items-start space-x-4">
-                <img
-                  src="https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/1fb4f92d-ff2d-4b39-a3da-9c3139a9c2d0.webp"
+                <Image
+               src={logoNota}
                   alt="Logo Hospital"
                   className="w-32 object-contain"
                 />
@@ -158,6 +360,7 @@ export function PrescriptionModal({
                   <p className="text-sm text-gray-600">{branchInfo?.address}</p>
                 </div>
               </div>
+              
               <div className="text-right">
                 <h4 className="font-semibold">Médico Tratante</h4>
                 <p className="text-sm">{staffInfo?.name}</p>
@@ -266,12 +469,16 @@ export function PrescriptionModal({
                     {formatDate(prescription.registrationDate)}
                   </span>
                 </div>
-                <Button onClick={handlePrintPrescription} disabled={isGeneratingPDF} className="ml-auto">
+                <Button
+                  onClick={handlePrintPrescription}
+                  disabled={isGeneratingPDF}
+                  className="ml-auto"
+                >
                   {isGeneratingPDF ? (
                     "Generando PDF..."
                   ) : (
                     <>
-                      <Printer className="w-4 h-4 mr-2" /> Imprimir Receta
+                      <Printer className="w-4 h-4 mr-2" /> Imprimir Nota Medica
                     </>
                   )}
                 </Button>
