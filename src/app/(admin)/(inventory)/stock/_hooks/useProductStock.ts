@@ -33,27 +33,29 @@ export function useProductsStock() {
   return { productStockQuery };
 }
 
-export function useProductStockById(productId: string) {
-  const productStockQuery = useQuery({
-    queryKey: ["product-stock", productId],
-    queryFn: async () => {
-      try {
-        const response = await getProductStock({ productId });
-        if (!response || "error" in response) {
-          throw new Error(response?.error || "No se recibió respuesta");
+export const useProductStockById = () =>{
+  return (productId: string) => {
+    const productStockQuery = useQuery({
+      queryKey: ["product-stock", productId],
+      queryFn: async () => {
+        try {
+          const response = await getProductStock({ productId });
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
         }
-        return response;
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Error desconocido";
-        toast.error(message);
-        return [];
-      }
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
-
-  return { productStockQuery };
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  
+    return { productStockQuery };
+  }
 }
 
 export function useProductsStockByStorage() {

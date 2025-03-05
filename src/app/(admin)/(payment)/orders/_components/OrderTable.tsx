@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from "./OrderTableColumns";
-import { ProductTableToolbarActions } from "./ProductTableToolbarActions";
+import { ProductTableToolbarActions } from "./OrderTableToolbarActions";
 // import { ListCategoryResponse } from "../_actions/category.actions";
 import { Order } from "../_interfaces/order.interface";
 
@@ -10,7 +10,7 @@ interface StorageTableProps {
   data: Order[];
 }
 
-export function StorageTable({ data }: StorageTableProps) {
+export function OrderTable({ data }: StorageTableProps) {
   return (
     <DataTable
       columns={columns}

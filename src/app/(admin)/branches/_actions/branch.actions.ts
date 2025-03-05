@@ -10,6 +10,7 @@ import { z } from 'zod';
 type CreateBranchResponse = BaseApiResponse | { error: string };
 type UpdateBranchResponse = BaseApiResponse | { error: string };
 type DeleteBranchResponse = BaseApiResponse | { error: string };
+type GetOneBranchResponse = Branch | { error: string };
 
 // type ApiResponse<T> = BaseApiResponse & {
 //   data: T;
@@ -62,6 +63,21 @@ const getActiveBranchesHandler = async () => {
   } catch (error) {
     console.error("💥 Error en getBranchesHandler:", error);
     return { error: "Error al obtener las sucursales" };
+  }
+}
+
+export const getOneBranch = async (id: string): Promise<GetOneBranchResponse> => {
+  try {
+    const [branch, error] = await http.get<Branch>(`/branch/${id}`);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return branch;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido al obtener la sucursal" };
   }
 }
 
