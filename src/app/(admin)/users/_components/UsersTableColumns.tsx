@@ -222,7 +222,7 @@ export const usersTableColumns = (): ColumnDef<UserResponseDto>[] => [
 								onSelect={() => setShowDeleteDialog(true)}
 								disabled={!isActive}
 							>
-								Eliminar
+								Desactivar
 								<DropdownMenuShortcut>
 									<Trash
 										className="size-4"
