@@ -529,6 +529,27 @@ export type CreateProductPurchaseBillingDto = {
   metadata?: Record<string, never>;
 }
 
+//Prototyping
+// export type ServiceSaleItemDtoPrototype = components['schemas']['ServiceSaleItemDto'];
+export type ServiceSaleItemDto = {
+  serviceId: string;
+  quantity: number;
+};
+// export type CreateServiceSaleBillingDtoPrototype = components['schemas']['CreateServiceSaleBillingDto'];
+export type CreatePrescriptionBillingDto = {
+  branchId: string;
+  patientId: string;
+  storageLocation?: string;
+  batchNumber?: string;
+  referenceId?: string;
+  currency: string;
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+  notes?: string;
+  products: ProductSaleItemDto[];
+  services: ServiceSaleItemDto[];
+  metadata?: Record<string, never>;
+};
+
 export const paymentMethodOptions: EnumOptions<PaymentMethod>[] = [
   {
     label: "Efectivo",
@@ -567,6 +588,33 @@ export const createProductSaleBillingSchema = z.object({
   })),
 }) satisfies z.ZodType<CreateProductSaleBillingDto>;
 
+export const createPrescriptionBillingSchema = z.object({
+  branchId: z.string({
+    required_error: "Debe seleccionar la sucursal que genera la venta",
+  }),
+  patientId: z.string({
+    required_error: "Debe seleccionar un paciente",
+  }),
+  storageLocation: z.string().optional(),
+  batchNumber: z.string().optional(),
+  referenceId: z.string().optional(),
+  currency: z.string(),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+  notes: z.string().optional(),
+  metadata: z.record(z.never()).optional(),
+  products: z.array(z.object({
+    productId: z.string(),
+    quantity: z.coerce.number(),
+    storageId: z.string({
+      required_error: "Debe seleccionar un almacén",
+    }),
+  })),
+  services: z.array(z.object({
+    serviceId: z.string(),
+    quantity: z.coerce.number(),
+  })),
+}) satisfies z.ZodType<CreatePrescriptionBillingDto>;
+
 export const createProductPurchaseBillingSchema = z.object({
   products: z.array(z.object({
     productId: z.string(),
@@ -586,4 +634,5 @@ export const createProductPurchaseBillingSchema = z.object({
 }) satisfies z.ZodType<CreateProductPurchaseBillingDto>;
 
 export type CreateProductSaleBillingInput = z.infer<typeof createProductSaleBillingSchema>;
+export type CreatePrescriptionBillingInput = z.infer<typeof createPrescriptionBillingSchema>;
 export type CreateProductPurchaseBillingInput = z.infer<typeof createProductPurchaseBillingSchema>;

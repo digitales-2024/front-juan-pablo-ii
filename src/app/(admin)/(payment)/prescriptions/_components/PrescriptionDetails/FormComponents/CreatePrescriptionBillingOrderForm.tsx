@@ -38,6 +38,7 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
+  CreatePrescriptionBillingInput,
   CreateProductSaleBillingInput,
   paymentMethodConfig,
   paymentMethodOptions,
@@ -72,9 +73,10 @@ interface CreatePrescriptionOrderFormProps
   prescription: PrescriptionWithPatient;
   stockDataQuery: UseQueryResult<OutgoingProductStock[], Error>
   //originalStorageId: string;
-  form: UseFormReturn<CreateProductSaleBillingInput>;
-  controlledFieldArray: UseFieldArrayReturn<CreateProductSaleBillingInput>;
-  onSubmit: (data: CreateProductSaleBillingInput) => void;
+  form: UseFormReturn<CreatePrescriptionBillingInput>;
+  controlledProductFieldArray: UseFieldArrayReturn<CreatePrescriptionBillingInput>;
+  controlledServiceFieldArray: UseFieldArrayReturn<CreatePrescriptionBillingInput>;
+  onSubmit: (data: CreatePrescriptionBillingInput) => void;
   onDialogClose?: () => void;
 }
 
@@ -88,14 +90,16 @@ export function CreatePrescriptionOrderForm({
   prescription,
   form,
   onSubmit,
-  controlledFieldArray,
+  controlledProductFieldArray,
+  controlledServiceFieldArray,
   stockDataQuery,
 }: CreatePrescriptionOrderFormProps) {
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
   // Flags de referencia para evitar bucles
   const didInitializeRef = useRef(false);
-  const isCalculatingRef = useRef(false);
+  const isCalculatingProductsRef = useRef(false);
+  const isCalculatingServicesRef = useRef(false);
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Estados básicos
@@ -104,7 +108,7 @@ export function CreatePrescriptionOrderForm({
   // const [originalProductsStock, setOriginalProductsStock] = useState<
   // OutgoingProducStockForm[]
   // >([]);
-  const [showTotals, setShowTotals] = useState(false);
+  const [showProductTotals, setShowProductTotals] = useState(false);
   const [productTotals, setProductTotals] = useState({
     total: 0,
     totalIGV: 0,
@@ -120,7 +124,7 @@ export function CreatePrescriptionOrderForm({
 
   // Hook de formulario
   const { register, watch } = form;
-  const { fields, remove } = controlledFieldArray;
+  const { fields, remove } = controlledProductFieldArray;
   const watchFieldArray = watch("products");
   // const storageSafeWatch = watch("storageId");
 
@@ -133,42 +137,42 @@ export function CreatePrescriptionOrderForm({
   const productStockById = useProductStockById();
 
   const originalProducts = prescription.prescriptionMedicaments;
-  const orginalProductsIds = originalProducts.map((product) => product.id);
-  const [isStockPending, startTransition] = useTransition();
+  // const orginalProductsIds = originalProducts.map((product) => product.id);
+  // const [isStockPending, startTransition] = useTransition();
 
-  const getProductStockByStorage = useCallback(
-    async (params: StockParams) => {
+  // const getProductStockByStorage = useCallback(
+  //   async (params: StockParams) => {
 
-      if (params.length === 0) {
-        return [];
-      }
+  //     if (params.length === 0) {
+  //       return [];
+  //     }
       
-      params.forEach((param)=>{
-        if (!param.productId || !param.storageId) {
-          toast.error("Se requiere producto y almacén para obtener el stock");
-          return;
-        }
-      })
+  //     params.forEach((param)=>{
+  //       if (!param.productId || !param.storageId) {
+  //         toast.error("Se requiere producto y almacén para obtener el stock");
+  //         return;
+  //       }
+  //     })
 
-      return new Promise((resolve) => {
-        startTransition(async () => {
-          try {
-            const response = await getManyProductsStockByStorage(params);
-            if (!response || "error" in response) {
-              throw new Error(response?.error || "No se recibió respuesta");
-            }
-            resolve(response);
-          } catch (error) {
-            const message =
-              error instanceof Error ? error.message : "Error desconocido";
-            toast.error(message);
-            resolve([]);
-          }
-        });
-      });
-    },
-    []
-  );
+  //     return new Promise((resolve) => {
+  //       startTransition(async () => {
+  //         try {
+  //           const response = await getManyProductsStockByStorage(params);
+  //           if (!response || "error" in response) {
+  //             throw new Error(response?.error || "No se recibió respuesta");
+  //           }
+  //           resolve(response);
+  //         } catch (error) {
+  //           const message =
+  //             error instanceof Error ? error.message : "Error desconocido";
+  //           toast.error(message);
+  //           resolve([]);
+  //         }
+  //       });
+  //     });
+  //   },
+  //   []
+  // );
 
   // Obtener datos de productos por ID seleccionados - solamente para los productos que ya están en fields
   const productIds = fields.map((field) => field.productId).filter(Boolean);
@@ -202,8 +206,8 @@ export function CreatePrescriptionOrderForm({
     // Programar nuevo cálculo con un pequeño retraso
     updateTimeoutRef.current = setTimeout(() => {
       // Evitar cálculos múltiples
-      if (isCalculatingRef.current) return;
-      isCalculatingRef.current = true;
+      if (isCalculatingProductsRef.current) return;
+      isCalculatingProductsRef.current = true;
 
       try {
         const products = form.getValues("products") || [];
@@ -216,11 +220,10 @@ export function CreatePrescriptionOrderForm({
             totalQuantity: 0,
             totalProducts: 0,
           });
-          setShowTotals(false);
+          setShowProductTotals(false);
           return;
         }
 
-        // Calcular totales
         let total = 0;
         let totalIGV = 0;
         let totalSubtotal = 0;
@@ -232,13 +235,14 @@ export function CreatePrescriptionOrderForm({
           const productData = orderProductsDataMap[field.productId];
           if (!productData) return;
 
-          const price = productData.precio ?? 0;
+          const price = productData.precio ?? 0; // price includes IGV
           const quantity = field.quantity ?? 0;
-          const subtotal = price * quantity;
-          const igvAmount = subtotal * IGV_RATE;
+          const totalWithIGV = isNaN(price * quantity) ? 0 : price * quantity;
+          const igv = isNaN(totalWithIGV * (IGV_RATE / (1 + IGV_RATE))) ? 0 : totalWithIGV * (IGV_RATE / (1 + IGV_RATE));
+          const subtotal = isNaN(totalWithIGV - igv) ? 0 : totalWithIGV - igv;
 
-          total += subtotal + igvAmount;
-          totalIGV += igvAmount;
+          total += totalWithIGV;
+          totalIGV += igv;
           totalSubtotal += subtotal;
           totalQuantity += quantity;
           totalProducts++;
@@ -253,12 +257,12 @@ export function CreatePrescriptionOrderForm({
           totalProducts,
         });
 
-        setShowTotals(true);
+        setShowProductTotals(true);
       } catch (error) {
         console.error("Error calculando totales:", error);
       } finally {
         // Importante: marcar como finalizado
-        isCalculatingRef.current = false;
+        isCalculatingProductsRef.current = false;
       }
     }, 200); // Reducido a 200ms para sentirse más responsivo
   }, [form, orderProductsDataMap]);
@@ -334,7 +338,7 @@ export function CreatePrescriptionOrderForm({
       totalQuantity: 0,
       totalProducts: 0,
     });
-    setShowTotals(false);
+    setShowProductTotals(false);
   }, [remove]);
 
   // Manejar eliminación de productos
@@ -555,13 +559,241 @@ export function CreatePrescriptionOrderForm({
                 onCheckedChange={(value) => {
                   setShowProductFields(value);
                   // Ocultar totales cuando cambia este switch
-                  setShowTotals(false);
+                  setShowProductTotals(false);
                 }}
               />
             </FormControl>
           </FormItem>
 
           {showServicesFields && <Separator className="col-span-4" />}
+
+          {/* Sección de servicios */}
+          {showServicesFields && (
+            <>
+              <div className="flex flex-col gap-4 col-span-4">
+                <FormLabel>{FORMSTATICS.services.label}</FormLabel>
+
+                {/* Ya no necesitamos el botón para calcular */}
+                {isCalculatingServicesRef.current && (
+                  <div className="w-full p-2 text-center">
+                    <p className="text-muted-foreground animate-pulse">
+                      Actualizando totales...
+                    </p>
+                  </div>
+                )}
+
+                {/* Tabla de productos */}
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">Nombre</TableHead>
+                      <TableHead>Cantidad</TableHead>
+                      <TableHead>Precio</TableHead>
+                      <TableHead>{"IGV(18%)"}</TableHead>
+                      <TableHead>Subtotal</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead className="text-center">Opciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {/* Filas de productos */}
+                    {fields.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center">
+                          No hay productos seleccionados
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      fields.map((field, index) => {
+                        const IGV = 0.18;
+                        // const data = selectedProducts.find(
+                        //   (p) => p.id === field.productId
+                        // );
+                        // const existentProduct = originalProductsStock.find(
+                        //   (p) => p.id === field.productId
+                        // );
+                        // const safeData: Partial<OutgoingProducStockForm> =
+                        //   existentProduct ?? data ?? {};
+                        // const safeData: Partial<OutgoingProducStockForm> =
+                        // existentProduct ?? data ?? {};
+                        const safeData: Partial<OutgoingProducStockForm> =
+                          stockDataQuery.data.find(
+                            (p) => p.id === field.productId
+                          ) ?? {};
+                        const safeWatch = watchFieldArray?.[index] ?? {};
+                        const price = safeData.precio ?? 0;
+                        const stockStorage = safeData.Stock?.find(
+                          (stock) => stock.Storage.id === field.storageId
+                        );
+
+                        const dynamicStock = isNaN(
+                          (stockStorage?.stock ?? 0) - (safeWatch.quantity ?? 0)
+                        )
+                          ? stockStorage?.stock ?? 0
+                          : (stockStorage?.stock ?? 0) -
+                            (safeWatch.quantity ?? 0);
+
+                        const quantity = safeWatch.quantity ?? 0;
+                        //const priceWithIGV = price; // Since price already includes IGV
+                        const totalPriceWithIGV = isNaN(price * quantity)
+                          ? 0
+                          : price * quantity;
+                        const totalIGV = isNaN(totalPriceWithIGV * (IGV / (1 + IGV)))
+                          ? 0
+                          : totalPriceWithIGV * (IGV / (1 + IGV));
+                        const subtotal = isNaN(totalPriceWithIGV - totalIGV)
+                          ? 0
+                          : totalPriceWithIGV - totalIGV;
+
+                        const maxStock = stockStorage?.stock ?? 0;
+                        console.log('product', safeData)
+                        console.log('productId', field.productId)
+                        console.log('')
+
+                        return (
+                          <TableRow
+                            key={field.id}
+                            className="animate-fade-down"
+                          >
+                            <TableCell>
+                              <FormItem>
+                                <div>
+                                  <span>{safeData.name ?? "Desconocido"}</span>
+                                </div>
+                                <Input
+                                  disabled
+                                  {...register(
+                                    `products.${index}.productId` as const
+                                  )}
+                                  type="hidden"
+                                />
+                                <FormMessage />
+                              </FormItem>
+                            </TableCell>
+                            <TableCell>
+                              <FormItem>
+                                <Input
+                                  disabled={
+                                    stockStorage
+                                      ? stockStorage.stock <= 0
+                                      : false
+                                  }
+                                  type="number"
+                                  {...register(`products.${index}.quantity`, {
+                                    valueAsNumber: true,
+                                  })}
+                                  className={cn(
+                                    "text-center",
+                                    quantity === 0 && "text-muted-foreground"
+                                  )}
+                                  placeholder="0"
+                                />
+                                <FormMessage />
+                                {stockStorage && (
+                                  <FormDescription>
+                                    {stockStorage.stock > 0
+                                      ? `Stock disponible: ${dynamicStock}`
+                                      : `No hay stock disponible`}
+                                  </FormDescription>
+                                )}
+                              </FormItem>
+                            </TableCell>
+                            <TableCell>
+                              <span className="block text-center">
+                                {price.toLocaleString("es-PE", {
+                                  style: "currency",
+                                  currency: "PEN",
+                                })}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="block text-center">
+                                {totalIGV.toLocaleString("es-PE", {
+                                  style: "currency",
+                                  currency: "PEN",
+                                })}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="block text-center">
+                                {subtotal.toLocaleString("es-PE", {
+                                  style: "currency",
+                                  currency: "PEN",
+                                })}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="block text-center font-semibold text-base">
+                                {totalPriceWithIGV.toLocaleString("es-PE", {
+                                  style: "currency",
+                                  currency: "PEN",
+                                })}
+                              </span>
+                            </TableCell>
+                            <TableCell className="flex justify-center items-center">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="hover:bg-destructive hover:text-white"
+                                size="sm"
+                                onClick={() => handleRemoveProduct(index)}
+                              >
+                                <Trash2 className="mr-1 size-4" />
+                                Eliminar
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
+
+                    {/* Fila de totales (siempre visible si hay productos) */}
+                    {showProductTotals && fields.length > 0 && (
+                      <TableRow className="bg-muted/30 font-medium animate-fade-down">
+                        <TableCell colSpan={2} className="font-bold">
+                          TOTALES:
+                        </TableCell>
+                        <TableCell></TableCell>
+                        <TableCell className="font-semibold">
+                          {productTotals.totalIGV.toLocaleString("es-PE", {
+                            style: "currency",
+                            currency: "PEN",
+                          })}
+                        </TableCell>
+                        <TableCell className="font-semibold">
+                          {productTotals.totalSubtotal.toLocaleString("es-PE", {
+                            style: "currency",
+                            currency: "PEN",
+                          })}
+                        </TableCell>
+                        <TableCell
+                          colSpan={2}
+                          className="text-lg text-primary font-bold"
+                        >
+                          {productTotals.total.toLocaleString("es-PE", {
+                            style: "currency",
+                            currency: "PEN",
+                          })}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+
+                {/* Dialog para seleccionar productos */}
+                <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
+                  <SelectProductDialog form={form} />
+                  <CustomFormDescription required={true} />
+                  {form.formState.errors.services && (
+                    <FormMessage className="text-destructive">
+                      {form.formState.errors.services.message}
+                    </FormMessage>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
           {showProductFields && <Separator className="col-span-4" />}
 
           {/* Sección de productos */}
@@ -614,7 +846,7 @@ export function CreatePrescriptionOrderForm({
                 <FormLabel>{FORMSTATICS.products.label}</FormLabel>
 
                 {/* Ya no necesitamos el botón para calcular */}
-                {isCalculatingRef.current && (
+                {isCalculatingProductsRef.current && (
                   <div className="w-full p-2 text-center">
                     <p className="text-muted-foreground animate-pulse">
                       Actualizando totales...
@@ -675,16 +907,27 @@ export function CreatePrescriptionOrderForm({
                             (safeWatch.quantity ?? 0);
 
                         const quantity = safeWatch.quantity ?? 0;
-                        const priceWithIGV = price * (1 + IGV);
-                        const subtotal = isNaN(price * quantity)
+                        // const priceWithIGV = price * (1 + IGV);
+                        // const subtotal = isNaN(price * quantity)
+                        //   ? 0
+                        //   : price * quantity;
+                        // const totalPriceWithIGV = isNaN(priceWithIGV * quantity)
+                        //   ? 0
+                        //   : priceWithIGV * quantity;
+                        // const totalIGV = isNaN(price * quantity * IGV)
+                        //   ? 0
+                        //   : price * quantity * IGV;
+
+                        //const priceWithIGV = price; // Since price already includes IGV
+                        const totalPriceWithIGV = isNaN(price * quantity)
                           ? 0
                           : price * quantity;
-                        const totalPriceWithIGV = isNaN(priceWithIGV * quantity)
+                        const totalIGV = isNaN(totalPriceWithIGV * (IGV / (1 + IGV)))
                           ? 0
-                          : priceWithIGV * quantity;
-                        const totalIGV = isNaN(price * quantity * IGV)
+                          : totalPriceWithIGV * (IGV / (1 + IGV));
+                        const subtotal = isNaN(totalPriceWithIGV - totalIGV)
                           ? 0
-                          : price * quantity * IGV;
+                          : totalPriceWithIGV - totalIGV;
 
                         const maxStock = stockStorage?.stock ?? 0;
                         console.log('product', safeData)
@@ -820,7 +1063,7 @@ export function CreatePrescriptionOrderForm({
                     )}
 
                     {/* Fila de totales (siempre visible si hay productos) */}
-                    {showTotals && fields.length > 0 && (
+                    {showProductTotals && fields.length > 0 && (
                       <TableRow className="bg-muted/30 font-medium animate-fade-down">
                         <TableCell colSpan={2} className="font-bold">
                           TOTALES:
@@ -854,7 +1097,7 @@ export function CreatePrescriptionOrderForm({
 
                 {/* Dialog para seleccionar productos */}
                 <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
-                  <SelectProductDialog form={form} />
+                  {/* <SelectProductDialog form={form} /> */}
                   <CustomFormDescription required={true} />
                   {form.formState.errors.products && (
                     <FormMessage className="text-destructive">
@@ -929,7 +1172,7 @@ export function CreatePrescriptionOrderForm({
             <FormItem>
               <FormLabel>{FORMSTATICS.notes.label}</FormLabel>
               <Textarea
-                {...register(FORMSTATICS.notes.name)}
+                {...register('notes')}
                 placeholder={FORMSTATICS.notes.placeholder}
               />
               <CustomFormDescription required={FORMSTATICS.notes.required} />

@@ -268,7 +268,144 @@ import { CreateProductSaleBillingInput, ProductSaleItemDto } from "../../orders/
 //export type CreateProductSaleBillingInput = z.infer<typeof createProductSaleBillingSchema>;
 
 //Faltan lo de los servicios
-export const CREATE_PRESCRIPTION_ORDER_FORMSTATICS: ComplexFormStatics<CreateProductSaleBillingInput, ProductSaleItemDto> = {
+export const CREATE_PRESCRIPTION_ORDER_FORMSTATICS = {
+    products: {
+        required: true,
+        label: "Productos",
+        type: "array",
+        subFields:{
+            productId: {
+                required: true,
+                label: "Producto",
+                defaultValue: undefined,
+                type: "select",
+                placeholder: "Selecciona un producto",
+                emptyMessage: "No se encontraron productos",
+                name: "productId",
+            },
+            quantity: {
+                required: true,
+                label: "Cantidad",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Cantidad",
+                name: "quantity",
+            },
+            storageId:{
+                required: true,
+                label: "Almacén con stock",
+                defaultValue: undefined,
+                type: "select",
+                placeholder: "Selecciona un almacén",
+                emptyMessage: "No se encontraron almacenes",
+                name: "storageId",
+            }
+        },
+        placeholder: "Productos de la orden",
+        name: "products",
+    },
+    services:{
+        required: true,
+        label: "Servicios",
+        type: "array",
+        subFields:{
+            serviceId: {
+                required: true,
+                label: "Servicio",
+                defaultValue: undefined,
+                type: "select",
+                placeholder: "Selecciona un servicio",
+                emptyMessage: "No se encontraron servicios",
+                name: "serviceId",
+            },
+            quantity: {
+                required: true,
+                label: "Cantidad",
+                defaultValue: 0,
+                type: "number",
+                placeholder: "Cantidad",
+                name: "quantity",
+            },
+        },
+        placeholder: "Servicios de la orden",
+        name: "services",
+    },
+    patientId:{
+        required: true,
+        label: "Paciente",
+        defaultValue: undefined,
+        type: "select",
+        placeholder: "Selecciona un paciente",
+        emptyMessage: "No se encontraron pacientes",
+        name: "patientId",
+    },
+    branchId: {
+        required: true,
+        label: "Sucursal de la venta",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Sucursal que genera la orden",
+        name: "branchId",
+    },
+    storageLocation: {
+        required: false,
+        label: "Ubicación de almacenamiento",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Ubicación de almacenamiento de la orden",
+        name: "storageLocation",
+    },
+    batchNumber: {
+        required: false,
+        label: "Número de lote",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Número de lote de la orden",
+        name: "batchNumber",
+    },
+    referenceId: {
+        required: false,
+        label: "Referencia",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Referencia de la orden",
+        name: "referenceId",
+    },
+    currency: {
+        required: true,
+        label: "Moneda",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Moneda de la orden",
+        name: "currency",
+    },
+    paymentMethod: {
+        required: true,
+        label: "Método de pago",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Método de pago de la orden",
+        name: "paymentMethod",
+    },
+    notes: {
+        required: false,
+        label: "Notas",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Notas de la orden",
+        name: "notes",
+    },
+    metadata: {
+        required: false,
+        label: "Metadatos",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Metadatos de la orden",
+        name: "metadata",
+    },
+}
+
+export const CREATE_PRODUCT_SALE_ORDER_FORMSTATICS: ComplexFormStatics<CreateProductSaleBillingInput, ProductSaleItemDto> = {
     products: {
         required: true,
         label: "Productos",

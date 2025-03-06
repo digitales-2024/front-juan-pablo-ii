@@ -31,8 +31,8 @@ import {
 } from "@/components/ui/drawer";
 import { useBilling } from "@/app/(admin)/(payment)/orders/_hooks/useBilling";
 import {
-  CreateProductSaleBillingInput,
-  createProductSaleBillingSchema,
+  CreatePrescriptionBillingInput,
+  createPrescriptionBillingSchema,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -62,8 +62,10 @@ export function CreatePrescriptionBillingProcessDialog({
   const { productStockQuery } = manyProductsStock(prescription.prescriptionMedicaments.map((product) => product.id!))
 
   // 5. Form y Field Array
-  const form = useForm<CreateProductSaleBillingInput>({
-    resolver: zodResolver(createProductSaleBillingSchema),
+  const form = useForm<CreatePrescriptionBillingInput>({
+    resolver: zodResolver(
+      createPrescriptionBillingSchema
+    ),
     defaultValues: async () => {
       setIsLoading(true);
       const result = await getActiveStoragesByBranch(prescription.branchId);
@@ -80,6 +82,11 @@ export function CreatePrescriptionBillingProcessDialog({
           notes: undefined,
           metadata: undefined,
           products: [],
+          services: prescription.prescriptionServices.length > 0 ? prescription.prescriptionServices.map((service) => ({
+            serviceId: service.id!,
+            quantity: service.quantity ?? 1,
+          }))
+          : [],
         };
       }
       setIsFetchingError(false);
@@ -94,6 +101,11 @@ export function CreatePrescriptionBillingProcessDialog({
         referenceId: undefined,
         notes: undefined,
         metadata: undefined,
+        services: prescription.prescriptionServices.length > 0 ? prescription.prescriptionServices.map((service) => ({
+          serviceId: service.id!,
+          quantity: service.quantity ?? 1,
+        }))
+        : [],
         // products:
         products:
           prescription.prescriptionMedicaments.length > 0
@@ -107,9 +119,14 @@ export function CreatePrescriptionBillingProcessDialog({
     },
   });
 
-  const fieldArray = useFieldArray({
+  const productFieldArray = useFieldArray({
     control: form.control,
     name: "products",
+  });
+
+  const serviceFieldArray = useFieldArray({
+    control: form.control,
+    name: "services",
   });
 
   // 3. Contextos (useContext)
@@ -144,8 +161,8 @@ export function CreatePrescriptionBillingProcessDialog({
 
   // 6. Callbacks (useCallback)
   const handleClearProductList = useCallback(() => {
-    fieldArray.remove();
-  }, [fieldArray]);
+    productFieldArray.remove();
+  }, [productFieldArray]);
 
   const handleOpenChange = useCallback((newOpen: boolean) => {
     setOpen((prev) => (prev === newOpen ? prev : newOpen));
@@ -158,7 +175,7 @@ export function CreatePrescriptionBillingProcessDialog({
   }, [handleClearProductList, form]);
 
   const onSubmit = useCallback(
-    (input: CreateProductSaleBillingInput) => {
+    (input: CreatePrescriptionBillingInput) => {
       startCreateTransition(() => {
         createSaleOrderMutation.mutate(input, {
           onSuccess: () => {
@@ -255,7 +272,8 @@ export function CreatePrescriptionBillingProcessDialog({
           <CreatePrescriptionOrderForm
             form={form}
             onSubmit={onSubmit}
-            controlledFieldArray={fieldArray}
+            controlledProductFieldArray={productFieldArray}
+            controlledServiceFieldArray={serviceFieldArray}
             prescription={prescription}
             stockDataQuery={productStockQuery}
           >
@@ -283,7 +301,8 @@ export function CreatePrescriptionBillingProcessDialog({
         <CreatePrescriptionOrderForm
           form={form}
           onSubmit={onSubmit}
-          controlledFieldArray={fieldArray}
+          controlledProductFieldArray={productFieldArray}
+          controlledServiceFieldArray={serviceFieldArray}
           prescription={prescription}
           stockDataQuery={productStockQuery}
         >
