@@ -86,6 +86,21 @@ const ListPatients = [
 	},
 ];
 
+const ListPaymentMethods = [
+	{
+		value: "efectivo",
+		label: "Efectivo",
+	},
+	{
+		value: "transferencia",
+		label: "Transferencia",
+	},
+	{
+		value: "billeteradigital",
+		label: "Billetera Digital",
+	},
+];
+
 export default function ConsultationForm({
 	form,
 	children,
@@ -201,7 +216,29 @@ export default function ConsultationForm({
 									<FormMessage />
 								</FormItem>
 							)}
+						)}
 						/> */}
+
+						<FormField
+							control={form.control}
+							name="paymentMethod"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Método de Pago</FormLabel>
+									<FormControl>
+										<ComboboxSelect
+											options={ListPaymentMethods}
+											{...field}
+											value={field.value as string}
+											onChange={(value) => field.onChange(value as string)}
+											description="Selecciona el método de pago"
+											placeholder="Selecciona un método de pago"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
 						<FormField
 							control={form.control}

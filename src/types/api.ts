@@ -1056,6 +1056,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/appointments/paginated": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las citas médicas de forma paginada */
+        get: operations["AppointmentController_findAllPaginated"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/appointments/{id}": {
         parameters: {
             query?: never;
@@ -9735,6 +9752,45 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o horario no disponible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AppointmentController_findAllPaginated: {
+        parameters: {
+            query?: {
+                /** @description Número de página para la paginación */
+                page?: number;
+                /** @description Número de registros por página */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de citas médicas paginadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Appointment"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
