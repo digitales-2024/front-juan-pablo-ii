@@ -59,10 +59,10 @@ export async function serverFetch<Success>(
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
 
-  if (process.env.NODE_ENV === "development") {
+  /* if (process.env.NODE_ENV === "development") {
     console.log("\tSERVER FETCH: server fetch hit w cookie:");
     console.log("\tSERVER FETCH:", accessToken ?? "---");
-  }
+  } */
 
   if (!accessToken) {
     if (process.env.NODE_ENV === "development") {

@@ -33,7 +33,7 @@ const CREATE_USER_MESSAGES = {
 	description:
 		"Rellena los campos para crear un nuevo usuario y enviar sus credenciales por correo",
 	success: "Usuario creado exitosamente",
-	submitButton: "Registrar y enviar correo",
+	submitButton: "Registrar Nuevo Usuario",
 	cancel: "Cancelar",
 } as const;
 
