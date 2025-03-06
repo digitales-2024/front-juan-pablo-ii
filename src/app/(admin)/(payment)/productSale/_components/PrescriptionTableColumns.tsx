@@ -27,8 +27,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 // import { StorageMovementDetail } from "./Movements/StorageMovementDetail";
 import { PrescriptionWithPatient } from "../_interfaces/prescription.interface";
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
-import { ShowPrescriptionDetailsDialog } from "./PrescriptionDetails/ShowsPDetailsDialog";
-import { CreatePrescriptionBillingProcessDialog } from "./PrescriptionDetails/FormComponents/CreatePrescriptionBillingOrderDialog";
+import { ShowPrescriptionDetailsDialog } from "./ProductDetails/ShowsPDetailsDialog";
+import { CreatePrescriptionBillingProcessDialog } from "./ProductDetails/FormComponents/CreateProductSaleBillingOrderDialog";
 // import Image from "next/image";
 
 // const STATE_OPTIONS = {

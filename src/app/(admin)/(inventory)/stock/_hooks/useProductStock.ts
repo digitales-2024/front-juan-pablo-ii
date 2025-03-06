@@ -109,15 +109,16 @@ export const useManyProductsStockByStorage = () =>{
 }
 
 export const useManyProductsStock = () =>{
-  return (params: string[]) => {
+  return (params: string[], key:string) => {
     const productStockQuery = useQuery({
-      queryKey: ["many-products-stock"],
+      queryKey: ["many-products-stock", key],
       queryFn: async () => {
         try {
           const response = await getManyProductsStock(params);
           if (!response || "error" in response) {
             throw new Error(response?.error || "No se recibió respuesta");
           }
+          console.log('response many products stock', response);
           return response;
         } catch (error) {
           const message =

@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CreatePrescriptionOrderForm } from "./CreatePrescriptionBillingOrderForm";
+import { CreatePrescriptionOrderForm } from "./CreateProductSaleBillingOrderForm";
 import {
   Dialog,
   DialogContent,
@@ -36,7 +36,6 @@ import {
   CreateProductSaleBillingInput,
   createProductSaleBillingSchema,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
-import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
 
 const CREATE_OUTGOING_MESSAGES = {
   button: "Crear salida",
@@ -47,11 +46,7 @@ const CREATE_OUTGOING_MESSAGES = {
   cancel: "Cancelar",
 } as const;
 
-export function CreatePrescriptionBillingProcessDialog({
-  prescription,
-}: {
-  prescription: PrescriptionWithPatient
-}) {
+export function CreatePrescriptionBillingProcessDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
@@ -79,7 +74,7 @@ export function CreatePrescriptionBillingProcessDialog({
       raw: true, //to be able to use useFIeldArray
     }),
     defaultValues: {
-      storageId: undefined, //required
+      patient: undefined, //required
       branchId: undefined, //required
       currency: undefined, //required
       paymentMethod: "CASH", //required
@@ -222,7 +217,6 @@ export function CreatePrescriptionBillingProcessDialog({
             form={form}
             onSubmit={handleSubmit}
             controlledFieldArray={fieldArray}
-            prescription={prescription}
           >
             {/* <DevelopmentZodError form={form} /> */}
             <DialogFooter>
@@ -250,7 +244,6 @@ export function CreatePrescriptionBillingProcessDialog({
           form={form}
           onSubmit={handleSubmit}
           controlledFieldArray={fieldArray}
-          prescription={prescription}
         >
           {/* <DevelopmentZodError form={form} /> */}
           <DrawerFooter>

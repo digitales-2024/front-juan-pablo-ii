@@ -613,7 +613,13 @@ export const createPrescriptionBillingSchema = z.object({
     serviceId: z.string(),
     quantity: z.coerce.number(),
   })),
-}) satisfies z.ZodType<CreatePrescriptionBillingDto>;
+}).refine(
+  data => data.products.length > 0 || data.services.length > 0,
+  {
+    message: "Debe agregar al menos un producto o un servicio",
+    path: ["products"],
+  }
+) satisfies z.ZodType<CreatePrescriptionBillingDto>;
 
 export const createProductPurchaseBillingSchema = z.object({
   products: z.array(z.object({

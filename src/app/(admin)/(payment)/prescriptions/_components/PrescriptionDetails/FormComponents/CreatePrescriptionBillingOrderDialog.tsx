@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import {
-  useFieldArray,
   useForm,
   // FieldErrors,
   // UseFormReturn,
@@ -39,6 +38,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getActiveStoragesByBranch } from "@/app/(admin)/(catalog)/storage/storages/_actions/storages.actions";
 import { toast } from "sonner";
 import { useManyProductsStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
+import { useServices } from "@/app/(admin)/services/_hooks/useServices";
 
 const CREATE_OUTGOING_MESSAGES = {
   button: "Generar venta",
@@ -58,8 +58,13 @@ export function CreatePrescriptionBillingProcessDialog({
   const [isCreatePending, startCreateTransition] = useTransition();
   const [isFetchingError, setIsFetchingError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  console.log('prescriptionMedicaments', prescription.prescriptionMedicaments)
+  const existentMedicamentsIds = prescription.prescriptionMedicaments.filter(product => product.id != undefined).map((product) => product.id!);
+  console.log('Prescription Medicaments Ids', existentMedicamentsIds)
   const manyProductsStock = useManyProductsStock()
-  const { productStockQuery } = manyProductsStock(prescription.prescriptionMedicaments.map((product) => product.id!))
+  const { productStockQuery } = manyProductsStock(existentMedicamentsIds, prescription.id)
+  const { servicesQuery } = useServices();
 
   // 5. Form y Field Array
   const form = useForm<CreatePrescriptionBillingInput>({
@@ -119,15 +124,15 @@ export function CreatePrescriptionBillingProcessDialog({
     },
   });
 
-  const productFieldArray = useFieldArray({
-    control: form.control,
-    name: "products",
-  });
+  // const productFieldArray = useFieldArray({
+  //   control: form.control,
+  //   name: "products",
+  // });
 
-  const serviceFieldArray = useFieldArray({
-    control: form.control,
-    name: "services",
-  });
+  // const serviceFieldArray = useFieldArray({
+  //   control: form.control,
+  //   name: "services",
+  // });
 
   // 3. Contextos (useContext)
   const isDesktop = useMediaQuery("(min-width: 640px)");
@@ -160,19 +165,19 @@ export function CreatePrescriptionBillingProcessDialog({
   // }
 
   // 6. Callbacks (useCallback)
-  const handleClearProductList = useCallback(() => {
-    productFieldArray.remove();
-  }, [productFieldArray]);
+  // const handleClearProductList = useCallback(() => {
+  //   productFieldArray.remove();
+  // }, [productFieldArray]);
 
   const handleOpenChange = useCallback((newOpen: boolean) => {
     setOpen((prev) => (prev === newOpen ? prev : newOpen));
   }, []);
 
   const handleClose = useCallback(() => {
-    handleClearProductList();
+    // handleClearProductList();
     form.reset();
     setOpen(false);
-  }, [handleClearProductList, form]);
+  }, [form]);
 
   const onSubmit = useCallback(
     (input: CreatePrescriptionBillingInput) => {
@@ -227,12 +232,17 @@ export function CreatePrescriptionBillingProcessDialog({
       <Skeleton className="h-9 w-24 animate-pulse rounded-md bg-secondary"></Skeleton>
   );}
 
+  const ErrorButtonSkeleton = () => {
+    return (
+      <Skeleton className="h-9 w-24 animate-pulse rounded-md bg-secondary text-center">Error</Skeleton>
+  );}
+
   const TriggerButton = () => {
-    if (isLoading || productStockQuery.isLoading) {
-      return (
-          <LoadingButton />
-      );
-    }
+    // if (isLoading || productStockQuery.isLoading || servicesQuery.isLoading) {
+    //   return (
+    //       <LoadingButton />
+    //   );
+    // }
 
     return (
     <Button
@@ -249,9 +259,21 @@ export function CreatePrescriptionBillingProcessDialog({
     );
   };
 
-  if (productStockQuery.isError) {
+  if (productStockQuery.isError || isFetchingError || servicesQuery.isError) {
     toast.error("Error al obtener el stock de productos");
+    return <ErrorButtonSkeleton />;
   }
+
+  if (productStockQuery.isLoading || isLoading || servicesQuery.isLoading) {
+    return <LoadingButton
+    />;
+  }
+
+  if (!productStockQuery.data || !servicesQuery.data) {
+    return <ErrorButtonSkeleton />;
+  }
+
+  
 
   if (isDesktop) {
     return (
@@ -272,10 +294,11 @@ export function CreatePrescriptionBillingProcessDialog({
           <CreatePrescriptionOrderForm
             form={form}
             onSubmit={onSubmit}
-            controlledProductFieldArray={productFieldArray}
-            controlledServiceFieldArray={serviceFieldArray}
+            // controlledProductFieldArray={productFieldArray}
+            // controlledServiceFieldArray={serviceFieldArray}
             prescription={prescription}
             stockDataQuery={productStockQuery}
+            serviceDataQuery={servicesQuery}
           >
             <DialogFooter>
               <DialogFooterContent />
@@ -301,10 +324,11 @@ export function CreatePrescriptionBillingProcessDialog({
         <CreatePrescriptionOrderForm
           form={form}
           onSubmit={onSubmit}
-          controlledProductFieldArray={productFieldArray}
-          controlledServiceFieldArray={serviceFieldArray}
+          // controlledProductFieldArray={productFieldArray}
+          // controlledServiceFieldArray={serviceFieldArray}
           prescription={prescription}
           stockDataQuery={productStockQuery}
+          serviceDataQuery={servicesQuery}
         >
           <DrawerFooter>
             <DialogFooterContent />

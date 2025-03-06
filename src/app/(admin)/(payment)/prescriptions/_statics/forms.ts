@@ -270,7 +270,7 @@ import { CreateProductSaleBillingInput, ProductSaleItemDto } from "../../orders/
 //Faltan lo de los servicios
 export const CREATE_PRESCRIPTION_ORDER_FORMSTATICS = {
     products: {
-        required: true,
+        required: false,
         label: "Productos",
         type: "array",
         subFields:{
@@ -305,7 +305,7 @@ export const CREATE_PRESCRIPTION_ORDER_FORMSTATICS = {
         name: "products",
     },
     services:{
-        required: true,
+        required: false,
         label: "Servicios",
         type: "array",
         subFields:{
