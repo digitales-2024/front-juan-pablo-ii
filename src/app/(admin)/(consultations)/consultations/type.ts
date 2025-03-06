@@ -1,14 +1,9 @@
 import { z } from "zod";
+import { createAppointmentSchema } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
 
-export const consultationsSchema = z.object({
-	time: z.string().min(1, { message: "" }),
-	date: z.date(),
-	serviceId: z.string().min(1, { message: "Debe seleccionar un servicio" }),
-	branchId: z.string().min(1, { message: "Debe seleccionar una sucursal" }),
-	description: z.string().min(1, { message: "La descripción es requerida" }),
-	staffId: z.string().min(1, { message: "Debe seleccionar un médico" }),
-	patientId: z.string().min(1, { message: "Debe seleccionar un paciente" }),
-	paymentMethod: z.string({ message: "Debe seleccionar un metodo de pago" })
+export const consultationsSchema = createAppointmentSchema.extend({
+	date: z.string().min(1, "La fecha es requerida"),
+	time: z.string().min(1, "La hora es requerida"),
 });
 
 export type ConsultationSchema = z.infer<typeof consultationsSchema>;

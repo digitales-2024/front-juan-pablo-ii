@@ -3661,7 +3661,7 @@ export interface components {
              * @description Método de pago
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Número de comprobante */
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
@@ -3679,7 +3679,7 @@ export interface components {
             amount: number;
             description?: string;
             /** @enum {string} */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             voucherNumber?: string;
             originalPaymentId?: string;
             verifiedBy?: string;
@@ -3729,7 +3729,7 @@ export interface components {
              * @description Método de pago
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Número de comprobante */
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
@@ -3750,7 +3750,7 @@ export interface components {
              * @description Método de pago a utilizar
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Monto del pago
              * @example 100.5
@@ -3795,7 +3795,7 @@ export interface components {
              * @example BANK_TRANSFER
              * @enum {string}
              */
-            refundMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            refundMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Notas adicionales */
             notes?: string;
         };
@@ -4026,6 +4026,12 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             rescheduledFromId?: string;
+            /**
+             * @description Método de pago
+             * @example CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
         };
         Appointment: {
             id: string;
@@ -4114,6 +4120,12 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             rescheduledFromId?: string;
+            /**
+             * @description Método de pago
+             * @example CASH
+             * @enum {string}
+             */
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
         };
         DeleteAppointmentsDto: {
             ids: string[];
@@ -5815,7 +5827,7 @@ export interface components {
              * @default CASH
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Monto pagado
              * @example 150
@@ -5907,7 +5919,7 @@ export interface components {
              * @default CASH
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Notas adicionales
              * @example Venta de medicamentos para paciente

@@ -242,7 +242,7 @@ export default function ConsultationForm({
 
 						<FormField
 							control={form.control}
-							name="description"
+							name="notes"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Descripción</FormLabel>

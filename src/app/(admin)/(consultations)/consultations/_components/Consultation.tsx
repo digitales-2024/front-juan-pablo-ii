@@ -25,9 +25,9 @@ export default function Consultation() {
 		resolver: zodResolver(consultationsSchema),
 		defaultValues: {
 			time: "",
-			date: new Date(),
+			date: "",
 			serviceId: "",
-			description: "",
+			notes: "",
 			staffId: "",
 			branchId: "",
 		},
@@ -52,6 +52,16 @@ export default function Consultation() {
 		console.log("Mes cambiado a:", date);
 		console.log("ID de personal actual:", selectedStaffId);
 		console.log("ID de sucursal actual:", selectedBranchId);
+	};
+
+	const handleServiceChange = (serviceId: string) => {
+		console.log("Cambiando ID de servicio a:", serviceId);
+		form.setValue("serviceId", serviceId);
+	};
+
+	const handlePatientChange = (patientId: string) => {
+		console.log("Cambiando ID de paciente a:", patientId);
+		form.setValue("patientId", patientId);
 	};
 
 	return (
@@ -108,6 +118,8 @@ export default function Consultation() {
 					time={selectedTime}
 					onStaffChange={handleStaffChange}
 					onBranchChange={handleBranchChange}
+					onServiceChange={handleServiceChange}
+					onPatientChange={handlePatientChange}
 				/>
 				<div className="relative">
 					{!showForm ? (

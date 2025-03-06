@@ -9,12 +9,15 @@ import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 import { useServices } from "@/app/(admin)/services/_hooks/useServices";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
+import { useForm } from "react-hook-form";
 
 interface LeftPanelProps {
   date: Date;
   time: string;
   onStaffChange: (staffId: string) => void;
   onBranchChange: (branchId: string) => void;
+  onServiceChange: (serviceId: string) => void;
+  onPatientChange: (patientId: string) => void;
 }
 
 export default function LeftPanel({ date, time, onStaffChange, onBranchChange }: LeftPanelProps) {
@@ -26,6 +29,7 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange }:
   const { services } = useServices();
   const { branches } = useBranches();
   const { patients } = usePatients();
+  const form = useForm();
 
   const ListMedico = staff?.filter(medico => medico.cmp)
     .map(medico => ({
@@ -71,16 +75,18 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange }:
           </Label>
           <ComboboxSelect
             options={ListMedico}
-            value={selectedMedico ?? ""}
+            value={selectedMedico || ""}
             onChange={(value) => {
               console.log("Valor seleccionado:", value);
               setSelectedMedico(value);
               if (value) {
                 console.log("Cambiando personal a:", value);
                 onStaffChange(value);
+                form.setValue("staffId", value);
               } else {
                 console.log("Ningún médico seleccionado, restableciendo...");
                 onStaffChange("");
+                form.setValue("staffId", "");
               }
               console.log("Lista de médicos después de la selección:", ListMedico);
             }}

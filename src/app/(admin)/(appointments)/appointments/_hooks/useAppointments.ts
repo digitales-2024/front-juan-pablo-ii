@@ -59,6 +59,7 @@ export const useAppointments = () => {
     // Mutación para crear una cita
     const createMutation = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
         mutationFn: async (data) => {
+            console.log("Datos enviados para crear la cita:", data);
             const response = await createAppointment(data);
             if ("error" in response) {
                 throw new Error(response.error);
