@@ -86,6 +86,21 @@ const ListPatients = [
 	},
 ];
 
+const ListPaymentMethods = [
+	{
+		value: "efectivo",
+		label: "Efectivo",
+	},
+	{
+		value: "transferencia",
+		label: "Transferencia",
+	},
+	{
+		value: "billeteradigital",
+		label: "Billetera Digital",
+	},
+];
+
 export default function ConsultationForm({
 	form,
 	children,
@@ -97,7 +112,7 @@ export default function ConsultationForm({
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Información de la Consulta</CardTitle>
+				<CardTitle>Detalles de la Consulta</CardTitle>
 				<CardDescription>
 					Por favor, completa tus datos para agendar la consulta.
 				</CardDescription>
@@ -109,45 +124,45 @@ export default function ConsultationForm({
 				>
 					<CardContent className="space-y-4">
 						<div className="grid grid-cols-2 gap-4">
-						<FormField
-							control={form.control}
-							name="date"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Fecha</FormLabel>
-									<FormControl>
-										<Input
-											value={format(
-												field.value,
-												"yyyy-MM-dd"
-											)}
-											readOnly
-											className="cursor-not-allowed"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="time"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Hora</FormLabel>
-									<FormControl>
-										<Input
-											{...field}
-											readOnly
-											className="cursor-not-allowed"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+							<FormField
+								control={form.control}
+								name="date"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Fecha</FormLabel>
+										<FormControl>
+											<Input
+												value={format(
+													field.value,
+													"yyyy-MM-dd"
+												)}
+												readOnly
+												className="cursor-not-allowed"
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="time"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Hora</FormLabel>
+										<FormControl>
+											<Input
+												{...field}
+												readOnly
+												className="cursor-not-allowed"
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 						</div>
-						<FormField
+						{/* <FormField
 							control={form.control}
 							name="serviceId"
 							render={({ field }) => (
@@ -196,6 +211,28 @@ export default function ConsultationForm({
 											onChange={field.onChange}
 											description="Selecciona el paciente que deseas agendar"
 											placeholder="Selecciona un paciente"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						)}
+						/> */}
+
+						<FormField
+							control={form.control}
+							name="paymentMethod"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Método de Pago</FormLabel>
+									<FormControl>
+										<ComboboxSelect
+											options={ListPaymentMethods}
+											{...field}
+											value={field.value as string}
+											onChange={(value) => field.onChange(value as string)}
+											description="Selecciona el método de pago"
+											placeholder="Selecciona un método de pago"
 										/>
 									</FormControl>
 									<FormMessage />
