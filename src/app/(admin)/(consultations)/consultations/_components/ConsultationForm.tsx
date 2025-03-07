@@ -28,8 +28,6 @@ interface ConsultationFormProps {
 	onSubmit: (data: ConsultationSchema) => void;
 }
 
-
-
 const ListPaymentMethods = [
 	{
 		value: "CASH",
@@ -50,12 +48,19 @@ export default function ConsultationForm({
 	children,
 	onSubmit,
 }: ConsultationFormProps) {
-	
-	const handleFormSubmit = (data: ConsultationSchema) => {
+	console.log('🧩 ConsultationForm renderizado, onSubmit es:', typeof onSubmit);
+
+	const handleFormSubmit = async (data: ConsultationSchema) => {
 		console.group('📝 DATOS DEL FORMULARIO AL ENVIAR');
 		console.log('Valores del formulario:', data);
 		console.groupEnd();
-		onSubmit(data);
+
+		try {
+			await onSubmit(data);
+			console.log('✅ Formulario procesado exitosamente');
+		} catch (error) {
+			console.error('❌ Error al procesar el formulario:', error);
+		}
 	};
 
 	return (
@@ -68,7 +73,20 @@ export default function ConsultationForm({
 			</CardHeader>
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(handleFormSubmit)}
+					onSubmit={(e) => {
+						e.preventDefault(); // Prevenir el comportamiento por defecto
+						console.log('📤 Evento submit del formulario capturado');
+						const values = form.getValues();
+						console.log('📊 Valores del formulario:', values);
+						
+						// Llamar directamente a onSubmit con los valores actuales del formulario
+						try {
+							onSubmit(values);
+							console.log('✅ onSubmit llamado exitosamente');
+						} catch (error) {
+							console.error('❌ Error al llamar onSubmit:', error);
+						}
+					}}
 					className="space-y-5"
 				>
 					<CardContent className="space-y-4">

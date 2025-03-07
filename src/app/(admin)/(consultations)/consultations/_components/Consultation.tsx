@@ -4,7 +4,7 @@ import ConsultationForm from "./ConsultationForm";
 import LeftPanel from "./LeftPanel";
 import { ConsultationSchema, consultationsSchema } from "../type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 import ConsultationCalendarTime from "./ConsultationCalendarTime";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,14 @@ import { Button } from "@/components/ui/button";
 import { CalendarDays, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 import { useAppointments } from "@/app/(admin)/(appointments)/appointments/_hooks/useAppointments";
 import { format } from "date-fns";
+import { CreateAppointmentDto } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
+import { toast } from "sonner";
+
+interface ConsultationFormProps {
+    form: UseFormReturn<ConsultationSchema>;
+    children: React.ReactNode;
+    onSubmit: (data: ConsultationSchema) => Promise<void>;
+}
 
 export default function Consultation() {
 	const [showForm, setShowForm] = useState(false);
@@ -97,7 +105,8 @@ export default function Consultation() {
 			startDate.setMilliseconds(0);
 			
 			const endDate = new Date(startDate);
-			endDate.setMinutes(endDate.getMinutes() + 30);
+			// Cambiar de 30 a 15 minutos
+			endDate.setMinutes(endDate.getMinutes() + 15);
 
 			console.log('🕒 HORARIOS:', {
 				'Hora seleccionada (Perú)': formValues.time,
@@ -106,6 +115,7 @@ export default function Consultation() {
 				'Fin (Perú)': new Date(endDate).toLocaleString('es-PE', { timeZone: 'America/Lima' }),
 				'Inicio (UTC)': startDate.toISOString(),
 				'Fin (UTC)': endDate.toISOString(),
+				'Duración': '15 minutos'
 			});
 
 			const appointmentPreview = {
@@ -147,7 +157,8 @@ export default function Consultation() {
 		startDate.setMilliseconds(0);
 		
 		const endDate = new Date(startDate);
-		endDate.setMinutes(endDate.getMinutes() + 30);
+		// Cambiar de 30 a 15 minutos
+		endDate.setMinutes(endDate.getMinutes() + 15);
 
 		const appointmentToCreate = {
 			staffId: formValues.staffId,
@@ -166,60 +177,80 @@ export default function Consultation() {
 	};
 
 	const handleSubmit = async (data: ConsultationSchema) => {
-		const formValues = form.getValues();
+		console.log('🔄 INICIO DE handleSubmit CON DATOS:', data);
 		
-		// Mostrar los datos iniciales como los otros logs
-		console.log('DATOS DEL FORMULARIO RECIBIDOS:', formValues);
-
-		// Procesar fecha y hora
-		const [time, period] = formValues.time.split(/(?=[AaPp][Mm])/);
-		const [hours, minutes] = time.split(':');
-		let hour24 = parseInt(hours);
+		// Validación explícita de campos requeridos
+		const requiredFields = ['staffId', 'serviceId', 'branchId', 'patientId', 'time', 'paymentMethod'];
+		const missingFields = requiredFields.filter(field => !data[field as keyof ConsultationSchema]);
 		
-		if (period.toLowerCase() === 'pm' && hour24 < 12) {
-			hour24 += 12;
-		} else if (period.toLowerCase() === 'am' && hour24 === 12) {
-			hour24 = 0;
+		if (missingFields.length > 0) {
+			console.error('❌ Faltan campos requeridos:', missingFields);
+			toast.error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
+			return;
 		}
-
-		// Crear fechas ISO
-		const startDate = new Date(selectedDate);
-		startDate.setHours(hour24);
-		startDate.setMinutes(parseInt(minutes));
-		startDate.setSeconds(0);
-		startDate.setMilliseconds(0);
 		
-		const endDate = new Date(startDate);
-		endDate.setMinutes(endDate.getMinutes() + 30);
-
-		// Crear objeto para useAppointments
-		const appointmentToCreate = {
-			staffId: formValues.staffId,
-			serviceId: formValues.serviceId,
-			branchId: formValues.branchId,
-			patientId: formValues.patientId,
-			start: startDate.toISOString(),
-			end: endDate.toISOString(),
-			type: "CONSULTA" as const,
-			notes: formValues.notes || "",
-			status: "PENDING" as const,
-			paymentMethod: formValues.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET"
-		};
-
-		// Mostrar el objeto final como los otros logs
-		console.log('OBJETO FINAL PARA CREAR APPOINTMENT:', appointmentToCreate);
-		console.log('FECHAS PROCESADAS:', {
-			fechaInicio: startDate.toISOString(),
-			fechaFin: endDate.toISOString()
-		});
-
 		try {
-			await createMutation.mutateAsync(appointmentToCreate);
-			console.log("Appointment creado exitosamente");
+			// Procesar fecha y hora
+			console.log('⏱️ Procesando fecha y hora...');
+			const [time, period] = data.time.split(/(?=[AaPp][Mm])/);
+			const [hours, minutes] = time.split(':');
+			let hour24 = parseInt(hours);
+			
+			if (period.toLowerCase() === 'pm' && hour24 < 12) {
+				hour24 += 12;
+			} else if (period.toLowerCase() === 'am' && hour24 === 12) {
+				hour24 = 0;
+			}
+			
+			// Crear fechas ISO
+			const startDate = new Date(selectedDate);
+			startDate.setHours(hour24);
+			startDate.setMinutes(parseInt(minutes));
+			startDate.setSeconds(0);
+			startDate.setMilliseconds(0);
+			
+			const endDate = new Date(startDate);
+			// Cambiar de 30 a 15 minutos
+			endDate.setMinutes(endDate.getMinutes() + 15);
+
+			console.log('📅 Fechas procesadas:', {
+				startDate: startDate.toISOString(),
+				endDate: endDate.toISOString(),
+				duracionMinutos: 15 // Agregamos duración explícita para claridad
+			});
+
+			// Crear objeto para createMutation
+			const appointmentToCreate: CreateAppointmentDto = {
+				staffId: data.staffId,
+				serviceId: data.serviceId,
+				branchId: data.branchId,
+				patientId: data.patientId,
+				start: startDate.toISOString(),
+				end: endDate.toISOString(),
+				type: "CONSULTA" as const,
+				notes: data.notes || "",
+				status: "PENDING" as const,
+				paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET"
+			};
+
+			console.log('📦 OBJETO FINAL PARA CREAR APPOINTMENT:', appointmentToCreate);
+			console.log('⏳ Llamando a createMutation.mutateAsync...');
+			
+			const result = await createMutation.mutateAsync(appointmentToCreate);
+			console.log('✅ Mutation completada exitosamente con resultado:', result);
+			
+			console.log("🎉 Appointment creado exitosamente");
 			form.reset();
 			setShowForm(false);
+			toast.success("Cita agendada exitosamente");
 		} catch (error) {
-			console.log('Error al crear appointment:', error);
+			// Manejo de error mejorado
+			console.error('❌ ERROR en handleSubmit:', error);
+			if (error instanceof Error) {
+				toast.error(`Error al crear la cita: ${error.message}`);
+			} else {
+				toast.error('Error desconocido al crear la cita');
+			}
 		}
 	};
 
@@ -306,21 +337,22 @@ export default function Consultation() {
 							)}
 						</div>
 					) : (
-						<ConsultationForm form={form} onSubmit={handleSubmit}>
+						<ConsultationForm 
+							form={form} 
+							onSubmit={handleSubmit}
+						>
 							<CardFooter className="w-full gap-10">
 								<div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
 									<Button 
 										type="submit" 
 										className="w-full"
-										onClick={() => {
-											console.log('💡 Botón Submit clickeado');
-											previewAppointmentData();
-										}}
 									>
 										Guardar
 									</Button>
+									
 									<Button
 										variant="ghost"
+										type="button"
 										onClick={() => setShowForm(false)}
 										className="gap-2"
 									>
