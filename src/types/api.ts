@@ -4031,7 +4031,7 @@ export interface components {
              * @example CASH
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
         };
         Appointment: {
             id: string;
@@ -4125,7 +4125,7 @@ export interface components {
              * @example CASH
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
         };
         DeleteAppointmentsDto: {
             ids: string[];
