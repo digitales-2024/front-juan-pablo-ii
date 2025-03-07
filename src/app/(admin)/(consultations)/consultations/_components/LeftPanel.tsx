@@ -20,7 +20,7 @@ interface LeftPanelProps {
   onPatientChange: (patientId: string) => void;
 }
 
-export default function LeftPanel({ date, time, onStaffChange, onBranchChange }: LeftPanelProps) {
+export default function LeftPanel({ date, time, onStaffChange, onBranchChange, onServiceChange, onPatientChange }: LeftPanelProps) {
   const [selectedMedico, setSelectedMedico] = useState<string | null>(null);
   const [selectedServicio, setSelectedServicio] = useState<string | null>(null);
   const [selectedSucursal, setSelectedSucursal] = useState<string | null>(null);
@@ -54,6 +54,17 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange }:
     label: paciente.name,
   })) || [];
 
+  const handleStaffSelect = (value: string | null) => {
+    console.group('👨‍⚕️ Staff Selection');
+    console.log('Value:', value);
+    setSelectedMedico(value);
+    if (value) {
+        console.log('Updating staff ID');
+        onStaffChange(value);
+    }
+    console.groupEnd();
+  };
+
   return (
     <div className="flex gap-4">
       <div className="gap-2 h-fit">
@@ -76,20 +87,7 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange }:
           <ComboboxSelect
             options={ListMedico}
             value={selectedMedico || ""}
-            onChange={(value) => {
-              console.log("Valor seleccionado:", value);
-              setSelectedMedico(value);
-              if (value) {
-                console.log("Cambiando personal a:", value);
-                onStaffChange(value);
-                form.setValue("staffId", value);
-              } else {
-                console.log("Ningún médico seleccionado, restableciendo...");
-                onStaffChange("");
-                form.setValue("staffId", "");
-              }
-              console.log("Lista de médicos después de la selección:", ListMedico);
-            }}
+            onChange={handleStaffSelect}
             description="Seleccione un medico que realizará la consulta"
             placeholder="Selecciona un medico"
           />
@@ -104,7 +102,13 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange }:
           <ComboboxSelect
             options={ListServicio}
             value={selectedServicio ?? ""}
-            onChange={(value) => setSelectedServicio(value)}
+            onChange={(value) => {
+              setSelectedServicio(value);
+              if (value) {
+                console.log("Cambiando servicio a:", value);
+                onServiceChange(value);
+              }
+            }}
             description="Seleccione un servicio para la consulta"
             placeholder="Selecciona un servicio"
           />
@@ -140,8 +144,11 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange }:
             options={ListPaciente}
             value={selectedPaciente ?? ""}
             onChange={(value) => {
-              console.log("Valor seleccionado:", value);
+              console.log("Valor seleccionado paciente:", value);
               setSelectedPaciente(value);
+              if (value) {
+                onPatientChange(value);
+              }
             }}
             description="Seleccione un paciente para la consulta"
             placeholder="Selecciona un paciente"
