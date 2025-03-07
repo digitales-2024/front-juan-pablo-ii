@@ -13,7 +13,7 @@ import {
 import { FilterStockDialog } from "./_components/FilterComponents/FilterByStorageNStockDialog";
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { toast } from "sonner";
 // import { useEffect, useState } from "react";
 // import { StockByStorage } from "./_interfaces/stock.interface";
@@ -22,7 +22,6 @@ import { toast } from "sonner";
 export default function PageBranches() {
 
   const {
-    filter,
     data,
     isLoading,
     query: dataQuery,
@@ -43,10 +42,6 @@ export default function PageBranches() {
     }
   }
   , [setFilterAllStorages]);
-
-  useEffect(()=>{
-    console.log('filter', filter);
-  }, [filter]);
 
   // Mientras no tengamos dataQuery, se puede retornar un loader
   if (!dataQuery) {

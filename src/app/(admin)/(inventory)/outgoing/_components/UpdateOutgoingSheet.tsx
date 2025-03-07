@@ -535,6 +535,7 @@ export function UpdateOutgoingSheet({
                         );
 
                         //In case is movement to be updated
+                        //this should be updated, because 'stockByStorageQuery' may bring too much registers
                         const existentProduct = field.id ? stockByStorageQuery.data.find((p)=>{
                           return p.id === field.productId
                         }) : null;
@@ -550,7 +551,7 @@ export function UpdateOutgoingSheet({
                         } : null;
 
                         const safeData: Partial<OutgoingProducStockForm> = existentProduct ? (transformedExistentProduct ?? {}) : (data ?? {});
-                        console.log(safeData)
+                        // console.log(safeData)
                         const safeWatch = watchFieldArray?.[index] ?? {};
                         const storageSafeWatch = form.watch(FORMSTATICS.storageId.name);
                         const stockStorage = safeData.Stock?.find((stock) => stock.Storage.id === storageSafeWatch);
@@ -567,7 +568,7 @@ export function UpdateOutgoingSheet({
 
                         const existentDynamicStock = isNaN((existentProductOriginalStock ?? 0) - (safeWatch.quantity ?? 0)) ? (existentProductOriginalStock ?? 0) : (existentProductOriginalStock ?? 0) - (safeWatch.quantity ?? 0);
 
-                        const extsitentTotalStock = existentProduct ? totalStock + existentProductOriginalStock : 0;
+                        const existentTotalStock = existentProduct ? totalStock + existentProductOriginalStock : 0;
 
                         //Se obtiene el nombre de los productos originales y los futuros
                         const name =
@@ -642,7 +643,7 @@ export function UpdateOutgoingSheet({
                                     {/* <FormLabel>Stock total</FormLabel> */}
                                     <span className="block text-center">
                                     {
-                                        existentProduct ? extsitentTotalStock : totalStock
+                                        existentProduct ? existentTotalStock : totalStock
                                     }
                                     </span>
                                 </div>

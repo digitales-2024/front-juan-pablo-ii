@@ -67,6 +67,24 @@ export async function getPatientById(id: string): Promise<PatientResponse> {
   }
 }
 
+export async function getPatientByDni (dni:string) {
+  try {
+    const [patient, error] = await http.get<ListPatientResponse>(`/paciente/dni/${dni}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el stock por producto",
+      };
+    }
+    return patient;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
+
 /* export type PatientResponse = BaseApiResponse<Patient> | { error: string }; */
 /**
  * Crea un nuevo paciente con imagen opcional.
@@ -92,7 +110,7 @@ export async function getPatientById(id: string): Promise<PatientResponse> {
   workplace: '',
   bloodType: '',
   primaryDoctor: '',
-  language: '',
+  sucursal: '',
   notes: '',
   image: File {
     size: 3239,

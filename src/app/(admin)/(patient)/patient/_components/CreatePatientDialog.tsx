@@ -69,7 +69,7 @@ export function CreatePatientDialog() {
       workplace: "",
       bloodType: "",
       primaryDoctor: "",
-      language: "",
+      sucursal: "",
       notes: "",
       patientPhoto: undefined,
     },

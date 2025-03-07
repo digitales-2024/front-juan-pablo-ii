@@ -22,7 +22,7 @@ const api: AxiosInstance = axios.create({
 api.interceptors.request.use(
   (config) => {
     if (process.env.NODE_ENV !== 'production') {
-      console.log(`🚀 [${config.method?.toUpperCase()}] ${config.url}`, {
+      console.log(`🚀❌ [${config.method?.toUpperCase()}] ${config.url}`, {
         body: config.data,
         params: config.params,
       });
@@ -39,7 +39,7 @@ api.interceptors.response.use(
   (response) => {
     if (process.env.NODE_ENV !== 'production') {
       // Solo registramos datos relevantes y seguros para JSON
-      console.log(`✅ [${response.status}] ${response.config.url}`, {
+      console.log(`✅objeto de respuesta usuario en ClientFetch:🚀 [${response.status}] ${response.config.url}`, {
         data: response.data,
         headers: {
           'set-cookie': response.headers['set-cookie']

@@ -97,7 +97,7 @@ export function UpdatePatientSheet({
       bloodType: patient.bloodType ?? FORMSTATICS.bloodType.defaultValue,
       primaryDoctor:
         patient.primaryDoctor ?? FORMSTATICS.primaryDoctor.defaultValue,
-      language: patient.language ?? FORMSTATICS.language.defaultValue,
+      sucursal: patient.sucursal ?? FORMSTATICS.sucursal.defaultValue,
       notes: patient.notes ?? FORMSTATICS.notes.defaultValue,
       patientPhoto:
         patient.patientPhoto ?? FORMSTATICS.patientPhoto.defaultValue,
@@ -602,10 +602,10 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name="language"
+                  name="sucursal"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.language.label}</FormLabel>
+                      <FormLabel>{FORMSTATICS.sucursal.label}</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
@@ -613,19 +613,18 @@ export function UpdatePatientSheet({
                         >
                           <SelectTrigger>
                             <SelectValue
-                              placeholder={FORMSTATICS.language.placeholder}
+                              placeholder={FORMSTATICS.sucursal.placeholder}
                             />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Español">Español</SelectItem>
-                            <SelectItem value="Inglés">Inglés</SelectItem>
-                            <SelectItem value="Quechua">Quechua</SelectItem>
+                            <SelectItem value="JLBYR">JLBYR</SelectItem>
+                            <SelectItem value="Yanahuara">Yanahuara</SelectItem>
                             <SelectItem value="Otro">Otro</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
                       <CustomFormDescription
-                        required={FORMSTATICS.language.required}
+                        required={FORMSTATICS.sucursal.required}
                       ></CustomFormDescription>
                       <FormMessage />
                     </FormItem>

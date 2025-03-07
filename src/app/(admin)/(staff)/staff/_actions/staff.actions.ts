@@ -1,11 +1,11 @@
 "use server";
 
 import { http } from "@/utils/serverFetch";
-import { 
-  Staff, 
-  CreateStaffDto, 
-  UpdateStaffDto, 
-  DeleteStaffDto 
+import {
+  Staff,
+  CreateStaffDto,
+  UpdateStaffDto,
+  DeleteStaffDto
 } from "../_interfaces/staff.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { createSafeAction } from '@/utils/createSafeAction';
@@ -14,6 +14,7 @@ import { z } from 'zod';
 type CreateStaffResponse = BaseApiResponse | { error: string };
 type UpdateStaffResponse = BaseApiResponse | { error: string };
 type DeleteStaffResponse = BaseApiResponse | { error: string };
+type GetOneStaffResponse = Staff | { error: string };
 
 // Schema para getStaff
 const GetStaffSchema = z.object({});
@@ -23,15 +24,17 @@ const getStaffHandler = async () => {
     const [staff, error] = await http.get<Staff[]>("/staff");
 
     if (error) {
-      return { error: typeof error === 'object' && error !== null && 'message' in error 
-        ? String(error.message) 
-        : 'Error al obtener el personal' };
+      return {
+        error: typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : 'Error al obtener el personal'
+      };
     }
 
     if (!Array.isArray(staff)) {
       return { error: 'Respuesta inválida del servidor' };
     }
-    
+
     return { data: staff };
   } catch (error) {
     console.error("💥 Error en getStaffHandler:", error);
@@ -44,18 +47,37 @@ const getActiveStaffHandler = async () => {
     const [staff, error] = await http.get<Staff[]>("/staff/active");
 
     if (error) {
-      return { error: typeof error === 'object' && error !== null && 'message' in error 
-        ? String(error.message) 
-        : 'Error al obtener el personal' };
+      return {
+        error: typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : 'Error al obtener el personal'
+      };
     }
 
     if (!Array.isArray(staff)) {
       return { error: 'Respuesta inválida del servidor' };
     }
-    
+
     return { data: staff };
   } catch (error) {
     console.error("💥 Error en getStaffHandler:", error);
+    return { error: "Error al obtener el personal" };
+  }
+}
+
+export const getStaffById = async (id: string) => {
+  try {
+    const [staff, error] = await http.get<GetOneStaffResponse>(`/staff/${id}`);
+
+    if (error) {
+      return { error: typeof error === 'object' && error !== null && 'message' in error 
+        ? String(error.message) 
+        : 'Error al obtener el personal' };
+    }
+
+    return staff;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
     return { error: "Error al obtener el personal" };
   }
 }
@@ -67,6 +89,7 @@ export async function createStaff(
   data: CreateStaffDto
 ): Promise<CreateStaffResponse> {
   try {
+    console.log(data);
     const [staff, error] = await http.post<BaseApiResponse>("/staff", data);
 
     if (error) {
@@ -75,6 +98,8 @@ export async function createStaff(
       }
       return { error: error.message };
     }
+    console.log(staff);
+
 
     return staff;
   } catch (error) {

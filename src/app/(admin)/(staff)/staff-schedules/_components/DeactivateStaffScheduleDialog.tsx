@@ -14,6 +14,7 @@ import { StaffSchedule } from "../_interfaces/staff-schedules.interface";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { useStaffSchedules } from "../_hooks/useStaffSchedules";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface DeleteStaffScheduleDialogProps {
   schedule?: StaffSchedule;
@@ -34,6 +35,7 @@ export function DeleteStaffScheduleDialog({
   showTrigger = true,
   onSuccess
 }: DeleteStaffScheduleDialogProps) {
+  const queryClient = useQueryClient();
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const { deleteMutation: { isPending, mutateAsync } } = useStaffSchedules();
 
@@ -51,6 +53,14 @@ export function DeleteStaffScheduleDialog({
     const ids = items.map((item) => item.id);
     try {
       await mutateAsync({ ids });
+
+      // Invalidar todas las queries que comiencen con 'calendar-turns'
+      await queryClient.invalidateQueries({
+        queryKey: ['calendar-turns'],
+        exact: false,
+        refetchType: 'all' // Forzar la recarga de todas las queries
+      });
+
       setOpen(false);
       onSuccess?.();
     } catch (error) {

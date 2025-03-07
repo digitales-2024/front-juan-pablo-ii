@@ -3,18 +3,29 @@
 import type * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
+import { format, isSameDay } from 'date-fns';
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+	showAvailableDays?: boolean;
+	availableDays?: Date[];
+};
 
 function CalendarBig({
 	className,
 	classNames,
 	showOutsideDays = true,
+	showAvailableDays,
+	availableDays,
+	onMonthChange,
 	...props
-}: CalendarProps) {
+}: CalendarProps & { onMonthChange?: (date: Date) => void }) {
+	const isDayAvailable = (date: Date) => {
+		return showAvailableDays ? (availableDays || []).some(availableDate => isSameDay(availableDate, date)) : true;
+	};
+
 	return (
 		<DayPicker
 			showOutsideDays={showOutsideDays}
@@ -58,6 +69,16 @@ function CalendarBig({
 				),
 			}}
 			{...props}
+			disabled={date => !isDayAvailable(date)}
+			onMonthChange={(date) => {
+				console.log("Mes cambiado en CalendarBig:", date);
+				const formattedDate = format(date, 'yyyy-MM-dd'); // Formatear la fecha
+				console.log("Fecha formateada:", formattedDate); // Log de la fecha formateada
+				if (onMonthChange) {
+					console.log("Llamando a onMonthChange con la fecha:", date);
+					onMonthChange(date); // Llama a la función con la fecha original
+				}
+			}}
 		/>
 	);
 }

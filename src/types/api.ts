@@ -438,6 +438,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/order/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las órdenes */
+        get: operations["OrderController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/order/type/{type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all orders by type */
+        get: operations["OrderController_findAllByType"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/order/status/{status}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payments by status */
+        get: operations["OrderController_findByStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/order/{id}": {
         parameters: {
             query?: never;
@@ -507,40 +558,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/order/type/{type}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get all orders by type */
-        get: operations["OrderController_findAllByType"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/order/status/{status}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get payments by status */
-        get: operations["OrderController_findByStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/order/{type}/status/{status}": {
         parameters: {
             query?: never;
@@ -570,6 +587,23 @@ export interface paths {
         put?: never;
         /** Crear nuevo pago */
         post: operations["PaymentController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payment/status/{status}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payments by status and type */
+        get: operations["PaymentController_findByStatusAndType"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -707,23 +741,6 @@ export interface paths {
         put?: never;
         /** Process refund for a payment */
         post: operations["PaymentController_refundPayment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/payment/status/{status}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get payments by status and type */
-        get: operations["PaymentController_findByStatusAndType"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1033,6 +1050,23 @@ export interface paths {
         put?: never;
         /** Crear nueva cita médica */
         post: operations["AppointmentController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/appointments/paginated": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las citas médicas de forma paginada */
+        get: operations["AppointmentController_findAllPaginated"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2586,7 +2620,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getOneProductStockByStorage"];
         put?: never;
         /** Create product sale order */
         post: operations["BillingController_createProductSaleOrder"];
@@ -2701,6 +2736,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/paciente/dni/{dni}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtenerun pacinete por su dni */
+        get: operations["PacientController_findByDni"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/paciente/{id}": {
         parameters: {
             query?: never;
@@ -2787,6 +2839,23 @@ export interface paths {
         patch: operations["PacientController_updateWithImage"];
         trace?: never;
     };
+    "/api/v1/paciente/dashboard/pacientes-por-sucursal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener datos de pacientes por sucursal para el dashboard */
+        get: operations["PacientController_getPacientesPorSucursal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/receta": {
         parameters: {
             query?: never;
@@ -2799,6 +2868,57 @@ export interface paths {
         put?: never;
         /** Crear nueva receta médica */
         post: operations["PrescriptionController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receta/patients": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener receta médica de los pacientes */
+        get: operations["PrescriptionController_findByPatientsPrescriptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receta/withPatient": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener receta médica de los pacientes */
+        get: operations["PrescriptionController_findByPrescriptionsWithPatients"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receta/patient/{dni}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener receta médica por ID */
+        get: operations["PrescriptionController_findByPatientIdCard"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2944,6 +3064,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/update-history/{id}/update-with-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar historia médica con imágenes */
+        patch: operations["UpdateHistoryController_updateWithImages"];
+        trace?: never;
+    };
     "/api/v1/update-history/{id}/with-images": {
         parameters: {
             query?: never;
@@ -2958,8 +3095,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Actualizar historia médica con imágenes */
-        patch: operations["UpdateHistoryController_updateWithImages"];
+        patch?: never;
         trace?: never;
     };
     "/api/v1/medical-history": {
@@ -3047,6 +3183,76 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/time-off": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las ausencias temporales */
+        get: operations["TimeOffController_findAll"];
+        put?: never;
+        /** Crear nueva ausencia temporal */
+        post: operations["TimeOffController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/time-off/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener ausencia temporal por ID */
+        get: operations["TimeOffController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar evento existente */
+        patch: operations["TimeOffController_update"];
+        trace?: never;
+    };
+    "/api/v1/time-off/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Desactivar múltiples eventos */
+        delete: operations["TimeOffController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/time-off/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples eventos */
+        patch: operations["TimeOffController_reactivateAll"];
         trace?: never;
     };
 }
@@ -3257,7 +3463,7 @@ export interface components {
              * @example PRODUCT_SALE_ORDER
              * @enum {string}
              */
-            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_CONSULTATION_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
             /**
              * @description ID del tipo de movimiento
              * @example movement-type-uuid
@@ -3317,7 +3523,94 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
-        Order: Record<string, never>;
+        Order: {
+            /**
+             * @description ID único de la orden
+             * @example 5f8d0a3e-7d5b-4d3e-a6c4-3a7d9b2d4c1a
+             */
+            id: string;
+            /**
+             * @description Código de referencia de la orden
+             * @example ORD-20240224-001
+             */
+            code?: string;
+            /**
+             * @description Tipo de orden
+             * @example MEDICAL_PRESCRIPTION_ORDER
+             * @enum {string}
+             */
+            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            /**
+             * @description ID del tipo de movimiento asociado
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            movementTypeId: string;
+            /**
+             * @description ID de referencia externa
+             * @example REF-12345
+             */
+            referenceId: string;
+            /**
+             * @description ID del origen de fondos. Por lo general, se refiere al proveeder. No existe entidad proveedor
+             * @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+             */
+            sourceId?: string;
+            /**
+             * @description ID del destino de fondos, por lo general se refiere al almacén de destino
+             * @example b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7
+             */
+            targetId?: string;
+            /**
+             * @description Estado actual de la orden
+             * @example PENDING
+             * @enum {string}
+             */
+            status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            /**
+             * @description Moneda de la transacción
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Subtotal de la orden (sin impuestos)
+             * @example 150.75
+             */
+            subtotal: number;
+            /**
+             * @description Impuestos aplicados
+             * @example 27.14
+             */
+            tax: number;
+            /**
+             * @description Total a pagar (subtotal + impuestos)
+             * @example 177.89
+             */
+            total: number;
+            /**
+             * Format: date-time
+             * @description Fecha de creación de la orden
+             * @example 2024-02-24T15:30:00Z
+             */
+            date: string;
+            /**
+             * @description Notas adicionales
+             * @example Orden creada para paciente Juan Pérez
+             */
+            notes?: string;
+            /** @description Estado de eliminación lógica. */
+            isActive: boolean;
+            /**
+             * @description Metadatos adicionales en formato JSON
+             * @example {
+             *       "pacienteId": "PAT-12345",
+             *       "medicoId": "DOC-67890",
+             *       "seguro": "Seguro Salud Total"
+             *     }
+             */
+            metadata?: Record<string, never>;
+        };
+        /** @enum {string} */
+        OrderType: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
         UpdateOrderDto: {
             /**
              * @description Código de la orden (opcional)
@@ -3329,7 +3622,7 @@ export interface components {
              * @example PRODUCT_SALE_ORDER
              * @enum {string}
              */
-            type?: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_CONSULTATION_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            type?: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
             /**
              * @description ID del tipo de movimiento
              * @example movement-type-uuid
@@ -3400,8 +3693,6 @@ export interface components {
             notes?: string;
         };
         /** @enum {string} */
-        OrderType: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_CONSULTATION_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
-        /** @enum {string} */
         OrderStatus: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
         CreatePaymentDto: {
             /**
@@ -3441,7 +3732,7 @@ export interface components {
              * @description Método de pago
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Número de comprobante */
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
@@ -3459,7 +3750,7 @@ export interface components {
             amount: number;
             description?: string;
             /** @enum {string} */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             voucherNumber?: string;
             originalPaymentId?: string;
             verifiedBy?: string;
@@ -3509,7 +3800,7 @@ export interface components {
              * @description Método de pago
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Número de comprobante */
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
@@ -3530,7 +3821,7 @@ export interface components {
              * @description Método de pago a utilizar
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Monto del pago
              * @example 100.5
@@ -3575,7 +3866,7 @@ export interface components {
              * @example BANK_TRANSFER
              * @enum {string}
              */
-            refundMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            refundMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Notas adicionales */
             notes?: string;
         };
@@ -3806,6 +4097,12 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             rescheduledFromId?: string;
+            /**
+             * @description Método de pago
+             * @example CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
         };
         Appointment: {
             id: string;
@@ -3825,6 +4122,7 @@ export interface components {
             notes: string;
             cancellationReason: string;
             rescheduledFromId: string;
+            isActive: boolean;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -3893,6 +4191,12 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             rescheduledFromId?: string;
+            /**
+             * @description Método de pago
+             * @example CASH
+             * @enum {string}
+             */
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
         };
         DeleteAppointmentsDto: {
             ids: string[];
@@ -5627,86 +5931,77 @@ export interface components {
              */
             batchNumber?: string;
             /**
-             * @description ID de referencia externa
-             * @example 123e4567-e89b-12d3-a456-426614174000
+             * @description Monto pagado
+             * @example 150
              */
-            referenceId?: string;
+            amountPaid?: number;
             /**
-             * @description Moneda (default: PEN)
+             * @description Moneda utilizada para el pago
              * @default PEN
-             * @example PEN
              */
             currency: string;
-            /**
-             * @description Método de pago
-             * @default CASH
-             * @enum {string}
-             */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
-            /**
-             * @description Notas adicionales
-             * @example Venta de medicamentos para paciente
-             */
+            /** @description Número de voucher o referencia del pago */
+            voucherNumber?: string;
+            /** @description Notas adicionales sobre la consulta */
             notes?: string;
             /**
-             * @description Metadata adicional
+             * @description Metadata adicional para la orden
              * @example {
-             *       "customField": "value"
+             *       "additionalNotes": "Social no pagante",
+             *       "preferences": {
+             *         "language": "español",
+             *         "communicationMethod": "email"
+             *       }
              *     }
              */
             metadata?: Record<string, never>;
         };
-        ProductPurchaseItemDto: {
+        ProductSaleItemDto: {
             /**
-             * @description ID del producto a comprar
-             * @example ece57703-3246-4c2d-8f82-825cd239237a
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
              */
             productId: string;
             /**
-             * @description Cantidad a comprar
-             * @example 10
+             * @description Cantidad del producto
+             * @example 5
              */
             quantity: number;
             /**
-             * @description Precio unitario del producto
-             * @example 100.5
+             * @description ID del almacen
+             * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            unitPrice: number;
+            storageId: string;
         };
-        CreateProductPurchaseBillingDto: {
+        CreateProductSaleBillingDto: {
             /**
-             * @description Lista de productos a comprar
+             * @description Lista de productos a vender
              * @example [
              *       {
-             *         "productId": "ece57703-3246-4c2d-8f82-825cd239237a",
-             *         "quantity": 10,
-             *         "unitPrice": 100.5
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5,
+             *         "storageId": "d4892502-5685-45e1-b323-55f933f54387"
              *       }
              *     ]
              */
-            products: components["schemas"]["ProductPurchaseItemDto"][];
-            /**
-             * @description ID del almacén de destino
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            storageId: string;
-            /**
-             * @description ID del proveedor
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            supplierId: string;
+            products: components["schemas"]["ProductSaleItemDto"][];
             /**
              * @description ID de la sucursal
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             branchId: string;
             /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId: string;
+            /**
              * @description Ubicación en almacén
              * @example Estante A-123
              */
             storageLocation?: string;
             /**
-             * @description Número de lote o compra
+             * @description Número de lote
              * @example LOT-2024-001
              */
             batchNumber?: string;
@@ -5726,10 +6021,10 @@ export interface components {
              * @default CASH
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Notas adicionales
-             * @example Compra de medicamentos de inventario
+             * @example Venta de medicamentos para paciente
              */
             notes?: string;
             /**
@@ -5739,83 +6034,6 @@ export interface components {
              *     }
              */
             metadata?: Record<string, never>;
-        };
-        CreateTimeOffDto: {
-            /**
-             * @description ID del personal asociado
-             * @example uuid-del-personal
-             */
-            staffId: string;
-            /**
-             * @description ID de la sucursal asociada
-             * @example uuid-de-la-sucursal
-             */
-            branchId: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de inicio de la ausencia
-             * @example 2023-11-20T00:00:00Z
-             */
-            start: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de fin de la ausencia
-             * @example 2023-11-25T23:59:00Z
-             */
-            end: string;
-            /**
-             * @description Motivo de la ausencia (opcional)
-             * @example Vacaciones
-             */
-            reason?: string;
-        };
-        TimeOff: {
-            id: string;
-            staffId: string;
-            branchId: string;
-            /** Format: date-time */
-            start: string;
-            /** Format: date-time */
-            end: string;
-            reason?: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpdateTimeOffDto: {
-            /**
-             * @description ID del personal asociado
-             * @example uuid-del-personal
-             */
-            staffId?: string;
-            /**
-             * @description ID de la sucursal asociada
-             * @example uuid-de-la-sucursal
-             */
-            branchId?: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de inicio de la ausencia
-             * @example 2023-11-20T00:00:00Z
-             */
-            start?: string;
-            /**
-             * Format: date-time
-             * @description Fecha y hora de fin de la ausencia
-             * @example 2023-11-25T23:59:00Z
-             */
-            end?: string;
-            /**
-             * @description Motivo de la ausencia (opcional)
-             * @example Vacaciones
-             */
-            reason?: string;
-        };
-        DeleteTimeOffsDto: {
-            /** @description Array de IDs de ausencias temporales a eliminar */
-            ids: string[];
         };
         CreatePatientDto: {
             /**
@@ -5902,7 +6120,7 @@ export interface components {
              * @description Idioma preferido del paciente
              * @example Español
              */
-            language?: string;
+            sucursal?: string;
             /**
              * @description Cualquier otra observación relevante
              * @example Paciente con antecedentes de alergias severas
@@ -5917,24 +6135,24 @@ export interface components {
         Patient: {
             id: string;
             name: string;
-            lastName: string;
+            lastName?: string;
             dni: string;
             birthDate: string;
             gender: string;
-            address: string;
-            phone: string;
-            email: string;
-            emergencyContact: string;
-            emergencyPhone: string;
-            healthInsurance: string;
-            maritalStatus: string;
-            occupation: string;
-            workplace: string;
-            bloodType: string;
-            primaryDoctor: string;
-            language: string;
-            notes: string;
-            patientPhoto: string;
+            address?: string;
+            phone?: string;
+            email?: string;
+            emergencyContact?: string;
+            emergencyPhone?: string;
+            healthInsurance?: string;
+            maritalStatus?: string;
+            occupation?: string;
+            workplace?: string;
+            bloodType?: string;
+            primaryDoctor?: string;
+            sucursal?: string;
+            notes?: string;
+            patientPhoto?: string;
             isActive: boolean;
         };
         UpdatePatientDto: {
@@ -6022,7 +6240,7 @@ export interface components {
              * @description Idioma preferido del paciente
              * @example Español
              */
-            language?: string;
+            sucursal?: string;
             /**
              * @description Cualquier otra observación relevante
              * @example Paciente con antecedentes de alergias severas
@@ -6038,9 +6256,9 @@ export interface components {
             ids: string[];
         };
         PrescriptionItemDto: {
-            id: string;
-            name: string;
-            quantity: number;
+            id?: string;
+            name?: string;
+            quantity?: number;
             description?: string;
         };
         CreatePrescriptionDto: {
@@ -6074,21 +6292,21 @@ export interface components {
              * @example [
              *       {
              *         "id": "123e4567-e89b-12d3-a456-426614174000",
-             *         "nombre": "Paracetamol",
-             *         "cantidad": "1",
-             *         "description": "recomendado para el paciente"
+             *         "name": "Paracetamol",
+             *         "quantity": 1,
+             *         "description": "Recomendado para el paciente"
              *       }
              *     ]
              */
             prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
             /**
-             * @description Detalle de medicamentos y dosificación
+             * @description Detalle de servicios y dosificación
              * @example [
              *       {
              *         "id": "123e4567-e89b-12d3-a456-426614174000",
-             *         "nombre": "consulta general",
-             *         "cantidad": "1",
-             *         "description": "recomendado para el paciente"
+             *         "name": "Consulta general",
+             *         "quantity": 1,
+             *         "description": "Recomendado para el paciente"
              *       }
              *     ]
              */
@@ -6105,9 +6323,9 @@ export interface components {
             purchaseOrderId?: string;
         };
         PrescriptionItemResponse: {
-            id: string;
-            name: string;
-            quantity: number;
+            id?: string;
+            name?: string;
+            quantity?: number;
             description?: string;
         };
         Prescription: {
@@ -6119,9 +6337,48 @@ export interface components {
             registrationDate: string;
             prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
             prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
-            description: string;
-            purchaseOrderId: string;
+            description?: string;
+            purchaseOrderId?: string;
             isActive: boolean;
+        };
+        PatientPrescriptions: {
+            id: string;
+            name: string;
+            lastName?: string;
+            dni: string;
+            birthDate: string;
+            gender: string;
+            address?: string;
+            phone?: string;
+            email?: string;
+            isActive: boolean;
+            Prescription: components["schemas"]["Prescription"][];
+        };
+        PrescriptionPatient: {
+            id: string;
+            name: string;
+            lastName?: string;
+            dni: string;
+            birthDate: string;
+            gender: string;
+            address?: string;
+            phone?: string;
+            email?: string;
+            isActive: boolean;
+        };
+        PrescriptionWithPatient: {
+            id: string;
+            updateHistoryId: string;
+            branchId: string;
+            staffId: string;
+            patientId: string;
+            registrationDate: string;
+            prescriptionMedicaments: components["schemas"]["PrescriptionItemResponse"][];
+            prescriptionServices: components["schemas"]["PrescriptionItemResponse"][];
+            description?: string;
+            purchaseOrderId?: string;
+            isActive: boolean;
+            patient: components["schemas"]["PrescriptionPatient"];
         };
         UpdatePrescriptionDto: {
             /**
@@ -6154,21 +6411,21 @@ export interface components {
              * @example [
              *       {
              *         "id": "123e4567-e89b-12d3-a456-426614174000",
-             *         "nombre": "Paracetamol",
-             *         "cantidad": "1",
-             *         "description": "recomendado para el paciente"
+             *         "name": "Paracetamol",
+             *         "quantity": 1,
+             *         "description": "Recomendado para el paciente"
              *       }
              *     ]
              */
             prescriptionMedicaments?: components["schemas"]["PrescriptionItemDto"][];
             /**
-             * @description Detalle de medicamentos y dosificación
+             * @description Detalle de servicios y dosificación
              * @example [
              *       {
              *         "id": "123e4567-e89b-12d3-a456-426614174000",
-             *         "nombre": "consulta general",
-             *         "cantidad": "1",
-             *         "description": "recomendado para el paciente"
+             *         "name": "Consulta general",
+             *         "quantity": 1,
+             *         "description": "Recomendado para el paciente"
              *       }
              *     ]
              */
@@ -6232,7 +6489,7 @@ export interface components {
              *       "observaciones": "Seguimiento en 7 días"
              *     }
              */
-            updateHistory: Record<string, never>;
+            updateHistory?: Record<string, never>;
             /**
              * @description Descripción adicional
              * @example Paciente presenta mejoría
@@ -6445,6 +6702,83 @@ export interface components {
             description: string;
             isActive: boolean;
             updates?: components["schemas"]["UpdateHistoryData"][];
+        };
+        CreateTimeOffDto: {
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio de la ausencia
+             * @example 2023-11-20T00:00:00Z
+             */
+            start: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin de la ausencia
+             * @example 2023-11-25T23:59:00Z
+             */
+            end: string;
+            /**
+             * @description Motivo de la ausencia (opcional)
+             * @example Vacaciones
+             */
+            reason?: string;
+        };
+        TimeOff: {
+            id: string;
+            staffId: string;
+            branchId: string;
+            /** Format: date-time */
+            start: string;
+            /** Format: date-time */
+            end: string;
+            reason?: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateTimeOffDto: {
+            /**
+             * @description ID del personal asociado
+             * @example uuid-del-personal
+             */
+            staffId?: string;
+            /**
+             * @description ID de la sucursal asociada
+             * @example uuid-de-la-sucursal
+             */
+            branchId?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio de la ausencia
+             * @example 2023-11-20T00:00:00Z
+             */
+            start?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin de la ausencia
+             * @example 2023-11-25T23:59:00Z
+             */
+            end?: string;
+            /**
+             * @description Motivo de la ausencia (opcional)
+             * @example Vacaciones
+             */
+            reason?: string;
+        };
+        DeleteTimeOffsDto: {
+            /** @description Array de IDs de ausencias temporales a eliminar */
+            ids: string[];
         };
     };
     responses: never;
@@ -7710,6 +8044,113 @@ export interface operations {
             };
         };
     };
+    OrderController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las órdenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_findAllByType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                type: components["schemas"]["OrderType"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orders found successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_findByStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Payment status to filter by */
+                status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of payments with the specified status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OrderController_findOne: {
         parameters: {
             query?: never;
@@ -7904,79 +8345,6 @@ export interface operations {
             };
         };
     };
-    OrderController_findAllByType: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                type: components["schemas"]["OrderType"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Orders found successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrderController_findByStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Payment status to filter by */
-                status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of payments with the specified status */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     OrderController_findByStatusType: {
         parameters: {
             query?: never;
@@ -8071,6 +8439,58 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_findByStatusAndType: {
+        parameters: {
+            query?: {
+                /** @description Payment type to filter by */
+                type?: "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
+            };
+            header?: never;
+            path: {
+                /** @description Payment status to filter by */
+                status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of payments with statistics */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        payments?: components["schemas"]["Payment"][];
+                        stats?: {
+                            totalRegular?: number;
+                            totalRefunds?: number;
+                            totalDiscounts?: number;
+                            totalPartialPayments?: number;
+                            netAmount?: number;
+                            paymentCount?: number;
+                            refundCount?: number;
+                            discountCount?: number;
+                        };
+                    };
+                };
+            };
+            /** @description Invalid status or payment type */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8425,58 +8845,6 @@ export interface operations {
                 };
             };
             /** @description Invalid refund request or payment not eligible for refund */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PaymentController_findByStatusAndType: {
-        parameters: {
-            query?: {
-                /** @description Payment type to filter by */
-                type?: "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
-            };
-            header?: never;
-            path: {
-                /** @description Payment status to filter by */
-                status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of payments with statistics */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        payments?: components["schemas"]["Payment"][];
-                        stats?: {
-                            totalRegular?: number;
-                            totalRefunds?: number;
-                            totalDiscounts?: number;
-                            totalPartialPayments?: number;
-                            netAmount?: number;
-                            paymentCount?: number;
-                            refundCount?: number;
-                            discountCount?: number;
-                        };
-                    };
-                };
-            };
-            /** @description Invalid status or payment type */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9498,6 +9866,45 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o horario no disponible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AppointmentController_findAllPaginated: {
+        parameters: {
+            query?: {
+                /** @description Número de página para la paginación */
+                page?: number;
+                /** @description Número de registros por página */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de citas médicas paginadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Appointment"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -14262,6 +14669,43 @@ export interface operations {
             };
         };
     };
+    PacientController_findByDni: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description DNI del paciente */
+                dni: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los pacientes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Patient"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     PacientController_findOne: {
         parameters: {
             query?: never;
@@ -14468,7 +14912,7 @@ export interface operations {
                     /** @example Dr. Juan Pérez, +51999999999 */
                     primaryDoctor?: string;
                     /** @example Español */
-                    language?: string;
+                    sucursal?: string;
                     /** @example Paciente con antecedentes de alergias severas */
                     notes?: string;
                     /** @example null */
@@ -14555,7 +14999,7 @@ export interface operations {
                     /** @example Dr. Juan Pérez, +51999999999 */
                     primaryDoctor?: string;
                     /** @example Español */
-                    language?: string;
+                    sucursal?: string;
                     /** @example Paciente con antecedentes de alergias severas */
                     notes?: string;
                     /** @example null */
@@ -14576,6 +15020,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PacientController_getPacientesPorSucursal: {
+        parameters: {
+            query?: {
+                /** @description Año para filtrar los datos (formato: YYYY) */
+                year?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Datos obtenidos exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Datos de pacientes por sucursal obtenidos con éxito */
+                        message?: string;
+                        /** @example [
+                         *       {
+                         *         "month": "Enero",
+                         *         "JLBYR": 12,
+                         *         "Yanahuara": 8
+                         *       },
+                         *       {
+                         *         "month": "Febrero",
+                         *         "JLBYR": 15,
+                         *         "Yanahuara": 10
+                         *       }
+                         *     ] */
+                        data?: {
+                            /** @example Enero */
+                            month?: string;
+                            /** @example 12 */
+                            JLBYR?: number;
+                            /** @example 8 */
+                            Yanahuara?: number;
+                        }[];
+                    };
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -14659,6 +15165,138 @@ export interface operations {
             };
             /** @description Unauthorized - No autorizado para realizar esta operación */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PrescriptionController_findByPatientsPrescriptions: {
+        parameters: {
+            query: {
+                limit: number;
+                offset: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recetas médicas encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientPrescriptions"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Recetas médicas no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PrescriptionController_findByPrescriptionsWithPatients: {
+        parameters: {
+            query: {
+                limit: number;
+                offset: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recetas médicas encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrescriptionWithPatient"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Recetas médicas no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PrescriptionController_findByPatientIdCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Número de DNI y deberia tambien el CE */
+                dni: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recetas médicas encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientPrescriptions"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Recetas médicas no encontrada */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -15087,7 +15725,7 @@ export interface operations {
                      *       "tratamiento": "Reposo y medicamentos",
                      *       "observaciones": "Seguimiento en 7 días"
                      *     } */
-                    updateHistory: Record<string, never>;
+                    updateHistory?: Record<string, never>;
                     /** @example Paciente presenta mejoría */
                     description?: string;
                     /** @example false */
@@ -15117,42 +15755,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    UpdateHistoryController_findOneWithImages: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Historia médica encontrada con sus imágenes */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UpdateHistory"];
-                };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
@@ -15238,6 +15840,42 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateHistoryController_findOneWithImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Historia médica encontrada con sus imágenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateHistory"];
+                };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
@@ -15509,6 +16147,239 @@ export interface operations {
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las ausencias temporales */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeOff"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTimeOffDto"];
+            };
+        };
+        responses: {
+            /** @description Ausencia temporal creada exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeOff"];
+                };
+            };
+            /** @description Datos de entrada inválidos o ausencia ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la ausencia temporal */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ausencia temporal encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeOff"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Ausencia temporal no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del evento a actualizar */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTimeOffDto"];
+            };
+        };
+        responses: {
+            /** @description Evento actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"];
+                };
+            };
+            /** @description Datos de entrada inválidos o evento no existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTimeOffsDto"];
+            };
+        };
+        responses: {
+            /** @description Eventos desactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description IDs inválidos o eventos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TimeOffController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTimeOffsDto"];
+            };
+        };
+        responses: {
+            /** @description Eventos reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
+            };
+            /** @description IDs inválidos o eventos no existen */
             400: {
                 headers: {
                     [name: string]: unknown;

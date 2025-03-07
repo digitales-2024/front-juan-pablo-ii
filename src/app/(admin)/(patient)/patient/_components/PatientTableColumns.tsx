@@ -164,9 +164,9 @@ export const columns: ColumnDef<Patient>[] = [
     ),
   },
   {
-    accessorKey: "language",
+    accessorKey: "sucursal",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Idioma" />
+      <DataTableColumnHeader column={column} title="sucursal" />
     ),
   },
   {

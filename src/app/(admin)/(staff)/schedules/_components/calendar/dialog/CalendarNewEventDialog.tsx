@@ -103,7 +103,7 @@ export default function CalendarNewEventDialog() {
         console.log('✅ Evento creado exitosamente');
         setNewEventDialogOpen(false);
         form.reset();
-        queryClient.invalidateQueries({ queryKey: ['staff-schedules'] });
+        queryClient.invalidateQueries({ queryKey: ['calendar-turns'] });
       },
       onError: (error) => {
         console.error('❌ Error detallado:', JSON.stringify(error, null, 2));

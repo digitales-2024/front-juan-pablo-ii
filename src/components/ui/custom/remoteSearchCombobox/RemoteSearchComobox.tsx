@@ -20,10 +20,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { UseQueryResult } from "@tanstack/react-query";
-import SmallLoading from "../errorComponents/SmallLoading";
 import { useMemo } from "react";
-import NotFoundSearchResults from "../errorComponents/NotFoundSearchResults";
-import SmallErrorMessage from "../errorComponents/SmallErrorMessage";
+import SmallLoading from "../SmallLoading";
+import SmallErrorMessage from "../SmallErrorMessage";
+import NotFoundSearchResults from "./NotFoundSearchResults";
 //import { ALIGN_OPTIONS } from "@radix-ui/react-popper";
 
 export type ComboBoxItemType = {
