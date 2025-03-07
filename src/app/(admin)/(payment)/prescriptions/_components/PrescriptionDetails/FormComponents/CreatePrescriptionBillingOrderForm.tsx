@@ -15,13 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CREATE_PRESCRIPTION_ORDER_FORMSTATICS as STATIC_FORM } from "../../../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import {
   Table,
@@ -43,9 +37,7 @@ import {
   ProductSaleItemDto,
   ServiceSaleItemDto,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
-import {
-  useProductsStock,
-} from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
+import { useProductsStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
 import {
@@ -74,7 +66,7 @@ type ServiceData = {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-}
+};
 interface CreatePrescriptionOrderFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
@@ -221,12 +213,11 @@ export function CreatePrescriptionOrderForm({
 
     if (serviceDataQuery.data)
       serviceDataQuery.data.forEach((service) => {
-      dataMap[service.id] = service;
-    });
+        dataMap[service.id] = service;
+      });
 
     return dataMap;
-  }
-  , [prescription]);
+  }, [prescription]);
 
   // Calculate service totals (only selected services)
   const calculateServiceTotals = useCallback(() => {
@@ -286,7 +277,7 @@ export function CreatePrescriptionOrderForm({
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error calculando totales de servicios: " + error.message);
-      } else{
+      } else {
         toast.error("Error calculando totales de servicios.");
       }
     } finally {
@@ -708,7 +699,7 @@ export function CreatePrescriptionOrderForm({
   //   calculateTotalsWithDebounce,
   // ]);
 
-  const SaveServiceTableButton = () =>{
+  const SaveServiceTableButton = () => {
     return (
       <Button
         type="button"
@@ -721,7 +712,7 @@ export function CreatePrescriptionOrderForm({
         Guardar cambios
       </Button>
     );
-  }
+  };
 
   const SaveProductTableButton = () => (
     <Button
@@ -931,8 +922,8 @@ export function CreatePrescriptionOrderForm({
                             </TableCell>
                             <TableCell>
                               <FormItem>
-                              <Input
-                                  disabled={ !field.selected }
+                                <Input
+                                  disabled={!field.selected}
                                   type="number"
                                   className={cn(
                                     "text-center",
@@ -992,7 +983,12 @@ export function CreatePrescriptionOrderForm({
                               </span>
                             </TableCell>
                             <TableCell>
-                              <Button type="button" disabled={ !field.selected } variant={'ghost'} className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">
+                              <Button
+                                type="button"
+                                disabled={!field.selected}
+                                variant={"ghost"}
+                                className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"
+                              >
                                 <CalendarPlus></CalendarPlus>
                               </Button>
                             </TableCell>
@@ -1018,17 +1014,13 @@ export function CreatePrescriptionOrderForm({
                             currency: "PEN",
                           })}
                         </TableCell>
-                        <TableCell
-                          className="text-lg text-primary font-bold"
-                        >
+                        <TableCell className="text-lg text-primary font-bold">
                           {serviceTotals.total.toLocaleString("es-PE", {
                             style: "currency",
                             currency: "PEN",
                           })}
                         </TableCell>
-                        <TableCell
-                          colSpan={1}
-                        ></TableCell>
+                        <TableCell colSpan={1}></TableCell>
                       </TableRow>
                     )}
                   </TableBody>
@@ -1037,7 +1029,9 @@ export function CreatePrescriptionOrderForm({
                 <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
                   {/* <SelectProductDialog form={form} /> */}
                   <SaveServiceTableButton></SaveServiceTableButton>
-                  <CustomFormDescription required={FORMSTATICS.services.required} />
+                  <CustomFormDescription
+                    required={FORMSTATICS.services.required}
+                  />
                   {form.formState.errors.services && (
                     <FormMessage className="text-destructive">
                       {form.formState.errors.services.message}
@@ -1419,6 +1413,13 @@ export function CreatePrescriptionOrderForm({
             </>
           )}
 
+          {(!showProductFields || !showServicesFields) && (form.formState.errors.services ?? form.formState.errors.products) && (
+            <FormMessage className="text-destructive col-span-4 text-center">
+              {form.formState.errors.services?.message && <span className="block">{form.formState.errors.services?.message}</span>}
+              {form.formState.errors.products?.message && <span className="block">{form.formState.errors.products?.message}</span>}
+            </FormMessage>
+          )}
+
           <Separator className="col-span-4" />
 
           {/* Campo método de pago */}
@@ -1496,7 +1497,6 @@ export function CreatePrescriptionOrderForm({
               )}
             </FormItem>
           </div>
-
           <Separator className="col-span-4" />
         </div>
         {/* Contenido adicional (botones de acción) */}

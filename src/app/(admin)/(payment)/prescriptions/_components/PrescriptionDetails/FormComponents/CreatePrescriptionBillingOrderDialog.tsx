@@ -39,11 +39,12 @@ import { getActiveStoragesByBranch } from "@/app/(admin)/(catalog)/storage/stora
 import { toast } from "sonner";
 import { useManyProductsStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import { useServices } from "@/app/(admin)/services/_hooks/useServices";
+import { ConfirmOrderDialog } from "./ConfirmOrderDialog";
 
 const CREATE_OUTGOING_MESSAGES = {
   button: "Generar venta",
   title: "Registrar venta por receta",
-  description: "Rellena los campos para completar la venta de medicamentos según receta",
+  description: "Rellena los campos para completar la venta de medicamentos según receta. Debes seleccionar los items para poder editar sus campos.",
   success: "Venta por receta registrada exitosamente",
   submitButton: "Procesar venta",
   cancel: "Cancelar",
@@ -203,10 +204,11 @@ export function CreatePrescriptionBillingProcessDialog({
       toast.error("Error al obtener los almacenes de la sucursal");
     }
   }, []);
+  
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
-      <Button
+      {/* <Button
         type="submit"
         disabled={isCreatePending || createSaleOrderMutation.isPending}
         className="w-full"
@@ -215,7 +217,24 @@ export function CreatePrescriptionBillingProcessDialog({
           <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
         )}
         {CREATE_OUTGOING_MESSAGES.submitButton}
-      </Button>
+      </Button> */}
+
+      <ConfirmOrderDialog
+        onConfirm={async ()=>{ await form.handleSubmit(onSubmit)()}}
+        trigger={
+          <div>
+            {(isCreatePending || createSaleOrderMutation.isPending) && (
+              <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
+            )}
+            <span>
+              {CREATE_OUTGOING_MESSAGES.submitButton}
+            </span>
+          </div>
+        }
+        isLoading={isCreatePending || createSaleOrderMutation.isPending}
+        confirmationText="Confirmar"
+      >
+      </ConfirmOrderDialog>
       <Button
         type="button"
         variant="outline"
@@ -273,8 +292,6 @@ export function CreatePrescriptionBillingProcessDialog({
     return <ErrorButtonSkeleton />;
   }
 
-  
-
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -287,7 +304,7 @@ export function CreatePrescriptionBillingProcessDialog({
         >
           <DialogHeader>
             <DialogTitle>{CREATE_OUTGOING_MESSAGES.title}</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-balance">
               {CREATE_OUTGOING_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
@@ -317,7 +334,7 @@ export function CreatePrescriptionBillingProcessDialog({
       <DrawerContent key={open ? "open" : "closed"} className="overflow-y-auto">
         <DrawerHeader>
           <DrawerTitle>{CREATE_OUTGOING_MESSAGES.title}</DrawerTitle>
-          <DrawerDescription>
+          <DrawerDescription className="text-balance">
             {CREATE_OUTGOING_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
