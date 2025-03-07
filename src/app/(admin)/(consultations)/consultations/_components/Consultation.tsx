@@ -41,9 +41,15 @@ export default function Consultation() {
 			notes: "",
 			staffId: "",
 			branchId: "",
+			patientId: "",
 			paymentMethod: undefined,
 		},
 	});
+
+	// Cada vez que cambie selectedDate, actualizar form.date
+	useEffect(() => {
+		form.setValue('date', format(selectedDate, "yyyy-MM-dd"));
+	}, [selectedDate, form]);
 
 	const selectedTime = form.watch("time");
 
@@ -76,6 +82,11 @@ export default function Consultation() {
 	const handlePatientChange = (patientId: string) => {
 		console.log("Cambiando ID de paciente a:", patientId);
 		form.setValue("patientId", patientId);
+	};
+
+	const handleDateChange = (date: Date) => {
+		setSelectedDate(date);
+		form.setValue('date', format(date, "yyyy-MM-dd")); // Actualiza como string
 	};
 
 	useEffect(() => {
@@ -135,46 +146,46 @@ export default function Consultation() {
 		}
 	}, [form.watch(), selectedDate]);
 
-	const previewAppointmentData = () => {
-		const formValues = form.getValues();
+	// const previewAppointmentData = () => {
+	// 	const formValues = form.getValues();
 		
-		// Procesar fecha y hora
-		const [time, period] = formValues.time.split(/(?=[AaPp][Mm])/);
-		const [hours, minutes] = time.split(':');
-		let hour24 = parseInt(hours);
+	// 	// Procesar fecha y hora
+	// 	const [time, period] = formValues.time.split(/(?=[AaPp][Mm])/);
+	// 	const [hours, minutes] = time.split(':');
+	// 	let hour24 = parseInt(hours);
 		
-		if (period.toLowerCase() === 'pm' && hour24 < 12) {
-			hour24 += 12;
-		} else if (period.toLowerCase() === 'am' && hour24 === 12) {
-			hour24 = 0;
-		}
+	// 	if (period.toLowerCase() === 'pm' && hour24 < 12) {
+	// 		hour24 += 12;
+	// 	} else if (period.toLowerCase() === 'am' && hour24 === 12) {
+	// 		hour24 = 0;
+	// 	}
 
-		// Crear fechas ISO
-		const startDate = new Date(selectedDate);
-		startDate.setHours(hour24);
-		startDate.setMinutes(parseInt(minutes));
-		startDate.setSeconds(0);
-		startDate.setMilliseconds(0);
+	// 	// Crear fechas ISO
+	// 	const startDate = new Date(selectedDate);
+	// 	startDate.setHours(hour24);
+	// 	startDate.setMinutes(parseInt(minutes));
+	// 	startDate.setSeconds(0);
+	// 	startDate.setMilliseconds(0);
 		
-		const endDate = new Date(startDate);
-		// Cambiar de 30 a 15 minutos
-		endDate.setMinutes(endDate.getMinutes() + 15);
+	// 	const endDate = new Date(startDate);
+	// 	// Cambiar de 30 a 15 minutos
+	// 	endDate.setMinutes(endDate.getMinutes() + 15);
 
-		const appointmentToCreate = {
-			staffId: formValues.staffId,
-			serviceId: formValues.serviceId,
-			branchId: formValues.branchId,
-			patientId: formValues.patientId,
-			start: startDate.toISOString(),
-			end: endDate.toISOString(),
-			type: "CONSULTA" as const,
-			notes: formValues.notes || "",
-			status: "PENDING" as const,
-			paymentMethod: formValues.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET"
-		};
+	// 	const appointmentToCreate = {
+	// 		staffId: formValues.staffId,
+	// 		serviceId: formValues.serviceId,
+	// 		branchId: formValues.branchId,
+	// 		patientId: formValues.patientId,
+	// 		start: startDate.toISOString(),
+	// 		end: endDate.toISOString(),
+	// 		type: "CONSULTA" as const,
+	// 		notes: formValues.notes || "",
+	// 		status: "PENDING" as const,
+	// 		paymentMethod: formValues.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET"
+	// 	};
 
-		console.log('DATOS QUE SE ENVIARÁN AL CREAR APPOINTMENT:', appointmentToCreate);
-	};
+	// 	console.log('DATOS QUE SE ENVIARÁN AL CREAR APPOINTMENT:', appointmentToCreate);
+	// };
 
 	const handleSubmit = async (data: ConsultationSchema) => {
 		console.log('🔄 INICIO DE handleSubmit CON DATOS:', data);
@@ -203,7 +214,7 @@ export default function Consultation() {
 			}
 			
 			// Crear fechas ISO
-			const startDate = new Date(selectedDate);
+			const startDate = new Date(data.date); // Convertir de string a Date
 			startDate.setHours(hour24);
 			startDate.setMinutes(parseInt(minutes));
 			startDate.setSeconds(0);

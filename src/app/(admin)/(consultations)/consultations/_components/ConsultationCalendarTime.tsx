@@ -76,10 +76,17 @@ export default function ConsultationCalendarTime({
 		const startDate = new Date(start);
 		const endDate = new Date(end);
 
-		// Crear un array de intervalos de 30 minutos
+		// Crear un array de intervalos de 15 minutos
 		const timeSlots = [];
-		for (let d = startDate; d < endDate; d.setMinutes(d.getMinutes() + 30)) {
-			timeSlots.push(new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
+		for (let d = startDate; d < endDate; d.setMinutes(d.getMinutes() + 15)) {
+			// Formatear la hora en el formato "09:00am" en lugar de usar toLocaleTimeString
+			const hours = d.getHours();
+			const minutes = d.getMinutes();
+			const period = hours >= 12 ? 'pm' : 'am';
+			const hour12 = hours % 12 || 12;
+			const formattedHour = hour12.toString().padStart(2, '0');
+			const formattedMinutes = minutes.toString().padStart(2, '0');
+			timeSlots.push(`${formattedHour}:${formattedMinutes}${period}`);
 		}
 
 		return {
@@ -90,19 +97,30 @@ export default function ConsultationCalendarTime({
 
 	console.log("horarios de showAvailableHours ", JSON.stringify(availableHoursForSelectedDate, null, 2));
 
-	// Crear un array de horarios en formato de 12 horas
+	// Crear un array de horarios en formato de 12 horas con intervalos de 15 minutos
 	const timeSlots = [
-		"09:00am", "09:30am", "10:00am", "10:30am", "11:00am", "11:30am", "12:00pm", "12:30pm",
-		"01:00pm", "01:30pm", "02:00pm", "02:30pm", "03:00pm", "03:30pm", "04:00pm", "04:30pm",
-		"05:00pm", "05:30pm", "06:00pm", "06:30pm", "07:00pm", "07:30pm", "08:00pm", "08:30pm"
+		"09:00am", "09:15am", "09:30am", "09:45am",
+		"10:00am", "10:15am", "10:30am", "10:45am",
+		"11:00am", "11:15am", "11:30am", "11:45am",
+		"12:00pm", "12:15pm", "12:30pm", "12:45pm",
+		"01:00pm", "01:15pm", "01:30pm", "01:45pm",
+		"02:00pm", "02:15pm", "02:30pm", "02:45pm",
+		"03:00pm", "03:15pm", "03:30pm", "03:45pm",
+		"04:00pm", "04:15pm", "04:30pm", "04:45pm",
+		"05:00pm", "05:15pm", "05:30pm", "05:45pm",
+		"06:00pm", "06:15pm", "06:30pm", "06:45pm",
+		"07:00pm", "07:15pm", "07:30pm", "07:45pm"
 	];
 
 	console.log("horarios switch", showAvailableHours);
 
 	// Filtrar los horarios disponibles en base a los eventos
 	const filteredTimeSlots = showAvailableHours
-		? availableHoursForSelectedDate.flatMap(event => event.timeSlots).filter(timeStr => {
-			const [timePart, modifier] = timeStr.split(" ");
+		? [...new Set(availableHoursForSelectedDate.flatMap(event => event.timeSlots).filter(timeStr => {
+			// Asegurarse de que timeStr está en el formato correcto (09:00am)
+			const [timePart, period] = timeStr.split(/(?=[AaPp][Mm])/);
+			if (!period) return false; // Si no tiene el formato esperado, filtrar
+
 			let [hoursStr, minutesStr] = timePart.split(":");
 			let hours = Number(hoursStr);
 			let minutes = Number(minutesStr);
@@ -115,9 +133,9 @@ export default function ConsultationCalendarTime({
 			const baseDate = new Date(selectedDate); // Fecha base
 
 			// Convertir a 24 horas
-			if (modifier === "pm" && hours < 12) {
+			if (period.toLowerCase() === 'pm' && hours < 12) {
 				hours += 12;
-			} else if (modifier === "am" && hours === 12) {
+			} else if (period.toLowerCase() === 'am' && hours === 12) {
 				hours = 0;
 			}
 
@@ -128,7 +146,7 @@ export default function ConsultationCalendarTime({
 			return availableHoursForSelectedDate.some((event: { timeSlots: string[] }) => {
 				return event.timeSlots.includes(timeStr);
 			});
-		})
+		}))]
 		: timeSlots;
 
 	console.log("horarios de filteredTimeSlots", filteredTimeSlots);
@@ -175,7 +193,22 @@ export default function ConsultationCalendarTime({
 
 	const isTimeDisabled = (timeStr: string) => {
 		if (!isToday(selectedDate) || allowPastDates) return false;
-		const [hours, minutes] = timeStr.split(":").map(Number);
+
+		// Manejar formato "09:00am"
+		const [timePart, period] = timeStr.split(/(?=[AaPp][Mm])/);
+		if (!period) return false; // Si no tiene el formato esperado, no deshabilitar
+
+		let [hoursStr, minutesStr] = timePart.split(":");
+		let hours = Number(hoursStr);
+		let minutes = Number(minutesStr);
+
+		// Convertir a 24 horas
+		if (period.toLowerCase() === 'pm' && hours < 12) {
+			hours += 12;
+		} else if (period.toLowerCase() === 'am' && hours === 12) {
+			hours = 0;
+		}
+
 		const selectedDateTime = new Date(selectedDate);
 		selectedDateTime.setHours(hours, minutes);
 		return isBefore(selectedDateTime, now);
@@ -195,7 +228,7 @@ export default function ConsultationCalendarTime({
 					availableDays={availableDays}
 					onSelect={(date: Date | undefined) => {
 						if (date) {
-							form.setValue("date", date, {
+							form.setValue("date", format(date, "yyyy-MM-dd"), {
 								shouldValidate: true,
 								shouldDirty: true,
 								shouldTouch: true,
