@@ -1992,6 +1992,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/storage/active/branch/{branchId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los almacenes */
+        get: operations["StorageController_findAllActiveByBranch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/storage/{id}": {
         parameters: {
             query?: never;
@@ -2607,6 +2624,57 @@ export interface paths {
         get: operations["StockController_getProductsStockById"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/availableProduct/{productId}/storage/{storageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getOneProductStockByStorage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/manyProductsByStorage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Obtener varios productos en stock por combinaciones de almacén y producto */
+        post: operations["StockController_getManyProductsStockByStorageAndProduct"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/manyProducts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Obtener varios productos en stock por combinaciones de almacén y producto */
+        post: operations["StockController_getProductsStockByProductsIds"];
         delete?: never;
         options?: never;
         head?: never;
@@ -12557,6 +12625,42 @@ export interface operations {
             };
         };
     };
+    StorageController_findAllActiveByBranch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                branchId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     StorageController_findOne: {
         parameters: {
             query?: never;
@@ -14176,6 +14280,83 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getOneProductStockByStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                productId: string;
+                storageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getManyProductsStockByStorageAndProduct: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Array de combinaciones de producto y almacén */
+        requestBody: {
+            content: {
+                "application/json": {
+                    productId?: string;
+                    storageId?: string;
+                }[];
+            };
+        };
+        responses: {
+            /** @description Productos en stock según las combinaciones solicitadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStockByProductsIds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Array de combinaciones de producto y almacén */
+        requestBody: {
+            content: {
+                "application/json": string[];
+            };
+        };
+        responses: {
+            /** @description Productos en stock según las combinaciones solicitadas */
             200: {
                 headers: {
                     [name: string]: unknown;

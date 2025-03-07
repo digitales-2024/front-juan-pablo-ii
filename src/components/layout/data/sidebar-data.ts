@@ -331,12 +331,12 @@ export function getFilteredSidebarData(profile: Profile | null): SidebarData {
   let filteredNavGroups = [...sidebarData.navGroups];
 
   // Filtrar según el rol
-  if (userRole === "ADMIN") {
+  if (userRole === "ADMINISTRATIVO") {
     // Administrativo: Todo excepto "Accesos y Usuarios"
     filteredNavGroups = filteredNavGroups.filter(
       (group) => group.title !== "Accesos y Usuarios"
     );
-  } else if (userRole === "DOCTOR") {
+  } else if (userRole === "MEDICO") {
     // Médico: Solo "Registros Operativos"
     filteredNavGroups = filteredNavGroups.filter(
       (group) => group.title === "Registros Operativos"
