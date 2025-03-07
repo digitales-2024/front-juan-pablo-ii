@@ -25,78 +25,20 @@ import { format } from "date-fns";
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
 	children: React.ReactNode;
+	onSubmit: (data: ConsultationSchema) => void;
 }
-
-//TODO - Mover a un archivo de constantes o servicio API
-const ListServices = [
-	{
-		value: "1",
-		label: "Plasma Rico en Plaquetas",
-	},
-	{
-		value: "4",
-		label: "Ácido Hialurónico",
-	},
-	{
-		value: "5",
-		label: "Limpieza Facial",
-	},
-	{
-		value: "6",
-		label: "Criolipolisis",
-	},
-];
-
-const ListSucursal = [
-	{
-		value: "1",
-		label: "Sucursal principal",
-	},
-	{
-		value: "4",
-		label: "Sucursal 1",
-	},
-	{
-		value: "5",
-		label: "Sucursal 2",
-	},
-
-];
-
-const ListPatients = [
-	{
-		value: "1",
-		label: "Paciente 1",
-	},
-	{
-		value: "2",
-		label: "Paciente 2",
-	},
-	{
-		value: "3",
-		label: "Paciente 3",
-	},
-	{
-		value: "4",
-		label: "Paciente 4",
-	},
-	{
-		value: "5",
-		label: "Paciente 5",
-	},
-];
 
 const ListPaymentMethods = [
 	{
-		value: "efectivo",
+		value: "CASH",
 		label: "Efectivo",
 	},
 	{
-		value: "transferencia",
+		value: "BANK_TRANSFER",
 		label: "Transferencia",
 	},
 	{
-		value: "billeteradigital",
+		value: "DIGITAL_WALLET",
 		label: "Billetera Digital",
 	},
 ];
@@ -104,10 +46,22 @@ const ListPaymentMethods = [
 export default function ConsultationForm({
 	form,
 	children,
+	onSubmit,
 }: ConsultationFormProps) {
-	function onSubmit(data: ConsultationSchema) {
-		console.log(data);
-	}
+	console.log('🧩 ConsultationForm renderizado, onSubmit es:', typeof onSubmit);
+
+	const handleFormSubmit = async (data: ConsultationSchema) => {
+		console.group('📝 DATOS DEL FORMULARIO AL ENVIAR');
+		console.log('Valores del formulario:', data);
+		console.groupEnd();
+
+		try {
+			await onSubmit(data);
+			console.log('✅ Formulario procesado exitosamente');
+		} catch (error) {
+			console.error('❌ Error al procesar el formulario:', error);
+		}
+	};
 
 	return (
 		<Card>
@@ -119,7 +73,20 @@ export default function ConsultationForm({
 			</CardHeader>
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(onSubmit)}
+					onSubmit={(e) => {
+						e.preventDefault(); // Prevenir el comportamiento por defecto
+						console.log('📤 Evento submit del formulario capturado');
+						const values = form.getValues();
+						console.log('📊 Valores del formulario:', values);
+						
+						// Llamar directamente a onSubmit con los valores actuales del formulario
+						try {
+							onSubmit(values);
+							console.log('✅ onSubmit llamado exitosamente');
+						} catch (error) {
+							console.error('❌ Error al llamar onSubmit:', error);
+						}
+					}}
 					className="space-y-5"
 				>
 					<CardContent className="space-y-4">
@@ -132,10 +99,9 @@ export default function ConsultationForm({
 										<FormLabel>Fecha</FormLabel>
 										<FormControl>
 											<Input
-												value={format(
-													field.value,
-													"yyyy-MM-dd"
-												)}
+												value={typeof field.value === 'string' 
+													? field.value 
+													: format(field.value, "yyyy-MM-dd")}
 												readOnly
 												className="cursor-not-allowed"
 											/>
@@ -197,25 +163,6 @@ export default function ConsultationForm({
 									<FormMessage />
 								</FormItem>
 							)}
-						/>
-						<FormField
-							control={form.control}
-							name="patientId"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Paciente</FormLabel>
-									<FormControl>
-										<ComboboxSelect
-											options={ListPatients}
-											value={field.value}
-											onChange={field.onChange}
-											description="Selecciona el paciente que deseas agendar"
-											placeholder="Selecciona un paciente"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
 						)}
 						/> */}
 
@@ -228,9 +175,8 @@ export default function ConsultationForm({
 									<FormControl>
 										<ComboboxSelect
 											options={ListPaymentMethods}
-											{...field}
-											value={field.value as string}
-											onChange={(value) => field.onChange(value as string)}
+											value={field.value || ""}
+											onChange={field.onChange}
 											description="Selecciona el método de pago"
 											placeholder="Selecciona un método de pago"
 										/>
@@ -242,7 +188,7 @@ export default function ConsultationForm({
 
 						<FormField
 							control={form.control}
-							name="description"
+							name="notes"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Descripción</FormLabel>

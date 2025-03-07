@@ -23,6 +23,7 @@ export const createAppointmentSchema = z.object({
     end: z.string().min(1, "La fecha y hora de fin son requeridas"),
     type: z.enum(["CONSULTA", "OTRO"]).optional(),
     notes: z.string().optional(),
+    paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"])
 }) satisfies z.ZodType<CreateAppointmentDto>;
 
 // Schema de validación para actualizar cita

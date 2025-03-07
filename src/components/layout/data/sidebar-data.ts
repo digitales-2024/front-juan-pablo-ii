@@ -289,11 +289,11 @@ export const sidebarData: SidebarData = {
               url: "/users",
               icon: User,
             },
-        /*     {
-              title: "Permisos",
-              url: "/permissions",
-              icon: KeyRound,
-            }, */
+            /*     {
+                  title: "Permisos",
+                  url: "/permissions",
+                  icon: KeyRound,
+                }, */
           ],
         },
       ],
@@ -331,12 +331,12 @@ export function getFilteredSidebarData(profile: Profile | null): SidebarData {
   let filteredNavGroups = [...sidebarData.navGroups];
 
   // Filtrar según el rol
-  if (userRole === "ADMINISTRATIVO") {
+  if (userRole === "ADMIN") {
     // Administrativo: Todo excepto "Accesos y Usuarios"
     filteredNavGroups = filteredNavGroups.filter(
       (group) => group.title !== "Accesos y Usuarios"
     );
-  } else if (userRole === "MEDICO") {
+  } else if (userRole === "DOCTOR") {
     // Médico: Solo "Registros Operativos"
     filteredNavGroups = filteredNavGroups.filter(
       (group) => group.title === "Registros Operativos"
