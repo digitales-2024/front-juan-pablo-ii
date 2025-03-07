@@ -1,14 +1,13 @@
 "use client";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import {
-  useFieldArray,
   useForm,
   // FieldErrors,
   // UseFormReturn,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { Plus, RefreshCcw } from "lucide-react";
+import { Receipt, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreatePrescriptionOrderForm } from "./CreatePrescriptionBillingOrderForm";
 import {
@@ -30,151 +29,186 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useBilling } from "@/app/(admin)/(payment)/orders/_hooks/useBilling";
-import { useSelectProductDispatch } from "../../../_hooks/useSelectProducts";
 import {
-  CreateProductSaleBillingDto,
-  CreateProductSaleBillingInput,
-  createProductSaleBillingSchema,
+  CreatePrescriptionBillingInput,
+  createPrescriptionBillingSchema,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getActiveStoragesByBranch } from "@/app/(admin)/(catalog)/storage/storages/_actions/storages.actions";
+import { toast } from "sonner";
+import { useManyProductsStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
+import { useServices } from "@/app/(admin)/services/_hooks/useServices";
+import { ConfirmOrderDialog } from "./ConfirmOrderDialog";
 
 const CREATE_OUTGOING_MESSAGES = {
-  button: "Crear salida",
-  title: "Registrar nueva salida",
-  description: "Rellena los campos para registrar una nueva salida",
-  success: "Salida creada exitosamente",
-  submitButton: "Crear salida",
+  button: "Generar venta",
+  title: "Registrar venta por receta",
+  description: "Rellena los campos para completar la venta de medicamentos según receta. Debes seleccionar los items para poder editar sus campos.",
+  success: "Venta por receta registrada exitosamente",
+  submitButton: "Procesar venta",
   cancel: "Cancelar",
 } as const;
 
 export function CreatePrescriptionBillingProcessDialog({
   prescription,
 }: {
-  prescription: PrescriptionWithPatient
+  prescription: PrescriptionWithPatient;
 }) {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
-  const isDesktop = useMediaQuery("(min-width: 640px)");
-  // const queryClient = useQueryClient();
-  const { createSaleOrderMutation } = useBilling();
-  const dispatch = useSelectProductDispatch();
+  const [isFetchingError, setIsFetchingError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  //type CreateProductSaleBillingInput = {
-  //   products: {
-  //       productId: string;
-  //       quantity: number;
-  //   }[];
-  //   storageId: string;
-  //   branchId: string;
-  //   currency: string;
-  //   paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
-  //   storageLocation?: string | undefined;
-  //   batchNumber?: string | undefined;
-  //   referenceId?: string | undefined;
-  //   notes?: string | undefined;
-  //   metadata?: Record<...> | undefined;
-  // }
-  const form = useForm<CreateProductSaleBillingInput>({
-    resolver: zodResolver(createProductSaleBillingSchema, undefined, {
-      raw: true, //to be able to use useFIeldArray
-    }),
-    defaultValues: {
-      storageId: undefined, //required
-      branchId: undefined, //required
-      currency: undefined, //required
-      paymentMethod: "CASH", //required
-      storageLocation: undefined,
-      batchNumber: undefined,
-      referenceId: undefined,
-      notes: undefined,
-      metadata: undefined,
-      products: [],
+  console.log('prescriptionMedicaments', prescription.prescriptionMedicaments)
+  const existentMedicamentsIds = prescription.prescriptionMedicaments.filter(product => product.id != undefined).map((product) => product.id!);
+  console.log('Prescription Medicaments Ids', existentMedicamentsIds)
+  const manyProductsStock = useManyProductsStock()
+  const { productStockQuery } = manyProductsStock(existentMedicamentsIds, prescription.id)
+  const { servicesQuery } = useServices();
+
+  // 5. Form y Field Array
+  const form = useForm<CreatePrescriptionBillingInput>({
+    resolver: zodResolver(
+      createPrescriptionBillingSchema
+    ),
+    defaultValues: async () => {
+      setIsLoading(true);
+      const result = await getActiveStoragesByBranch(prescription.branchId);
+      if ("error" in result) {
+        setIsFetchingError(true);
+        return {
+          patientId: prescription.patientId, //required
+          branchId: prescription.branchId, //required
+          currency: "PEN", //required
+          paymentMethod: "CASH", //required
+          storageLocation: undefined,
+          batchNumber: undefined,
+          referenceId: undefined,
+          notes: undefined,
+          metadata: undefined,
+          products: [],
+          services: prescription.prescriptionServices.length > 0 ? prescription.prescriptionServices.map((service) => ({
+            serviceId: service.id!,
+            quantity: service.quantity ?? 1,
+          }))
+          : [],
+        };
+      }
+      setIsFetchingError(false);
+      setIsLoading(false);
+      return {
+        patientId: prescription.patientId, //required
+        branchId: prescription.branchId, //required
+        currency: "PEN", //required
+        paymentMethod: "CASH", //required
+        storageLocation: undefined,
+        batchNumber: undefined,
+        referenceId: undefined,
+        notes: undefined,
+        metadata: undefined,
+        services: prescription.prescriptionServices.length > 0 ? prescription.prescriptionServices.map((service) => ({
+          serviceId: service.id!,
+          quantity: service.quantity ?? 1,
+        }))
+        : [],
+        // products:
+        products:
+          prescription.prescriptionMedicaments.length > 0
+            ? prescription.prescriptionMedicaments.map((product) => ({
+                productId: product.id!,
+                quantity: product.quantity ?? 1,
+                storageId: result[0].id ?? undefined,
+              }))
+            : [],
+      };
     },
   });
 
-  const formControl = form.control;
+  // const productFieldArray = useFieldArray({
+  //   control: form.control,
+  //   name: "products",
+  // });
 
-  const fieldArray = useFieldArray({
-    control: formControl,
-    name: "products",
-    // rules: {
-    //   minLength: 1,
-    // },
-  });
-  const { remove } = fieldArray;
+  // const serviceFieldArray = useFieldArray({
+  //   control: form.control,
+  //   name: "services",
+  // });
 
-  const handleClearProductList = useCallback(() => {
-    // this removes from the tanstack state management
-    dispatch({
-      type: "clear",
-    });
-    //THis removes from the react-hook-form arraylist
-    remove();
+  // 3. Contextos (useContext)
+  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const { createSaleOrderMutation } = useBilling();
+  // const { useStorageByBranchQuery } = useStorages();
+
+  // // 4. Queries y datos externos
+  // const [isPending, startTransition] = useTransition();
+  // const [defaultStorages, setDefaultStorages] = useState<DetailedStorage[]>([]);
+
+  // useEffect(() => {
+  //   startTransition(async () => {
+  //     const result = await getActiveStoragesByBranch(prescription.branchId);
+  //     if (!("error" in result)) {
+  //       setDefaultStorages(result);
+  //     }
+  //   });
+  // }, [prescription.branchId]);
+
+  // if (isPending) {
+  //   return (
+  //     <div className="flex items-center space-x-2">
+  //       <Skeleton className="h-9 w-24 animate-pulse rounded-md bg-secondary"></Skeleton>
+  //     </div>
+  //   );
+  // }
+
+  // if (defaultStorages.length === 0) {
+  //   return <div>No hay almacenes disponibles para esta sucursal</div>;
+  // }
+
+  // 6. Callbacks (useCallback)
+  // const handleClearProductList = useCallback(() => {
+  //   productFieldArray.remove();
+  // }, [productFieldArray]);
+
+  const handleOpenChange = useCallback((newOpen: boolean) => {
+    setOpen((prev) => (prev === newOpen ? prev : newOpen));
   }, []);
 
-  useEffect(() => {
-    if (!open) {
-      handleClearProductList();
-    }
-  }, [open, handleClearProductList]);
-
-  function handleSubmit(input: CreateProductSaleBillingDto) {
-    // console.log('Input received', input);
-    // console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
-    if (createSaleOrderMutation.isPending || isCreatePending) return;
-
-    //   {
-    //     "name": "INgreso regulacion",
-    //     "storageId": "61de3a1b-9538-48a0-8cdc-62edafcef760",
-    //     "date": "2025-02-11",
-    //     "state": true,
-    //     "description": "",
-    //     "referenceId": "",
-    //     "movement": [
-    //         {
-    //             "productId": "4d42f81a-2d5f-4bc5-8ad1-992c6a537934",
-    //             "quantity": 4
-    //         },
-    //         {
-    //             "productId": "397d68a1-cb47-4402-9546-0ab7b57ec93f",
-    //             "quantity": 2
-    //         }
-    //     ]
-    // }
-
-    startCreateTransition(() => {
-      createSaleOrderMutation.mutate(input, {
-        onSuccess: (res) => {
-          form.reset();
-          setOpen(false);
-        },
-        onError: (error) => {
-          if (error.message.includes("No autorizado")) {
-            setTimeout(() => {
-              form.reset();
-            }, 1000);
-          }
-        },
-      });
-    });
-  }
-
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
+    // handleClearProductList();
     form.reset();
-    handleClearProductList();
     setOpen(false);
-  };
+  }, [form]);
+
+  const onSubmit = useCallback(
+    (input: CreatePrescriptionBillingInput) => {
+      startCreateTransition(() => {
+        createSaleOrderMutation.mutate(input, {
+          onSuccess: () => {
+            form.reset();
+            setOpen(false);
+          },
+          onError: (error) => {
+            if (error.message.includes("No autorizado")) {
+              setTimeout(() => form.reset(), 1000);
+            }
+          },
+        });
+      });
+    },
+    [createSaleOrderMutation, form, startCreateTransition]
+  );
+
+  useEffect(() => {
+    if (isFetchingError) {
+      toast.error("Error al obtener los almacenes de la sucursal");
+    }
+  }, []);
   
-  //ACtivate only when form errors
-  // useEffect(() => {
-  //   if (form.formState.errors) {
-  //     console.log("Errores en el formulario", form.formState.errors);
-  //   }
-  // }, [form.formState.errors]);
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
-      <Button
+      {/* <Button
         type="submit"
         disabled={isCreatePending || createSaleOrderMutation.isPending}
         className="w-full"
@@ -183,7 +217,24 @@ export function CreatePrescriptionBillingProcessDialog({
           <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
         )}
         {CREATE_OUTGOING_MESSAGES.submitButton}
-      </Button>
+      </Button> */}
+
+      <ConfirmOrderDialog
+        onConfirm={async ()=>{ await form.handleSubmit(onSubmit)()}}
+        trigger={
+          <div>
+            {(isCreatePending || createSaleOrderMutation.isPending) && (
+              <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
+            )}
+            <span>
+              {CREATE_OUTGOING_MESSAGES.submitButton}
+            </span>
+          </div>
+        }
+        isLoading={isCreatePending || createSaleOrderMutation.isPending}
+        confirmationText="Confirmar"
+      >
+      </ConfirmOrderDialog>
       <Button
         type="button"
         variant="outline"
@@ -195,16 +246,55 @@ export function CreatePrescriptionBillingProcessDialog({
     </div>
   );
 
-  const TriggerButton = () => (
-    <Button onClick={() => setOpen(true)} variant="outline" size="sm">
-      <Plus className="size-4 mr-2" aria-hidden="true" />
+  const LoadingButton = () => {
+    return (
+      <Skeleton className="h-9 w-24 animate-pulse rounded-md bg-secondary"></Skeleton>
+  );}
+
+  const ErrorButtonSkeleton = () => {
+    return (
+      <Skeleton className="h-9 w-24 animate-pulse rounded-md bg-secondary text-center">Error</Skeleton>
+  );}
+
+  const TriggerButton = () => {
+    // if (isLoading || productStockQuery.isLoading || servicesQuery.isLoading) {
+    //   return (
+    //       <LoadingButton />
+    //   );
+    // }
+
+    return (
+    <Button
+      disabled={isFetchingError || productStockQuery.isError}
+      onClick={() => setOpen(true)}
+      variant="ghost"
+      size="sm"
+      aria-label="Open menu"
+      className="flex p-2 data-[state=open]:bg-muted text-sm bg-primary/10 hover:scale-105 hover:transition-all"
+    >
+      <Receipt className="text-primary !size-6" />
       {CREATE_OUTGOING_MESSAGES.button}
     </Button>
-  );
+    );
+  };
+
+  if (productStockQuery.isError || isFetchingError || servicesQuery.isError) {
+    toast.error("Error al obtener el stock de productos");
+    return <ErrorButtonSkeleton />;
+  }
+
+  if (productStockQuery.isLoading || isLoading || servicesQuery.isLoading) {
+    return <LoadingButton
+    />;
+  }
+
+  if (!productStockQuery.data || !servicesQuery.data) {
+    return <ErrorButtonSkeleton />;
+  }
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
           <TriggerButton />
         </DialogTrigger>
@@ -214,17 +304,19 @@ export function CreatePrescriptionBillingProcessDialog({
         >
           <DialogHeader>
             <DialogTitle>{CREATE_OUTGOING_MESSAGES.title}</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-balance">
               {CREATE_OUTGOING_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
           <CreatePrescriptionOrderForm
             form={form}
-            onSubmit={handleSubmit}
-            controlledFieldArray={fieldArray}
+            onSubmit={onSubmit}
+            // controlledProductFieldArray={productFieldArray}
+            // controlledServiceFieldArray={serviceFieldArray}
             prescription={prescription}
+            stockDataQuery={productStockQuery}
+            serviceDataQuery={servicesQuery}
           >
-            {/* <DevelopmentZodError form={form} /> */}
             <DialogFooter>
               <DialogFooterContent />
             </DialogFooter>
@@ -235,24 +327,26 @@ export function CreatePrescriptionBillingProcessDialog({
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={handleOpenChange}>
       <DrawerTrigger asChild>
         <TriggerButton />
       </DrawerTrigger>
       <DrawerContent key={open ? "open" : "closed"} className="overflow-y-auto">
         <DrawerHeader>
           <DrawerTitle>{CREATE_OUTGOING_MESSAGES.title}</DrawerTitle>
-          <DrawerDescription>
+          <DrawerDescription className="text-balance">
             {CREATE_OUTGOING_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
         <CreatePrescriptionOrderForm
           form={form}
-          onSubmit={handleSubmit}
-          controlledFieldArray={fieldArray}
+          onSubmit={onSubmit}
+          // controlledProductFieldArray={productFieldArray}
+          // controlledServiceFieldArray={serviceFieldArray}
           prescription={prescription}
+          stockDataQuery={productStockQuery}
+          serviceDataQuery={servicesQuery}
         >
-          {/* <DevelopmentZodError form={form} /> */}
           <DrawerFooter>
             <DialogFooterContent />
           </DrawerFooter>
@@ -261,31 +355,3 @@ export function CreatePrescriptionBillingProcessDialog({
     </Drawer>
   );
 }
-
-// function DevelopmentZodError({
-//   form,
-// }: {
-//   form: UseFormReturn<CreateProductSaleBillingInput>;
-// }) {
-//   console.log("Ingresando a DevelopmentZodError", process.env.NEXT_PUBLIC_ENV);
-//   if (process.env.NEXT_PUBLIC_ENV !== "development") return null;
-//   const [errors, setErrors] = useState<
-//     FieldErrors<CreateProductSaleBillingInput>
-//   >({});
-//   useEffect(() => {
-//     if (form.formState.errors) {
-//       setErrors(form.formState.errors);
-//     }
-//   }, [form.formState.errors]);
-//   return (
-//     <div>
-//       <div>
-//         {Object.keys(errors).map((key) => (
-//           <p key={key}>
-//             {key}: {errors[key as keyof CreateProductSaleBillingInput]?.message}
-//           </p>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
