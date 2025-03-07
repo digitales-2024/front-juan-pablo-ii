@@ -119,4 +119,4 @@ export async function reactivateServices(data: DeleteServicesDto): Promise<Delet
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido al reactivar los servicios" };
   }
-} 
+}
