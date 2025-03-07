@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 export default async function PageUser() {
 	const response = await getUsers();
+	/* console.log("🚀 ~ PageUser ~ response:", response) */
 
 	if (!response || 'error' in response) {
 		notFound();

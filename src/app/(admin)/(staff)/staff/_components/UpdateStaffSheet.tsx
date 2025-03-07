@@ -23,7 +23,11 @@ import {
   SheetFooter,
   SheetClose,
 } from "@/components/ui/sheet";
-import { Staff, updateStaffSchema, UpdateStaffDto } from "../_interfaces/staff.interface";
+import {
+  Staff,
+  updateStaffSchema,
+  UpdateStaffDto,
+} from "../_interfaces/staff.interface";
 import { PencilIcon, RefreshCcw } from "lucide-react";
 import { useStaff } from "../_hooks/useStaff";
 import { useStaffTypes } from "../_hooks/useStaffTypes";
@@ -43,12 +47,11 @@ interface UpdateStaffSheetProps {
   showTrigger?: boolean;
 }
 
-
 export function UpdateStaffSheet({
   staff,
   open: controlledOpen,
   onOpenChange,
-  showTrigger = true
+  showTrigger = true,
 }: UpdateStaffSheetProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const { updateMutation } = useStaff();
@@ -75,19 +78,22 @@ export function UpdateStaffSheet({
     if (updateMutation.isPending) return;
 
     try {
-      await updateMutation.mutateAsync({
-        id: staff.id,
-        data,
-      }, {
-        onSuccess: () => {
-          setOpen(false);
-          form.reset();
+      await updateMutation.mutateAsync(
+        {
+          id: staff.id,
+          data,
         },
-        onError: (error) => {
-          console.error("Error al actualizar personal:", error);
-          toast.error(error.message || "Error al actualizar el personal");
-        },
-      });
+        {
+          onSuccess: () => {
+            setOpen(false);
+            form.reset();
+          },
+          onError: (error) => {
+            console.error("Error al actualizar personal:", error);
+            toast.error(error.message || "Error al actualizar el personal");
+          },
+        }
+      );
     } catch (error) {
       console.error("Error en onSubmit:", error);
     }
@@ -147,11 +153,7 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>DNI</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="12345678"
-                        maxLength={8}
-                        {...field}
-                      />
+                      <Input placeholder="12345678" maxLength={8} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -165,10 +167,7 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>Fecha de Nacimiento</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                      />
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -200,10 +199,7 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>Teléfono (opcional)</FormLabel>
                     <FormControl>
-                      <PhoneInput
-                        placeholder="999888777"
-                        {...field}
-                      />
+                      <PhoneInput placeholder="999888777" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -216,7 +212,10 @@ export function UpdateStaffSheet({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de Personal</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Seleccione un tipo de personal" />
@@ -242,16 +241,42 @@ export function UpdateStaffSheet({
                   <FormItem>
                     <FormLabel>CMP (opcional)</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Número de colegiatura"
-                        {...field}
-                      />
+                      <Input placeholder="Número de colegiatura" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
+              {/* funcion para agregar usuario al personal */}
+              <FormField
+                control={form.control}
+                name="staffTypeId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Agregar Usuario del sistema</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione un tipo de personal" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {staffTypes?.map((type) => (
+                          <SelectItem key={type.id} value={type.id}>
+                            {type.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* fin */}
               <SheetFooter>
                 <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                   <SheetClose asChild>
@@ -259,10 +284,7 @@ export function UpdateStaffSheet({
                       Cancelar
                     </Button>
                   </SheetClose>
-                  <Button
-                    type="submit"
-                    disabled={updateMutation.isPending}
-                  >
+                  <Button type="submit" disabled={updateMutation.isPending}>
                     {updateMutation.isPending ? (
                       <>
                         <RefreshCcw className="mr-2 size-4 animate-spin" />
@@ -280,4 +302,4 @@ export function UpdateStaffSheet({
       </SheetContent>
     </Sheet>
   );
-} 
+}
