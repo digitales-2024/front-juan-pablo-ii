@@ -17,6 +17,8 @@ import {
   Service,
   Staff,
 } from "../_interfaces/updateHistory.interface";
+import logoNota from "@/assets/images/logoNota.jpg";
+import Image from "next/image";
 
 interface PrescriptionModalProps {
   isOpen: boolean;
@@ -67,43 +69,295 @@ export function PrescriptionModal({
     setIsGeneratingPDF(true);
 
     try {
-      // 1. Hacer copia del contenido para no afectar la visualización
-      const printableDiv = prescriptionRef.current.cloneNode(true) as HTMLDivElement;
+      // Crear una nueva versión del contenido optimizada para PDF
+      const clonedContent = prescriptionRef.current.cloneNode(
+        true
+      ) as HTMLElement;
 
-      // 2. Aplicar estilos de impresión óptimos
-      printableDiv.style.width = "210mm";
-      printableDiv.style.backgroundColor = "#ffffff";
-      printableDiv.style.padding = "10mm";
+      // Remover el botón de impresión
+      const buttonElement = clonedContent.querySelector("button");
+      if (buttonElement) {
+        const parentElement = buttonElement.closest(".flex.justify-between");
+        if (parentElement) {
+          parentElement.removeChild(buttonElement);
+        }
+      }
 
-      // 3. Agregar a DOM temporalmente (invisible)
-      printableDiv.style.position = "absolute";
-      printableDiv.style.left = "-9999px";
-      document.body.appendChild(printableDiv);
+      // Configurar el contenedor para captura
+      const tempContainer = document.createElement("div");
+      tempContainer.appendChild(clonedContent);
+      tempContainer.style.position = "absolute";
+      tempContainer.style.left = "-9999px";
+      tempContainer.style.top = "-9999px";
+      // Configurar para A5 (148mm x 210mm)
+      tempContainer.style.width = "148mm"; // Ancho A5
+      document.body.appendChild(tempContainer);
 
-      // 4. Esperar a que se apliquen los estilos
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Color corporativo para usar consistentemente
+      const corporateColor = "hsl(197, 99%, 45%)";
+      const corporateColorRGB = "0, 157, 209";
 
-      // 5. Capturar con mejor calidad
-      const canvas = await html2canvas(printableDiv, {
-        scale: 2.5,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#ffffff",
-        logging: false,
+      // SOLUCIÓN MEJORADA PARA EL LOGO
+      // Reemplazar la imagen con una versión ampliada
+      const logoImgContainer = clonedContent.querySelector(
+        ".w-24.sm\\:w-32.flex-shrink-0"
+      );
+      const logoImg = clonedContent.querySelector<HTMLImageElement>('img[alt="Logo Hospital"]')!;
+
+      if (logoImgContainer && logoImg) {
+        // Eliminar restricciones de tamaño en el contenedor
+        (logoImgContainer as HTMLElement).style.width = "auto";
+        (logoImgContainer as HTMLElement).style.maxWidth = "100%"; // Mayor ancho máximo
+        (logoImgContainer as HTMLElement).classList.remove(
+          "w-24",
+          "sm:w-32",
+          "flex-shrink-0"
+        );
+
+        // Crear imagen nueva con dimensiones más grandes (remplazar la actual)
+        const newImg = document.createElement("img");
+        newImg.src = logoImg.src;
+        newImg.alt = "Logo Hospital";
+        // Para A5, ajustamos el tamaño proporcionalmente
+        newImg.style.width = "90px"; // Reducido a la mitad (era 180px)
+        newImg.style.height = "auto";
+        newImg.style.maxWidth = "100%";
+        newImg.style.objectFit = "contain";
+        newImg.style.display = "block";
+        newImg.style.marginBottom = "8px";
+
+        // Aumentar contraste y saturación para mejor visibilidad
+        newImg.style.filter = "contrast(1.3) saturate(1.2)";
+
+        // Reemplazar la imagen original con la nueva
+        logoImg.parentNode?.replaceChild(newImg, logoImg);
+
+        // Asegurar que la imagen esté cargada antes de continuar
+        await new Promise<void>((resolve) => {
+          if (newImg.complete) {
+            resolve();
+          } else {
+            newImg.onload = () => resolve();
+            newImg.onerror = () => {
+              console.error("Error al cargar la imagen del logo");
+              resolve();
+            };
+          }
+        });
+      }
+
+      // Ajustar el grid de encabezado para dar más espacio al logo
+      const headerGrid = clonedContent.querySelector(
+        ".grid.grid-cols-1.sm\\:grid-cols-2.gap-4.border-b.pb-4"
+      );
+      if (headerGrid) {
+        (headerGrid as HTMLElement).style.display = "flex";
+        (headerGrid as HTMLElement).style.flexDirection = "row";
+        (headerGrid as HTMLElement).style.justifyContent = "space-between";
+        (headerGrid as HTMLElement).style.alignItems = "center";
+      }
+
+      // Aplicar estilos mejorados para PDF - Más profesional y compacto
+      const elementsToStyle = clonedContent.querySelectorAll(
+        "div, table, h4, p, th, td"
+      );
+      elementsToStyle.forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        
+        if (htmlEl.tagName === "H4") {
+          htmlEl.style.color = corporateColor;
+          htmlEl.style.fontSize = "12px";
+          htmlEl.style.marginBottom = "3px";
+          htmlEl.style.borderBottom = "none";
+          htmlEl.style.paddingBottom = "2px";
+          htmlEl.style.fontWeight = "600";
+        } else if (htmlEl.classList.contains("bg-gray-50")) {
+          htmlEl.style.background = "#f8faff";
+          htmlEl.style.borderRadius = "4px";
+          htmlEl.style.border = "none";
+          htmlEl.style.padding = "6px";
+        } else if (htmlEl.tagName === "TABLE") {
+          htmlEl.style.borderCollapse = "collapse";
+          htmlEl.style.width = "100%";
+          htmlEl.style.fontSize = "9px";
+        } else if (htmlEl.tagName === "TH") {
+          htmlEl.style.backgroundColor = "hsla(197, 85%, 96%, 0.7)";
+          htmlEl.style.color = "hsl(197, 99%, 35%)";
+          htmlEl.style.padding = "4px 3px";
+          htmlEl.style.fontSize = "9px";
+          htmlEl.style.fontWeight = "500";
+        } else if (htmlEl.tagName === "TD") {
+          htmlEl.style.padding = "3px";
+          htmlEl.style.borderBottom = "1px solid #f0f7ff";
+          htmlEl.style.fontSize = "9px";
+        } else if (htmlEl.tagName === "P") {
+          htmlEl.style.fontSize = "9px";
+          htmlEl.style.margin = "2px 0";
+        }
       });
 
-      // 6. Limpiar
-      document.body.removeChild(printableDiv);
+      // Aplicar líneas divisorias con el color corporativo y más juntas
+      const headerDiv = clonedContent.querySelector(
+        ".grid.grid-cols-1.sm\\:grid-cols-2.gap-4.border-b.pb-4"
+      );
+      if (headerDiv) {
+        headerDiv.classList.remove("border-b");
+        (
+          headerDiv as HTMLElement
+        ).style.borderBottom = `1px solid ${corporateColor}`;
+        (headerDiv as HTMLElement).style.paddingBottom = "8px"; // Menos padding para A5
+        (headerDiv as HTMLElement).style.marginBottom = "8px"; // Menos margen
+      }
 
-      // 7. Crear PDF optimizado
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
+      const patientDiv = clonedContent.querySelector(".border-b.pb-4");
+      if (patientDiv) {
+        patientDiv.classList.remove("border-b");
+        (
+          patientDiv as HTMLElement
+        ).style.borderBottom = `1px solid ${corporateColor}`;
+        (patientDiv as HTMLElement).style.paddingBottom = "8px"; // Menos padding para A5
+        (patientDiv as HTMLElement).style.marginBottom = "8px"; // Menos margen
+      }
+
+      // Eliminar otros bordes que no son los principales
+      const otherBorderElements = clonedContent.querySelectorAll(
+        ".border-b:not(:first-child):not(:nth-child(2)), .border-t:not(.border-t.border-black.mt-16)"
+      );
+      otherBorderElements.forEach((el) => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.classList.remove("border-b", "border-t");
+        htmlEl.style.borderBottom = "none";
+        htmlEl.style.borderTop = "none";
+      });
+
+      // Preservar el borde de la firma con el color corporativo
+      const signatureBorder = clonedContent.querySelector(
+        ".border-t.border-black.mt-16"
+      );
+      if (signatureBorder) {
+        (signatureBorder as HTMLElement).style.borderTopColor = corporateColor;
+        (signatureBorder as HTMLElement).style.borderTopWidth = "1px";
+        (signatureBorder as HTMLElement).style.borderTopStyle = "solid";
+        (signatureBorder as HTMLElement).style.marginTop = "25px"; // Más cerca para A5
+        (signatureBorder as HTMLElement).style.paddingTop = "6px";
+        (signatureBorder as HTMLElement).style.width = "120px"; // Más pequeño para A5
+        (signatureBorder as HTMLElement).style.marginLeft = "auto"; // Para mantenerlo a la derecha
+      }
+
+      // Agregar líneas adicionales a elementos de sección para mayor coherencia
+      const sectionDivs = clonedContent.querySelectorAll(".space-y-4 > div");
+      sectionDivs.forEach((section, index) => {
+        const htmlSection = section as HTMLElement;
+        if (index > 0 && index < sectionDivs.length - 2) {
+          // No aplicar a primera ni últimas secciones
+          htmlSection.style.borderBottom = `1px dotted hsla(${corporateColorRGB}, 0.3)`;
+          htmlSection.style.paddingBottom = "6px"; // Menos para A5
+          htmlSection.style.marginBottom = "6px"; // Menos para A5
+        }
+      });
+
+      // Agregar título centralizado para la receta - Más arriba y compacto
+      const header = document.createElement("div");
+      header.style.textAlign = "center";
+      header.style.marginBottom = "6px"; // Menos espacio para A5
+      header.style.paddingBottom = "0";
+      header.style.marginTop = "-8px"; // Moverlo más arriba
+
+      const title = document.createElement("h2");
+      title.textContent = "NOTA MÉDICA";
+      title.style.fontSize = "15px"; // Más pequeño para A5
+      title.style.fontWeight = "bold";
+      title.style.color = corporateColor; // Usar el color corporativo
+      title.style.margin = "0";
+      title.style.fontFamily = "Arial, sans-serif";
+
+      header.appendChild(title);
+      clonedContent.insertBefore(header, clonedContent.firstChild);
+
+      // Mejorar la sección del médico tratante
+      const doctorInfo = clonedContent.querySelector(".text-right");
+      if (doctorInfo) {
+        const doctorTitle = doctorInfo.querySelector("h4");
+        if (doctorTitle) {
+          doctorTitle.textContent = "Médico"; // Más simple
+          doctorTitle.style.fontSize = "10px"; // Más pequeño para A5
+          doctorTitle.style.color = corporateColor;
+          doctorTitle.style.fontWeight = "500";
+          doctorTitle.style.marginBottom = "2px";
+        }
+      }
+
+      // Limpiar los textos de los encabezados (quitar los iconos)
+      const sectionTitles = clonedContent.querySelectorAll("h4");
+      sectionTitles.forEach((title) => {
+        if (title.textContent?.includes("👤")) {
+          title.textContent = "Datos del Paciente";
+        } else if (title.textContent?.includes("🔍")) {
+          title.textContent = "Diagnóstico";
+        } else if (title.textContent?.includes("⚕️")) {
+          title.textContent = "Servicios Recetados";
+        } else if (title.textContent?.includes("📝")) {
+          title.textContent = "Medicamentos Recetados";
+        }
+      });
+
+      // Optimizar contenedor principal - Más compacto
+      clonedContent.style.fontFamily = "Arial, sans-serif";
+      clonedContent.style.padding = "8mm"; // Menos padding para A5
+      clonedContent.style.fontSize = "9px"; // Más pequeño para A5
+      clonedContent.style.background = "#ffffff"; // Sin gradiente
+      clonedContent.style.width = "132mm"; // Ancho apropiado para A5
+      clonedContent.style.boxSizing = "border-box";
+      clonedContent.style.borderRadius = "0";
+
+      // Ajustar espaciado entre secciones principales
+      const mainSections = clonedContent.querySelectorAll(
+        ".space-y-6, .space-y-4"
+      );
+      mainSections.forEach((section) => {
+        const htmlSection = section as HTMLElement;
+        htmlSection.classList.remove("space-y-6", "space-y-4");
+        htmlSection.classList.add("space-y-2"); // Menos espacio para A5
+        htmlSection.style.gap = "4px"; // Aún menos espacio
+      });
+
+      // Ajustar espacios en el grid
+      const gridDivs = clonedContent.querySelectorAll(".grid.gap-4");
+      gridDivs.forEach((grid) => {
+        const htmlGrid = grid as HTMLElement;
+        htmlGrid.classList.remove("gap-4");
+        htmlGrid.classList.add("gap-1"); // Menos gap para A5
+      });
+
+      // Capturar como imagen con mayor calidad
+      const canvas = await html2canvas(clonedContent, {
+        scale: 3, // Mayor escala para mejor calidad
+        logging: false,
+        backgroundColor: "#ffffff",
+        useCORS: true, // Importante para imágenes externas
+        allowTaint: true, // Permitir imágenes de diferentes dominios
+        imageTimeout: 5000, // Más tiempo para cargar imágenes
+      });
+
+      document.body.removeChild(tempContainer);
+
+      // Generar PDF con mejor calidad en tamaño A5
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a5", // Cambiar a formato A5
+        compress: true,
+      });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
 
+      // Calcular altura proporcional
+      const aspectRatio = canvas.height / canvas.width;
+      const pdfHeight = pdfWidth * aspectRatio;
+
+      // Añadir imagen al PDF
       pdf.addImage(
-        imgData,
+        canvas.toDataURL("image/png", 1.0), // Calidad máxima
         "PNG",
         0,
         0,
@@ -111,9 +365,66 @@ export function PrescriptionModal({
         pdfHeight
       );
 
-      pdf.save(`Receta_Medica_${patient?.name}_${patient?.lastName}.pdf`);
+      // Manejar múltiples páginas si es necesario
+      if (pdfHeight > 210) {
+        // A5 altura = 210mm
+        let heightLeft = pdfHeight - 210;
+        let position = -210;
+
+        while (heightLeft > 0) {
+          pdf.addPage();
+          pdf.addImage(
+            canvas.toDataURL("image/png", 1.0),
+            "PNG",
+            0,
+            position,
+            pdfWidth,
+            pdfHeight
+          );
+
+          position -= 210;
+          heightLeft -= 210;
+        }
+      }
+
+      // Añadir borde decorativo más delicado en cada página
+      const pageCount = pdf.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+
+        // Borde más sutil con color corporativo
+        pdf.setDrawColor(
+          parseInt(corporateColorRGB.split(",")[0]),
+          parseInt(corporateColorRGB.split(",")[1]),
+          parseInt(corporateColorRGB.split(",")[2])
+        );
+        pdf.setLineWidth(0.3); // Línea más fina
+
+        // Borde completo pero sutil
+        pdf.rect(3, 3, pdfWidth - 6, pdf.internal.pageSize.getHeight() - 6);
+
+        // Añadir pie de página
+        pdf.setFontSize(6); // Más pequeño para A5
+        pdf.setTextColor(120, 120, 120);
+
+        // Si hay más de una página, añadir indicador
+        if (pageCount > 1) {
+          pdf.text(
+            `Página ${i} de ${pageCount}`,
+            pdfWidth / 2,
+            pdf.internal.pageSize.getHeight() - 7,
+            { align: "center" }
+          );
+        }
+      }
+
+      // Guardar PDF
+      pdf.save(`Nota_Medica_${patient?.name}_${patient?.lastName}.pdf`);
     } catch (error) {
       console.error("Error al generar PDF:", error);
+      alert(
+        "Ocurrió un error al generar el PDF. Por favor intente nuevamente."
+      );
     } finally {
       setIsGeneratingPDF(false);
     }
@@ -139,52 +450,63 @@ export function PrescriptionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-3xl">
-        <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden">
+        <div className="max-h-[calc(100dvh-8rem)] overflow-y-auto p-2 sm:p-4">
           <DialogHeader>
             <DialogTitle>Nota Médica</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6 p-4" ref={prescriptionRef}>
+          <div className="space-y-6" ref={prescriptionRef}>
             {/* Encabezado de la Receta */}
-            <div className="grid grid-cols-2 gap-4 border-b pb-4">
-              <div className="flex items-start space-x-4">
-                <img
-                  src="https://pub-c8a9c1f826c540b981f5cfb49c3a55ea.r2.dev/1fb4f92d-ff2d-4b39-a3da-9c3139a9c2d0.webp"
-                  alt="Logo Hospital"
-                  className="w-32 object-contain"
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b pb-4">
+              <div className="flex items-start space-x-2 sm:space-x-4">
+                <div className="w-24 sm:w-32 flex-shrink-0">
+                  <Image
+                    src={logoNota}
+                    alt="Logo Hospital"
+                    className="w-full h-auto object-contain"
+                    width={140}
+                    height={70}
+                  />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">{branchInfo?.name}</p>
-                  <p className="text-sm text-gray-600">{branchInfo?.address}</p>
+                  <p className="text-xs sm:text-sm font-medium">
+                    {branchInfo?.name}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-600">
+                    {branchInfo?.address}
+                  </p>
                 </div>
               </div>
-              <div className="text-right">
+
+              <div className="text-right mt-2 sm:mt-0">
                 <h4 className="font-semibold">Médico Tratante</h4>
-                <p className="text-sm">{staffInfo?.name}</p>
-                <p className="text-sm text-gray-600">Cod: {staffInfo?.cmp}</p>
+                <p className="text-xs sm:text-sm">{staffInfo?.name}</p>
+                <p className="text-xs sm:text-sm text-gray-600">
+                  Cod: {staffInfo?.cmp}
+                </p>
               </div>
             </div>
 
             {/* Datos del Paciente */}
             <div className="border-b pb-4">
-              <h4 className="font-semibold mb-2">Datos del Paciente</h4>
-              <div className="grid grid-cols-2 gap-4">
+              <h4 className="font-semibold mb-2">👤 Datos del Paciente</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium">Nombre: </span>
                     {patient.name} {patient.lastName}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium">DNI: </span>
                     {patient.dni}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium">Teléfono: </span>
                     {patient.phone}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm">
                     <span className="font-medium">Dirección: </span>
                     {patient.address}
                   </p>
@@ -197,8 +519,8 @@ export function PrescriptionModal({
               {/* Descripción/Diagnóstico */}
               {prescription.description && (
                 <div>
-                  <h4 className="font-semibold mb-2">Diagnóstico</h4>
-                  <p className="text-sm bg-gray-50 p-3 rounded">
+                  <h4 className="font-semibold mb-2">🔍 Diagnóstico</h4>
+                  <p className="text-xs sm:text-sm bg-gray-50 p-3 rounded">
                     {prescription.description}
                   </p>
                 </div>
@@ -207,11 +529,11 @@ export function PrescriptionModal({
               {/* Servicios Adicionales */}
               {prescription.prescriptionServices?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold mb-2">Servicios Recetados</h4>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <table className="w-full">
+                  <h4 className="font-semibold mb-2">⚕️ Servicios Recetados</h4>
+                  <div className="bg-gray-50 p-2 sm:p-3 rounded overflow-x-auto">
+                    <table className="w-full min-w-[300px]">
                       <thead>
-                        <tr className="text-sm text-gray-600 border-b">
+                        <tr className="text-xs sm:text-sm text-gray-600 border-b">
                           <th className="text-left py-2">Servicio</th>
                           <th className="text-left py-2">Cantidad</th>
                           <th className="text-left py-2">Descripción</th>
@@ -220,9 +542,15 @@ export function PrescriptionModal({
                       <tbody>
                         {prescription.prescriptionServices.map((item) => (
                           <tr key={item.id} className="border-b last:border-0">
-                            <td className="py-2">{item.name}</td>
-                            <td className="py-2">{item.quantity} Uni</td>
-                            <td className="py-2">{item.description}</td>
+                            <td className="py-2 text-xs sm:text-sm">
+                              {item.name}
+                            </td>
+                            <td className="py-2 text-xs sm:text-sm">
+                              {item.quantity} Uni
+                            </td>
+                            <td className="py-2 text-xs sm:text-sm">
+                              {item.description}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -234,11 +562,13 @@ export function PrescriptionModal({
               {/* Medicamentos Recetados */}
               {prescription.prescriptionMedicaments?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold mb-2">Medicamentos Recetados</h4>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <table className="w-full">
+                  <h4 className="font-semibold mb-2">
+                    📝 Medicamentos Recetados
+                  </h4>
+                  <div className="bg-gray-50 p-2 sm:p-3 rounded overflow-x-auto">
+                    <table className="w-full min-w-[300px]">
                       <thead>
-                        <tr className="text-sm text-gray-600 border-b">
+                        <tr className="text-xs sm:text-sm text-gray-600 border-b">
                           <th className="text-left py-2">Medicamento</th>
                           <th className="text-left py-2">Cantidad</th>
                           <th className="text-left py-2">Descripción</th>
@@ -247,9 +577,15 @@ export function PrescriptionModal({
                       <tbody>
                         {prescription.prescriptionMedicaments.map((item) => (
                           <tr key={item.id} className="border-b last:border-0">
-                            <td className="py-2">{item.name}</td>
-                            <td className="py-2">{item.quantity} Uni</td>
-                            <td className="py-2">{item.description}</td>
+                            <td className="py-2 text-xs sm:text-sm">
+                              {item.name}
+                            </td>
+                            <td className="py-2 text-xs sm:text-sm">
+                              {item.quantity} Uni
+                            </td>
+                            <td className="py-2 text-xs sm:text-sm">
+                              {item.description}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -259,19 +595,23 @@ export function PrescriptionModal({
               )}
 
               {/* Fecha y Firma */}
-              <div className="flex justify-between items-end">
-                <div>
-                  <span className="text-sm text-gray-600">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mt-4">
+                <div className="mb-3 sm:mb-0">
+                  <span className="text-xs sm:text-sm text-gray-600">
                     Fecha de emisión:{" "}
                     {formatDate(prescription.registrationDate)}
                   </span>
                 </div>
-                <Button onClick={handlePrintPrescription} disabled={isGeneratingPDF} className="ml-auto">
+                <Button
+                  onClick={handlePrintPrescription}
+                  disabled={isGeneratingPDF}
+                  className="w-full sm:w-auto"
+                >
                   {isGeneratingPDF ? (
                     "Generando PDF..."
                   ) : (
                     <>
-                      <Printer className="w-4 h-4 mr-2" /> Imprimir Receta
+                      <Printer className="w-4 h-4 mr-2" /> Imprimir Nota Medica
                     </>
                   )}
                 </Button>
@@ -279,7 +619,9 @@ export function PrescriptionModal({
 
               <div className="text-right">
                 <div className="border-t border-black mt-16 pt-2 inline-block">
-                  <p className="text-sm font-medium">Firma del Médico</p>
+                  <p className="text-xs sm:text-sm font-medium">
+                    Firma del Médico
+                  </p>
                   <p className="text-xs text-gray-600">{staffInfo?.name}</p>
                 </div>
               </div>

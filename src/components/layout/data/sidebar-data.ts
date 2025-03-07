@@ -6,7 +6,7 @@ import {
   ClipboardType,
   Clock,
   DollarSign,
-
+  FileHeart,
   FileText,
   Handshake,
   Home,
@@ -18,7 +18,6 @@ import {
   PackageOpen,
   PackagePlus,
   PackageSearch,
-  Pill,
   ShieldBan,
   ShieldCheck,
   ShieldPlus,
@@ -32,7 +31,9 @@ import {
   Warehouse,
 } from "lucide-react";
 import { type SidebarData } from "../types";
+import { type Profile } from "@/app/(auth)/sign-in/_interfaces/auth.interface";
 
+// Datos completos de la barra lateral
 export const sidebarData: SidebarData = {
   user: {
     name: "satnaing",
@@ -51,12 +52,12 @@ export const sidebarData: SidebarData = {
         {
           title: "Calendario Citas",
           url: "/appointments-schedule",
-          icon: Handshake,
+          icon: CalendarPlus,
         },
         {
           title: "Consultas",
           url: "/consultations",
-          icon: CalendarPlus,
+          icon: Handshake,
         },
       ],
     },
@@ -136,9 +137,9 @@ export const sidebarData: SidebarData = {
           icon: DollarSign,
           items: [
             {
-              title: "Recetas",
+              title: "Notas medicas",
               url: "/prescriptions",
-              icon: Pill,
+              icon: FileHeart,
             },
             {
               title: "Órdenes",
@@ -288,14 +289,67 @@ export const sidebarData: SidebarData = {
               url: "/users",
               icon: User,
             },
-        /*     {
-              title: "Permisos",
-              url: "/permissions",
-              icon: KeyRound,
-            }, */
+            /*     {
+                  title: "Permisos",
+                  url: "/permissions",
+                  icon: KeyRound,
+                }, */
           ],
         },
       ],
     },
   ],
 };
+
+/**
+ * Función que filtra los elementos de la barra lateral según el rol del usuario
+ * @param profile - Perfil del usuario actual
+ * @returns Datos filtrados de la barra lateral
+ */
+export function getFilteredSidebarData(profile: Profile | null): SidebarData {
+  // Si no hay perfil, mostrar estructura básica
+  if (!profile) {
+    return sidebarData;
+  }
+
+  // Si es superadmin, mostrar todo
+  if (profile.isSuperAdmin) {
+    return {
+      user: {
+        name: profile.name,
+        email: profile.email,
+        avatar: "/avatars/shadcn.jpg",
+      },
+      navGroups: sidebarData.navGroups
+    };
+  }
+
+  // Obtener el rol principal del usuario
+  const userRole = profile.roles.length > 0 ? profile.roles[0].name : "";
+
+  // Crear una copia de los grupos de navegación
+  let filteredNavGroups = [...sidebarData.navGroups];
+
+  // Filtrar según el rol
+  if (userRole === "ADMIN") {
+    // Administrativo: Todo excepto "Accesos y Usuarios"
+    filteredNavGroups = filteredNavGroups.filter(
+      (group) => group.title !== "Accesos y Usuarios"
+    );
+  } else if (userRole === "DOCTOR") {
+    // Médico: Solo "Registros Operativos"
+    filteredNavGroups = filteredNavGroups.filter(
+      (group) => group.title === "Registros Operativos"
+    );
+  }
+
+  // Retornar los datos filtrados
+  return {
+    user: {
+      name: profile.name,
+      email: profile.email,
+      avatar: "/avatars/shadcn.jpg",
+    },
+    navGroups: filteredNavGroups,
+  };
+}

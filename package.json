@@ -86,5 +86,10 @@
 	},
 	"overrides": {
 		"react-is": "^19.0.0-rc"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"core-js"
+		]
 	}
 }
