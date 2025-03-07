@@ -50,6 +50,7 @@ type ComboboxProps<T> = {
   align?: "start" | "center" | "end"; //(typeof ALIGN_OPTIONS)[number];
   popoverContentClassName?: string;
   total?: number;
+  regexInput?: RegExp;
 };
 
 const popOverStyles = {
@@ -75,6 +76,7 @@ export function SearchCombobox<T = unknown>({
   align,
   popoverContentClassName,
   total,
+  regexInput,
 }: ComboboxProps<T>) {
   const [open, setOpenState] = React.useState(false);
   const { isError, isLoading, isLoadingError, error, data, refetch } = queryState;
@@ -88,7 +90,14 @@ export function SearchCombobox<T = unknown>({
   const more = total ? total - items.length : 0;
 
   const handleOnSearchChange = useDebouncedCallback((value: string) => {
-    onSearchChange?.(value);
+    if (regexInput) {
+      // Only call onSearchChange if the value matches the regex pattern or is empty
+      if (regexInput.test(value) || value === "") {
+        onSearchChange?.(value);
+      }
+    } else {
+      onSearchChange?.(value);
+    }
   }, 300) as (value: string) => void;
 
   function setOpen(isOpen: boolean) {
@@ -129,67 +138,67 @@ export function SearchCombobox<T = unknown>({
             {isError && <CommandEmpty>{error?.message}</CommandEmpty>}
             {isLoadingError && <CommandEmpty>{warningsMessages.loadingError}</CommandEmpty>}
             {
-                isLoading && <CommandGroup>
-                    <SmallLoading></SmallLoading>
-                </CommandGroup>
+          isLoading && <CommandGroup>
+              <SmallLoading></SmallLoading>
+          </CommandGroup>
             }
             {
-                isError && <CommandGroup>
-                    <SmallErrorMessage error={error} reset={refetch}></SmallErrorMessage>
-                </CommandGroup>
+          isError && <CommandGroup>
+              <SmallErrorMessage error={error} reset={refetch}></SmallErrorMessage>
+          </CommandGroup>
             }
             {
-                isLoadingError && <CommandGroup>
-                    <SmallErrorMessage error={error} reset={refetch}></SmallErrorMessage>
-                </CommandGroup>
+          isLoadingError && <CommandGroup>
+              <SmallErrorMessage error={error} reset={refetch}></SmallErrorMessage>
+          </CommandGroup>
             }
             {!isLoading && !isError && items.length === 0 && <CommandGroup>
-                    <NotFoundSearchResults></NotFoundSearchResults>
-                </CommandGroup>}
+              <NotFoundSearchResults></NotFoundSearchResults>
+          </CommandGroup>}
             {
               data && <CommandGroup>
-                {unselect && (
-                  <CommandItem
-                    key="unselect"
-                    value=""
-                    onSelect={() => {
-                      onSelect("");
-                      setOpen(false);
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        value === "" ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {unselectMsg}
-                  </CommandItem>
+          {unselect && (
+            <CommandItem
+              key="unselect"
+              value=""
+              onSelect={() => {
+                onSelect("");
+                setOpen(false);
+              }}
+            >
+              <Check
+                className={cn(
+            "mr-2 h-4 w-4",
+            value === "" ? "opacity-100" : "opacity-0"
                 )}
-                {items.map((item) => {
-                  const isSelected =
-                    value === item.value || selected.includes(item.value);
-                  return (
-                    <CommandItem
-                      key={item.value}
-                      value={item.value}
-                      keywords={[item.label]}
-                      onSelect={(value) => {
-                        onSelect(value, item.label);
-                        setOpen(false);
-                      }}
-                      disabled={isSelected}
-                    >
-                      {item.label}
-                      <Check
-                        className={cn(
-                          "ml-auto h-4 w-4",
-                          isSelected ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                    </CommandItem>
-                  );
-                })}
+              />
+              {unselectMsg}
+            </CommandItem>
+          )}
+          {items.map((item) => {
+            const isSelected =
+              value === item.value || selected.includes(item.value);
+            return (
+              <CommandItem
+                key={item.value}
+                value={item.value}
+                keywords={[item.label]}
+                onSelect={(value) => {
+            onSelect(value, item.label);
+            setOpen(false);
+                }}
+                disabled={isSelected}
+              >
+                {item.label}
+                <Check
+            className={cn(
+              "ml-auto h-4 w-4",
+              isSelected ? "opacity-100" : "opacity-0"
+            )}
+                />
+              </CommandItem>
+            );
+          })}
               </CommandGroup>
             }
           </CommandList>

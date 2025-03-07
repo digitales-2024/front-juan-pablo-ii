@@ -1733,6 +1733,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/active/for-sale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los productos activos con informaciòn detallada relevante */
+        get: operations["ProductController_findAllActiveForSale"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/detailed": {
         parameters: {
             query?: never;
@@ -1984,6 +2001,23 @@ export interface paths {
         };
         /** Obtener almacén por ID */
         get: operations["StorageController_findOneWithRelations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/storage/active/branch/{branchId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los almacenes */
+        get: operations["StorageController_findAllActiveByBranch"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2596,6 +2630,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stock/availableProduct/byUse/{productUse}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStockByUse"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/stock/availableProduct/{productId}": {
         parameters: {
             query?: never;
@@ -2613,7 +2664,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/billing/product-sale": {
+    "/api/v1/stock/availableProduct/{productId}/storage/{storageId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2623,99 +2674,79 @@ export interface paths {
         /** Obtener un producto en stock en todos los almacenes. */
         get: operations["StockController_getOneProductStockByStorage"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/manyProductsByStorage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Obtener varios productos en stock por combinaciones de almacén y producto */
+        post: operations["StockController_getManyProductsStockByStorageAndProduct"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/manyProducts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Obtener varios productos en stock por combinaciones de almacén y producto */
+        post: operations["StockController_getProductsStockByProductsIds"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/billing/medical-appointment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create medical consultation order */
+        post: operations["BillingController_createMedicalConsultationOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/billing/product-sale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /** Create product sale order */
         post: operations["BillingController_createProductSaleOrder"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/api/v1/billing/product-purchase": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create product purchase order */
-        post: operations["BillingController_createProductPurchaseOrder"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/time-off": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todas las ausencias temporales */
-        get: operations["TimeOffController_findAll"];
-        put?: never;
-        /** Crear nueva ausencia temporal */
-        post: operations["TimeOffController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/time-off/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener ausencia temporal por ID */
-        get: operations["TimeOffController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar evento existente */
-        patch: operations["TimeOffController_update"];
-        trace?: never;
-    };
-    "/api/v1/time-off/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples eventos */
-        delete: operations["TimeOffController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/time-off/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples eventos */
-        patch: operations["TimeOffController_reactivateAll"];
         trace?: never;
     };
     "/api/v1/paciente": {
@@ -2743,7 +2774,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtenerun pacinete por su dni */
+        /** Obtenerun paciente por su dni */
         get: operations["PacientController_findByDni"];
         put?: never;
         post?: never;
@@ -3732,7 +3763,7 @@ export interface components {
              * @description Método de pago
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
             /** @description Número de comprobante */
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
@@ -3750,7 +3781,7 @@ export interface components {
             amount: number;
             description?: string;
             /** @enum {string} */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
             voucherNumber?: string;
             originalPaymentId?: string;
             verifiedBy?: string;
@@ -3800,7 +3831,7 @@ export interface components {
              * @description Método de pago
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
             /** @description Número de comprobante */
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
@@ -3821,7 +3852,7 @@ export interface components {
              * @description Método de pago a utilizar
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
             /**
              * @description Monto del pago
              * @example 100.5
@@ -3866,7 +3897,7 @@ export interface components {
              * @example BANK_TRANSFER
              * @enum {string}
              */
-            refundMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            refundMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
             /** @description Notas adicionales */
             notes?: string;
         };
@@ -4097,12 +4128,6 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             rescheduledFromId?: string;
-            /**
-             * @description Método de pago
-             * @example CASH
-             * @enum {string}
-             */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
         };
         Appointment: {
             id: string;
@@ -4191,12 +4216,6 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             rescheduledFromId?: string;
-            /**
-             * @description Método de pago
-             * @example CASH
-             * @enum {string}
-             */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
         };
         DeleteAppointmentsDto: {
             ids: string[];
@@ -4775,12 +4794,13 @@ export interface components {
             proveedor?: string;
             /**
              * @description Uso del producto
-             * @example Paciente
+             * @example VENTA
+             * @enum {string}
              */
-            uso?: string;
+            uso: "VENTA" | "INTERNO" | "OTRO";
             /**
              * @description Uso específico del producto
-             * @example Venta
+             * @example Paciente
              */
             usoProducto?: string;
             /**
@@ -4822,7 +4842,8 @@ export interface components {
             precio: number;
             unidadMedida: string;
             proveedor: string;
-            uso: string;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             usoProducto: string;
             description: string;
             codigoProducto: string;
@@ -4850,6 +4871,8 @@ export interface components {
             unidadMedida: string;
             categoriaId: string;
             tipoProductoId: string;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             categoria: components["schemas"]["ActiveProductCategory"];
             tipoProducto: components["schemas"]["ActiveProductTypeProduct"];
         };
@@ -4861,7 +4884,8 @@ export interface components {
             precio: number;
             unidadMedida: string;
             proveedor: string;
-            uso: string;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             usoProducto: string;
             description: string;
             codigoProducto: string;
@@ -4912,12 +4936,13 @@ export interface components {
             proveedor?: string;
             /**
              * @description Uso del producto
-             * @example Paciente
+             * @example VENTA
+             * @enum {string}
              */
-            uso?: string;
+            uso?: "VENTA" | "INTERNO" | "OTRO";
             /**
              * @description Uso específico del producto
-             * @example Venta
+             * @example Paciente
              */
             usoProducto?: string;
             /**
@@ -5884,52 +5909,23 @@ export interface components {
             name: string;
             precio: number;
             codigoProducto: string;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             unidadMedida: string;
             Stock: components["schemas"]["StockProduct"][];
         };
-        ProductSaleItemDto: {
+        CreateMedicalAppointmentBillingDto: {
             /**
-             * @description ID del producto
-             * @example 123e4567-e89b-12d3-a456-426614174000
+             * @description ID de la consulta médica
+             * @example 29c5e5b8-1835-42f9-ae34-217a3791ba22
              */
-            productId: string;
+            appointmentId: string;
             /**
-             * @description Cantidad del producto
-             * @example 5
+             * @description Método de pago a utilizar
+             * @default CASH
+             * @enum {string}
              */
-            quantity: number;
-        };
-        CreateProductSaleBillingDto: {
-            /**
-             * @description Lista de productos a vender
-             * @example [
-             *       {
-             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
-             *         "quantity": 5
-             *       }
-             *     ]
-             */
-            products: components["schemas"]["ProductSaleItemDto"][];
-            /**
-             * @description ID del almacén de origen
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId: string;
-            /**
-             * @description ID de la sucursal
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId: string;
-            /**
-             * @description Ubicación en almacén
-             * @example Estante A-123
-             */
-            storageLocation?: string;
-            /**
-             * @description Número de lote
-             * @example LOT-2024-001
-             */
-            batchNumber?: string;
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
             /**
              * @description Monto pagado
              * @example 150
@@ -6021,7 +6017,7 @@ export interface components {
              * @default CASH
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
             /**
              * @description Notas adicionales
              * @example Venta de medicamentos para paciente
@@ -11925,6 +11921,40 @@ export interface operations {
             };
         };
     };
+    ProductController_findAllActiveForSale: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los productos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActiveProduct"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ProductController_findAllWithRelations: {
         parameters: {
             query?: never;
@@ -12652,6 +12682,42 @@ export interface operations {
             };
             /** @description Almacén no encontrado */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StorageController_findAllActiveByBranch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                branchId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedStorage"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -14265,6 +14331,29 @@ export interface operations {
             };
         };
     };
+    StockController_getProductsStockByUse: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
+                use: "VENTA" | "INTERNO" | "OTRO";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
     StockController_getProductsStockById: {
         parameters: {
             query?: never;
@@ -14285,6 +14374,121 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ProductStock"][];
                 };
+            };
+        };
+    };
+    StockController_getOneProductStockByStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID del producto */
+                productId: string;
+                storageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getManyProductsStockByStorageAndProduct: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Array de combinaciones de producto y almacén */
+        requestBody: {
+            content: {
+                "application/json": {
+                    productId?: string;
+                    storageId?: string;
+                }[];
+            };
+        };
+        responses: {
+            /** @description Productos en stock según las combinaciones solicitadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStockByProductsIds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Array de combinaciones de producto y almacén */
+        requestBody: {
+            content: {
+                "application/json": string[];
+            };
+        };
+        responses: {
+            /** @description Productos en stock según las combinaciones solicitadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    BillingController_createMedicalConsultationOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMedicalAppointmentBillingDto"];
+            };
+        };
+        responses: {
+            /** @description Medical appointment order created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -14311,277 +14515,6 @@ export interface operations {
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    BillingController_createProductPurchaseOrder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProductPurchaseBillingDto"];
-            };
-        };
-        responses: {
-            /** @description Product purchase order created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todas las ausencias temporales */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TimeOff"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateTimeOffDto"];
-            };
-        };
-        responses: {
-            /** @description Ausencia temporal creada exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TimeOff"];
-                };
-            };
-            /** @description Datos de entrada inválidos o ausencia ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID de la ausencia temporal */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Ausencia temporal encontrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TimeOff"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Ausencia temporal no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del evento a actualizar */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTimeOffDto"];
-            };
-        };
-        responses: {
-            /** @description Evento actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"];
-                };
-            };
-            /** @description Datos de entrada inválidos o evento no existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTimeOffsDto"];
-            };
-        };
-        responses: {
-            /** @description Eventos desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description IDs inválidos o eventos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTimeOffsDto"];
-            };
-        };
-        responses: {
-            /** @description Eventos reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description IDs inválidos o eventos no existen */
             400: {
                 headers: {
                     [name: string]: unknown;

@@ -84,12 +84,12 @@ export const FORMSTATICS: FormStatics<CreateProductInput> = {
         defaultValue: "",
     },
     uso: {
-        required: false,
-        label: "Uso",
+        required: true,
+        label: "Ámbito de uso",
         type: "text",
-        placeholder: "Uso",
+        placeholder: "Venta, uso interno, etc.",
         name: "uso",
-        defaultValue: "",
+        defaultValue: "VENTA",
     },
     usoProducto: {
         required: false,
@@ -203,10 +203,10 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateProductInput> = {
     },
     uso: {
         required: false,
-        label: "Uso",
-        defaultValue: "",
+        label: "Ámbito de uso",
+        defaultValue: "VENTA",
         type: "text",
-        placeholder: "Uso",
+        placeholder: "Venta, uso interno, etc.",
         name: "uso",
     },
     usoProducto: {

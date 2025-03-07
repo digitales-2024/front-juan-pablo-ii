@@ -508,13 +508,13 @@ export type CreateProductSaleBillingDto = {
   products: ProductSaleItemDto[];
   metadata?: Record<string, never>;
 };
-export type ProductPurchaseItemDtoPrototype = components['schemas']['ProductPurchaseItemDto'];
+// export type ProductPurchaseItemDtoPrototype = components['schemas']['ProductPurchaseItemDto'];
 export type ProductPurchaseItemDto = {
   productId: string;
   quantity: number;
   unitPrice: number;
 };
-export type CreateProductPurchaseBillingDtoPrototype = components['schemas']['CreateProductPurchaseBillingDto'];
+// export type CreateProductPurchaseBillingDtoPrototype = components['schemas']['CreateProductPurchaseBillingDto'];
 export type CreateProductPurchaseBillingDto = {
   products: ProductPurchaseItemDto[];
   storageId: string;
