@@ -2630,7 +2630,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-<<<<<<< HEAD
     "/api/v1/stock/availableProduct/{productId}/storage/{storageId}": {
         parameters: {
             query?: never;
@@ -2699,8 +2698,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-=======
->>>>>>> 9d4cd5412670905e4208a10abc2085b9b2624d25
     "/api/v1/billing/product-sale": {
         parameters: {
             query?: never;
@@ -2708,8 +2705,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener un producto en stock en todos los almacenes. */
-        get: operations["StockController_getOneProductStockByStorage"];
+        get?: never;
         put?: never;
         /** Create product sale order */
         post: operations["BillingController_createProductSaleOrder"];
@@ -2717,93 +2713,6 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/api/v1/billing/product-purchase": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create product purchase order */
-        post: operations["BillingController_createProductPurchaseOrder"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/time-off": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todas las ausencias temporales */
-        get: operations["TimeOffController_findAll"];
-        put?: never;
-        /** Crear nueva ausencia temporal */
-        post: operations["TimeOffController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/time-off/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener ausencia temporal por ID */
-        get: operations["TimeOffController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar evento existente */
-        patch: operations["TimeOffController_update"];
-        trace?: never;
-    };
-    "/api/v1/time-off/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples eventos */
-        delete: operations["TimeOffController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/time-off/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples eventos */
-        patch: operations["TimeOffController_reactivateAll"];
         trace?: never;
     };
     "/api/v1/paciente": {
@@ -2952,7 +2861,7 @@ export interface paths {
             cookie?: never;
         };
         /** Obtener todas las recetas médicas */
-        get: operations["PrescriptionController_findAll"];
+        get: operations["ApponitmentUserController_findAll"];
         put?: never;
         /** Crear nueva receta médica */
         post: operations["PrescriptionController_create"];
@@ -3028,7 +2937,7 @@ export interface paths {
         options?: never;
         head?: never;
         /** Actualizar receta médica existente */
-        patch: operations["PrescriptionController_update"];
+        patch: operations["ApponitmentUserController_update"];
         trace?: never;
     };
     "/api/v1/receta/remove/all": {
@@ -4203,6 +4112,8 @@ export interface components {
             start: string;
             /** Format: date-time */
             end: string;
+            /** @enum {string} */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @enum {string} */
             status: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED";
             /** @enum {string} */
@@ -5975,49 +5886,18 @@ export interface components {
             unidadMedida: string;
             Stock: components["schemas"]["StockProduct"][];
         };
-        ProductSaleItemDto: {
+        CreateMedicalAppointmentBillingDto: {
             /**
-             * @description ID del producto
-             * @example 123e4567-e89b-12d3-a456-426614174000
+             * @description ID de la consulta médica
+             * @example 29c5e5b8-1835-42f9-ae34-217a3791ba22
              */
-            productId: string;
+            appointmentId: string;
             /**
-             * @description Cantidad del producto
-             * @example 5
+             * @description Método de pago a utilizar
+             * @default CASH
+             * @enum {string}
              */
-            quantity: number;
-        };
-        CreateProductSaleBillingDto: {
-            /**
-             * @description Lista de productos a vender
-             * @example [
-             *       {
-             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
-             *         "quantity": 5
-             *       }
-             *     ]
-             */
-            products: components["schemas"]["ProductSaleItemDto"][];
-            /**
-             * @description ID del almacén de origen
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            storageId: string;
-            /**
-             * @description ID de la sucursal
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            branchId: string;
-            /**
-             * @description Ubicación en almacén
-             * @example Estante A-123
-             */
-            storageLocation?: string;
-            /**
-             * @description Número de lote
-             * @example LOT-2024-001
-             */
-            batchNumber?: string;
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Monto pagado
              * @example 150
@@ -6867,6 +6747,21 @@ export interface components {
         DeleteTimeOffsDto: {
             /** @description Array de IDs de ausencias temporales a eliminar */
             ids: string[];
+        };
+        AppointmentMedicalResponse: {
+            id?: string;
+            staffId?: number;
+            userId?: string;
+            medicalHistoryId?: string;
+            patientId?: string;
+            status?: string;
+        };
+        UpdateAppointmentUserDto: {
+            /**
+             * @description ID de la sucursal donde se emite la receta
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            status?: string;
         };
     };
     responses: never;
@@ -14412,7 +14307,6 @@ export interface operations {
             };
         };
     };
-<<<<<<< HEAD
     StockController_getOneProductStockByStorage: {
         parameters: {
             query?: never;
@@ -14491,9 +14385,44 @@ export interface operations {
         };
     };
     BillingController_createMedicalConsultationOrder: {
-=======
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMedicalAppointmentBillingDto"];
+            };
+        };
+        responses: {
+            /** @description Medical appointment order created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     BillingController_createProductSaleOrder: {
->>>>>>> 9d4cd5412670905e4208a10abc2085b9b2624d25
         parameters: {
             query?: never;
             header?: never;
@@ -14516,277 +14445,6 @@ export interface operations {
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    BillingController_createProductPurchaseOrder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProductPurchaseBillingDto"];
-            };
-        };
-        responses: {
-            /** @description Product purchase order created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Order"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todas las ausencias temporales */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TimeOff"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateTimeOffDto"];
-            };
-        };
-        responses: {
-            /** @description Ausencia temporal creada exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TimeOff"];
-                };
-            };
-            /** @description Datos de entrada inválidos o ausencia ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID de la ausencia temporal */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Ausencia temporal encontrada */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TimeOff"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Ausencia temporal no encontrada */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID del evento a actualizar */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTimeOffDto"];
-            };
-        };
-        responses: {
-            /** @description Evento actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"];
-                };
-            };
-            /** @description Datos de entrada inválidos o evento no existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTimeOffsDto"];
-            };
-        };
-        responses: {
-            /** @description Eventos desactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description IDs inválidos o eventos no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    TimeOffController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteTimeOffsDto"];
-            };
-        };
-        responses: {
-            /** @description Eventos reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Event"][];
-                };
-            };
-            /** @description IDs inválidos o eventos no existen */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -15305,7 +14963,7 @@ export interface operations {
             };
         };
     };
-    PrescriptionController_findAll: {
+    ApponitmentUserController_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -15320,7 +14978,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Prescription"][];
+                    "application/json": components["schemas"]["AppointmentMedicalResponse"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -15553,7 +15211,7 @@ export interface operations {
             };
         };
     };
-    PrescriptionController_update: {
+    ApponitmentUserController_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -15564,7 +15222,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdatePrescriptionDto"];
+                "application/json": components["schemas"]["UpdateAppointmentUserDto"];
             };
         };
         responses: {
