@@ -81,7 +81,7 @@ export default function PageOrders() {
             <div className="flex-grow">
               <Select onValueChange={onSubmitBranch} defaultValue="">
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Seleccione una sucursal" />
+                  <SelectValue placeholder="Filtrar por sucursal" />
                 </SelectTrigger>
                 <SelectContent>
                   {activeBranchesQuery.data.map((branch) => (
