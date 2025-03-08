@@ -53,6 +53,7 @@ export function CreateStaffDialog() {
       email: "",
       phone: "",
       cmp: "",
+      userId: "",
     },
   });
 
