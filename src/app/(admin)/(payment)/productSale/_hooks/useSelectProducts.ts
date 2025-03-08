@@ -37,7 +37,7 @@ function reducer(state: State, action: Action): OutgoingProducStockForm[] {
 
 const useSelectedProducts = () => {
   const selectedProducts = useQuery<OutgoingProducStockForm[]>({
-    queryKey: ["prescription-order-selected-products"],
+    queryKey: ["product-sale-order-selected-products"],
     initialData: [],
   });
 

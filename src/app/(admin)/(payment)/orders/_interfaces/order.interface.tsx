@@ -584,7 +584,7 @@ export const createProductSaleBillingSchema = z.object({
     quantity: z.coerce.number(),
     storageId: z.string({
       required_error: "Debe seleccionar un almacén",
-    }),
+    }).min(1, { message: "Debe seleccionar al menos un producto" }),
   })),
 }) satisfies z.ZodType<CreateProductSaleBillingDto>;
 
