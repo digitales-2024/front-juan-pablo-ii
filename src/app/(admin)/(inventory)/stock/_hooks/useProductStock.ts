@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getForSaleProductStock, getManyProductsStock, getManyProductsStockByStorage, getOneProductStockByStorage, getProductStock, getProductStockByStorage, getProductsStock } from "../_actions/stock.actions";
+import { getForSaleProductStock, getForSaleProductStockAndBranch, getManyProductsStock, getManyProductsStockByStorage, getOneProductStockByStorage, getProductStock, getProductStockByStorage, getProductsStock } from "../_actions/stock.actions";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { OutgoingProducStockForm, OutgoingProductStock } from "../_interfaces/stock.interface";
@@ -62,10 +62,10 @@ export function useProductsStockByUse() {
 export function useProductsStockByUseAndBranch() {
   return (productUse: ProductUse, branchId:string) => {
     const productStockQuery = useQuery({
-      queryKey: ["products-stock-by-use", productUse],
+      queryKey: ["products-stock-by-use-and-storage", productUse, branchId],
       queryFn: async () => {
         try {
-          const response = await getForSaleProductStock({ productUse });
+          const response = await getForSaleProductStockAndBranch({ productUse, branchId });
           if (!response || "error" in response) {
             throw new Error(response?.error || "No se recibió respuesta");
           }

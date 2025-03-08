@@ -5,19 +5,13 @@ import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHe
 // import { DetailedOutgoing } from "../_interfaces/outgoing.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
-import { Badge } from "@/components/ui/badge";
 // import { UpdateOutgoingSheet } from "./UpdateOutgoingSheet";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 // import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
 // import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
@@ -25,10 +19,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 // import { StorageMovementDetail } from "./Movements/StorageMovementDetail";
-import { PrescriptionWithPatient } from "../_interfaces/prescription.interface";
-import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
-import { ShowPrescriptionDetailsDialog } from "./ProductDetails/ShowsPDetailsDialog";
-import { CreatePrescriptionBillingProcessDialog } from "./ProductDetails/FormComponents/CreateProductSaleBillingOrderDialog";
+import { OutgoingProductStock } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
+import { ProductStockDetailPopover } from "./ProductSalePopover";
 // import Image from "next/image";
 
 // const STATE_OPTIONS = {
@@ -41,7 +33,7 @@ import { CreatePrescriptionBillingProcessDialog } from "./ProductDetails/FormCom
 //   false: "NO",
 // };
 
-export const columns: ColumnDef<PrescriptionWithPatient>[] = [
+export const columns: ColumnDef<OutgoingProductStock>[] = [
   {
     id: "select",
     size: 10,
@@ -73,131 +65,76 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
     enablePinning: true,
   },
   {
-    accessorKey: "patient.dni",
+    accessorKey: "name",
     meta: {
-      title: "DNI",
+      title: "Producto",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="DNI" />
+      <DataTableColumnHeader column={column} title="Producto" />
     ),
     cell: ({ row }) => (
-      <span>{row.original.patient.dni}</span>
+      <span className="capitalize">{row.original.name}</span>
     ),
   },
   {
-    accessorKey: "patient.name",
+    accessorKey: "codigoProducto",
     meta: {
-      title: "Paciente",
+      title: "Codigo",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Paciente" />
-    ),
-    cell: ({ row }) => {
-      return (
-      <span className="capitalize">
-        {`${row.original.patient.name} ${row.original.patient.lastName ?? ''}`}
-      </span>
-    )}
+      <DataTableColumnHeader column={column} title="Código" />
+    )
   },
   {
-    accessorKey: "prescriptionServices",
-    size: 10,
+    accessorKey: "precio",
     meta: {
-      title: "Nota Médica",
+      title: "Precio venta",
     },
-    header: () => <div>Nota Médica</div>,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Precio Venta" />
+    ),
     cell: ({ row }) => (
-      <div>
-        <ShowPrescriptionDetailsDialog data={row.original}></ShowPrescriptionDetailsDialog>
-      </div>
+      <span>{row.original.precio.toLocaleString(
+        "es-PE",
+        {
+          style: "currency",
+          currency: "PEN",
+        }
+      )}</span>
     ),
   },
   {
-    accessorKey: "purchaseOrderId",
-    size: 10,
+    accessorKey: "Stock",
     meta: {
-      title: "Procesar órden",
+      title: "Stock info.",
     },
-    header: () => <div>Procesar órden</div>,
+    header: () => <div>Stock</div>,
     cell: ({ row }) => (
       <div>
-        {/* <ShowMovementsDialog
-          data={row.original.prescriptionServices}
-        ></ShowMovementsDialog> */}
-        <CreatePrescriptionBillingProcessDialog
-          prescription={row.original}
-        ></CreatePrescriptionBillingProcessDialog>
+        {row.original.Stock && <ProductStockDetailPopover productStock={row.original}></ProductStockDetailPopover>}
+        {
+          !row.original.Stock && <span>No disponible</span>
+        }
       </div>
-    ),
-  },
-  {
-    accessorKey: "patient.phone",
-    meta: {
-      title: "Teléfono",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Teléfono" />
-    ),
-    cell: ({ row }) => (
-      <span>{row.original.patient.phone ?? '---'}</span>
-    ),
-  },
-  {
-    accessorKey: "patient.email",
-    meta: {
-      title: "e-mail",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
-    ),
-    cell: ({ row }) => (
-      <span>
-        {row.original.patient.email ?? "---"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "staffId",
-    meta: {
-      title: "Personal tratante",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Personal tratante" />
-    ),
-    cell: ({ row }) => {
-      const {
-        oneStaffQuery
-      } = useStaff()
-      const { data:staff, isLoading, isError } = oneStaffQuery(row.original.staffId)
-      if (isLoading) return <span>Cargando...</span>
-      if (isError) return <span>Error al cargar</span>
-      return (
-      <span>
-        {staff ? `${staff.name} ${staff.lastName}` : "No disponible"}
-      </span>
-    )},
-  },
-  {
-    accessorKey: "isActive",
-    meta: {
-      title: "Eliminación lógica",
-    },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Eliminación lógica" />
-    ),
-    cell: ({ row }) => (
-      <Badge variant={row.original.isActive ? "success" : "destructive"}>
-        {row.original.isActive ? "Activo" : "Desactivado"}
-      </Badge>
     ),
   },
   // {
-  //   accessorKey: "createdAt",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Fecha de creación" />
+  //   accessorKey: "",
+  //   size: 10,
+  //   meta: {
+  //     title: "Procesar órden",
+  //   },
+  //   header: () => <div>Procesar órden</div>,
+  //   cell: ({ row }) => (
+  //     <div>
+  //       {/* <ShowMovementsDialog
+  //         data={row.original.prescriptionServices}
+  //       ></ShowMovementsDialog> */}
+  //       <CreatePrescriptionBillingProcessDialog
+  //         prescription={row.original}
+  //       ></CreatePrescriptionBillingProcessDialog>
+  //     </div>
   //   ),
-  //   cell: ({ row }) =>
-  //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
   {
     id: "Acciones",
@@ -207,15 +144,13 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: function Cell({ row }) {
-      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-      const [showReactivateDialog, setShowReactivateDialog] = useState(false);
-      const [showEditSheet, setShowEditSheet] = useState(false);
+      // const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+      // const [showReactivateDialog, setShowReactivateDialog] = useState(false);
+      // const [showEditSheet, setShowEditSheet] = useState(false);
       // const {} = useProductStockById(row.original.Movement)
       // const productExistent: OutgoingProducStockForm = 
-      const outgoing = row.original;
-      const { isActive } = outgoing;
-      const isSuperAdmin = true;
-
+      // const outgoing = row.original;
+      // const { isActive } = outgoing;
       return (
         <div>
           {/* <div>
@@ -253,7 +188,7 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
                 <Ellipsis className="size-4" aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
+            {/* <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem
                 onSelect={() => setShowEditSheet(true)}
                 disabled={!isActive}
@@ -281,7 +216,7 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
                   <Trash className="size-4" aria-hidden="true" />
                 </DropdownMenuShortcut>
               </DropdownMenuItem>
-            </DropdownMenuContent>
+            </DropdownMenuContent> */}
           </DropdownMenu>
         </div>
       );

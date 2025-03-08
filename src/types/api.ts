@@ -2647,6 +2647,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stock/availableProduct/byUse/{productUse}/branch/{branchId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStockByUseAndBranch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/stock/availableProduct/{productId}": {
         parameters: {
             query?: never;
@@ -5463,11 +5480,6 @@ export interface components {
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
             /**
-             * @description ID de referencia para la salida en caso de transferencia
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            outgoingId?: string;
-            /**
              * @description productos a ingresar al almacen y cantidad
              * @example [
              *       {
@@ -5895,9 +5907,14 @@ export interface components {
             description: string;
             stock: components["schemas"]["ProductStockResponse"][];
         };
+        StockStorageBranch: {
+            id: string;
+            name: string;
+        };
         StockStorage: {
             id: string;
             name: string;
+            branch?: components["schemas"]["StockStorageBranch"];
         };
         StockProduct: {
             stock: number;
@@ -14338,6 +14355,31 @@ export interface operations {
             path: {
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
                 use: "VENTA" | "INTERNO" | "OTRO";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStockByUseAndBranch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
+                branchId: string;
+                /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
+                productUse: "VENTA" | "INTERNO" | "OTRO";
             };
             cookie?: never;
         };

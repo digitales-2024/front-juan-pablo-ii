@@ -74,10 +74,10 @@ export default function PageOrders() {
   const onSubmitAllPrescriptions = useCallback(() => {
     setFilterAllPrescriptions();
     if (response.isError) {
-      toast.error("Error al filtrar stock");
+      toast.error("Error al filtrar recetas");
     }
     if (response.data) {
-      toast.success("Stock filtrado correctamente");
+      toast.success("Recetas filtrado correctamente");
     }
   }, [setFilterAllPrescriptions]);
 
@@ -86,7 +86,7 @@ export default function PageOrders() {
   }
 
   if (response.isError) {
-    toast.error("Ocurrió un error al cargar los almacenes");
+    toast.error("Ocurrió un error al cargar las recetas");
     throw response.error;
   }
 
