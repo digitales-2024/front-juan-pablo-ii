@@ -40,5 +40,5 @@ export const updateStaffSchema = z.object({
   email: z.string().email("El email no es válido").optional(),
   phone: z.string().optional(),
   cmp: z.string().optional(),
- 
+  userId: z.string().optional(),
 }) satisfies z.ZodType<UpdateStaffDto>;
