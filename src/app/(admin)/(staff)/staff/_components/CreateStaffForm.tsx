@@ -135,30 +135,40 @@ export function CreateStaffForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4"
       >
-        {/* Opción para seleccionar usuario existente (solo visible con permisos) */}
+        {/* Sección de usuario mejorada para responsividad */}
         {hasPermission && (
           <div className="flex flex-col space-y-4 border-b pb-4 mb-4">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="use-existing-user"
-                checked={useExistingUser}
-                onCheckedChange={handleToggleChange}
-              />
-              <Label htmlFor="use-existing-user">
-                Asignar usuario existente
-              </Label>
+            <div className="flex items-center justify-between space-x-2 w-full">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="use-existing-user"
+                  checked={useExistingUser}
+                  onCheckedChange={handleToggleChange}
+                  className="data-[state=checked]:bg-primary" // Mejorar visibilidad
+                />
+                <Label 
+                  htmlFor="use-existing-user" 
+                  className="text-sm sm:text-base font-medium"
+                >
+                  Asignar usuario existente
+                </Label>
+              </div>
             </div>
 
             {useExistingUser && (
-              <div>
-                <FormLabel>Seleccionar usuario</FormLabel>
+              <div className="w-full">
+                <FormLabel className="text-sm sm:text-base mb-2 block">Seleccionar usuario</FormLabel>
                 <Select onValueChange={handleUserSelect}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccione un usuario" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent 
+                    position="popper" 
+                    className="max-h-[300px] overflow-y-auto w-[min(calc(100vw-2rem),350px)] sm:w-[350px]"
+                    align="start"
+                  >
                     <SelectItem value="none">Ninguno</SelectItem>
                     {isLoadingUsers ? (
                       <SelectItem value="loading" disabled>
@@ -167,14 +177,18 @@ export function CreateStaffForm({
                     ) : (
                       filteredUsers.map((user) => (
                         <SelectItem key={user.id} value={user.id}>
-                          {user.name} - {user.email} (
-                          {user.roles?.[0]?.name || "Sin rol"})
+                          <div className="truncate">
+                            {user.name} - {user.email}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {user.roles?.[0]?.name || "Sin rol"}
+                          </div>
                         </SelectItem>
                       ))
                     )}
                   </SelectContent>
                 </Select>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-2">
                   Al seleccionar un usuario, algunos campos se completarán
                   automáticamente.
                 </p>
@@ -183,7 +197,7 @@ export function CreateStaffForm({
           </div>
         )}
 
-        {/* Resto del formulario existente */}
+        {/* Formulario con grid responsivo mejorado */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
