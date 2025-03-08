@@ -27,6 +27,7 @@ export const createStaffSchema = z.object({
   email: z.string().email("El email no es válido"),
   phone: z.string().optional(),
   cmp: z.string().optional(),
+  userId: z.string().optional(),
 }) satisfies z.ZodType<CreateStaffDto>;
 
 // Schema de validación para actualizar personal
@@ -39,5 +40,5 @@ export const updateStaffSchema = z.object({
   email: z.string().email("El email no es válido").optional(),
   phone: z.string().optional(),
   cmp: z.string().optional(),
-
+ 
 }) satisfies z.ZodType<UpdateStaffDto>;
