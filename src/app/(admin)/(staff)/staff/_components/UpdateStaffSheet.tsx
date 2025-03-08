@@ -249,7 +249,7 @@ export function UpdateStaffSheet({
               />
 
               {/* funcion para agregar usuario al personal */}
-              <FormField
+       {/*        <FormField
                 control={form.control}
                 name="staffTypeId"
                 render={({ field }) => (
@@ -275,7 +275,7 @@ export function UpdateStaffSheet({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               {/* fin */}
               <SheetFooter>
                 <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
