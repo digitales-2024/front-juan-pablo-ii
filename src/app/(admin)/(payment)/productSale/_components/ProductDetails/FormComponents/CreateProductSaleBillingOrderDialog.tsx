@@ -10,7 +10,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CreatePrescriptionOrderForm } from "./CreateProductSaleBillingOrderForm";
 import {
   Dialog,
   DialogContent,
@@ -36,6 +35,9 @@ import {
   CreateProductSaleBillingInput,
   createProductSaleBillingSchema,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
+import {
+  CreateProductSaleBillingOrderForm
+} from "./CreateProductSaleBillingOrderForm"
 
 const CREATE_OUTGOING_MESSAGES = {
   button: "Crear salida",
@@ -213,7 +215,7 @@ export function CreatePrescriptionBillingProcessDialog() {
               {CREATE_OUTGOING_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <CreatePrescriptionOrderForm
+          <CreateProductSaleBillingOrderForm
             form={form}
             onSubmit={handleSubmit}
             controlledFieldArray={fieldArray}
@@ -222,7 +224,7 @@ export function CreatePrescriptionBillingProcessDialog() {
             <DialogFooter>
               <DialogFooterContent />
             </DialogFooter>
-          </CreatePrescriptionOrderForm>
+          </CreateProductSaleBillingOrderForm>
         </DialogContent>
       </Dialog>
     );
@@ -240,7 +242,7 @@ export function CreatePrescriptionBillingProcessDialog() {
             {CREATE_OUTGOING_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <CreatePrescriptionOrderForm
+        <CreateProductSaleBillingOrderForm
           form={form}
           onSubmit={handleSubmit}
           controlledFieldArray={fieldArray}
@@ -249,7 +251,7 @@ export function CreatePrescriptionBillingProcessDialog() {
           <DrawerFooter>
             <DialogFooterContent />
           </DrawerFooter>
-        </CreatePrescriptionOrderForm>
+        </CreateProductSaleBillingOrderForm>
       </DrawerContent>
     </Drawer>
   );
