@@ -13,10 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CREATE_PRESCRIPTION_ORDER_FORMSTATICS as STATIC_FORM } from "../../../_statics/forms";
-import { Option } from "@/types/statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import {
   Table,
   TableBody,
@@ -28,23 +26,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
   CreateProductSaleBillingInput,
   paymentMethodConfig,
   paymentMethodOptions,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
-import {
-  useProductsStock,
-  useProductsStockByUse,
-  useProductStockById,
-} from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
+import { useProductsStockByUse } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import {
   useSelectedProducts,
   useSelectProductDispatch,
 } from "../../../_hooks/useSelectProducts";
-import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import {
   Select,
   SelectContent,
@@ -54,13 +46,12 @@ import {
 } from "@/components/ui/select";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { OutgoingProducStockForm } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
-import { toast } from "sonner";
 import { SelectProductDialog } from "./SelectProductDialog";
 import LoadingDialogForm from "../../LoadingDialogForm";
 import GeneralErrorMessage from "../../errorComponents/GeneralErrorMessage";
-import { Product } from "@/app/(admin)/(patient)/update-history/_interfaces/updateHistory.interface";
 import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
-import SearchPatientCombobox from "@/app/(admin)/(payment)/prescriptions/_components/FilterComponents/SearchPatientCombobox";
+import SearchPatientCombobox from "../../FilterComponents/SearchPatientCombobox";
+import { toast } from "sonner";
 
 interface CreateProductSaleFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -78,16 +69,9 @@ export function CreateProductSaleBillingOrderForm({
 }: CreateProductSaleFormProps) {
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
-  const didInitializeRef = useRef(false);
-  const isCalculatingRef = useRef(false);
-  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isCalculatingProductsRef = useRef(false);
 
-  const [showProductFields, setShowProductFields] = useState(false);
-  const [showServicesFields, setShowServicesFields] = useState(true);
-  const [originalProductsStock, setOriginalProductsStock] = useState<
-    OutgoingProducStockForm[]
-  >([]);
-  const [showTotals, setShowTotals] = useState(false);
+  const [showProductTotals, setShowProductTotals] = useState(false);
   const [productTotals, setProductTotals] = useState({
     total: 0,
     totalIGV: 0,
@@ -134,11 +118,10 @@ export function CreateProductSaleBillingOrderForm({
 
     // Agregar nuevos productos
     selectedProducts.forEach((product) => {
-      //console.log('product', product);
       append({
         productId: product.id,
-        quantity: 1, //THis is the default value for quantity
-        storageId: product.storageId,
+        quantity: product.Stock[0].stock == 0 ? 0 : 1, //THis is the default value for quantity
+        storageId: product.Stock[0].Storage.id,
       });
     });
   }, [selectedProducts, append, remove]);
@@ -146,6 +129,10 @@ export function CreateProductSaleBillingOrderForm({
   useEffect(() => {
     syncProducts();
   }, [syncProducts]);
+
+  // const removeAllProductStockStateDataState = useCallback((productId: string) => {
+  //   setProductStockState((prev) => prev.filter((item) => item.id !== productId));
+  // }, []);
 
   // useEffect(() => {
   //   if (didInitializeRef.current) return;
@@ -244,6 +231,80 @@ export function CreateProductSaleBillingOrderForm({
   //   }, 200);
   // }, [form, selectedProducts, calculateTotalsWithDebounce]);
 
+  const calculateProductTotals = useCallback(() => {
+    if (isCalculatingProductsRef.current) return;
+    isCalculatingProductsRef.current = true;
+
+    try {
+      if (selectedProducts.length === 0 || !watchFieldArray) {
+        setProductTotals({
+          total: 0,
+          totalIGV: 0,
+          totalSubtotal: 0,
+          totalQuantity: 0,
+          totalProducts: 0,
+        });
+        setShowProductTotals(false);
+        return;
+      }
+
+      let total = 0;
+      let totalIGV = 0;
+      let totalSubtotal = 0;
+      let totalQuantity = 0;
+      let totalProducts = 0;
+      const IGV_RATE = 0.18;
+
+      selectedProducts.forEach((product) => {
+        const productData = watchFieldArray.find(
+          (p) => p?.productId === product.id
+        );
+        if (!productData) return;
+
+        const price = product.precio ?? 0;
+        // Ensure quantity is a valid number
+        const quantityValue = productData.quantity;
+        const quantity = typeof quantityValue === 'number' && !isNaN(quantityValue) ? quantityValue : 0;
+        
+        // Calculate values only if both price and quantity are valid
+        if (price > 0 && quantity > 0) {
+          const totalWithIGV = price * quantity;
+          const igv = totalWithIGV * (IGV_RATE / (1 + IGV_RATE));
+          const subtotal = totalWithIGV - igv;
+
+          total += totalWithIGV;
+          totalIGV += igv;
+          totalSubtotal += subtotal;
+          totalQuantity += quantity;
+          totalProducts++;
+        }
+      });
+
+      // Ensure all calculated values are finite numbers
+      setProductTotals({
+        total: isFinite(total) ? total : 0,
+        totalIGV: isFinite(totalIGV) ? totalIGV : 0,
+        totalSubtotal: isFinite(totalSubtotal) ? totalSubtotal : 0,
+        totalQuantity: isFinite(totalQuantity) ? totalQuantity : 0,
+        totalProducts,
+      });
+
+      setShowProductTotals(totalProducts > 0);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Error calculando totales de productos: " + error.message);
+      } else {
+        toast.error("Error calculando totales de productos");
+      }
+    } finally {
+      isCalculatingProductsRef.current = false;
+    }
+  }, [selectedProducts, watchFieldArray]);
+
+  useEffect(() => {
+    calculateProductTotals();
+  }, [calculateProductTotals]);
+
   const isLoading =
     productStockQuery.isLoading ||
     responseBranches.isLoading ||
@@ -314,12 +375,12 @@ export function CreateProductSaleBillingOrderForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-4 gap-4">
-          <div className="col-span-4">
+          <div className="col-span-4 sm:col-span-2">
             <FormField
               control={form.control}
               name="branchId"
               render={({ field }) => (
-                <FormItem className="w-full sm:w-1/2">
+                <FormItem className="w-full">
                   <FormLabel>{FORMSTATICS.branchId.label}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -351,15 +412,19 @@ export function CreateProductSaleBillingOrderForm({
               )}
             />
           </div>
-          <div>
-            <FormItem className="w-full sm:w-1/2">
+          <div className="col-span-4 sm:col-span-2">
+            <FormItem className="w-full">
               <FormLabel>{FORMSTATICS.patientId.label}</FormLabel>
               <SearchPatientCombobox
                 onValueChange={(val) => {
                   onSubmitPatient(val);
                 }}
               />
-              <FormMessage />
+              {form.formState.errors.patientId && (
+                <FormMessage className="text-destructive">
+                  {form.formState.errors.patientId.message}
+                </FormMessage>
+              )}
               <CustomFormDescription
                 required={FORMSTATICS.patientId.required}
               />
@@ -381,10 +446,11 @@ export function CreateProductSaleBillingOrderForm({
                   <TableHead className="text-center text-balance max-w-10">
                     Almacén
                   </TableHead>
-                  <TableHead className="text-center">Stock General</TableHead>
-                  <TableHead>Cantidad</TableHead>
                   <TableHead>Precio</TableHead>
+                  <TableHead>Cantidad</TableHead>
                   <TableHead>Total</TableHead>
+                  <TableHead className="text-center">Stock restante</TableHead>
+                  <TableHead className="text-center">Stock General</TableHead>
                   <TableHead className="text-center">Opciones</TableHead>
                 </TableRow>
               </TableHeader>
@@ -398,9 +464,18 @@ export function CreateProductSaleBillingOrderForm({
                   //const price = safeData.precio ?? 0;
                   const safeStorages =
                     safeData.Stock?.map((stock) => ({
-                      label: `${stock.Storage.name} (Stock. ${stock.stock})`,
+                      label: (
+                        <div>
+                          {stock.Storage.name} {"(Stock "}{" "}
+                          <span className="text-primary font-bold">
+                            {stock.stock}
+                          </span>
+                          {")"}
+                        </div>
+                      ),
                       value: stock.Storage.id,
                     })) ?? [];
+
                   const stockStorage = safeData.Stock?.find(
                     (stock) => stock.Storage.id === safeWatch.storageId
                   );
@@ -417,7 +492,9 @@ export function CreateProductSaleBillingOrderForm({
                     : (stockStorage?.stock ?? 0) - (safeWatch.quantity ?? 0);
 
                   const price = safeData.precio ?? 0;
-                  const total = price * (safeWatch.quantity ?? 0);
+                  const total = isNaN(price * (safeWatch.quantity ?? 0))
+                    ? 0
+                    : price * (safeWatch.quantity ?? 0);
                   //const quantity = safeWatch.quantity ?? 0;
 
                   // Manejar NaN o valores inexistentes
@@ -449,8 +526,12 @@ export function CreateProductSaleBillingOrderForm({
                           <Select
                             {...register(
                               `products.${index}.storageId` as const
-                            )}	
-                            value={field.storageId}
+                            )}
+                            defaultValue={field.storageId}
+                            onValueChange={(val) => {
+                              form.setValue(`products.${index}.storageId`, val);
+                              calculateProductTotals();
+                            }}
                             // onValueChange={(value) =>
                             //   handleEditProduct(index, {
                             //     storageId: value,
@@ -476,12 +557,22 @@ export function CreateProductSaleBillingOrderForm({
                           </Select>
                         </FormItem>
                       </TableCell>
+
+                      <TableCell>
+                        <span className="block text-center">
+                          {price.toLocaleString("es-PE", {
+                            style: "currency",
+                            currency: "PEN",
+                          })}
+                        </span>
+                      </TableCell>
                       <TableCell>
                         <FormItem>
                           {/* <FormLabel>Cantidad</FormLabel> */}
                           <Input
+                            className="font-bold"
                             {...register(
-                              `movement.${index}.quantity` as const,
+                              `products.${index}.quantity` as const,
                               {
                                 valueAsNumber: true,
                                 validate: (value) =>
@@ -491,13 +582,16 @@ export function CreateProductSaleBillingOrderForm({
                               }
                             )}
                             type="number"
-                            min="0"
+                            min={1}
+                            placeholder="0"
                             onInput={(e) => {
                               const target = e.target as HTMLInputElement;
+                              if (target.value === "") {
+                                return;
+                              }
                               if (target.valueAsNumber < 0) {
                                 target.value = "0";
                               }
-
                               if (
                                 target.valueAsNumber >
                                 (stockStorage?.stock ?? 0)
@@ -506,6 +600,7 @@ export function CreateProductSaleBillingOrderForm({
                                   stockStorage?.stock ?? 0
                                 ).toString();
                               }
+                              setTimeout(() => calculateProductTotals(), 0);
                             }}
                           />
                           <FormMessage />
@@ -534,25 +629,20 @@ export function CreateProductSaleBillingOrderForm({
                   </div>
                 </TableCell> */}
                       <TableCell>
-                        <div>
-                          {/* <FormLabel>Stock almacén</FormLabel> */}
-                          <p className="block text-center">
-                            {`Alm. "${stockStorage?.Storage.name}" `}
-                            {"("}
-                            <span className="text-primary font-bold">
-                              {`${dynamicStock}`}
-                            </span>
-                            {")"}
-                          </p>
-                        </div>
+                        <span className="block text-center font-semibold">
+                          {total.toLocaleString("es-PE", {
+                            style: "currency",
+                            currency: "PEN",
+                          })}
+                        </span>
                       </TableCell>
                       <TableCell>
-                        <div>
-                          {/* <FormLabel>Stock total</FormLabel> */}
-                          <span className="block text-center">
-                            {totalStock}
-                          </span>
-                        </div>
+                        <span className="block text-center text-primary font-bold">
+                          {dynamicStock}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="block text-center">{totalStock}</span>
                       </TableCell>
                       <TableCell className="flex justify-center items-center">
                         <Button
@@ -569,161 +659,11 @@ export function CreateProductSaleBillingOrderForm({
                     </TableRow>
                   );
                 })}
-              </TableBody>
-              {/* <Button
-              type="button"
-              onClick={() => append({ 
-                productId: '', 
-                quantity: 0 
-              })}
-            >
-              Agregar Movimiento
-            </Button> */}
-            </Table>
-            <div className="col-span-2 w-full flex flex-col gap-2 justify-center items-center py-4">
-              {/* <SelectProductDialog data={reponseProducts.data}>
-              </SelectProductDialog> */}
-              <SelectProductDialog form={form}></SelectProductDialog>
-              <CustomFormDescription required={true}></CustomFormDescription>
-              {form.formState.errors.movement && (
-                <FormMessage className="text-destructive">
-                  {form.formState.errors.movement.message}
-                </FormMessage>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4 col-span-4">
-            <FormLabel>{FORMSTATICS.products.label}</FormLabel>
-
-            {isCalculatingRef.current && (
-              <div className="w-full p-2 text-center">
-                <p className="text-muted-foreground animate-pulse">
-                  Actualizando totales...
-                </p>
-              </div>
-            )}
-
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">Nombre</TableHead>
-                  <TableHead>Cantidad</TableHead>
-                  <TableHead>Precio</TableHead>
-                  <TableHead>{"IGV(18%)"}</TableHead>
-                  <TableHead>Subtotal</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead className="text-center">Opciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {fields.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center">
-                      No hay productos seleccionados
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  fields.map((field, index) => {
-                    const IGV = 0.18;
-                    const data = selectedProducts.find(
-                      (p) => p.id === field.productId
-                    );
-                    const price = data?.precio ?? 0;
-                    const quantity = field.quantity ?? 0;
-                    const subtotal = price * quantity;
-                    const priceWithIGV = price * (1 + IGV);
-                    const totalPriceWithIGV = priceWithIGV * quantity;
-                    const totalIGV = price * quantity * IGV;
-
-                    return (
-                      <TableRow key={field.id} className="animate-fade-down">
-                        <TableCell>
-                          <FormItem>
-                            <div>
-                              <span>{data?.name ?? "Desconocido"}</span>
-                            </div>
-                            <Input
-                              disabled
-                              {...register(
-                                `products.${index}.productId` as const
-                              )}
-                              type="hidden"
-                            />
-                            <FormMessage />
-                          </FormItem>
-                        </TableCell>
-                        <TableCell>
-                          <FormItem>
-                            <Input
-                              type="number"
-                              {...register(`products.${index}.quantity`, {
-                                valueAsNumber: true,
-                              })}
-                              className={cn(
-                                "text-center",
-                                quantity === 0 && "text-muted-foreground"
-                              )}
-                              placeholder="0"
-                            />
-                            <FormMessage />
-                          </FormItem>
-                        </TableCell>
-                        <TableCell>
-                          <span className="block text-center">
-                            {price.toLocaleString("es-PE", {
-                              style: "currency",
-                              currency: "PEN",
-                            })}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className="block text-center">
-                            {totalIGV.toLocaleString("es-PE", {
-                              style: "currency",
-                              currency: "PEN",
-                            })}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className="block text-center">
-                            {subtotal.toLocaleString("es-PE", {
-                              style: "currency",
-                              currency: "PEN",
-                            })}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className="block text-center font-semibold text-base">
-                            {totalPriceWithIGV.toLocaleString("es-PE", {
-                              style: "currency",
-                              currency: "PEN",
-                            })}
-                          </span>
-                        </TableCell>
-                        <TableCell className="flex justify-center items-center">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="hover:bg-destructive hover:text-white"
-                            size="sm"
-                            onClick={() => handleRemoveProduct(index)}
-                          >
-                            <Trash2 className="mr-1 size-4" />
-                            Eliminar
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-
-                {showTotals && fields.length > 0 && (
+                {showProductTotals && selectedProducts.length > 0 && (
                   <TableRow className="bg-muted/30 font-medium animate-fade-down">
-                    <TableCell colSpan={2} className="font-bold">
-                      TOTALES:
+                    <TableCell colSpan={5} className="font-bold">
+                      TOTALES ({productTotals.totalProducts} productos):
                     </TableCell>
-                    <TableCell></TableCell>
                     <TableCell className="font-semibold">
                       {productTotals.totalIGV.toLocaleString("es-PE", {
                         style: "currency",
@@ -748,10 +688,21 @@ export function CreateProductSaleBillingOrderForm({
                   </TableRow>
                 )}
               </TableBody>
+              {/* <Button
+              type="button"
+              onClick={() => append({ 
+                productId: '', 
+                quantity: 0 
+              })}
+            >
+              Agregar Movimiento
+            </Button> */}
             </Table>
-
-            <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
-              <CustomFormDescription required={true} />
+            <div className="col-span-2 w-full flex flex-col gap-2 justify-center items-center py-4">
+              {/* <SelectProductDialog data={reponseProducts.data}>
+              </SelectProductDialog> */}
+              <SelectProductDialog form={form}></SelectProductDialog>
+              <CustomFormDescription required={true}></CustomFormDescription>
               {form.formState.errors.products && (
                 <FormMessage className="text-destructive">
                   {form.formState.errors.products.message}
@@ -762,7 +713,7 @@ export function CreateProductSaleBillingOrderForm({
 
           <Separator className="col-span-4" />
 
-          <div className="col-span-3">
+          <div className="col-span-2">
             <FormField
               control={form.control}
               name="paymentMethod"

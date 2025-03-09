@@ -581,11 +581,11 @@ export const createProductSaleBillingSchema = z.object({
   metadata: z.record(z.never()).optional(),
   products: z.array(z.object({
     productId: z.string(),
-    quantity: z.coerce.number(),
+    quantity: z.coerce.number().min(1, { message: "La cantidad debe ser mayor a 0" }),
     storageId: z.string({
       required_error: "Debe seleccionar un almacén",
-    }).min(1, { message: "Debe seleccionar al menos un producto" }),
-  })),
+    }),
+  })).min(1, { message: "Debe seleccionar al menos un producto" }),
 }) satisfies z.ZodType<CreateProductSaleBillingDto>;
 
 export const createPrescriptionBillingSchema = z.object({
@@ -604,14 +604,14 @@ export const createPrescriptionBillingSchema = z.object({
   metadata: z.record(z.never()).optional(),
   products: z.array(z.object({
     productId: z.string(),
-    quantity: z.coerce.number(),
+    quantity: z.coerce.number().min(1, { message: "La cantidad debe ser mayor a 0" }),
     storageId: z.string({
       required_error: "Debe seleccionar un almacén",
     }),
   })),
   services: z.array(z.object({
     serviceId: z.string(),
-    quantity: z.coerce.number(),
+    quantity: z.coerce.number().min(1, { message: "La cantidad debe ser mayor a 0" }),
   })),
 }).refine(
   data => data.products.length > 0 || data.services.length > 0,

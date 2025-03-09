@@ -125,7 +125,9 @@ export const createProductSchema = z.object({
   }).min(0).nonnegative(),
   unidadMedida: z.string().optional(),
   proveedor: z.string().optional(),
-  uso: z.enum(["VENTA", "INTERNO", "OTRO"]),
+  uso: z.enum(["VENTA", "INTERNO", "OTRO"], {
+    required_error: "El uso es requerido"
+  }),
   usoProducto: z.string().optional(),
   description: z.string().optional(),
   codigoProducto: z.string().min(1, "El código de producto es requerido"),
@@ -159,7 +161,9 @@ export const updateProductSchema = z.object({
   precio: z.coerce.number().min(0, "El precio no puede ser negativo").optional(),
   unidadMedida: z.string().optional(),
   proveedor: z.string().optional(),
-  uso: z.enum(["VENTA", "INTERNO", "OTRO"]).optional(),
+  uso: z.enum(["VENTA", "INTERNO", "OTRO"],  {
+    required_error: "El uso es requerido"
+  }),
   usoProducto: z.string().optional(),
   description: z.string().optional(),
   codigoProducto: z.string().optional(),

@@ -2,8 +2,8 @@ import { Table } from "@tanstack/react-table";
 // import { CreateOutgoingDialog } from "./CreateOutgoingDialog";
 // import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
 // import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { OutgoingProductStock } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
+import { CreateProductSaleBillingProcessDialog } from "./ProductDetails/FormComponents/CreateProductSaleBillingOrderDialog";
 
 export interface ProductSaleTableToolbarActionsProps {
   table?: Table<OutgoingProductStock>;
@@ -30,7 +30,7 @@ export function ProductSaleTableToolbarActions({
           /> */}
         </>
       ) : null}
-      {/* <CreateOutgoingDialog /> */}
+      <CreateProductSaleBillingProcessDialog />
     </div>
   );
 }
