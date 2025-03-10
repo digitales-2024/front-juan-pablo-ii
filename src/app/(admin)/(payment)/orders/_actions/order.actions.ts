@@ -9,6 +9,7 @@ import {
   UpdateOrderDto,
   DeleteOrdersDto,
   SubmitDraftOrderDto,
+  DetailedOrder,
 } from "../_interfaces/order.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { z } from "zod";
@@ -18,6 +19,7 @@ export type OrderResponse = BaseApiResponse<Order> | { error: string };
 export type OneOrderGetResponse = Order | { error: string };
 // export type DetailedOrderResponse = BaseApiResponse<DetailedStorage> | { error: string };
 export type ListOrderResponse = Order[] | { error: string };
+export type ListDetailedOrderResponse = DetailedOrder[] | { error: string };
 // export type ListDetailedOrderResponse = DetailedStorage[] | { error: string };
 
 const GetOrderSchema = z.object({});
@@ -68,7 +70,7 @@ const GetOrderSchema = z.object({});
  */
 export const getOrders = async () => {
   try {
-    const [orders, error] = await http.get<ListOrderResponse>("/order");
+    const [orders, error] = await http.get<ListDetailedOrderResponse>("/order");
     if (error) {
       return {
         error:
@@ -112,7 +114,7 @@ const getActiveOrdersHandler = async () => {
 
 export const getAllOrdersByType = async ({ type }: { type: OrderType }) => {
   try {
-    const [orders, error] = await http.get<ListOrderResponse>(
+    const [orders, error] = await http.get<ListDetailedOrderResponse>(
       "/order/type/" + type
     );
     if (error) {
@@ -140,7 +142,7 @@ export const getAllOrdersByStatus = async ({
   status: OrderStatus;
 }) => {
   try {
-    const [orders, error] = await http.get<ListOrderResponse>(
+    const [orders, error] = await http.get<ListDetailedOrderResponse>(
       "/order/status/" + status
     );
     if (error) {
@@ -170,7 +172,7 @@ export const getAllOrdersByStatusAndType = async ({
   type: OrderType;
 }) => {
   try {
-    const [orders, error] = await http.get<ListOrderResponse>(
+    const [orders, error] = await http.get<ListDetailedOrderResponse>(
       `/order/${type}/status/${status}`
     );
     if (error) {

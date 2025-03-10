@@ -4,10 +4,10 @@ import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from "./OrderTableColumns";
 import { ProductTableToolbarActions } from "./OrderTableToolbarActions";
 // import { ListCategoryResponse } from "../_actions/category.actions";
-import { Order } from "../_interfaces/order.interface";
+import { DetailedOrder } from "../_interfaces/order.interface";
 
 interface StorageTableProps {
-  data: Order[];
+  data: DetailedOrder[];
 }
 
 export function OrderTable({ data }: StorageTableProps) {

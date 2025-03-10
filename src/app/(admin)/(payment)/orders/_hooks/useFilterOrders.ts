@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-    ListOrderResponse,
     getOrders,
     getAllOrdersByStatus,
     getAllOrdersByStatusAndType,
     getAllOrdersByType,
+    ListDetailedOrderResponse,
 } from "../_actions//order.actions";
 import { OrderStatus, OrderType } from "../_interfaces/order.interface";
 
@@ -49,7 +49,7 @@ export function useUnifiedOrders() {
     queryKey: STOCK_QUERY_KEY,
     queryFn: async () => {
       try {
-        let response: ListOrderResponse;
+        let response: ListDetailedOrderResponse;
         switch (filter.type) {
           case "ALL": {
             response = await getOrders();

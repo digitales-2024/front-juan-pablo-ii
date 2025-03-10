@@ -2,7 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { Order, orderStatusConfig, orderTypeConfig } from "../_interfaces/order.interface";
+import {
+  DetailedOrder,
+  orderStatusConfig,
+  orderTypeConfig,
+} from "../_interfaces/order.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -24,9 +28,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { ReactivateStorageDialog } from "@/app/(admin)/(catalog)/storage/storages/_components/ReactivateProductDialog";
+import { UpdateStorageSheet } from "@/app/(admin)/(catalog)/storage/storages/_components/UpdateStorageSheet";
+import { ProcessPaymentDialog } from "./paymentComponents/processPayment/ProcessPaymentDialog";
 // import Image from "next/image";
 
-export const columns: ColumnDef<Order>[] = [
+export const columns: ColumnDef<DetailedOrder>[] = [
   {
     accessorKey: "select",
     size: 10,
@@ -82,7 +89,14 @@ export const columns: ColumnDef<Order>[] = [
         // <span>
         //   {row.original.status || "Sin tipo de almacén"}
         // </span>
-        <Badge className={cn(config.backgroundColor, config.textColor, config.hoverBgColor, "flex space-x-1 items-center justify-center text-sm")}>
+        <Badge
+          className={cn(
+            config.backgroundColor,
+            config.textColor,
+            config.hoverBgColor,
+            "flex space-x-1 items-center justify-center text-sm"
+          )}
+        >
           <Icon className="size-4" />
           <span>{config.name}</span>
         </Badge>
@@ -104,7 +118,14 @@ export const columns: ColumnDef<Order>[] = [
         // <span>
         //   {row.original.status || "Sin tipo de almacén"}
         // </span>
-        <Badge className={cn(config.backgroundColor, config.textColor, config.hoverBgColor, "flex space-x-1 items-center justify-center text-sm")}>
+        <Badge
+          className={cn(
+            config.backgroundColor,
+            config.textColor,
+            config.hoverBgColor,
+            "flex space-x-1 items-center justify-center text-sm"
+          )}
+        >
           <Icon className="size-4"></Icon>
           <span>{config.name}</span>
         </Badge>
@@ -207,20 +228,51 @@ export const columns: ColumnDef<Order>[] = [
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: function Cell({ row }) {
-      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-      const [showReactivateDialog, setShowReactivateDialog] = useState(false);
-      const [showEditSheet, setShowEditSheet] = useState(false);
-      const storage = row.original;
-      const { isActive } = storage;
+      // const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+      // const [showReactivateDialog, setShowReactivateDialog] = useState(false);
+      // const [showEditSheet, setShowEditSheet] = useState(false);
+      const [showCancelOrderDialog, setShowCancelOrderDialog] = useState(false);
+      const [showProcessPaymentDialog, setShowProcessPaymentDialog] = useState(false);
+      const [showVerifyPaymentDialog, setShowVerifyPaymentDialog] = useState(false);
+      const [showRejectPaymentDialog, setShowRejectPaymentDialog] = useState(false);
+      const [showRefundPaymentDialog, setShowRefundPaymentDialog] = useState(false);
+      const order = row.original;
+      const { isActive } = order;
       const isSuperAdmin = true;
 
-      const orderStatus = row.original.status
-      // const payment = row.original.payment
+      const orderStatus = order.status;
+      const regularPayment = order.payments.find(
+        (payment) => payment.type !== "REFUND"
+      );
+      const refundPayment = order.payments.find(
+        (payment) => payment.type === "REFUND"
+      );
+
+      //order validations
+      const isOrderPending = orderStatus === "PENDING";
+      const isOrderCompleted = orderStatus === "COMPLETED";
+      const isOrderCancelled = orderStatus === "CANCELLED";
+      const isOrderRefunded = orderStatus === "REFUNDED";
+
+      //payment validations
+      const isPaymentPending = regularPayment && regularPayment.status === "PENDING";
+      const isPaymentCompleted = regularPayment && regularPayment.status === "COMPLETED";
+      const isPaymentProcessed = regularPayment && regularPayment.status === "PROCESSING";
+      const isPaymentCancelled = regularPayment && regularPayment.status === "CANCELLED";
+      const isPaymentRefunded = refundPayment && refundPayment.status === "REFUNDED";
+
+      //GeneralValidations
+      const shouldProcessPayment = isOrderPending && isPaymentPending;
+      const couldCancelOrder = isOrderPending && isPaymentPending;
+      const shouldVerifyPayment = isOrderPending && isPaymentProcessed;
+      const couldRejectPayment = isOrderPending && isPaymentProcessed;
+      const couldRefundPayment = isOrderCompleted && isPaymentCompleted;
+      const cannotProcessPayment = isOrderCancelled ?? isOrderRefunded ?? isPaymentCancelled ?? isPaymentRefunded;
 
       return (
         <div>
-          {/* <div>
-            <UpdateStorageSheet
+          <div>
+            {/* <UpdateStorageSheet
               storage={storage}
               open={showEditSheet}
               onOpenChange={setShowEditSheet}
@@ -237,8 +289,37 @@ export const columns: ColumnDef<Order>[] = [
               open={showReactivateDialog}
               onOpenChange={setShowReactivateDialog}
               showTrigger={false}
-            />
-          </div> */}
+            /> */}
+
+              {shouldProcessPayment && showProcessPaymentDialog &&<ProcessPaymentDialog
+                open={showProcessPaymentDialog}
+                onOpenChange={setShowProcessPaymentDialog}
+                order={order}
+                payment={regularPayment}
+                showTrigger = {false}
+              ></ProcessPaymentDialog>}
+{/* 
+              {shouldVerifyPayment && <ProcessPaymentDialog
+                open={showVerifyPaymentDialog}
+                onOpenChange={setShowVerifyPaymentDialog}
+                order={order}
+                payment={regularPayment}
+              ></ProcessPaymentDialog>}
+
+              {couldRejectPayment && <ProcessPaymentDialog
+                open={showRejectPaymentDialog}
+                onOpenChange={setShowRejectPaymentDialog}
+                order={order}
+                payment={regularPayment}
+              ></ProcessPaymentDialog>}
+
+              {couldRefundPayment && <ProcessPaymentDialog
+                open={showRefundPaymentDialog}
+                onOpenChange={setShowRefundPaymentDialog}
+                order={order}
+                payment={regularPayment}
+              ></ProcessPaymentDialog>} */}
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -250,14 +331,23 @@ export const columns: ColumnDef<Order>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onSelect={() => setShowEditSheet(true)}
+              {shouldProcessPayment && <DropdownMenuItem
+                onSelect={() => setShowProcessPaymentDialog(true)}
                 disabled={!isActive}
               >
-                Editar
-              </DropdownMenuItem>
+                Procesar Pago
+              </DropdownMenuItem>}
               <DropdownMenuSeparator />
-              {isSuperAdmin && (
+
+              {
+                cannotProcessPayment && (
+                  <DropdownMenuItem disabled>
+                    No se puede procesar el pago
+                  </DropdownMenuItem>
+                )
+              }
+
+              {/* {isSuperAdmin && (
                 <DropdownMenuItem
                   onSelect={() => setShowReactivateDialog(true)}
                   disabled={isActive}
@@ -276,7 +366,7 @@ export const columns: ColumnDef<Order>[] = [
                 <DropdownMenuShortcut>
                   <Trash className="size-4" aria-hidden="true" />
                 </DropdownMenuShortcut>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

@@ -2647,7 +2647,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/billing/product-sale": {
+    "/api/v1/stock/availableProduct/byUse/{productUse}/branch/{branchId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2664,7 +2664,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/billing/product-purchase": {
+    "/api/v1/stock/availableProduct/{productId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2674,33 +2674,31 @@ export interface paths {
         /** Obtener un producto en stock en todos los almacenes. */
         get: operations["StockController_getProductsStockById"];
         put?: never;
-        /** Create product purchase order */
-        post: operations["BillingController_createProductPurchaseOrder"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/time-off": {
+    "/api/v1/stock/availableProduct/{productId}/storage/{storageId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener todas las ausencias temporales */
-        get: operations["TimeOffController_findAll"];
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getOneProductStockByStorage"];
         put?: never;
-        /** Crear nueva ausencia temporal */
-        post: operations["TimeOffController_create"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/time-off/{id}": {
+    "/api/v1/stock/manyProductsByStorage": {
         parameters: {
             query?: never;
             header?: never;
@@ -2709,32 +2707,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post?: never;
+        /** Obtener varios productos en stock por combinaciones de almacén y producto */
+        post: operations["StockController_getManyProductsStockByStorageAndProduct"];
         delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar evento existente */
-        patch: operations["TimeOffController_update"];
-        trace?: never;
-    };
-    "/api/v1/time-off/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Desactivar múltiples eventos */
-        delete: operations["TimeOffController_deleteMany"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/time-off/reactivate/all": {
+    "/api/v1/stock/manyProducts": {
         parameters: {
             query?: never;
             header?: never;
@@ -2743,12 +2724,63 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post?: never;
+        /** Obtener varios productos en stock por combinaciones de almacén y producto */
+        post: operations["StockController_getProductsStockByProductsIds"];
         delete?: never;
         options?: never;
         head?: never;
-        /** Reactivar múltiples eventos */
-        patch: operations["TimeOffController_reactivateAll"];
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/billing/medical-appointment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create medical consultation order */
+        post: operations["BillingController_createMedicalConsultationOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/billing/medical-prescription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create medical prescription order */
+        post: operations["BillingController_createMedicalPrescriptionOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/billing/product-sale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create product sale order */
+        post: operations["BillingController_createProductSaleOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/paciente": {
@@ -3642,6 +3674,118 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
+        Payment: {
+            id: string;
+            orderId: string;
+            /** Format: date-time */
+            date: string;
+            /** @enum {string} */
+            status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
+            /** @enum {string} */
+            type: "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
+            amount: number;
+            description?: string;
+            /** @enum {string} */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            voucherNumber?: string;
+            originalPaymentId?: string;
+            verifiedBy?: string;
+            /** Format: date-time */
+            verifiedAt?: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        DetailedOrder: {
+            /**
+             * @description ID único de la orden
+             * @example 5f8d0a3e-7d5b-4d3e-a6c4-3a7d9b2d4c1a
+             */
+            id: string;
+            /**
+             * @description Código de referencia de la orden
+             * @example ORD-20240224-001
+             */
+            code?: string;
+            /**
+             * @description Tipo de orden
+             * @example MEDICAL_PRESCRIPTION_ORDER
+             * @enum {string}
+             */
+            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            /**
+             * @description ID del tipo de movimiento asociado
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            movementTypeId: string;
+            /**
+             * @description ID de referencia externa
+             * @example REF-12345
+             */
+            referenceId: string;
+            /**
+             * @description ID del origen de fondos. Por lo general, se refiere al proveeder. No existe entidad proveedor
+             * @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+             */
+            sourceId?: string;
+            /**
+             * @description ID del destino de fondos, por lo general se refiere al almacén de destino
+             * @example b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7
+             */
+            targetId?: string;
+            /**
+             * @description Estado actual de la orden
+             * @example PENDING
+             * @enum {string}
+             */
+            status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            /**
+             * @description Moneda de la transacción
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Subtotal de la orden (sin impuestos)
+             * @example 150.75
+             */
+            subtotal: number;
+            /**
+             * @description Impuestos aplicados
+             * @example 27.14
+             */
+            tax: number;
+            /**
+             * @description Total a pagar (subtotal + impuestos)
+             * @example 177.89
+             */
+            total: number;
+            /**
+             * Format: date-time
+             * @description Fecha de creación de la orden
+             * @example 2024-02-24T15:30:00Z
+             */
+            date: string;
+            /**
+             * @description Notas adicionales
+             * @example Orden creada para paciente Juan Pérez
+             */
+            notes?: string;
+            /** @description Estado de eliminación lógica. */
+            isActive: boolean;
+            /**
+             * @description Metadatos adicionales en formato JSON
+             * @example {
+             *       "pacienteId": "PAT-12345",
+             *       "medicoId": "DOC-67890",
+             *       "seguro": "Seguro Salud Total"
+             *     }
+             */
+            metadata?: Record<string, never>;
+            /** @description Detalles del pago */
+            payments: components["schemas"]["Payment"][];
+        };
         /** @enum {string} */
         OrderType: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
         UpdateOrderDto: {
@@ -3765,35 +3909,11 @@ export interface components {
              * @description Método de pago
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Número de comprobante */
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
             originalPaymentId?: string;
-        };
-        Payment: {
-            id: string;
-            orderId: string;
-            /** Format: date-time */
-            date: string;
-            /** @enum {string} */
-            status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
-            /** @enum {string} */
-            type: "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
-            amount: number;
-            description?: string;
-            /** @enum {string} */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
-            voucherNumber?: string;
-            originalPaymentId?: string;
-            verifiedBy?: string;
-            /** Format: date-time */
-            verifiedAt?: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
         };
         UpdatePaymentDto: {
             /**
@@ -3833,7 +3953,7 @@ export interface components {
              * @description Método de pago
              * @enum {string}
              */
-            paymentMethod?: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Número de comprobante */
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
@@ -3854,7 +3974,7 @@ export interface components {
              * @description Método de pago a utilizar
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Monto del pago
              * @example 100.5
@@ -3899,7 +4019,7 @@ export interface components {
              * @example BANK_TRANSFER
              * @enum {string}
              */
-            refundMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            refundMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /** @description Notas adicionales */
             notes?: string;
         };
@@ -4130,6 +4250,12 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             rescheduledFromId?: string;
+            /**
+             * @description Método de pago
+             * @example CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
         };
         Appointment: {
             id: string;
@@ -4220,6 +4346,12 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             rescheduledFromId?: string;
+            /**
+             * @description Método de pago
+             * @example CASH
+             * @enum {string}
+             */
+            paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
         };
         DeleteAppointmentsDto: {
             ids: string[];
@@ -5925,20 +6057,11 @@ export interface components {
              */
             appointmentId: string;
             /**
-             * @description ID de la sucursal
-             * @example 123e4567-e89b-12d3-a456-426614174000
+             * @description Método de pago a utilizar
+             * @default CASH
+             * @enum {string}
              */
-            branchId: string;
-            /**
-             * @description Ubicación en almacén
-             * @example Estante A-123
-             */
-            storageLocation?: string;
-            /**
-             * @description Número de lote
-             * @example LOT-2024-001
-             */
-            batchNumber?: string;
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Monto pagado
              * @example 150
@@ -5957,6 +6080,90 @@ export interface components {
              * @description Metadata adicional para la orden
              * @example {
              *       "additionalNotes": "Social no pagante",
+             *       "preferences": {
+             *         "language": "español",
+             *         "communicationMethod": "email"
+             *       }
+             *     }
+             */
+            metadata?: Record<string, never>;
+        };
+        PrescriptionProductItemDto: {
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId: string;
+            /**
+             * @description Cantidad del producto
+             * @example 5
+             */
+            quantity: number;
+            /**
+             * @description ID del almacen
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId: string;
+        };
+        CreateMedicalPrescriptionBillingDto: {
+            /**
+             * @description Array de IDs de citas médicas
+             * @example [
+             *       "29c5e5b8-1835-42f9-ae34-217a3791ba22",
+             *       "39c5e5b8-1835-42f9-ae34-217a3791ba33"
+             *     ]
+             */
+            appointmentIds: string[];
+            /**
+             * @description Lista de productos a vender
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5,
+             *         "storageId": "d4892502-5685-45e1-b323-55f933f54387"
+             *       }
+             *     ]
+             */
+            products: components["schemas"]["PrescriptionProductItemDto"][];
+            /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId: string;
+            /**
+             * @description ID de la receta
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            recipeId: string;
+            /**
+             * @description ID de la sucursal
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId: string;
+            /**
+             * @description Método de pago a utilizar
+             * @default CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            /**
+             * @description Monto pagado
+             * @example 150
+             */
+            amountPaid?: number;
+            /**
+             * @description Moneda utilizada para el pago
+             * @default PEN
+             */
+            currency: string;
+            /** @description Número de voucher o referencia del pago */
+            voucherNumber?: string;
+            /** @description Notas adicionales sobre la receta */
+            notes?: string;
+            /**
+             * @description Metadata adicional para la orden
+             * @example {
+             *       "additionalNotes": "Instrucciones especiales",
              *       "preferences": {
              *         "language": "español",
              *         "communicationMethod": "email"
@@ -6030,7 +6237,7 @@ export interface components {
              * @default CASH
              * @enum {string}
              */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
             /**
              * @description Notas adicionales
              * @example Venta de medicamentos para paciente
@@ -8011,7 +8218,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Order"][];
+                    "application/json": components["schemas"]["DetailedOrder"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -14382,87 +14589,63 @@ export interface operations {
             };
         };
     };
-    BillingController_createProductSaleOrder: {
+    StockController_getProductsStockByUseAndBranch: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
+                branchId: string;
+                /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
+                productUse: "VENTA" | "INTERNO" | "OTRO";
+            };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProductSaleBillingDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
-            /** @description Product sale order created successfully */
-            201: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Order"];
+                    "application/json": components["schemas"]["ProductStock"][];
                 };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };
-    BillingController_createProductPurchaseOrder: {
+    StockController_getProductsStockById: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description ID del producto */
+                productId: string;
+            };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProductPurchaseBillingDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
-            /** @description Product purchase order created successfully */
-            201: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Order"];
+                    "application/json": components["schemas"]["ProductStock"][];
                 };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };
-    TimeOffController_findAll: {
+    StockController_getOneProductStockByStorage: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description ID del producto */
+                productId: string;
+                storageId: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -14545,6 +14728,44 @@ export interface operations {
         };
         responses: {
             /** @description Medical appointment order created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BillingController_createMedicalPrescriptionOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMedicalPrescriptionBillingDto"];
+            };
+        };
+        responses: {
+            /** @description Medical prescription order created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;

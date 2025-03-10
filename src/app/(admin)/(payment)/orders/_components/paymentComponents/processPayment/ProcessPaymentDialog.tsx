@@ -34,15 +34,21 @@ import { usePayments } from "../../../_hooks/usePayment";
 import { toast } from "sonner";
 import { ProcessPaymentForm } from "./ProcessPaymentForm";
 import { ConfirmOrderDialog } from "./ConfirmDialog";
+import { DialogProps } from "@radix-ui/react-dialog";
 
-interface ProcessPaymentDialogProps {
+interface ProcessPaymentDialogProps extends DialogProps {
   order: Order;
   payment: Payment;
+  showTrigger?: boolean;
+  onSuccess?: () => void;
 }
 
 export function ProcessPaymentDialog({
   order,
   payment,
+  showTrigger = true,
+  onSuccess,
+  ...props
 }: ProcessPaymentDialogProps) {
   const SUBJECT_ENTITYNAME = "pago";
   const PROCESS_PAYMENT_MESSAGES = {
@@ -90,6 +96,7 @@ export function ProcessPaymentDialog({
         },
         {
           onSuccess: () => {
+            onSuccess?.();
             setOpen(false);
             form.reset();
           },
@@ -112,13 +119,6 @@ export function ProcessPaymentDialog({
     form.reset();
     setOpen(false);
   };
-
-  //ACtivate only when form errors
-  // useEffect(() => {
-  //   if (form.formState.errors) {
-  //     console.log("Errores en el formulario", form.formState.errors);
-  //   }
-  // }, [form.formState.errors]);
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
@@ -170,10 +170,12 @@ export function ProcessPaymentDialog({
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <TriggerButton />
-        </DialogTrigger>
+      <Dialog {...props} open={open} onOpenChange={setOpen}>
+        {showTrigger && (
+          <DialogTrigger asChild>
+            <TriggerButton />
+          </DialogTrigger>
+        )}
         <DialogContent className="max-w-xl max-h-[calc(100vh-4rem)]">
           <DialogHeader>
             <DialogTitle>{PROCESS_PAYMENT_MESSAGES.title}</DialogTitle>
@@ -193,10 +195,12 @@ export function ProcessPaymentDialog({
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <TriggerButton />
-      </DrawerTrigger>
+    <Drawer {...props} open={open} onOpenChange={setOpen}>
+      {showTrigger && (
+        <DrawerTrigger asChild>
+          <TriggerButton />
+        </DrawerTrigger>
+      )}
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{PROCESS_PAYMENT_MESSAGES.title}</DrawerTitle>
