@@ -434,7 +434,7 @@ export const createPaymentSchema = z.object({
   date: z.string().optional(),
   status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"]).optional(),
   type: z.enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"]),
-  amount: z.number(),
+  amount: z.coerce.number(),
   description: z.string().optional(),
   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]).optional(),
   voucherNumber: z.string().optional(),
@@ -446,7 +446,7 @@ export const updatePaymentSchema = z.object({
   date: z.string().optional(),
   status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"]).optional(),
   type: z.enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"]).optional(),
-  amount: z.number().optional(),
+  amount: z.coerce.number().optional(),
   description: z.string().optional(),
   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]).optional(),
   voucherNumber: z.string().optional(),
@@ -459,15 +459,17 @@ export const cancelPaymentSchema = z.object({
 
 export const processPaymentSchema = z.object({
   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
-  amount: z.number(),
+  amount: z.coerce.number(),
   voucherNumber: z.string().optional(),
-  date: z.string(),
+  date: z.string().min(1,"La fecha es requerida").refine((val) => !isNaN(Date.parse(val)), {
+    message: "La fecha debe ser una cadena de fecha válida ISO 8601",
+  }),
   description: z.string().optional(),
 }) satisfies z.ZodType<ProcessPaymentDto>;
 
 export const verifyPaymentSchema = z.object({
   verificationNotes: z.string().optional(),
-  verifiedAt: z.string().optional(),
+  verifiedAt: z.string(),
 }) satisfies z.ZodType<VerifyPaymentDto>;
 
 export const rejectPaymentSchema = z.object({
@@ -475,7 +477,7 @@ export const rejectPaymentSchema = z.object({
 }) satisfies z.ZodType<RejectPaymentDto>;
 
 export const refundPaymentSchema = z.object({
-  amount: z.number(),
+  amount: z.coerce.number(),
   reason: z.string(),
   refundMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
   notes: z.string().optional(),

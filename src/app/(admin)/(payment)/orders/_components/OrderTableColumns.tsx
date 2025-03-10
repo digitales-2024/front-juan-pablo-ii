@@ -214,6 +214,9 @@ export const columns: ColumnDef<Order>[] = [
       const { isActive } = storage;
       const isSuperAdmin = true;
 
+      const orderStatus = row.original.status
+      // const payment = row.original.payment
+
       return (
         <div>
           {/* <div>

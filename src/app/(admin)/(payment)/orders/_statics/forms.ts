@@ -1,5 +1,5 @@
 import { FormStatics } from "@/types/statics/forms";
-import { CreateOrderInput, UpdateOrderInput, } from "../_interfaces/order.interface";
+import { CancelPaymentInput, CreateOrderInput, ProcessPaymentInput, RefundPaymentInput, RejectPaymentInput, UpdateOrderInput, VerifyPaymentInput, } from "../_interfaces/order.interface";
 
 // export const createOrderSchema = z.object({
 //     code: z.string().optional(),
@@ -244,5 +244,147 @@ export const UPDATEFORMSTATICS: FormStatics<UpdateOrderInput> = {
         type: "text",
         placeholder: "Metadatos de la orden",
         name: "metadata",
+    },
+}
+
+// type ProcessPaymentInput = {
+//     date: string;
+//     paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+//     amount: number;
+//     voucherNumber?: string | undefined;
+//     description?: string | undefined;
+// }
+export const PROCESS_PAYMENT_STATICS: FormStatics<ProcessPaymentInput> = {
+    date: {
+        required: true,
+        label: "Fecha",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Fecha del pago",
+        name: "date",
+    },
+    paymentMethod: {
+        required: true,
+        label: "Método de pago",
+        defaultValue: 'CASH',
+        type: "text",
+        placeholder: "Método de pago",
+        name: "paymentMethod",
+    },
+    amount: {
+        required: true,
+        label: "Monto",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Monto del pago",
+        name: "amount",
+    },
+    voucherNumber: {
+        required: false,
+        label: "Número de voucher",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Número de voucher",
+        name: "voucherNumber",
+    },
+    description: {
+        required: false,
+        label: "Descripción",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Descripción del pago",
+        name: "description",
+    },
+}
+
+// type VerifyPaymentInput = {
+//     verificationNotes?: string | undefined;
+//     verifiedAt?: string | undefined;
+// }
+export const VERIFY_PAYMENT_STATICS: FormStatics<VerifyPaymentInput> = {
+    verificationNotes: {
+        required: false,
+        label: "Notas de verificación",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Notas de verificación",
+        name: "verificationNotes",
+    },
+    verifiedAt: {
+        required: false,
+        label: "Fecha de verificación",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Fecha de verificación",
+        name: "verifiedAt",
+    },
+}
+
+// type CancelPaymentInput = {
+//     cancellationReason: string;
+// }
+export const CANCEL_PAYMENT_STATICS: FormStatics<CancelPaymentInput> = {
+    cancellationReason: {
+        required: true,
+        label: "Motivo de cancelación",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Motivo de cancelación",
+        name: "cancellationReason",
+    },
+}
+
+// type RejectPaymentInput = {
+//     rejectionReason: string;
+// }
+export const REJECT_PAYMENT_STATICS: FormStatics<RejectPaymentInput> = {
+    rejectionReason: {
+        required: true,
+        label: "Motivo de rechazo",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Motivo de rechazo",
+        name: "rejectionReason",
+    },
+}
+
+// type RefundPaymentInput = {
+//     amount: number;
+//     reason: string;
+//     refundMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+//     notes?: string | undefined;
+// }
+export const REFUND_PAYMENT_STATICS: FormStatics<RefundPaymentInput> = {
+    amount: {
+        required: true,
+        label: "Monto",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Monto de la devolución",
+        name: "amount",
+    },
+    reason: {
+        required: true,
+        label: "Motivo de la devolución",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Motivo de la devolución",
+        name: "reason",
+    },
+    refundMethod: {
+        required: true,
+        label: "Método de devolución",
+        defaultValue: 'BANK_TRANSFER',
+        type: "text",
+        placeholder: "Método de devolución",
+        name: "refundMethod",
+    },
+    notes: {
+        required: false,
+        label: "Notas",
+        defaultValue: undefined,
+        type: "text",
+        placeholder: "Notas de la devolución",
+        name: "notes",
     },
 }
