@@ -77,7 +77,7 @@ export function UpdateStaffSheet({
     const checkPermission = () => {
       const hasAccess =
         user?.isSuperAdmin ??
-        user?.roles?.some((role) => role.name === "GERENTE") ?? 
+        user?.roles?.some((role) => role.name === "GERENTE") ??
         false;
 
       setHasPermission(hasAccess);
@@ -86,21 +86,21 @@ export function UpdateStaffSheet({
 
     const loadUsers = async () => {
       if (!checkPermission() || !isOpen) return;
-    
+
       setIsLoadingUsers(true);
       try {
         const usersResponse = await getUsers();
-    
+
         if (Array.isArray(usersResponse)) {
           // Asegúrate de que TypeScript sepa que es un array de UserResponseDto
           const usersArray = usersResponse as UserResponseDto[];
-          
+
           // Filtrar usuarios (excluir SUPER_ADMIN y GERENTE)
           const filtered = usersArray.filter((user) => {
             if (user.isSuperAdmin) return false;
             return !user.roles?.some((role) => role.name === "GERENTE");
           });
-    
+
           setFilteredUsers(filtered);
         } else {
           console.error("Error obteniendo usuarios:", usersResponse.error);
@@ -133,16 +133,18 @@ export function UpdateStaffSheet({
   // Manejar selección de usuario existente
   const handleUserSelect = (value: string) => {
     if (value === "none") {
-      // Limpiar los campos
+      // Limpiar el userId
       form.setValue("userId", "");
+      console.log("userId limpiado:", form.getValues());
       return;
     }
 
     const selectedUser = filteredUsers.find((user) => user.id === value);
 
     if (selectedUser) {
-      // Solo actualizar el userId, ya que en actualización mantenemos los otros datos
+      // Actualizar el userId
       form.setValue("userId", selectedUser.id);
+      console.log("userId actualizado:", form.getValues());
     }
   };
 
@@ -153,11 +155,20 @@ export function UpdateStaffSheet({
     if (!checked) {
       // Limpiar el userId
       form.setValue("userId", "");
+      console.log("userId limpiado por switch:", form.getValues());
     }
   };
 
   const onSubmit = async (data: UpdateStaffDto) => {
     if (updateMutation.isPending) return;
+
+    // Si useExistingUser está desactivado, asegurar que userId sea null o vacío
+    if (!useExistingUser) {
+      data.userId = "";
+    }
+
+    // Log para depuración
+    console.log("Datos a enviar:", data);
 
     try {
       await updateMutation.mutateAsync(
@@ -200,7 +211,6 @@ export function UpdateStaffSheet({
         <div className="mt-4 overflow-y-auto pr-1">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              
               {/* Sección de usuario - solo visible con permisos */}
               {hasPermission && (
                 <div className="flex flex-col space-y-4 border-b pb-4 mb-4">
@@ -212,8 +222,8 @@ export function UpdateStaffSheet({
                         onCheckedChange={handleToggleChange}
                         className="data-[state=checked]:bg-primary"
                       />
-                      <Label 
-                        htmlFor="use-existing-user" 
+                      <Label
+                        htmlFor="use-existing-user"
                         className="text-sm sm:text-base font-medium"
                       >
                         Asignar usuario existente
@@ -223,18 +233,21 @@ export function UpdateStaffSheet({
 
                   {useExistingUser && (
                     <div className="w-full">
-                      <FormLabel className="text-sm sm:text-base mb-2 block">Seleccionar usuario</FormLabel>
-                      <Select 
+                      <FormLabel className="text-sm sm:text-base mb-2 block">
+                        Seleccionar usuario
+                      </FormLabel>
+                      <Select
                         onValueChange={handleUserSelect}
-                        defaultValue={staff.userId ?? "none"}
+                        defaultValue={staff.userId || "none"} // Asegúrate que esto sea correcto
+                        value={form.watch("userId") || "none"} // Añadir esto para mantener sincronizado el valor
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Seleccione un usuario" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent 
-                          position="popper" 
+                        <SelectContent
+                          position="popper"
                           className="max-h-[300px] overflow-y-auto w-[min(calc(100vw-2rem),350px)] sm:w-[350px]"
                           align="start"
                         >
@@ -304,7 +317,11 @@ export function UpdateStaffSheet({
                     <FormItem>
                       <FormLabel>DNI</FormLabel>
                       <FormControl>
-                        <Input placeholder="12345678" maxLength={8} {...field} />
+                        <Input
+                          placeholder="12345678"
+                          maxLength={8}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -399,6 +416,9 @@ export function UpdateStaffSheet({
                   )}
                 />
               </div>
+
+              {/* Campo oculto para userId */}
+              <input type="hidden" {...form.register("userId")} />
 
               <SheetFooter>
                 <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
