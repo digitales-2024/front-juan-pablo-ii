@@ -1,6 +1,6 @@
 "use client";
 
-import { PatientTable } from "./_components/PatientTable";
+import { PatientTable } from "./_components/ApoointmentTable";
 import { PageHeader } from "@/components/PageHeader";
 import { notFound } from "next/navigation";
 import { usePatients } from "./_hooks/usePatient";
