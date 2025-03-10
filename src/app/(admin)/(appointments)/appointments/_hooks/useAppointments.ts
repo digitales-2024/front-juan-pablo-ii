@@ -6,9 +6,11 @@ import {
     CreateAppointmentDto,
     UpdateAppointmentDto,
     DeleteAppointmentsDto,
+    PaginatedAppointmentsResponse
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
-import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment } from "../_actions/appointments.action";
+import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments } from "../_actions/appointments.action";
+import { useState } from "react";
 
 interface UpdateAppointmentVariables {
     id: string;
@@ -17,6 +19,10 @@ interface UpdateAppointmentVariables {
 
 export const useAppointments = () => {
     const queryClient = useQueryClient();
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 10
+    });
 
     // Query para obtener las citas
     const appointmentsQuery = useQuery({
@@ -51,6 +57,29 @@ export const useAppointments = () => {
                 throw new Error(response.error ?? "Error desconocido");
             }
 
+            return response.data;
+        },
+        staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+
+    // Query para obtener las citas paginadas
+    const paginatedAppointmentsQuery = useQuery({
+        queryKey: ["paginated-appointments", pagination.page, pagination.limit],
+        queryFn: async () => {
+            const response = await getAllAppointments({
+                page: pagination.page,
+                limit: pagination.limit
+            });
+
+            if (!response) {
+                throw new Error("No se recibió respuesta del servidor");
+            }
+
+            if (response.error || !response.data) {
+                throw new Error(response.error ?? "Error desconocido");
+            }
+
+            console.log("Respuesta paginada recibida:", response.data);
             return response.data;
         },
         staleTime: 1000 * 60 * 5, // 5 minutos
@@ -181,7 +210,11 @@ export const useAppointments = () => {
     return {
         appointmentsQuery,
         activeAppointmentsQuery,
+        paginatedAppointmentsQuery,
         appointments: appointmentsQuery.data,
+        paginatedAppointments: paginatedAppointmentsQuery.data,
+        pagination,
+        setPagination,
         createMutation,
         updateMutation,
         deleteMutation,
