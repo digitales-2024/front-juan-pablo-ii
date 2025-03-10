@@ -53,6 +53,7 @@ export function CreateStaffDialog() {
       email: "",
       phone: "",
       cmp: "",
+      userId: "",
     },
   });
 
@@ -79,11 +80,11 @@ export function CreateStaffDialog() {
   };
 
   const DialogFooterContent = () => (
-    <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
+    <div className="gap-2 flex flex-col-reverse sm:flex-row-reverse sm:gap-2 w-full">
       <Button
         type="submit"
         disabled={isCreatePending || createMutation.isPending}
-        className="w-full"
+        className="w-full sm:w-auto"
         form="create-staff-form"
       >
         {(isCreatePending || createMutation.isPending) && (
@@ -97,7 +98,7 @@ export function CreateStaffDialog() {
       <Button
         type="button"
         variant="outline"
-        className="w-full"
+        className="w-full sm:w-auto"
         onClick={handleClose}
       >
         {CREATE_STAFF_MESSAGES.cancel}
@@ -110,8 +111,9 @@ export function CreateStaffDialog() {
       onClick={() => setOpen(true)}
       variant="outline"
       size="sm"
+      className="flex items-center text-xs sm:text-sm"
     >
-      <Plus className="size-4 mr-2" aria-hidden="true" />
+      <Plus className="size-3 sm:size-4 mr-1 sm:mr-2" aria-hidden="true" />
       {CREATE_STAFF_MESSAGES.button}
     </Button>
   );
@@ -122,23 +124,27 @@ export function CreateStaffDialog() {
         <DialogTrigger asChild>
           <TriggerButton />
         </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{CREATE_STAFF_MESSAGES.title}</DialogTitle>
-            <DialogDescription>
+        <DialogContent className="sm:max-w-[550px] overflow-y-auto max-h-[85vh]">
+          <DialogHeader className="text-left sm:text-center">
+            <DialogTitle className="text-lg sm:text-xl">
+              {CREATE_STAFF_MESSAGES.title}
+            </DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">
               {CREATE_STAFF_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+          <div className="p-3 sm:p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 text-sm sm:text-base">
             <p className="font-semibold">
               Recuerda ingresar el CMP si estás creando un personal médico.
             </p>
           </div>
-          <CreateStaffForm form={form} onSubmit={handleSubmit}>
-            <DialogFooter>
-              <DialogFooterContent />
-            </DialogFooter>
-          </CreateStaffForm>
+          <div className="overflow-y-auto pr-1">
+            <CreateStaffForm form={form} onSubmit={handleSubmit}>
+              <DialogFooter>
+                <DialogFooterContent />
+              </DialogFooter>
+            </CreateStaffForm>
+          </div>
         </DialogContent>
       </Dialog>
     );
@@ -149,24 +155,28 @@ export function CreateStaffDialog() {
       <DrawerTrigger asChild>
         <TriggerButton />
       </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>{CREATE_STAFF_MESSAGES.title}</DrawerTitle>
+      <DrawerContent className="px-4 pb-6 pt-4 max-h-[90vh]">
+        <DrawerHeader className="px-0 pb-4">
+          <DrawerTitle className="text-lg">
+            {CREATE_STAFF_MESSAGES.title}
+          </DrawerTitle>
           <DrawerDescription>
             {CREATE_STAFF_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+        <div className="p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 text-sm mb-4">
           <p className="font-semibold">
             Recuerda ingresar el CMP si estás creando un personal médico.
           </p>
         </div>
-        <CreateStaffForm form={form} onSubmit={handleSubmit}>
-          <DrawerFooter>
-            <DialogFooterContent />
-          </DrawerFooter>
-        </CreateStaffForm>
+        <div className="overflow-y-auto pr-1 pb-16">
+          <CreateStaffForm form={form} onSubmit={handleSubmit}>
+            <DrawerFooter className="px-0 pt-4">
+              <DialogFooterContent />
+            </DrawerFooter>
+          </CreateStaffForm>
+        </div>
       </DrawerContent>
     </Drawer>
   );
-} 
+}
