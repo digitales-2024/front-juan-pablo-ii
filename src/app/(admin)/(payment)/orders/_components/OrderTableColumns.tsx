@@ -111,6 +111,28 @@ export const columns: ColumnDef<Order>[] = [
       );
     },
   },
+  // {
+  //   accessorKey: "",
+  //   meta: { title: "Estado de Órden" },
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Estado de Órden" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     // orderTypeConfig
+  //     // orderStatusConfig
+  //     const config = orderStatusConfig[row.original.status];
+  //     const Icon = config.icon;
+  //     return (
+  //       // <span>
+  //       //   {row.original.status || "Sin tipo de almacén"}
+  //       // </span>
+  //       <Badge className={cn(config.backgroundColor, config.textColor, config.hoverBgColor, "flex space-x-1 items-center justify-center text-sm")}>
+  //         <Icon className="size-4"></Icon>
+  //         <span>{config.name}</span>
+  //       </Badge>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "tax",
     meta: { title: "Impuestos" },

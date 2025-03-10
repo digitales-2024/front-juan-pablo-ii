@@ -661,10 +661,10 @@ export function CreateProductSaleBillingOrderForm({
                 })}
                 {showProductTotals && selectedProducts.length > 0 && (
                   <TableRow className="bg-muted/30 font-medium animate-fade-down">
-                    <TableCell colSpan={5} className="font-bold">
+                    <TableCell colSpan={4} className="font-bold">
                       TOTALES ({productTotals.totalProducts} productos):
                     </TableCell>
-                    <TableCell className="font-semibold">
+                    {/* <TableCell className="font-semibold">
                       {productTotals.totalIGV.toLocaleString("es-PE", {
                         style: "currency",
                         currency: "PEN",
@@ -675,9 +675,9 @@ export function CreateProductSaleBillingOrderForm({
                         style: "currency",
                         currency: "PEN",
                       })}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell
-                      colSpan={2}
+                      colSpan={1}
                       className="text-lg text-primary font-bold"
                     >
                       {productTotals.total.toLocaleString("es-PE", {
@@ -685,6 +685,7 @@ export function CreateProductSaleBillingOrderForm({
                         currency: "PEN",
                       })}
                     </TableCell>
+                    <TableCell colSpan={3}></TableCell>
                   </TableRow>
                 )}
               </TableBody>

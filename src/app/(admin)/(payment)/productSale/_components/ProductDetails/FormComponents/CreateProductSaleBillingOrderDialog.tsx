@@ -39,6 +39,7 @@ import {
   CreateProductSaleBillingOrderForm
 } from "./CreateProductSaleBillingOrderForm";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CREATE_OUTGOING_MESSAGES = {
   button: "Nueva venta",
@@ -55,6 +56,7 @@ export function CreateProductSaleBillingProcessDialog() {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { createSaleOrderMutation } = useBilling();
   const dispatch = useSelectProductDispatch();
+  const router = useRouter();
 
 // export const createProductSaleBillingSchema = z.object({
 //   branchId: z.string({
@@ -130,8 +132,17 @@ export function CreateProductSaleBillingProcessDialog() {
     startCreateTransition(() => {
       createSaleOrderMutation.mutate(input, {
         onSuccess: (res) => {
-          toast.success('Venta creada exitosamente: ' + res.data.id);
           form.reset();
+          toast.success('Venta creada exitosamente: ' + res.data.id, {
+            action: {
+              label: "Ver órden",
+              onClick: async () => {
+                // history.push(`/admin/inventory/incoming/${res.data.id}`)
+                await router.push('/orders')
+              },
+            },
+            duration: 10000,
+          });
           setOpen(false);
         },
         onError: (error) => {

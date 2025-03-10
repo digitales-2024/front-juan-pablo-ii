@@ -171,6 +171,9 @@ export const useProducts = () => {
           if (!oldProducts) return detailedProduct;
           return [...oldProducts, ...detailedProduct];
       });
+      await queryClient.refetchQueries({
+        queryKey: ["active-products"]
+      })
       toast.success(res.message);
     },
     onError: (error) => {

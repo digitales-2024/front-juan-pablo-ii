@@ -17,6 +17,12 @@ export function OrderTable({ data }: StorageTableProps) {
       data={data}
       placeholder="Buscar por nombre ..."
       toolbarActions={(table) => <ProductTableToolbarActions table={table} />}
+      columnVisibilityConfig={
+        {
+          subtotal: false,
+          tax: false,
+        }
+      }
     />
   );
 }
