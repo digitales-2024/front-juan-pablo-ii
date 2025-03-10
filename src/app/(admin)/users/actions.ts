@@ -21,7 +21,7 @@ export async function getUsers(): Promise<GetUsersResponse> {
         if (error) {
             return { error: error.message };
         }
-		console.log("🚀 ~ getUsers ~ users:", users)
+		/* console.log("🚀 ~ getUsers ~ users:", users) */
         return users;
     } catch (error) {
         if (error instanceof Error) return { error: error.message };

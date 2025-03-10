@@ -54,6 +54,7 @@ export function CreateStaffDialog() {
       phone: "",
       cmp: "",
       userId: "",
+      branchId: "", // Agregar este campo
     },
   });
 
