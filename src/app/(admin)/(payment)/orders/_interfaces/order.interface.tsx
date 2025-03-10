@@ -30,7 +30,7 @@ export type EnumConfig = {
   backgroundColor: string;
   textColor: string;
   hoverBgColor: string;
-  hoverTextColor?:string
+  hoverTextColor?: string
   importantBgColor?: string;
   importantHoverBgColor?: string;
   importantTextColor?: string;
@@ -92,7 +92,7 @@ export const orderTypeEnumOptions: EnumOptions<OrderType>[] = [
   }
 ]
 
-export const orderStatusConfig: Record<OrderStatus, EnumConfig> = { 
+export const orderStatusConfig: Record<OrderStatus, EnumConfig> = {
   DRAFT: {
     name: "Borrador",
     backgroundColor: "bg-[#F5F5F5]",
@@ -436,7 +436,7 @@ export const createPaymentSchema = z.object({
   type: z.enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"]),
   amount: z.number(),
   description: z.string().optional(),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]).optional(),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]).optional(),
   voucherNumber: z.string().optional(),
   originalPaymentId: z.string().optional(),
 }) satisfies z.ZodType<CreatePaymentDto>;
@@ -448,7 +448,7 @@ export const updatePaymentSchema = z.object({
   type: z.enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"]).optional(),
   amount: z.number().optional(),
   description: z.string().optional(),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]).optional(),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]).optional(),
   voucherNumber: z.string().optional(),
   originalPaymentId: z.string().optional(),
 }) satisfies z.ZodType<UpdatePaymentDto>;
@@ -458,7 +458,7 @@ export const cancelPaymentSchema = z.object({
 }) satisfies z.ZodType<CancelPaymentDto>;
 
 export const processPaymentSchema = z.object({
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
   amount: z.number(),
   voucherNumber: z.string().optional(),
   date: z.string(),
@@ -477,7 +477,7 @@ export const rejectPaymentSchema = z.object({
 export const refundPaymentSchema = z.object({
   amount: z.number(),
   reason: z.string(),
-  refundMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+  refundMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
   notes: z.string().optional(),
 }) satisfies z.ZodType<RefundPaymentDto>;
 
@@ -503,7 +503,7 @@ export type CreateProductSaleBillingDto = {
   batchNumber?: string;
   referenceId?: string;
   currency: string;
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   products: ProductSaleItemDto[];
   metadata?: Record<string, never>;
@@ -524,7 +524,7 @@ export type CreateProductPurchaseBillingDto = {
   batchNumber?: string;
   referenceId?: string;
   currency: string;
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   metadata?: Record<string, never>;
 }
@@ -543,7 +543,7 @@ export type CreatePrescriptionBillingDto = {
   batchNumber?: string;
   referenceId?: string;
   currency: string;
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   products: ProductSaleItemDto[];
   services: ServiceSaleItemDto[];

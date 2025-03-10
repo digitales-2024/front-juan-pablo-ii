@@ -47,6 +47,8 @@ interface DataTableProps<TData, TValue> {
   columnVisibilityConfig?: Partial<Record<keyof TData, boolean>>;
   onTableChange?: (table: TableType<TData>, newState: TableState) => void;
   onRowSelectionChange?: (table: TData[]) => void;
+  totalCount?: number;
+  manualPagination?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -59,6 +61,8 @@ export function DataTable<TData, TValue>({
   columnVisibilityConfig,
   onTableChange,
   onRowSelectionChange,
+  totalCount,
+  manualPagination,
 }: DataTableProps<TData, TValue>) {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -72,12 +76,19 @@ export function DataTable<TData, TValue>({
     left: ["select"],
     right: ["actions"],
   });
+
+  // Calcular el número de páginas para la paginación manual
+  const calculatePageCount = (totalItems: number | undefined, pageSize: number): number | undefined => {
+    if (!totalItems) return undefined;
+    return Math.ceil(totalItems / pageSize);
+  };
+
   const handleOnRowSelectionChange = useCallback(
     (valueFn: Updater<RowSelectionState>) => {
       if (typeof valueFn === "function") {
         const updatedRowSelection = valueFn(rowSelection);
         setRowSelection(updatedRowSelection);
-  
+
         //Get all selected rows based on the updatedRowSelection
         const selectedRows = Object.keys(updatedRowSelection).reduce(
           (acc, key) => {
@@ -90,7 +101,7 @@ export function DataTable<TData, TValue>({
             return acc;
           },
           [] as TData[],
-        );  
+        );
         // Call the onRowSelectionChange function with the selected rows
         onRowSelectionChange?.(selectedRows);
       }
@@ -101,7 +112,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    onStateChange: (updaterOrValue)=>{
+    onStateChange: (updaterOrValue) => {
       // Si no has definido onTableChange, salimos
       if (!onTableChange) return;
       // Determina el nuevo estado
@@ -139,6 +150,8 @@ export function DataTable<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getExpandedRowModel: getExpandedRowModel(),
+    manualPagination: manualPagination,
+    pageCount: manualPagination ? calculatePageCount(totalCount, 10) : undefined, // Usar 10 como valor predeterminado para pageSize
   });
 
   const getCommonPinningStyles = (column: Column<TData>): CSSProperties => {
@@ -182,9 +195,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}

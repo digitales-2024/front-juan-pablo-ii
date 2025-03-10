@@ -15,6 +15,7 @@ import { useAppointments } from "@/app/(admin)/(appointments)/appointments/_hook
 import { format } from "date-fns";
 import { CreateAppointmentDto } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
@@ -31,6 +32,7 @@ export default function Consultation() {
 	const [selectedBranchId, setSelectedBranchId] = useState("");
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const { createMutation } = useAppointments();
+	const queryClient = useQueryClient();
 
 	const form = useForm<ConsultationSchema>({
 		resolver: zodResolver(consultationsSchema),
@@ -279,6 +281,9 @@ export default function Consultation() {
 
 			const result = await createMutation.mutateAsync(appointmentToCreate);
 			console.log('✅ Mutation completada exitosamente con resultado:', result);
+
+			// Invalidar la query después de crear la cita
+			queryClient.invalidateQueries({ queryKey: ['paginated-appointments'] });
 
 			console.log("🎉 Appointment creado exitosamente");
 			// En lugar de resetear todo el formulario, solo limpiamos algunos campos
