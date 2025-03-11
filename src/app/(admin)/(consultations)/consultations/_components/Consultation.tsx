@@ -18,6 +18,8 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
 import { EventType, EventStatus } from "@/app/(admin)/(staff)/schedules/_interfaces/event.interface";
+import { useBilling } from "@/app/(admin)/(payment)/orders/_hooks/useBilling";
+import { CreateMedicalAppointmentBillingDto } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
@@ -36,6 +38,7 @@ export default function Consultation() {
 	const { createMutation } = useAppointments();
 	const queryClient = useQueryClient();
 	const { createMutation: createEventMutation } = useEvents();
+	const { createMedicalAppointmentOrderMutation } = useBilling();
 
 	const form = useForm<ConsultationSchema>({
 		resolver: zodResolver(consultationsSchema),
@@ -321,13 +324,46 @@ export default function Consultation() {
 			queryClient.invalidateQueries({ queryKey: ['paginated-appointments'] });
 
 			console.log("🎉 Appointment creado exitosamente");
+
+			// Crear la orden de facturación para la cita médica
+			try {
+				console.log('💰 Creando orden de facturación para la cita médica...');
+
+				// Verificar que tenemos el ID del appointment
+				if (result.data && result.data.id) {
+					// Crear el objeto para la facturación
+					const billingData: CreateMedicalAppointmentBillingDto = {
+						appointmentId: result.data.id,
+						paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET",
+						currency: "PEN", // Moneda peruana (soles)
+						notes: data.notes || "",
+						metadata: {}
+					};
+
+					console.log('📦 Datos de facturación a crear:', billingData);
+
+					// Usar la mutación del hook useBilling para crear la orden
+					const billingResult = await createMedicalAppointmentOrderMutation.mutateAsync(billingData);
+					console.log('✅ Orden de facturación creada exitosamente:', billingResult);
+
+					// Mostrar mensaje de éxito
+					toast.success("Cita agendada y facturada exitosamente");
+				} else {
+					console.error('❌ No se pudo obtener el ID del appointment para crear la facturación');
+					toast.success("Cita agendada exitosamente, pero no se pudo crear la facturación");
+				}
+			} catch (billingError) {
+				console.error('❌ Error al crear la orden de facturación:', billingError);
+				toast.success("Cita agendada exitosamente, pero hubo un error al crear la facturación");
+				// No interrumpimos el flujo principal si falla la creación de la facturación
+			}
+
 			// En lugar de resetear todo el formulario, solo limpiamos algunos campos
 			// pero mantenemos la fecha, hora, personal y sucursal seleccionados
 			form.setValue("notes", "");
 			form.setValue("paymentMethod", "" as any);
 			// Mantenemos: date, time, staffId, branchId
 			setShowForm(false);
-			toast.success("Cita agendada exitosamente");
 		} catch (error) {
 			// Manejo de error mejorado
 			console.error('❌ ERROR en handleSubmit:', error);

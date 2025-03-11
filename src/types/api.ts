@@ -489,6 +489,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/order/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener orden por ID */
+        get: operations["OrderController_findOneDetailed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/order/search/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener orden por ID */
+        get: operations["OrderController_searchOneDetailed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/order/{id}": {
         parameters: {
             query?: never;
@@ -1157,6 +1191,40 @@ export interface paths {
         head?: never;
         /** Reactivar múltiples citas médicas */
         patch: operations["AppointmentController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/appointments/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Cancelar cita médica */
+        patch: operations["AppointmentController_cancel"];
+        trace?: never;
+    };
+    "/api/v1/appointments/{id}/no-show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Marcar cita médica como NO_SHOW */
+        patch: operations["AppointmentController_markAsNoShow"];
         trace?: never;
     };
     "/api/v1/events/filter": {
@@ -4370,6 +4438,11 @@ export interface components {
              */
             rescheduledFromId?: string;
             /**
+             * @description Razón por la que el paciente no se presentó a la cita
+             * @example El paciente no se presentó sin previo aviso
+             */
+            noShowReason?: string;
+            /**
              * @description Método de pago
              * @example CASH
              * @enum {string}
@@ -4400,6 +4473,7 @@ export interface components {
             type: "CONSULTA" | "OTRO";
             notes: string;
             cancellationReason: string;
+            noShowReason: string;
             rescheduledFromId: string;
             isActive: boolean;
             /** Format: date-time */
@@ -4471,6 +4545,11 @@ export interface components {
              */
             rescheduledFromId?: string;
             /**
+             * @description Razón por la que el paciente no se presentó a la cita
+             * @example El paciente no se presentó sin previo aviso
+             */
+            noShowReason?: string;
+            /**
              * @description Método de pago
              * @example CASH
              * @enum {string}
@@ -4484,6 +4563,20 @@ export interface components {
         };
         DeleteAppointmentsDto: {
             ids: string[];
+        };
+        CancelAppointmentDto: {
+            /**
+             * @description Motivo de la cancelación
+             * @example El paciente no pudo asistir por motivos personales
+             */
+            cancellationReason: string;
+        };
+        NoShowAppointmentDto: {
+            /**
+             * @description Razón por la que el paciente no se presentó a la cita
+             * @example El paciente no se presentó sin previo aviso
+             */
+            noShowReason: string;
         };
         Event: Record<string, never>;
         /**
@@ -4753,214 +4846,6 @@ export interface components {
             title: string;
         };
         DeleteStaffSchedulesDto: {
-            ids: string[];
-        };
-        CreateStaffTypeDto: {
-            /**
-             * @description Nombre de la especialidad
-             * @example Cardiología
-             */
-            name: string;
-            /**
-             * @description Descripción de la especialidad
-             * @example Especialidad enfocada en el sistema cardiovascular
-             */
-            description: string;
-        };
-        StaffType: {
-            /** @description ID único del tipo de personal */
-            id: string;
-            /** @description Nombre del tipo de personal */
-            name: string;
-            /** @description Descripción del tipo de personal */
-            description?: string;
-            /** @description Estado activo/inactivo del tipo de personal */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @description Fecha de creación del registro
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Fecha de última actualización
-             */
-            updatedAt: string;
-        };
-        UpdateStaffTypeDto: {
-            /**
-             * @description Nombre de la especialidad
-             * @example Cardiología
-             */
-            name?: string;
-            /**
-             * @description Descripción de la especialidad
-             * @example Especialidad enfocada en el sistema cardiovascular
-             */
-            description?: string;
-        };
-        DeleteStaffTypeDto: {
-            ids: string[];
-        };
-        CreateStaffDto: {
-            /**
-             * @description ID del tipo de personal
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            staffTypeId: string;
-            /**
-             * @description ID del usuario asociado al personal médico en el sistema
-             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
-             */
-            userId?: string;
-            /**
-             * @description Nombre del personal médico
-             * @example Carlos
-             */
-            name: string;
-            /**
-             * @description Apellido del personal médico
-             * @example Rodríguez
-             */
-            lastName: string;
-            /**
-             * @description Numero de CMP
-             * @example 123456789
-             */
-            cmp?: string;
-            /**
-             * @description Número de DNI del personal médico
-             * @example 40506070
-             */
-            dni: string;
-            /**
-             * Format: date-time
-             * @description Fecha de nacimiento del personal médico
-             * @example 1980-05-15
-             */
-            birth: string;
-            /**
-             * @description email
-             * @example personal1@correo.com
-             */
-            email: string;
-            /**
-             * @description numero de telefono
-             * @example 123456789
-             */
-            phone?: string;
-            /**
-             * @description ID de la sucursal asociado al personal en el sistema
-             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
-             */
-            branchId?: string;
-        };
-        Staff: {
-            /** @description ID único del personal */
-            id: string;
-            /** @description ID del tipo de personal */
-            staffTypeId: string;
-            /** @description ID del usuario asociado */
-            userId: string | null;
-            /** @description Nombre del personal */
-            name: string;
-            /** @description Correo electrónico */
-            email: string;
-            /** @description Número telefónico */
-            phone: string;
-            /** @description Apellido del personal */
-            lastName: string;
-            /** @description Documento Nacional de Identidad */
-            dni: string;
-            /**
-             * Format: date-time
-             * @description Fecha de nacimiento
-             */
-            birth: string;
-            /** @description Estado activo/inactivo del personal */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @description Fecha de creación del registro
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Fecha de última actualización
-             */
-            updatedAt: string;
-            /**
-             * @description Información del tipo de personal
-             * @example {
-             *       "name": "doctor"
-             *     }
-             */
-            staffType: {
-                /**
-                 * @description Nombre del tipo de personal
-                 * @example doctor
-                 */
-                name?: string;
-            };
-            /** @description Número de Colegiatura Médica (CMP) */
-            cmp: string;
-            /** @description id de la sucursa asignado a este personal */
-            branchId: string;
-        };
-        UpdateStaffDto: {
-            /**
-             * @description ID del tipo de personal
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            staffTypeId?: string;
-            /**
-             * @description ID del usuario asociado al personal médico en el sistema
-             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
-             */
-            userId?: string;
-            /**
-             * @description Nombre del personal médico
-             * @example Carlos
-             */
-            name?: string;
-            /**
-             * @description Apellido del personal médico
-             * @example Rodríguez
-             */
-            lastName?: string;
-            /**
-             * @description Numero de CMP
-             * @example 123456789
-             */
-            cmp?: string;
-            /**
-             * @description Número de DNI del personal médico
-             * @example 40506070
-             */
-            dni?: string;
-            /**
-             * Format: date-time
-             * @description Fecha de nacimiento del personal médico
-             * @example 1980-05-15
-             */
-            birth?: string;
-            /**
-             * @description email
-             * @example personal1@correo.com
-             */
-            email?: string;
-            /**
-             * @description numero de telefono
-             * @example 123456789
-             */
-            phone?: string;
-            /**
-             * @description ID de la sucursal asociado al personal en el sistema
-             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
-             */
-            branchId?: string;
-        };
-        DeleteStaffDto: {
             ids: string[];
         };
         CreateCategoryDto: {
@@ -6238,8 +6123,7 @@ export interface components {
             name: string;
             precio: number;
             codigoProducto: string;
-            /** @enum {string} */
-            uso: "VENTA" | "INTERNO" | "OTRO";
+            uso: Record<string, never>;
             unidadMedida: string;
             Stock: components["schemas"]["StockProduct"][];
         };
@@ -8725,6 +8609,80 @@ export interface operations {
             };
         };
     };
+    OrderController_findOneDetailed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la orden */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orden encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOrder"];
+                };
+            };
+            /** @description ID de orden inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_searchOneDetailed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la orden */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orden encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOrder"][];
+                };
+            };
+            /** @description ID de orden inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OrderController_findOne: {
         parameters: {
             query?: never;
@@ -10703,6 +10661,86 @@ export interface operations {
                 };
             };
             /** @description IDs inválidos o citas médicas no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AppointmentController_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelAppointmentDto"];
+            };
+        };
+        responses: {
+            /** @description Cita médica cancelada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Appointment"];
+                };
+            };
+            /** @description Datos de entrada inválidos o cita no encontrada */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AppointmentController_markAsNoShow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoShowAppointmentDto"];
+            };
+        };
+        responses: {
+            /** @description Cita médica marcada como NO_SHOW exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Appointment"];
+                };
+            };
+            /** @description Datos de entrada inválidos o cita no encontrada */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -14433,7 +14471,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
-                use: "VENTA" | "INTERNO" | "OTRO";
+                use: unknown;
             };
             cookie?: never;
         };
@@ -14458,7 +14496,7 @@ export interface operations {
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
                 branchId: string;
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
-                productUse: "VENTA" | "INTERNO" | "OTRO";
+                productUse: unknown;
             };
             cookie?: never;
         };

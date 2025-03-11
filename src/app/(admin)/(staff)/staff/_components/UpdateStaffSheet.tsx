@@ -48,6 +48,7 @@ import { Label } from "@/components/ui/label";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { AutoComplete } from "@/components/ui/autocomplete";
 import { Option } from "@/types/statics/forms";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UpdateStaffSheetProps {
   staff: Staff;
@@ -72,6 +73,7 @@ export function UpdateStaffSheet({
   const [hasPermission, setHasPermission] = useState(false);
   const [useExistingUser, setUseExistingUser] = useState(!!staff.userId);
   const [branchesOptions, setBranchesOptions] = useState<Option[]>([]);
+  const queryClient = useQueryClient();
 
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
@@ -147,6 +149,26 @@ export function UpdateStaffSheet({
     },
   });
 
+  // Actualizar el formulario cuando cambia el personal
+  useEffect(() => {
+    // Actualizar los valores del formulario cuando cambia el personal
+    form.reset({
+      name: staff.name,
+      lastName: staff.lastName,
+      dni: staff.dni,
+      birth: staff.birth,
+      email: staff.email,
+      phone: staff.phone ?? "",
+      staffTypeId: staff.staffTypeId,
+      cmp: staff.cmp ?? "",
+      userId: staff.userId ?? "",
+      branchId: staff.branchId ? String(staff.branchId) : "",
+    });
+
+    // Actualizar el estado de useExistingUser
+    setUseExistingUser(!!staff.userId);
+  }, [staff, form]);
+
   // Manejar selección de usuario existente
   const handleUserSelect = (value: string) => {
     if (value === "none") {
@@ -179,22 +201,41 @@ export function UpdateStaffSheet({
   const onSubmit = async (data: UpdateStaffDto) => {
     if (updateMutation.isPending) return;
 
-    // Si useExistingUser está desactivado, asegurar que userId sea null o vacío
+    // Crear una copia de los datos para no modificar el estado del formulario
+    const submitData = { ...data };
+
+    // Si useExistingUser está desactivado, asegurar que userId sea cadena vacía
     if (!useExistingUser) {
-      data.userId = "";
+      submitData.userId = "";
+    }
+
+    // Asegurarse de que cmp sea cadena vacía si no tiene valor
+    if (!submitData.cmp) {
+      submitData.cmp = "";
+    }
+
+    // Asegurarse de que branchId sea cadena vacía si no tiene valor
+    if (!submitData.branchId) {
+      submitData.branchId = "";
     }
 
     // Log para depuración
-    console.log("Datos a enviar:", data);
+    console.log("Datos a enviar:", submitData);
 
     try {
       await updateMutation.mutateAsync(
         {
           id: staff.id,
-          data,
+          data: submitData,
         },
         {
           onSuccess: () => {
+            // Invalidar consultas para forzar una recarga de datos
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
+            queryClient.invalidateQueries({ queryKey: ["active-staff"] });
+            queryClient.invalidateQueries({ queryKey: ["staff", staff.id] });
+
+            // Cerrar el modal y resetear el formulario
             setOpen(false);
             form.reset();
           },
