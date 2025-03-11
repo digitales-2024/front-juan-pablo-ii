@@ -22,11 +22,18 @@ export type StockByStorage = {
   stock: ProductStock[];
 }
 
+export type StockStorageBranchPrototype = components['schemas']['StockStorageBranch'];
+export type StockStorageBranch = {
+  id: string;
+  name: string;
+};
+
 // Tipos para el modulo Outgoing
 export type StorageStockPrototype = components['schemas']['StockStorage']
 export type StockStorage = {
   id: string;
   name: string;
+  branch?: StockStorageBranch;
 }
 export type ProductStockDataPrototype = components['schemas']['StockProduct']
 export type ProductStockData = {
@@ -40,6 +47,7 @@ export type OutgoingProductStock = {
   name: string;
   precio: number;
   codigoProducto: string;
+  uso: "VENTA" | "INTERNO" | "OTRO";
   unidadMedida: string;
   Stock: ProductStockData[];
 }

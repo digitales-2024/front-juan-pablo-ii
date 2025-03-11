@@ -1,5 +1,5 @@
 import { components } from "@/types/api";
-import { ArrowDownToDot, ArrowUpFromDot, Banknote, CircleX, Divide, DollarSign, Gift, Hourglass, LucideIcon, NotebookPen, PartyPopper, Pill, RefreshCcwDot, RotateCcw, Sliders, Smartphone, Stethoscope, TriangleAlert, Undo2, Wallet } from "lucide-react";
+import { Archive, ArrowDownToDot, ArrowUpFromDot, Banknote, CircleX, Divide, DollarSign, Gift, Hourglass, LucideIcon, NotebookPen, PartyPopper, Pill, RefreshCcwDot, RotateCcw, Sliders, Smartphone, StepForward, Stethoscope, TriangleAlert, Undo2, Wallet } from "lucide-react";
 import { z } from "zod";
 
 // Tipos base de la API
@@ -22,6 +22,7 @@ import { z } from "zod";
 // };
 
 export type Order = components['schemas']['Order'];
+export type DetailedOrderPrototype = components['schemas']['DetailedOrder'];
 export type OrderType = components['schemas']['OrderType'];
 export type OrderStatus = components['schemas']['OrderStatus'];
 
@@ -101,7 +102,7 @@ export const orderStatusConfig: Record<OrderStatus, EnumConfig> = {
     icon: NotebookPen,
   },
   PENDING: {
-    name: "Pendiente",
+    name: "No completado",
     backgroundColor: "bg-[#FFF8E1]",
     hoverBgColor: "hover:bg-[#FFECB3]",
     textColor: "text-[#FFA000]",
@@ -150,7 +151,7 @@ export const orderStatusEnumOptions: EnumOptions<OrderStatus>[] = [
     value: "DRAFT"
   },
   {
-    label: "Pendiente",
+    label: "No completado",
     value: "PENDING"
   },
   {
@@ -292,28 +293,65 @@ export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
 //   voucherNumber?: string;
 //   originalPaymentId?: string;
 // };
-export type Payment = components['schemas']['Payment'];
 export type PaymentStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
 export type PaymentType = "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
-export type PaymentMethod = "CASH" | "BANK_TRANSFER" | "YAPE";
+export type PaymentMethod = "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+export type PaymentPrototype = components['schemas']['Payment'];
+export type Payment = {
+  id: string;
+  orderId: string;
+  date: string;
+  status: PaymentStatus;
+  type: PaymentType;
+  amount: number;
+  description?: string;
+  paymentMethod: PaymentMethod;
+  voucherNumber?: string;
+  originalPaymentId?: string;
+  verifiedBy?: string;
+  verifiedAt?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+export type DetailedOrder = {
+ id: string;
+ code?: string;
+ type: OrderType;
+ movementTypeId: string;
+ referenceId: string;
+ sourceId?: string;
+ targetId?: string;
+ status: OrderStatus
+ currency: string;
+ subtotal: number;
+ tax: number;
+ total: number;
+ date: string;
+ notes?: string;
+ isActive: boolean;
+ metadata?: Record<string, never>;
+  payments: Payment[];
+}
+
 
 export const paymentStatusConfig: Record<PaymentStatus, EnumConfig> = {
   PENDING: {
-    name: "Pendiente",
+    name: "No pagado",
     backgroundColor: "bg-[#FFF8E1]",
     hoverBgColor: "hover:bg-[#FFECB3]",
     textColor: "text-[#FFA000]",
     icon: Hourglass,
   },
   PROCESSING: {
-    name: "En proceso",
+    name: "Pagando",
     backgroundColor: "bg-[#E0F2F1]",
     hoverBgColor: "hover:bg-[#B2DFDB]",
     textColor: "text-[#00796B]",
     icon: RefreshCcwDot,
   },
   COMPLETED: {
-    name: "Completado",
+    name: "Pagado",
     backgroundColor: "bg-[#E8F5E9]",
     hoverBgColor: "hover:bg-[#C8E6C9]",
     textColor: "text-[#388E3C]",
@@ -387,14 +425,67 @@ export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
     textColor: "text-[#1976D2]",
     icon: Banknote,
   },
-  YAPE: {
-    name: "Yape",
+  DIGITAL_WALLET: {
+    name: "Billetera digital",
     backgroundColor: "bg-[#F3E5F5]",
     hoverBgColor: "hover:bg-[#E1BEE7]",
     textColor: "text-[#8E24AA]",
     icon: Smartphone,
   },
 };
+
+export type PaymentOptions = 'CANCEL' | 'PROCESS' | 'VERIFY' | 'REJECT' | 'REFUND' | 'CLOSE' | 'RESTORE';
+export const paymentOptionButtons: Record<PaymentOptions,EnumConfig > = {
+  CANCEL: {
+    name: "Cancelar",
+    backgroundColor: "bg-[#FFEBEE]",
+    hoverBgColor: "hover:bg-[#FFCDD2]",
+    textColor: "text-[#D32F2F]",
+    icon: CircleX,
+  },
+  PROCESS: {
+    name: "Procesar",
+    backgroundColor: "bg-[#E0F2F1]",
+    hoverBgColor: "hover:bg-[#B2DFDB]",
+    textColor: "text-[#00796B]",
+    icon: StepForward,
+  },
+  VERIFY: {
+    name: "Verificar",
+    backgroundColor: "bg-[#E8F5E9]",
+    hoverBgColor: "hover:bg-[#C8E6C9]",
+    textColor: "text-[#388E3C]",
+    icon: PartyPopper,
+  },
+  REJECT: {
+    name: "Rechazar",
+    backgroundColor: "bg-[#FFEBEE]",
+    hoverBgColor: "hover:bg-[#FFCDD2]",
+    textColor: "text-[#D32F2F]",
+    icon: CircleX,
+  },
+  REFUND: {
+    name: "Reembolsar",
+    backgroundColor: "bg-[#F3E5F5]",
+    hoverBgColor: "hover:bg-[#CE93D8]",
+    textColor: "text-[#8E24AA]",
+    icon: Undo2,
+  },
+  CLOSE: {
+    name: "Archivar",
+    backgroundColor: "bg-[#FFF3E0]",
+    hoverBgColor: "hover:bg-[#FFE0B2]",
+    textColor: "text-[#F57C00]",
+    icon: Archive,
+  },
+  RESTORE: {
+    name: "Restaurar",
+    backgroundColor: "bg-[#FFF8E1]",
+    hoverBgColor: "hover:bg-[#FFECB3]",
+    textColor: "text-[#FFA000]",
+    icon: NotebookPen,
+  }
+}
 
 export type CreatePaymentDto = components['schemas']['CreatePaymentDto'];
 export type UpdatePaymentDto = components['schemas']['UpdatePaymentDto'];
@@ -434,9 +525,9 @@ export const createPaymentSchema = z.object({
   date: z.string().optional(),
   status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"]).optional(),
   type: z.enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"]),
-  amount: z.number(),
+  amount: z.coerce.number(),
   description: z.string().optional(),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]).optional(),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]).optional(),
   voucherNumber: z.string().optional(),
   originalPaymentId: z.string().optional(),
 }) satisfies z.ZodType<CreatePaymentDto>;
@@ -446,9 +537,9 @@ export const updatePaymentSchema = z.object({
   date: z.string().optional(),
   status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"]).optional(),
   type: z.enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"]).optional(),
-  amount: z.number().optional(),
+  amount: z.coerce.number().optional(),
   description: z.string().optional(),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]).optional(),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]).optional(),
   voucherNumber: z.string().optional(),
   originalPaymentId: z.string().optional(),
 }) satisfies z.ZodType<UpdatePaymentDto>;
@@ -458,16 +549,18 @@ export const cancelPaymentSchema = z.object({
 }) satisfies z.ZodType<CancelPaymentDto>;
 
 export const processPaymentSchema = z.object({
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
-  amount: z.number(),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
+  amount: z.coerce.number(),
   voucherNumber: z.string().optional(),
-  date: z.string(),
+  date: z.string().min(1,"La fecha es requerida").refine((val) => !isNaN(Date.parse(val)), {
+    message: "La fecha debe ser una cadena de fecha válida ISO 8601",
+  }),
   description: z.string().optional(),
 }) satisfies z.ZodType<ProcessPaymentDto>;
 
 export const verifyPaymentSchema = z.object({
   verificationNotes: z.string().optional(),
-  verifiedAt: z.string().optional(),
+  verifiedAt: z.string(),
 }) satisfies z.ZodType<VerifyPaymentDto>;
 
 export const rejectPaymentSchema = z.object({
@@ -475,9 +568,9 @@ export const rejectPaymentSchema = z.object({
 }) satisfies z.ZodType<RejectPaymentDto>;
 
 export const refundPaymentSchema = z.object({
-  amount: z.number(),
+  amount: z.coerce.number(),
   reason: z.string(),
-  refundMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+  refundMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
   notes: z.string().optional(),
 }) satisfies z.ZodType<RefundPaymentDto>;
 
@@ -503,18 +596,18 @@ export type CreateProductSaleBillingDto = {
   batchNumber?: string;
   referenceId?: string;
   currency: string;
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   products: ProductSaleItemDto[];
   metadata?: Record<string, never>;
 };
-export type ProductPurchaseItemDtoPrototype = components['schemas']['ProductPurchaseItemDto'];
+// export type ProductPurchaseItemDtoPrototype = components['schemas']['ProductPurchaseItemDto'];
 export type ProductPurchaseItemDto = {
   productId: string;
   quantity: number;
   unitPrice: number;
 };
-export type CreateProductPurchaseBillingDtoPrototype = components['schemas']['CreateProductPurchaseBillingDto'];
+// export type CreateProductPurchaseBillingDtoPrototype = components['schemas']['CreateProductPurchaseBillingDto'];
 export type CreateProductPurchaseBillingDto = {
   products: ProductPurchaseItemDto[];
   storageId: string;
@@ -524,7 +617,7 @@ export type CreateProductPurchaseBillingDto = {
   batchNumber?: string;
   referenceId?: string;
   currency: string;
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   metadata?: Record<string, never>;
 }
@@ -535,7 +628,21 @@ export type ServiceSaleItemDto = {
   serviceId: string;
   quantity: number;
 };
-// export type CreateServiceSaleBillingDtoPrototype = components['schemas']['CreateServiceSaleBillingDto'];
+export type CreateServiceSaleBillingDtoPrototype = components['schemas']['CreateMedicalPrescriptionBillingDto'];
+
+// {
+//   appointmentIds: string[];
+//   products: components["schemas"]["PrescriptionProductItemDto"][];
+//   patientId: string;
+//   recipeId: string;
+//   branchId: string;
+//   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+//   amountPaid?: number;
+//   currency: string;
+//   voucherNumber?: string;
+//   notes?: string;
+//   metadata?: Record<string, never>;
+// };
 export type CreatePrescriptionBillingDto = {
   branchId: string;
   patientId: string;
@@ -543,7 +650,7 @@ export type CreatePrescriptionBillingDto = {
   batchNumber?: string;
   referenceId?: string;
   currency: string;
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   products: ProductSaleItemDto[];
   services: ServiceSaleItemDto[];
@@ -561,7 +668,7 @@ export const paymentMethodOptions: EnumOptions<PaymentMethod>[] = [
   },
   {
     label: "Billetera Digital",
-    value: "YAPE",
+    value: "DIGITAL_WALLET",
   }
 ];
 
@@ -576,16 +683,16 @@ export const createProductSaleBillingSchema = z.object({
   batchNumber: z.string().optional(),
   referenceId: z.string().optional(),
   currency: z.string(),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
   notes: z.string().optional(),
   metadata: z.record(z.never()).optional(),
   products: z.array(z.object({
     productId: z.string(),
-    quantity: z.coerce.number(),
+    quantity: z.coerce.number().min(1, { message: "La cantidad debe ser mayor a 0" }),
     storageId: z.string({
       required_error: "Debe seleccionar un almacén",
     }),
-  })),
+  })).min(1, { message: "Debe seleccionar al menos un producto" }),
 }) satisfies z.ZodType<CreateProductSaleBillingDto>;
 
 export const createPrescriptionBillingSchema = z.object({
@@ -599,19 +706,19 @@ export const createPrescriptionBillingSchema = z.object({
   batchNumber: z.string().optional(),
   referenceId: z.string().optional(),
   currency: z.string(),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
   notes: z.string().optional(),
   metadata: z.record(z.never()).optional(),
   products: z.array(z.object({
     productId: z.string(),
-    quantity: z.coerce.number(),
+    quantity: z.coerce.number().min(1, { message: "La cantidad debe ser mayor a 0" }),
     storageId: z.string({
       required_error: "Debe seleccionar un almacén",
     }),
   })),
   services: z.array(z.object({
     serviceId: z.string(),
-    quantity: z.coerce.number(),
+    quantity: z.coerce.number().min(1, { message: "La cantidad debe ser mayor a 0" }),
   })),
 }).refine(
   data => data.products.length > 0 || data.services.length > 0,
@@ -634,7 +741,7 @@ export const createProductPurchaseBillingSchema = z.object({
   batchNumber: z.string().optional(),
   referenceId: z.string().optional(),
   currency: z.string(),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
   notes: z.string().optional(),
   metadata: z.record(z.never()).optional(),
 }) satisfies z.ZodType<CreateProductPurchaseBillingDto>;

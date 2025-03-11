@@ -2,67 +2,16 @@ import { Table } from "@tanstack/react-table";
 // import { CreateOutgoingDialog } from "./CreateOutgoingDialog";
 // import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
 // import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
-import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
-import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ToolbarButtonsLoading } from "./errorComponents/ToolbarLoading";
-import { toast } from "sonner";
-import { PrescriptionWithPatient } from "../_interfaces/prescription.interface";
+import { OutgoingProductStock } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
+import { CreateProductSaleBillingProcessDialog } from "./ProductDetails/FormComponents/CreateProductSaleBillingOrderDialog";
 
-export interface OutgoingTableToolbarActionsProps {
-  table?: Table<PrescriptionWithPatient>;
+export interface ProductSaleTableToolbarActionsProps {
+  table?: Table<OutgoingProductStock>;
 }
 
-export function OutgoingTableToolbarActions({
+export function ProductSaleTableToolbarActions({
   table,
-}: OutgoingTableToolbarActionsProps) {
-  const { activeBranchesQuery: responseBranches } = useBranches();
-  const { activeStoragesQuery: responseStorages } = useStorages();
-
-  if (responseBranches.isLoading && responseStorages.isLoading) {
-    return <ToolbarButtonsLoading />;
-  } else {
-    if (responseBranches.isError) {
-      toast.error("Error al cargar las sucursales, "+responseBranches.error.message, {
-        action: {
-          label: "Recargar",
-          onClick: async () => {
-            await responseBranches.refetch();
-          }
-        }
-      });
-      return (
-        <ToolbarButtonsLoading
-        />
-      );
-    }
-    if (!responseBranches.data) {
-      return (
-        <ToolbarButtonsLoading
-        />
-      );
-    }
-    if(responseStorages.isError){
-      toast.error("Error al cargar los almacenes, "+responseStorages.error.message, {
-        action: {
-          label: "Recargar",
-          onClick: async () => {
-            await responseStorages.refetch();
-          }
-        }
-      });
-      return (
-        <ToolbarButtonsLoading
-        />
-      )
-    }
-    if(!responseStorages.data){
-      return (
-        <ToolbarButtonsLoading
-        />
-      );
-    }
-  }
+}: ProductSaleTableToolbarActionsProps) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
@@ -81,55 +30,7 @@ export function OutgoingTableToolbarActions({
           /> */}
         </>
       ) : null}
-      <Select onValueChange={
-        (e)=>{
-          // return table?.setGlobalFilter((rows, columnId, filterValue) => {
-          //   return rows.filter(row => globalFilterFn(row, columnId, filterValue));
-          // });
-          return table?.setGlobalFilter(e.toLowerCase());
-        }
-      }>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Filtre por almacén"/>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Todos</SelectLabel>
-            {
-              responseStorages.data.map((storage) => (
-                <SelectItem key={storage.id} value={storage.name}>
-                  {storage.name}
-                </SelectItem>
-              ))
-            }
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <Select onValueChange={
-        (e)=>{
-          // return table?.setGlobalFilter((rows, columnId, filterValue) => {
-          //   return rows.filter(row => globalFilterFn(row, columnId, filterValue));
-          // });
-          return table?.setGlobalFilter(e.toLowerCase());
-        }
-      }>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Filtre por sucursal"/>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Todos</SelectLabel>
-            {
-              responseBranches.data.map((branch) => (
-                <SelectItem key={branch.id} value={branch.name}>
-                  {branch.name}
-                </SelectItem>
-              ))
-            }
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      {/* <CreateOutgoingDialog /> */}
+      <CreateProductSaleBillingProcessDialog />
     </div>
   );
 }

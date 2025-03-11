@@ -81,13 +81,14 @@ export const useIncoming = () => {
       return response;
     },
     onSuccess: async (res) => {
-      queryClient.setQueryData<DetailedIncoming[] | undefined>(
-        ["detailed-incomings"],
-        (oldIncomings) => {
-          if (!oldIncomings) return [res.data];
-          return [...oldIncomings, res.data];
-        }
-      );
+      // queryClient.setQueryData<DetailedIncoming[] | undefined>(
+      //   ["detailed-incomings"],
+      //   (oldIncomings) => {
+      //     if (!oldIncomings) return [res.data];
+      //     return [...oldIncomings, res.data];
+      //   }
+      // );
+      await queryClient.refetchQueries({ queryKey: ["detailed-incomings"] });
       await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
       await queryClient.refetchQueries({ queryKey: ["stock"] });
       toast.success(res.message);

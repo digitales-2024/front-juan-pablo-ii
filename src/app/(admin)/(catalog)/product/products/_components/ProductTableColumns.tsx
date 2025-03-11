@@ -2,7 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DetailedProduct } from "../_interfaces/products.interface";
+import {
+  DetailedProduct,
+  ProductUse,
+  productUseEnumConfig,
+} from "../_interfaces/products.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +25,7 @@ import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { ReactivateProductDialog } from "./ReactivateProductDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DeactivateProductDialog } from "./DeactivateProductDialog";
+import { cn } from "@/lib/utils";
 // import Image from "next/image";
 
 // declare module '@tanstack/react-table' {
@@ -40,9 +45,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) =>
-            table.toggleAllPageRowsSelected(!!value)
-          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
           className="translate-y-0.5"
         />
@@ -66,7 +69,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
     accessorKey: "name",
     //id: "Nombre",
     meta: {
-      title: "Nombre"
+      title: "Nombre",
     },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
@@ -75,7 +78,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   {
     accessorKey: "unidadMedida",
     meta: {
-      title: "Unidad de Medida"
+      title: "Unidad de Medida",
     },
     //id: "Unidad de Medida",
     header: ({ column }) => (
@@ -86,7 +89,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
     accessorKey: "codigoProducto",
     //id: "Código",
     meta: {
-      title: "Código"
+      title: "Código",
     },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
@@ -115,37 +118,33 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   {
     accessorKey: "categoria",
     //id: "Categoría",
-    meta:{
-      title: "Categoría"
+    meta: {
+      title: "Categoría",
     },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Categoría" />
     ),
     cell: ({ row }) => (
-      <span>
-        {row.original.categoria?.name || "Sin Categoría"}
-      </span>
+      <span>{row.original.categoria?.name || "Sin Categoría"}</span>
     ),
   },
   {
     accessorKey: "tipoProducto",
-    meta:{
-      title: "Subcategoría"
+    meta: {
+      title: "Subcategoría",
     },
     //id: "Subcategoría",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Subcategoría" />
     ),
     cell: ({ row }) => (
-      <span>
-        {row.original.tipoProducto?.name || "Sin subcategoría"}
-      </span>
+      <span>{row.original.tipoProducto?.name || "Sin subcategoría"}</span>
     ),
   },
   {
     accessorKey: "precio",
-    meta:{
-      title: "Precio"
+    meta: {
+      title: "Precio",
     },
     //id: "Precio",
     header: ({ column }) => (
@@ -163,7 +162,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   {
     accessorKey: "descuento",
     meta: {
-      title: "Descuento"
+      title: "Descuento",
     },
     //id: "Descuento",
     header: ({ column }) => (
@@ -183,7 +182,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   {
     accessorKey: "description",
     meta: {
-      title: "Descripción"
+      title: "Descripción",
     },
     //id: "Descripción",
     header: ({ column }) => (
@@ -192,8 +191,8 @@ export const columns: ColumnDef<DetailedProduct>[] = [
   },
   {
     accessorKey: "observaciones",
-    meta:{
-      title: "Observaciones"
+    meta: {
+      title: "Observaciones",
     },
     //id: "Observaciones",
     header: ({ column }) => (
@@ -204,26 +203,48 @@ export const columns: ColumnDef<DetailedProduct>[] = [
     accessorKey: "condicionesAlmacenamiento",
     //id: "Condiciones de almacenamiento",
     meta: {
-      title: "Condiciones de almacenamiento"
+      title: "Condiciones de almacenamiento",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Condiciones de almacenamiento" />
+      <DataTableColumnHeader
+        column={column}
+        title="Condiciones de almacenamiento"
+      />
     ),
   },
   {
-    accessorKey: "usoProducto",
+    accessorKey: "uso",
     meta: {
-      title: "Ámbito de uso"
+      title: "Ámbito de uso",
     },
     //id: "Uso",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ámbito de uso" />
     ),
+    cell: ({ row }) => {
+      const isProductUse = row.original.uso;
+      if (!isProductUse) return "---"
+      const config = productUseEnumConfig[row.original.uso as ProductUse];
+      const Icon = config.icon;
+      return (
+        <Badge
+          className={cn(
+            config.backgroundColor,
+            config.textColor,
+            config.hoverBgColor,
+            "flex space-x-1 items-center justify-center text-sm"
+          )}
+        >
+          <Icon className="size-4"></Icon>
+          <span>{config.name}</span>
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "isActive",
     meta: {
-      title: "Estado"
+      title: "Estado",
     },
     //id: "Estado",
     header: ({ column }) => (
@@ -247,7 +268,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
     accessorKey: "actions",
     //id: "Acciones",
     meta: {
-      title: "Acciones"
+      title: "Acciones",
     },
     size: 10,
     header: ({ column }) => (
@@ -294,7 +315,7 @@ export const columns: ColumnDef<DetailedProduct>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onSelect={() => setShowEditSheet(true)}
                 disabled={!isActive}
               >

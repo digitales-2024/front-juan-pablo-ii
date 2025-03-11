@@ -1733,6 +1733,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/product/active/for-sale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los productos activos con informaciòn detallada relevante */
+        get: operations["ProductController_findAllActiveForSale"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/product/detailed": {
         parameters: {
             query?: never;
@@ -2613,6 +2630,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stock/availableProduct/byUse/{productUse}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStockByUse"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stock/availableProduct/byUse/{productUse}/branch/{branchId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener un producto en stock en todos los almacenes. */
+        get: operations["StockController_getProductsStockByUseAndBranch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/stock/availableProduct/{productId}": {
         parameters: {
             query?: never;
@@ -2757,7 +2808,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtenerun pacinete por su dni */
+        /** Obtenerun paciente por su dni */
         get: operations["PacientController_findByDni"];
         put?: never;
         post?: never;
@@ -3742,6 +3793,118 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
+        Payment: {
+            id: string;
+            orderId: string;
+            /** Format: date-time */
+            date: string;
+            /** @enum {string} */
+            status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
+            /** @enum {string} */
+            type: "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
+            amount: number;
+            description?: string;
+            /** @enum {string} */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            voucherNumber?: string;
+            originalPaymentId?: string;
+            verifiedBy?: string;
+            /** Format: date-time */
+            verifiedAt?: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        DetailedOrder: {
+            /**
+             * @description ID único de la orden
+             * @example 5f8d0a3e-7d5b-4d3e-a6c4-3a7d9b2d4c1a
+             */
+            id: string;
+            /**
+             * @description Código de referencia de la orden
+             * @example ORD-20240224-001
+             */
+            code?: string;
+            /**
+             * @description Tipo de orden
+             * @example MEDICAL_PRESCRIPTION_ORDER
+             * @enum {string}
+             */
+            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            /**
+             * @description ID del tipo de movimiento asociado
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            movementTypeId: string;
+            /**
+             * @description ID de referencia externa
+             * @example REF-12345
+             */
+            referenceId: string;
+            /**
+             * @description ID del origen de fondos. Por lo general, se refiere al proveeder. No existe entidad proveedor
+             * @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+             */
+            sourceId?: string;
+            /**
+             * @description ID del destino de fondos, por lo general se refiere al almacén de destino
+             * @example b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7
+             */
+            targetId?: string;
+            /**
+             * @description Estado actual de la orden
+             * @example PENDING
+             * @enum {string}
+             */
+            status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            /**
+             * @description Moneda de la transacción
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Subtotal de la orden (sin impuestos)
+             * @example 150.75
+             */
+            subtotal: number;
+            /**
+             * @description Impuestos aplicados
+             * @example 27.14
+             */
+            tax: number;
+            /**
+             * @description Total a pagar (subtotal + impuestos)
+             * @example 177.89
+             */
+            total: number;
+            /**
+             * Format: date-time
+             * @description Fecha de creación de la orden
+             * @example 2024-02-24T15:30:00Z
+             */
+            date: string;
+            /**
+             * @description Notas adicionales
+             * @example Orden creada para paciente Juan Pérez
+             */
+            notes?: string;
+            /** @description Estado de eliminación lógica. */
+            isActive: boolean;
+            /**
+             * @description Metadatos adicionales en formato JSON
+             * @example {
+             *       "pacienteId": "PAT-12345",
+             *       "medicoId": "DOC-67890",
+             *       "seguro": "Seguro Salud Total"
+             *     }
+             */
+            metadata?: Record<string, never>;
+            /** @description Detalles del pago */
+            payments: components["schemas"]["Payment"][];
+        };
         /** @enum {string} */
         OrderType: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
         UpdateOrderDto: {
@@ -3870,30 +4033,6 @@ export interface components {
             voucherNumber?: string;
             /** @description ID del pago original (en caso de reembolso) */
             originalPaymentId?: string;
-        };
-        Payment: {
-            id: string;
-            orderId: string;
-            /** Format: date-time */
-            date: string;
-            /** @enum {string} */
-            status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
-            /** @enum {string} */
-            type: "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
-            amount: number;
-            description?: string;
-            /** @enum {string} */
-            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
-            voucherNumber?: string;
-            originalPaymentId?: string;
-            verifiedBy?: string;
-            /** Format: date-time */
-            verifiedAt?: string;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
         };
         UpdatePaymentDto: {
             /**
@@ -4922,12 +5061,13 @@ export interface components {
             proveedor?: string;
             /**
              * @description Uso del producto
-             * @example Paciente
+             * @example VENTA
+             * @enum {string}
              */
-            uso?: string;
+            uso: "VENTA" | "INTERNO" | "OTRO";
             /**
              * @description Uso específico del producto
-             * @example Venta
+             * @example Paciente
              */
             usoProducto?: string;
             /**
@@ -4969,7 +5109,8 @@ export interface components {
             precio: number;
             unidadMedida: string;
             proveedor: string;
-            uso: string;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             usoProducto: string;
             description: string;
             codigoProducto: string;
@@ -4997,6 +5138,8 @@ export interface components {
             unidadMedida: string;
             categoriaId: string;
             tipoProductoId: string;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             categoria: components["schemas"]["ActiveProductCategory"];
             tipoProducto: components["schemas"]["ActiveProductTypeProduct"];
         };
@@ -5008,7 +5151,8 @@ export interface components {
             precio: number;
             unidadMedida: string;
             proveedor: string;
-            uso: string;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             usoProducto: string;
             description: string;
             codigoProducto: string;
@@ -5059,12 +5203,13 @@ export interface components {
             proveedor?: string;
             /**
              * @description Uso del producto
-             * @example Paciente
+             * @example VENTA
+             * @enum {string}
              */
-            uso?: string;
+            uso?: "VENTA" | "INTERNO" | "OTRO";
             /**
              * @description Uso específico del producto
-             * @example Venta
+             * @example Paciente
              */
             usoProducto?: string;
             /**
@@ -5585,11 +5730,6 @@ export interface components {
             /** @description Indica si es un traslado entre almacenes */
             isTransference?: boolean;
             /**
-             * @description ID de referencia para la salida en caso de transferencia
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            outgoingId?: string;
-            /**
              * @description productos a ingresar al almacen y cantidad
              * @example [
              *       {
@@ -6017,9 +6157,14 @@ export interface components {
             description: string;
             stock: components["schemas"]["ProductStockResponse"][];
         };
+        StockStorageBranch: {
+            id: string;
+            name: string;
+        };
         StockStorage: {
             id: string;
             name: string;
+            branch?: components["schemas"]["StockStorageBranch"];
         };
         StockProduct: {
             stock: number;
@@ -6031,6 +6176,8 @@ export interface components {
             name: string;
             precio: number;
             codigoProducto: string;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             unidadMedida: string;
             Stock: components["schemas"]["StockProduct"][];
         };
@@ -8196,7 +8343,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Order"][];
+                    "application/json": components["schemas"]["DetailedOrder"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -12134,6 +12281,40 @@ export interface operations {
             };
         };
     };
+    ProductController_findAllActiveForSale: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los productos */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActiveProduct"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ProductController_findAllWithRelations: {
         parameters: {
             query?: never;
@@ -14494,6 +14675,54 @@ export interface operations {
             path: {
                 /** @description ID del producto */
                 storageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStockByUse: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
+                use: "VENTA" | "INTERNO" | "OTRO";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Producto en stock en todos los almacenes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductStock"][];
+                };
+            };
+        };
+    };
+    StockController_getProductsStockByUseAndBranch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
+                branchId: string;
+                /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
+                productUse: "VENTA" | "INTERNO" | "OTRO";
             };
             cookie?: never;
         };
