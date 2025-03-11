@@ -2,10 +2,10 @@ import { PageMetadata } from "@/types/statics/pageMetadata";
 import { User } from "lucide-react";
 
 export const METADATA: PageMetadata = {
-  title: "Pacientes",
+  title: "Citas medicas activas",
   entityName: "Paciente",
   entityPluralName: "Pacientes",
-  description: "Administra todos los pacientes de tu sistema.",
+  description: "Administracion medica de todas las citas del sistema.",
   Icon: User,
   /* dataDependencies: [
     {
