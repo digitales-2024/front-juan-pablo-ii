@@ -7,9 +7,10 @@ import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
 import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 import { useAppointment } from "./_hooks/useApointmentMedical";
-import {  useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AppointmentResponse } from "./_interfaces/apoointments-medical.inteface";
-import { CalendarClock, Stethoscope, Users } from "lucide-react"; // Importamos algunos iconos
+import { CalendarClock, Stethoscope, Users } from "lucide-react";
+import { toast } from "sonner";
 
 export default function PageAppointments() {
   const { user } = useAuth();
@@ -17,49 +18,66 @@ export default function PageAppointments() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // Mejoramos la detección de roles
+  const isSuperAdmin = user?.isSuperAdmin === true;
+  const isSuperAdminRole = user?.roles?.some(role => role.name === "SUPER_ADMIN") ?? false;
+  const isDoctor = user?.roles?.some(role => role.name === "MEDICO") ?? false;
+  const isReceptionist = user?.roles?.some(role => role.name === "ADMINISTRATIVO") ?? false;
+  
+  // Determinamos definitivamente si es admin (cualquiera de las dos formas)
+  const isAdmin = isSuperAdmin || isSuperAdminRole;
+
   const {
     useDoctorConfirmedAppointments,
     useBranchConfirmedAppointments,
     useAllConfirmedAppointments,
   } = useAppointment();
 
-  // Determinar el tipo de usuario
-  const isSuperAdmin = user?.isSuperAdmin ?? false;
-  const isDoctor = user?.roles?.some((role) => role.name === "MEDICO") ?? false;
-  const isReceptionist =
-    user?.roles?.some((role) => role.name === "ADMINISTRATIVO") ?? false;
+  // Obtenemos los datos con los hooks correspondientes
+  const doctorData = useDoctorConfirmedAppointments(user?.id ?? "");
+  const branchData = useBranchConfirmedAppointments(user?.id ?? "");
+  const adminData = useAllConfirmedAppointments(); // No requiere ID
 
-  // Consultas condicionadas por rol
-  const doctorQuery = isDoctor
-    ? useDoctorConfirmedAppointments(user?.id ?? "")
-    : {
-        data: undefined,
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: () => Promise.resolve(),
-      };
-  const branchQuery = isReceptionist
-    ? useBranchConfirmedAppointments(user?.id ?? "")
-    : {
-        data: undefined,
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: () => Promise.resolve(),
-      };
-  const adminQuery = isSuperAdmin
-    ? useAllConfirmedAppointments()
-    : {
-        data: undefined,
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: () => Promise.resolve(),
-      };
+  // Función mejorada para refrescar datos
+  const handleRefresh = useCallback(() => {
+    setIsLoading(true);
+    
+    try {
+      if (isDoctor) {
+        void doctorData.refetch().then(response => {
+          if (response?.data) {
+            setAppointments(response.data);
+            toast.success("Citas del médico actualizadas");
+          }
+          setIsLoading(false);
+        });
+      } else if (isReceptionist) {
+        void branchData.refetch().then(response => {
+          if (response?.data) {
+            setAppointments(response.data);
+            toast.success("Citas de la sucursal actualizadas");
+          }
+          setIsLoading(false);
+        });
+      } else if (isAdmin) {
+        void adminData.refetch().then(response => {
+          if (response?.data) {
+            setAppointments(response.data);
+            toast.success("Todas las citas actualizadas");
+          }
+          setIsLoading(false);
+        });
+      } else {
+        setIsLoading(false);
+        toast.error("No se pudo determinar el rol del usuario");
+      }
+    } catch (err) {
+      console.error("Error al refrescar datos:", err);
+      toast.error("Error al actualizar los datos");
+      setIsLoading(false);
+    }
+  }, [isDoctor, isReceptionist, isAdmin, doctorData, branchData, adminData]);
 
-  // Cargar los datos según el rol del usuario
-  
   useEffect(() => {
     if (!user) {
       setError(new Error("Usuario no autenticado"));
@@ -70,27 +88,26 @@ export default function PageAppointments() {
     setIsLoading(true);
 
     try {
-      if (isDoctor && doctorQuery.data) {
-        setAppointments(doctorQuery.data);
-      } else if (isReceptionist && branchQuery.data) {
-        setAppointments(branchQuery.data);
-      } else if (isSuperAdmin && adminQuery.data) {
-        setAppointments(adminQuery.data);
+      if (isDoctor) {
+        setAppointments(doctorData.data ?? []);
+      } else if (isReceptionist) {
+        setAppointments(branchData.data ?? []);
+      } else if (isAdmin) { // Cambiamos a isAdmin
+        setAppointments(adminData.data ?? []);
+      } else {
+        // Si no tiene ningún rol reconocido
+        console.warn("Usuario sin rol reconocido:", user);
+        setAppointments([]);
       }
-
-      setIsLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Error desconocido"));
+    } finally {
       setIsLoading(false);
     }
   }, [
     user,
-    isDoctor,
-    isReceptionist,
-    isSuperAdmin,
-    doctorQuery.data,
-    branchQuery.data,
-    adminQuery.data,
+    isDoctor, isReceptionist, isAdmin, // Cambiamos a isAdmin
+    doctorData.data, branchData.data, adminData.data,
   ]);
 
   if (isLoading) {
@@ -99,13 +116,13 @@ export default function PageAppointments() {
 
   if (
     error ||
-    (isDoctor && doctorQuery.isError) ||
-    (isReceptionist && branchQuery.isError) ||
-    (isSuperAdmin && adminQuery.isError)
+    (isDoctor && doctorData.isError) ||
+    (isReceptionist && branchData.isError) ||
+    (isAdmin && adminData.isError)
   ) {
     console.error(
       "Error:",
-      error ?? doctorQuery.error ?? branchQuery.error ?? adminQuery.error
+      error ?? doctorData.error ?? branchData.error ?? adminData.error
     );
     notFound();
   }
@@ -156,11 +173,12 @@ export default function PageAppointments() {
         <AppointmentTable
           data={appointments}
           userRole={{
-            isSuperAdmin,
+            isSuperAdmin: isAdmin, // Pasamos isAdmin como isSuperAdmin
             isDoctor,
             isReceptionist,
           }}
           userId={user?.id}
+          onRefresh={handleRefresh}
         />
       </div>
     </>
