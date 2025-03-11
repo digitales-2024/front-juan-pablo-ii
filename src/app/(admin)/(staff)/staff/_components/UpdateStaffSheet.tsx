@@ -45,6 +45,9 @@ import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 import { getUsers } from "@/app/(admin)/users/actions";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
+import { AutoComplete } from "@/components/ui/autocomplete";
+import { Option } from "@/types/statics/forms";
 
 interface UpdateStaffSheetProps {
   staff: Staff;
@@ -63,10 +66,12 @@ export function UpdateStaffSheet({
   const { updateMutation } = useStaff();
   const { staffTypes } = useStaffTypes();
   const { user } = useAuth();
+  const { activeBranchesQuery: responseBranches } = useBranches();
   const [filteredUsers, setFilteredUsers] = useState<UserResponseDto[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
   const [useExistingUser, setUseExistingUser] = useState(!!staff.userId);
+  const [branchesOptions, setBranchesOptions] = useState<Option[]>([]);
 
   const isOpen = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
@@ -115,6 +120,17 @@ export function UpdateStaffSheet({
     void loadUsers();
   }, [user, isOpen]);
 
+  // Cargar sucursales cuando se abre el formulario
+  useEffect(() => {
+    if (isOpen && responseBranches.data) {
+      const options = responseBranches.data.map((branch) => ({
+        label: branch.name,
+        value: branch.id,
+      }));
+      setBranchesOptions(options);
+    }
+  }, [isOpen, responseBranches.data]);
+
   const form = useForm<UpdateStaffDto>({
     resolver: zodResolver(updateStaffSchema),
     defaultValues: {
@@ -127,6 +143,7 @@ export function UpdateStaffSheet({
       staffTypeId: staff.staffTypeId,
       cmp: staff.cmp ?? "",
       userId: staff.userId ?? "",
+      branchId: staff.branchId ? String(staff.branchId) : "", // Convertir a string de forma segura
     },
   });
 
@@ -238,8 +255,8 @@ export function UpdateStaffSheet({
                       </FormLabel>
                       <Select
                         onValueChange={handleUserSelect}
-                        defaultValue={staff.userId || "none"} // Asegúrate que esto sea correcto
-                        value={form.watch("userId") || "none"} // Añadir esto para mantener sincronizado el valor
+                        defaultValue={staff.userId ?? "none"} // Asegúrate que esto sea correcto
+                        value={form.watch("userId") ?? "none"} // Añadir esto para mantener sincronizado el valor
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
@@ -277,7 +294,45 @@ export function UpdateStaffSheet({
                   )}
                 </div>
               )}
-
+              {/* Campo de Sucursal */}
+              <FormField
+                control={form.control}
+                name="branchId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Selecione la sucursal del personal</FormLabel>
+                    <FormControl>
+                      {branchesOptions.length > 0 ? (
+                        <AutoComplete
+                          options={branchesOptions}
+                          placeholder="Seleccione una sucursal"
+                          emptyMessage="No hay sucursales disponibles"
+                          value={
+                            branchesOptions.find(
+                              (option) => option.value === field.value
+                            ) ?? undefined
+                          }
+                          onValueChange={(option) => {
+                            field.onChange(option?.value || "");
+                          }}
+                        />
+                      ) : (
+                        <Input
+                          disabled={true}
+                          placeholder="No hay sucursales disponibles"
+                          type="text"
+                        />
+                      )}
+                    </FormControl>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {branchesOptions.length === 0 && (
+                        <span>No hay sucursales disponibles o activas.</span>
+                      )}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               {/* Campos existentes del formulario */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField

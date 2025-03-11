@@ -28,6 +28,7 @@ export const createStaffSchema = z.object({
   phone: z.string().optional(),
   cmp: z.string().optional(),
   userId: z.string().optional(),
+  branchId: z.string().min(1, "La sucursal es requerida"),
 }) satisfies z.ZodType<CreateStaffDto>;
 
 // Schema de validación para actualizar personal
@@ -41,4 +42,5 @@ export const updateStaffSchema = z.object({
   phone: z.string().optional(),
   cmp: z.string().optional(),
   userId: z.string().optional(),
+  branchId: z.string().min(1, "La sucursal es requerida").optional(),
 }) satisfies z.ZodType<UpdateStaffDto>;
