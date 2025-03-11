@@ -118,7 +118,7 @@ export function RejectPaymentForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid sm:grid-cols-4 gap-4">
+        <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid gap-4">
           <FormField
             control={form.control}
             name={FORMSTATICS.rejectionReason.name}

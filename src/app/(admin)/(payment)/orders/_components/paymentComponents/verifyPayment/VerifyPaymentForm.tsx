@@ -128,12 +128,12 @@ export function VerifyPaymentForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid sm:grid-cols-4 gap-4">
 
-          <div className="sm:col-span-1">
+          <div className="sm:col-span-2">
             <FormField
               control={form.control}
               name={FORMSTATICS.verifiedAt.name}
               render={({ field }) => (
-                <FormItem className="flex flex-col justify-between h-full">
+                <FormItem className="flex flex-col gap-2 h-full mt-2">
                   <FormLabel>{FORMSTATICS.verifiedAt.placeholder}</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -188,7 +188,7 @@ export function VerifyPaymentForm({
             control={form.control}
             name={FORMSTATICS.verificationNotes.name}
             render={({ field }) => (
-              <FormItem >
+              <FormItem className="sm:col-span-2">
                 <FormLabel>{FORMSTATICS.verificationNotes.label}</FormLabel>
                 <FormControl>
                   <Textarea

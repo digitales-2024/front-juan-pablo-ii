@@ -71,7 +71,7 @@ export default function PageOrders() {
       <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap gap-x-4">
         <PageHeader title={METADATA.title} description={METADATA.description} />
       </div>
-      <div className="p-1 flex space-x-3">
+      <div className="p-1 flex flex-col sm:flex-row space-x-3 space-y-1">
         <SearchOrderCombobox
           onValueChange={(val, entity) => {
             onSubmitOrderId(val, entity as DetailedOrder);
