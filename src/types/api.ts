@@ -1367,163 +1367,6 @@ export interface paths {
         patch: operations["StaffScheduleController_reactivateAll"];
         trace?: never;
     };
-    "/api/v1/staff-type": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener todos los tipos de personal */
-        get: operations["StaffTypeController_findAll"];
-        put?: never;
-        /** Crear un nuevo tipo de personal */
-        post: operations["StaffTypeController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff-type/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener tipo de personal por ID */
-        get: operations["StaffTypeController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar un tipo de personal */
-        patch: operations["StaffTypeController_update"];
-        trace?: never;
-    };
-    "/api/v1/staff-type/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Eliminar múltiples tipos de personal */
-        delete: operations["StaffTypeController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff-type/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiples tipos de personal */
-        patch: operations["StaffTypeController_reactivateAll"];
-        trace?: never;
-    };
-    "/api/v1/staff": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener Personal */
-        get: operations["StaffController_findAll"];
-        put?: never;
-        /** Crear nuevo personal */
-        post: operations["StaffController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff/active": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener Personal Activo */
-        get: operations["StaffController_findAllActive"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Obtener personal por ID */
-        get: operations["StaffController_findOne"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Actualizar personal existente */
-        patch: operations["StaffController_update"];
-        trace?: never;
-    };
-    "/api/v1/staff/remove/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Eliminar múltiple personal */
-        delete: operations["StaffController_deleteMany"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/staff/reactivate/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reactivar múltiple personal */
-        patch: operations["StaffController_reactivateAll"];
-        trace?: never;
-    };
     "/api/v1/category": {
         parameters: {
             query?: never;
@@ -2681,6 +2524,163 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/staff-type": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los tipos de personal */
+        get: operations["StaffTypeController_findAll"];
+        put?: never;
+        /** Crear un nuevo tipo de personal */
+        post: operations["StaffTypeController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-type/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener tipo de personal por ID */
+        get: operations["StaffTypeController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar un tipo de personal */
+        patch: operations["StaffTypeController_update"];
+        trace?: never;
+    };
+    "/api/v1/staff-type/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Eliminar múltiples tipos de personal */
+        delete: operations["StaffTypeController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-type/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiples tipos de personal */
+        patch: operations["StaffTypeController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/staff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener Personal */
+        get: operations["StaffController_findAll"];
+        put?: never;
+        /** Crear nuevo personal */
+        post: operations["StaffController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener Personal Activo */
+        get: operations["StaffController_findAllActive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener personal por ID */
+        get: operations["StaffController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar personal existente */
+        patch: operations["StaffController_update"];
+        trace?: never;
+    };
+    "/api/v1/staff/remove/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Eliminar múltiple personal */
+        delete: operations["StaffController_deleteMany"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff/reactivate/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivar múltiple personal */
+        patch: operations["StaffController_reactivateAll"];
+        trace?: never;
+    };
     "/api/v1/billing/medical-appointment": {
         parameters: {
             query?: never;
@@ -2692,6 +2692,23 @@ export interface paths {
         put?: never;
         /** Create medical consultation order */
         post: operations["BillingController_createMedicalConsultationOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/billing/medical-prescription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create medical prescription order */
+        post: operations["BillingController_createMedicalPrescriptionOrder"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2861,7 +2878,7 @@ export interface paths {
             cookie?: never;
         };
         /** Obtener todas las recetas médicas */
-        get: operations["ApponitmentUserController_findAll"];
+        get: operations["PrescriptionController_findAll"];
         put?: never;
         /** Crear nueva receta médica */
         post: operations["PrescriptionController_create"];
@@ -2937,7 +2954,7 @@ export interface paths {
         options?: never;
         head?: never;
         /** Actualizar receta médica existente */
-        patch: operations["ApponitmentUserController_update"];
+        patch: operations["PrescriptionController_update"];
         trace?: never;
     };
     "/api/v1/receta/remove/all": {
@@ -3250,6 +3267,125 @@ export interface paths {
         head?: never;
         /** Reactivar múltiples eventos */
         patch: operations["TimeOffController_reactivateAll"];
+        trace?: never;
+    };
+    "/api/v1/appointments-user/doctor/{id}/confirmed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener citas confirmadas del médico */
+        get: operations["ApponitmentUserController_getConfirmedForDoctor"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/appointments-user/doctor/{id}/completed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener citas completadas del médico */
+        get: operations["ApponitmentUserController_getCompletedForDoctor"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/appointments-user/admin/confirmed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las citas confirmadas (admin) */
+        get: operations["ApponitmentUserController_getAllConfirmed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/appointments-user/admin/completed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todas las citas completadas (admin) */
+        get: operations["ApponitmentUserController_getAllCompleted"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/appointments-user/branch/{id}/confirmed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener citas confirmadas por sucursal */
+        get: operations["ApponitmentUserController_getBranchConfirmed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/appointments-user/branch/{id}/completed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener citas completadas por sucursal */
+        get: operations["ApponitmentUserController_getBranchCompleted"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/appointments-user/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar estado de una cita */
+        patch: operations["ApponitmentUserController_updateStatus"];
         trace?: never;
     };
 }
@@ -4100,6 +4236,11 @@ export interface components {
              * @enum {string}
              */
             paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            /**
+             * @description ID del evento asociado a la cita
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            eventId?: string;
         };
         Appointment: {
             id: string;
@@ -4196,6 +4337,11 @@ export interface components {
              * @enum {string}
              */
             paymentMethod?: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            /**
+             * @description ID del evento asociado en el calendario
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            eventId?: string;
         };
         DeleteAppointmentsDto: {
             ids: string[];
@@ -4468,202 +4614,6 @@ export interface components {
             title: string;
         };
         DeleteStaffSchedulesDto: {
-            ids: string[];
-        };
-        CreateStaffTypeDto: {
-            /**
-             * @description Nombre de la especialidad
-             * @example Cardiología
-             */
-            name: string;
-            /**
-             * @description Descripción de la especialidad
-             * @example Especialidad enfocada en el sistema cardiovascular
-             */
-            description: string;
-        };
-        StaffType: {
-            /** @description ID único del tipo de personal */
-            id: string;
-            /** @description Nombre del tipo de personal */
-            name: string;
-            /** @description Descripción del tipo de personal */
-            description?: string;
-            /** @description Estado activo/inactivo del tipo de personal */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @description Fecha de creación del registro
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Fecha de última actualización
-             */
-            updatedAt: string;
-        };
-        UpdateStaffTypeDto: {
-            /**
-             * @description Nombre de la especialidad
-             * @example Cardiología
-             */
-            name?: string;
-            /**
-             * @description Descripción de la especialidad
-             * @example Especialidad enfocada en el sistema cardiovascular
-             */
-            description?: string;
-        };
-        DeleteStaffTypeDto: {
-            ids: string[];
-        };
-        CreateStaffDto: {
-            /**
-             * @description ID del tipo de personal
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            staffTypeId: string;
-            /**
-             * @description ID del usuario asociado al personal médico en el sistema
-             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
-             */
-            userId?: string;
-            /**
-             * @description Nombre del personal médico
-             * @example Carlos
-             */
-            name: string;
-            /**
-             * @description Apellido del personal médico
-             * @example Rodríguez
-             */
-            lastName: string;
-            /**
-             * @description Numero de CMP
-             * @example 123456789
-             */
-            cmp?: string;
-            /**
-             * @description Número de DNI del personal médico
-             * @example 40506070
-             */
-            dni: string;
-            /**
-             * Format: date-time
-             * @description Fecha de nacimiento del personal médico
-             * @example 1980-05-15
-             */
-            birth: string;
-            /**
-             * @description email
-             * @example personal1@correo.com
-             */
-            email: string;
-            /**
-             * @description numero de telefono
-             * @example 123456789
-             */
-            phone?: string;
-        };
-        Staff: {
-            /** @description ID único del personal */
-            id: string;
-            /** @description ID del tipo de personal */
-            staffTypeId: string;
-            /** @description ID del usuario asociado */
-            userId: string | null;
-            /** @description Nombre del personal */
-            name: string;
-            /** @description Correo electrónico */
-            email: string;
-            /** @description Número telefónico */
-            phone: string;
-            /** @description Apellido del personal */
-            lastName: string;
-            /** @description Documento Nacional de Identidad */
-            dni: string;
-            /**
-             * Format: date-time
-             * @description Fecha de nacimiento
-             */
-            birth: string;
-            /** @description Estado activo/inactivo del personal */
-            isActive: boolean;
-            /**
-             * Format: date-time
-             * @description Fecha de creación del registro
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Fecha de última actualización
-             */
-            updatedAt: string;
-            /**
-             * @description Información del tipo de personal
-             * @example {
-             *       "name": "doctor"
-             *     }
-             */
-            staffType: {
-                /**
-                 * @description Nombre del tipo de personal
-                 * @example doctor
-                 */
-                name?: string;
-            };
-            /** @description Número de Colegiatura Médica (CMP) */
-            cmp: string;
-        };
-        UpdateStaffDto: {
-            /**
-             * @description ID del tipo de personal
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            staffTypeId?: string;
-            /**
-             * @description ID del usuario asociado al personal médico en el sistema
-             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
-             */
-            userId?: string;
-            /**
-             * @description Nombre del personal médico
-             * @example Carlos
-             */
-            name?: string;
-            /**
-             * @description Apellido del personal médico
-             * @example Rodríguez
-             */
-            lastName?: string;
-            /**
-             * @description Numero de CMP
-             * @example 123456789
-             */
-            cmp?: string;
-            /**
-             * @description Número de DNI del personal médico
-             * @example 40506070
-             */
-            dni?: string;
-            /**
-             * Format: date-time
-             * @description Fecha de nacimiento del personal médico
-             * @example 1980-05-15
-             */
-            birth?: string;
-            /**
-             * @description email
-             * @example personal1@correo.com
-             */
-            email?: string;
-            /**
-             * @description numero de telefono
-             * @example 123456789
-             */
-            phone?: string;
-        };
-        DeleteStaffDto: {
             ids: string[];
         };
         CreateCategoryDto: {
@@ -5021,6 +4971,58 @@ export interface components {
             branchId?: string;
             staffId?: string;
             isActive: boolean;
+        };
+        Staff: {
+            /** @description ID único del personal */
+            id: string;
+            /** @description ID del tipo de personal */
+            staffTypeId: string;
+            /** @description ID del usuario asociado */
+            userId: string | null;
+            /** @description Nombre del personal */
+            name: string;
+            /** @description Correo electrónico */
+            email: string;
+            /** @description Número telefónico */
+            phone: string;
+            /** @description Apellido del personal */
+            lastName: string;
+            /** @description Documento Nacional de Identidad */
+            dni: string;
+            /**
+             * Format: date-time
+             * @description Fecha de nacimiento
+             */
+            birth: string;
+            /** @description Estado activo/inactivo del personal */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de creación del registro
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Fecha de última actualización
+             */
+            updatedAt: string;
+            /**
+             * @description Información del tipo de personal
+             * @example {
+             *       "name": "doctor"
+             *     }
+             */
+            staffType: {
+                /**
+                 * @description Nombre del tipo de personal
+                 * @example doctor
+                 */
+                name?: string;
+            };
+            /** @description Número de Colegiatura Médica (CMP) */
+            cmp: string;
+            /** @description id de la sucursa asignado a este personal */
+            branchId: string;
         };
         DetailedStorage: {
             id: string;
@@ -5886,6 +5888,162 @@ export interface components {
             unidadMedida: string;
             Stock: components["schemas"]["StockProduct"][];
         };
+        CreateStaffTypeDto: {
+            /**
+             * @description Nombre de la especialidad
+             * @example Cardiología
+             */
+            name: string;
+            /**
+             * @description Descripción de la especialidad
+             * @example Especialidad enfocada en el sistema cardiovascular
+             */
+            description: string;
+        };
+        StaffType: {
+            /** @description ID único del tipo de personal */
+            id: string;
+            /** @description Nombre del tipo de personal */
+            name: string;
+            /** @description Descripción del tipo de personal */
+            description?: string;
+            /** @description Estado activo/inactivo del tipo de personal */
+            isActive: boolean;
+            /**
+             * Format: date-time
+             * @description Fecha de creación del registro
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Fecha de última actualización
+             */
+            updatedAt: string;
+        };
+        UpdateStaffTypeDto: {
+            /**
+             * @description Nombre de la especialidad
+             * @example Cardiología
+             */
+            name?: string;
+            /**
+             * @description Descripción de la especialidad
+             * @example Especialidad enfocada en el sistema cardiovascular
+             */
+            description?: string;
+        };
+        DeleteStaffTypeDto: {
+            ids: string[];
+        };
+        CreateStaffDto: {
+            /**
+             * @description ID del tipo de personal
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            staffTypeId: string;
+            /**
+             * @description ID del usuario asociado al personal médico en el sistema
+             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
+             */
+            userId?: string;
+            /**
+             * @description Nombre del personal médico
+             * @example Carlos
+             */
+            name: string;
+            /**
+             * @description Apellido del personal médico
+             * @example Rodríguez
+             */
+            lastName: string;
+            /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
+            /**
+             * @description Número de DNI del personal médico
+             * @example 40506070
+             */
+            dni: string;
+            /**
+             * Format: date-time
+             * @description Fecha de nacimiento del personal médico
+             * @example 1980-05-15
+             */
+            birth: string;
+            /**
+             * @description email
+             * @example personal1@correo.com
+             */
+            email: string;
+            /**
+             * @description numero de telefono
+             * @example 123456789
+             */
+            phone?: string;
+            /**
+             * @description ID de la sucursal asociado al personal en el sistema
+             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
+             */
+            branchId?: string;
+        };
+        UpdateStaffDto: {
+            /**
+             * @description ID del tipo de personal
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            staffTypeId?: string;
+            /**
+             * @description ID del usuario asociado al personal médico en el sistema
+             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
+             */
+            userId?: string;
+            /**
+             * @description Nombre del personal médico
+             * @example Carlos
+             */
+            name?: string;
+            /**
+             * @description Apellido del personal médico
+             * @example Rodríguez
+             */
+            lastName?: string;
+            /**
+             * @description Numero de CMP
+             * @example 123456789
+             */
+            cmp?: string;
+            /**
+             * @description Número de DNI del personal médico
+             * @example 40506070
+             */
+            dni?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de nacimiento del personal médico
+             * @example 1980-05-15
+             */
+            birth?: string;
+            /**
+             * @description email
+             * @example personal1@correo.com
+             */
+            email?: string;
+            /**
+             * @description numero de telefono
+             * @example 123456789
+             */
+            phone?: string;
+            /**
+             * @description ID de la sucursal asociado al personal en el sistema
+             * @example 7c4dd6ce-scratch-41d4-a716-446655441111
+             */
+            branchId?: string;
+        };
+        DeleteStaffDto: {
+            ids: string[];
+        };
         CreateMedicalAppointmentBillingDto: {
             /**
              * @description ID de la consulta médica
@@ -5916,6 +6074,90 @@ export interface components {
              * @description Metadata adicional para la orden
              * @example {
              *       "additionalNotes": "Social no pagante",
+             *       "preferences": {
+             *         "language": "español",
+             *         "communicationMethod": "email"
+             *       }
+             *     }
+             */
+            metadata?: Record<string, never>;
+        };
+        PrescriptionProductItemDto: {
+            /**
+             * @description ID del producto
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            productId: string;
+            /**
+             * @description Cantidad del producto
+             * @example 5
+             */
+            quantity: number;
+            /**
+             * @description ID del almacen
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            storageId: string;
+        };
+        CreateMedicalPrescriptionBillingDto: {
+            /**
+             * @description Array de IDs de citas médicas
+             * @example [
+             *       "29c5e5b8-1835-42f9-ae34-217a3791ba22",
+             *       "39c5e5b8-1835-42f9-ae34-217a3791ba33"
+             *     ]
+             */
+            appointmentIds: string[];
+            /**
+             * @description Lista de productos a vender
+             * @example [
+             *       {
+             *         "productId": "123e4567-e89b-12d3-a456-426614174000",
+             *         "quantity": 5,
+             *         "storageId": "d4892502-5685-45e1-b323-55f933f54387"
+             *       }
+             *     ]
+             */
+            products: components["schemas"]["PrescriptionProductItemDto"][];
+            /**
+             * @description ID del paciente
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            patientId: string;
+            /**
+             * @description ID de la receta
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            recipeId: string;
+            /**
+             * @description ID de la sucursal
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            branchId: string;
+            /**
+             * @description Método de pago a utilizar
+             * @default CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+            /**
+             * @description Monto pagado
+             * @example 150
+             */
+            amountPaid?: number;
+            /**
+             * @description Moneda utilizada para el pago
+             * @default PEN
+             */
+            currency: string;
+            /** @description Número de voucher o referencia del pago */
+            voucherNumber?: string;
+            /** @description Notas adicionales sobre la receta */
+            notes?: string;
+            /**
+             * @description Metadata adicional para la orden
+             * @example {
+             *       "additionalNotes": "Instrucciones especiales",
              *       "preferences": {
              *         "language": "español",
              *         "communicationMethod": "email"
@@ -6748,20 +6990,14 @@ export interface components {
             /** @description Array de IDs de ausencias temporales a eliminar */
             ids: string[];
         };
-        AppointmentMedicalResponse: {
-            id?: string;
-            staffId?: number;
-            userId?: string;
-            medicalHistoryId?: string;
-            patientId?: string;
-            status?: string;
-        };
+        AppointmentResponse: Record<string, never>;
         UpdateAppointmentUserDto: {
             /**
-             * @description ID de la sucursal donde se emite la receta
-             * @example 123e4567-e89b-12d3-a456-426614174000
+             * @description Estado de la cita
+             * @example COMPLETED
+             * @enum {string}
              */
-            status?: string;
+            status: "COMPLETED" | "NO_SHOW";
         };
     };
     responses: never;
@@ -10788,488 +11024,6 @@ export interface operations {
             };
         };
     };
-    StaffTypeController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todos los tipos de personal */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateStaffTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de personal creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"];
-                };
-            };
-            /** @description Datos de entrada inválidos o tipo de personal ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tipo de personal encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateStaffTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipo de personal actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de personal eliminados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de personal no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffTypeController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffTypeDto"];
-            };
-        };
-        responses: {
-            /** @description Tipos de personal reactivados exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StaffType"][];
-                };
-            };
-            /** @description IDs inválidos o tipos de personal no existen */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todo el personal */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateStaffDto"];
-            };
-        };
-        responses: {
-            /** @description Personal creado exitosamente */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"];
-                };
-            };
-            /** @description Datos de entrada inválidos o personal ya existe */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_findAllActive: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de todo el personal activo */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"][];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Personal encontrado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateStaffDto"];
-            };
-        };
-        responses: {
-            /** @description Personal actualizado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"];
-                };
-            };
-            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_deleteMany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffDto"];
-            };
-        };
-        responses: {
-            /** @description Personal eliminado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"][];
-                };
-            };
-            /** @description IDs inválidos o personal no existentes */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    StaffController_reactivateAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeleteStaffDto"];
-            };
-        };
-        responses: {
-            /** @description Personal reactivado exitosamente */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Staff"][];
-                };
-            };
-            /** @description IDs inválidos o personal no existentes */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     CategoryController_findAll: {
         parameters: {
             query?: never;
@@ -14384,6 +14138,488 @@ export interface operations {
             };
         };
     };
+    StaffTypeController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todos los tipos de personal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStaffTypeDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de personal creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"];
+                };
+            };
+            /** @description Datos de entrada inválidos o tipo de personal ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tipo de personal encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStaffTypeDto"];
+            };
+        };
+        responses: {
+            /** @description Tipo de personal actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffTypeDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de personal eliminados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de personal no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffTypeController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffTypeDto"];
+            };
+        };
+        responses: {
+            /** @description Tipos de personal reactivados exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffType"][];
+                };
+            };
+            /** @description IDs inválidos o tipos de personal no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todo el personal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Personal creado exitosamente */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"];
+                };
+            };
+            /** @description Datos de entrada inválidos o personal ya existe */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_findAllActive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todo el personal activo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Personal encontrado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Personal actualizado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_deleteMany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Personal eliminado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description IDs inválidos o personal no existentes */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StaffController_reactivateAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Personal reactivado exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Staff"][];
+                };
+            };
+            /** @description IDs inválidos o personal no existentes */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     BillingController_createMedicalConsultationOrder: {
         parameters: {
             query?: never;
@@ -14398,6 +14634,44 @@ export interface operations {
         };
         responses: {
             /** @description Medical appointment order created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BillingController_createMedicalPrescriptionOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMedicalPrescriptionBillingDto"];
+            };
+        };
+        responses: {
+            /** @description Medical prescription order created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -14963,7 +15237,7 @@ export interface operations {
             };
         };
     };
-    ApponitmentUserController_findAll: {
+    PrescriptionController_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -14978,7 +15252,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AppointmentMedicalResponse"][];
+                    "application/json": components["schemas"]["Prescription"][];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -15211,7 +15485,7 @@ export interface operations {
             };
         };
     };
-    ApponitmentUserController_update: {
+    PrescriptionController_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -15222,7 +15496,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateAppointmentUserDto"];
+                "application/json": components["schemas"]["UpdatePrescriptionDto"];
             };
         };
         responses: {
@@ -16243,6 +16517,258 @@ export interface operations {
                 };
             };
             /** @description IDs inválidos o eventos no existen */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApponitmentUserController_getConfirmedForDoctor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de citas confirmadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApponitmentUserController_getCompletedForDoctor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de citas completadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApponitmentUserController_getAllConfirmed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las citas confirmadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApponitmentUserController_getAllCompleted: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de todas las citas completadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApponitmentUserController_getBranchConfirmed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de citas confirmadas de la sucursal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApponitmentUserController_getBranchCompleted: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de citas completadas de la sucursal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentResponse"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApponitmentUserController_updateStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAppointmentUserDto"];
+            };
+        };
+        responses: {
+            /** @description Cita actualizada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BaseApiResponse"];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
             400: {
                 headers: {
                     [name: string]: unknown;

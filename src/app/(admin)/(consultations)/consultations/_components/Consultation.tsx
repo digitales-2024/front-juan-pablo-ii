@@ -16,6 +16,8 @@ import { format } from "date-fns";
 import { CreateAppointmentDto } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
+import { EventType, EventStatus } from "@/app/(admin)/(staff)/schedules/_interfaces/event.interface";
 
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
@@ -33,6 +35,7 @@ export default function Consultation() {
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const { createMutation } = useAppointments();
 	const queryClient = useQueryClient();
+	const { createMutation: createEventMutation } = useEvents();
 
 	const form = useForm<ConsultationSchema>({
 		resolver: zodResolver(consultationsSchema),
@@ -262,6 +265,37 @@ export default function Consultation() {
 				duracionMinutos: 15
 			});
 
+			// Crear evento de tipo CITA con color gris usando el hook useEvents
+			let eventId = null;
+			try {
+				console.log('🗓️ Creando evento de calendario para la cita...');
+
+				// Crear el objeto para el evento
+				const eventData = {
+					title: `Cita: Paciente`,
+					color: 'gray', // Color gris inicial
+					type: EventType.CITA,
+					status: EventStatus.PENDING,
+					start: startDate.toISOString(),
+					end: endDate.toISOString(),
+					staffId: data.staffId,
+					branchId: data.branchId
+				};
+
+				console.log('📦 Datos del evento a crear:', eventData);
+
+				// Usar la mutación del hook useEvents para crear el evento
+				const eventResult = await createEventMutation.mutateAsync(eventData);
+				console.log('✅ Evento creado exitosamente:', eventResult);
+
+				// Guardar el ID del evento para asociarlo con la cita
+				eventId = eventResult.data?.id;
+				console.log('🔑 ID del evento creado:', eventId);
+			} catch (eventError) {
+				console.error('❌ Error al crear el evento:', eventError);
+				// No interrumpimos el flujo principal si falla la creación del evento
+			}
+
 			// Crear objeto para createMutation
 			const appointmentToCreate: CreateAppointmentDto = {
 				staffId: data.staffId,
@@ -273,7 +307,8 @@ export default function Consultation() {
 				type: "CONSULTA" as const,
 				notes: data.notes || "",
 				status: "PENDING" as const,
-				paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET"
+				paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET",
+				eventId: eventId || undefined // Añadir el ID del evento a la cita
 			};
 
 			console.log('📦 OBJETO FINAL PARA CREAR APPOINTMENT:', appointmentToCreate);
