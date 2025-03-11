@@ -21,6 +21,8 @@ import {
   Stethoscope,
   ClipboardPlus,
   CalendarHeart,
+  Check,
+  ChevronsUpDown,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -44,6 +46,20 @@ import {
 import { AddMedicalLeaveModal } from "./AddMedicalLeaveModal";
 import { AddPrescriptionModal } from "./AddPrescriptionModal";
 import { useUpdateHistory } from "../_hook/useUpdateHistory";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface AddHistoryModalProps {
   isOpen: boolean;
@@ -331,23 +347,60 @@ export function AddHistoryModal({
                       <Stethoscope className="h-4 w-4 text-primary" />
                       Servicio
                     </Label>
-                    <Select
-                      value={formData.serviceId}
-                      onValueChange={(value) =>
-                        setFormData((prev) => ({ ...prev, serviceId: value }))
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccione un servicio" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {services.map((service) => (
-                          <SelectItem key={service.id} value={service.id}>
-                            {service.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="serviceId"
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "justify-between w-full",
+                            !formData.serviceId && "text-muted-foreground"
+                          )}
+                        >
+                          {formData.serviceId
+                            ? services.find(
+                                (service) => service.id === formData.serviceId
+                              )?.name
+                            : "Seleccione un servicio"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0 w-full max-w-[300px]">
+                        <Command>
+                          <CommandInput placeholder="Buscar servicio..." />
+                          <CommandEmpty>
+                            No se encontraron servicios.
+                          </CommandEmpty>
+                          <CommandList>
+                            <CommandGroup>
+                              {services.map((service) => (
+                                <CommandItem
+                                  key={service.id}
+                                  value={service.name}
+                                  onSelect={() => {
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      serviceId: service.id,
+                                    }));
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      formData.serviceId === service.id
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {service.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div className="space-y-2">
                     <Label
