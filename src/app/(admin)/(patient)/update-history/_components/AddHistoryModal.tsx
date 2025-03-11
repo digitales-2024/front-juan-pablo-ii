@@ -122,6 +122,12 @@ export function AddHistoryModal({
     medicalLeave: false,
   });
 
+  // Añadir estado para los errores de validación
+  const [formErrors, setFormErrors] = useState({
+    serviceId: false,
+    branchId: false,
+  });
+
   // Efecto para establecer automáticamente el médico si el usuario logueado es médico
   useEffect(() => {
     if (isUserDoctor && loggedInDoctor) {
@@ -154,6 +160,20 @@ export function AddHistoryModal({
   // Manejador principal del envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validar los campos requeridos
+    const newErrors = {
+      serviceId: !formData.serviceId,
+      branchId: !formData.branchId,
+    };
+
+    // Si hay errores, actualizar estado y detener el envío
+    if (newErrors.serviceId || newErrors.branchId) {
+      setFormErrors(newErrors);
+      return;
+    }
+
+    // Continuar con el envío si no hay errores
     setIsSubmitting(true);
 
     try {
@@ -319,6 +339,17 @@ export function AddHistoryModal({
     setMedicalLeaveResetKey((prev) => prev + 1);
   };
 
+  // Funciones para limpiar errores cuando el usuario interactúa
+  const clearServiceError = (serviceId: string) => {
+    setFormData((prev) => ({ ...prev, serviceId }));
+    setFormErrors((prev) => ({ ...prev, serviceId: false }));
+  };
+
+  const clearBranchError = (branchId: string) => {
+    setFormData((prev) => ({ ...prev, branchId }));
+    setFormErrors((prev) => ({ ...prev, branchId: false }));
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-3xl max-h-[90vh] h-full border-t-4 border-t-primary">
@@ -345,7 +376,7 @@ export function AddHistoryModal({
                       className="flex items-center gap-2"
                     >
                       <Stethoscope className="h-4 w-4 text-primary" />
-                      Servicio
+                      Servicio <span className="text-destructive">*</span>
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -355,7 +386,8 @@ export function AddHistoryModal({
                           role="combobox"
                           className={cn(
                             "justify-between w-full",
-                            !formData.serviceId && "text-muted-foreground"
+                            !formData.serviceId && "text-muted-foreground",
+                            formErrors.serviceId && "border-destructive"
                           )}
                         >
                           {formData.serviceId
@@ -379,10 +411,7 @@ export function AddHistoryModal({
                                   key={service.id}
                                   value={service.name}
                                   onSelect={() => {
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      serviceId: service.id,
-                                    }));
+                                    clearServiceError(service.id);
                                   }}
                                 >
                                   <Check
@@ -401,6 +430,11 @@ export function AddHistoryModal({
                         </Command>
                       </PopoverContent>
                     </Popover>
+                    {formErrors.serviceId && (
+                      <p className="text-destructive text-xs mt-1">
+                        Este campo es obligatorio
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label
@@ -466,15 +500,17 @@ export function AddHistoryModal({
                       className="flex items-center gap-2"
                     >
                       <MapPin className="h-4 w-4 text-primary" />
-                      Sucursal
+                      Sucursal <span className="text-destructive">*</span>
                     </Label>
                     <Select
                       value={formData.branchId}
-                      onValueChange={(value) =>
-                        setFormData((prev) => ({ ...prev, branchId: value }))
-                      }
+                      onValueChange={(value) => clearBranchError(value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger
+                        className={
+                          formErrors.branchId ? "border-destructive" : ""
+                        }
+                      >
                         <SelectValue placeholder="Seleccione una sucursal" />
                       </SelectTrigger>
                       <SelectContent>
@@ -485,6 +521,11 @@ export function AddHistoryModal({
                         ))}
                       </SelectContent>
                     </Select>
+                    {formErrors.branchId && (
+                      <p className="text-destructive text-xs mt-1">
+                        Este campo es obligatorio
+                      </p>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -626,7 +667,15 @@ export function AddHistoryModal({
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className={cn(
+                  "relative",
+                  (formErrors.serviceId || formErrors.branchId) &&
+                    "animate-shake"
+                )}
+              >
                 {isSubmitting ? "Guardando..." : "Guardar Historia"}
               </Button>
             </DialogFooter>
