@@ -88,7 +88,7 @@ export const sidebarData: SidebarData = {
             },
             {
               title: "Finalizados",
-              url: "/prescriptions",
+              url: "/apoointment-medical-complete",
               icon: ShieldBan,
             },
           ],
