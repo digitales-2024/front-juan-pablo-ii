@@ -43,13 +43,13 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
     const handler = setTimeout(() => {
       onFilterChange({
         ...filter,
-        type: 'TURNO' as const,
+        type: 'CITA' as const,
         status: 'CONFIRMED' as const
       } as EventFilterParams);
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [filter]);
+  }, [filter, onFilterChange]);
 
   const handleFilterChange = (key: keyof EventFilterParams, value: string) => {
     setFilter(prev => ({

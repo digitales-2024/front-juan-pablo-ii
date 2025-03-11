@@ -5,7 +5,8 @@ import {
     Appointment,
     CreateAppointmentDto,
     UpdateAppointmentDto,
-    DeleteAppointmentsDto
+    DeleteAppointmentsDto,
+    PaginatedAppointmentsResponse
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { createSafeAction } from '@/utils/createSafeAction';
@@ -77,7 +78,7 @@ const getAllAppointmentsHandler = async (data: { page?: number; limit?: number }
     try {
         const url = `/appointments/paginated?page=${page}&limit=${limit}`;
 
-        const [appointments, error] = await http.get<Appointment[]>(url);
+        const [response, error] = await http.get<PaginatedAppointmentsResponse>(url);
 
         if (error) {
             return {
@@ -87,11 +88,11 @@ const getAllAppointmentsHandler = async (data: { page?: number; limit?: number }
             };
         }
 
-        if (!Array.isArray(appointments)) {
+        if (!response || !response.appointments || !Array.isArray(response.appointments)) {
             return { error: 'Respuesta inválida del servidor' };
         }
 
-        return { data: appointments };
+        return { data: response };
     } catch (error) {
         console.error("💥 Error en getAllAppointmentsHandler:", error);
         return { error: "Error al obtener todas las citas médicas" };

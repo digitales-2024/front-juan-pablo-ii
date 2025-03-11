@@ -8,6 +8,7 @@ import {
   DollarSign,
   FileHeart,
   FileText,
+  HandCoins,
   Handshake,
   Home,
   Hospital,
@@ -50,15 +51,27 @@ export const sidebarData: SidebarData = {
           icon: Home,
         },
         {
-          title: "Calendario Citas",
-          url: "/appointments-schedule",
-          icon: CalendarPlus,
-        },
-        {
           title: "Consultas",
           url: "/consultations",
           icon: Handshake,
         },
+        {
+          title: "Gestión de Citas",
+          icon: CalendarPlus,
+          items: [
+            {
+              title: "Calendario",
+              url: "/appointments-schedule",
+              icon: CalendarRange,
+            },
+            {
+              title: "Lista de Citas",
+              url: "/appointments",
+              icon: CalendarPlus,
+            },
+          ],
+        }
+
       ],
     },
     {
@@ -140,6 +153,11 @@ export const sidebarData: SidebarData = {
               title: "Notas medicas",
               url: "/prescriptions",
               icon: FileHeart,
+            },
+            {
+              title: "Venta de productos",
+              url: "/productSale",
+              icon: HandCoins,
             },
             {
               title: "Órdenes",

@@ -1,8 +1,23 @@
 
 import { components } from "@/types/api";
+import { Archive, LucideIcon, MoreHorizontal, ShoppingBag } from "lucide-react";
 import { z } from "zod";
 
 // Tipos base de la API
+// export type ProductUsePrototype = components['schemas']['ProductUse'];
+export type ProductUse = "VENTA" | "INTERNO" | "OTRO";
+export type EnumConfig = {
+  name: string;
+  backgroundColor: string;
+  textColor: string;
+  hoverBgColor: string;
+  hoverTextColor?:string
+  importantBgColor?: string;
+  importantHoverBgColor?: string;
+  importantTextColor?: string;
+  importantHoverTextColor?: string;
+  icon: LucideIcon;
+}
 export type Product = components['schemas']['Product'];
 export type DetailedProduct = components['schemas']['ProductWithRelations'];
 export type CreateProductDto = components['schemas']['CreateProductDto'];
@@ -18,6 +33,49 @@ export type ProductSearch = {
   name: string;
 }
 
+export const productUseOptions: Record<ProductUse, {
+  label: string;
+  value: ProductUse;
+}> = {
+  VENTA: {
+    label: "Venta",
+    value: "VENTA",
+  },
+  INTERNO: {
+    label: "Uso interno",
+    value: "INTERNO",
+  },
+  OTRO: {
+    label: "Otro",
+    value: "OTRO",
+  },
+}
+
+export const productUseEnumConfig: Record<ProductUse, EnumConfig> = {
+  VENTA: {
+    name: "Venta",
+    backgroundColor: "bg-[#a7f3d0]",
+    textColor: "text-[#065f46]",
+    hoverBgColor: "hover:bg-[#86efac]",
+    icon: ShoppingBag,
+  },
+  INTERNO: {
+    name: "Uso interno",
+    backgroundColor: "bg-[#c7d2fe]",
+    textColor: "text-[#3730a3]",
+    hoverBgColor: "hover:bg-[#a5b4fc]",
+    icon: Archive,
+  },
+  OTRO: {
+    name: "Otro",
+    backgroundColor: "bg-[#cbd5e1]",
+    textColor: "text-[#334155]",
+    hoverBgColor: "hover:bg-[#94a3b8]",
+    icon: MoreHorizontal,
+  },
+}
+
+
 //Es necesario crear tipos explicitos para tipos anidados autogenerados para evitar errores de compilación y errores en tiempo de ejecución
 export type ActiveProduct = {
   id: string;
@@ -27,6 +85,7 @@ export type ActiveProduct = {
   tipoProductoId: string;
   codigoProducto: string;
   unidadMedida: string;
+  uso: "VENTA" | "INTERNO" | "OTRO";
   categoria: ActiveProductCategory;
   tipoProducto: ActiveProductType;
 }
@@ -66,7 +125,9 @@ export const createProductSchema = z.object({
   }).min(0).nonnegative(),
   unidadMedida: z.string().optional(),
   proveedor: z.string().optional(),
-  uso: z.string().optional(),
+  uso: z.enum(["VENTA", "INTERNO", "OTRO"], {
+    required_error: "El uso es requerido"
+  }),
   usoProducto: z.string().optional(),
   description: z.string().optional(),
   codigoProducto: z.string().min(1, "El código de producto es requerido"),
@@ -100,7 +161,9 @@ export const updateProductSchema = z.object({
   precio: z.coerce.number().min(0, "El precio no puede ser negativo").optional(),
   unidadMedida: z.string().optional(),
   proveedor: z.string().optional(),
-  uso: z.string().optional(),
+  uso: z.enum(["VENTA", "INTERNO", "OTRO"],  {
+    required_error: "El uso es requerido"
+  }),
   usoProducto: z.string().optional(),
   description: z.string().optional(),
   codigoProducto: z.string().optional(),

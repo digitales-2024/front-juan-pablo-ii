@@ -34,7 +34,7 @@ export function AppointmentTableToolbarActions({
                 onClick={() => window.location.href = '/consultations'}
                 className="default"
             >
-                Crear Cita
+                Agendar Cita
             </Button>
             {/* <CreateAppointmentDialog /> */}
         </div>

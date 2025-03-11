@@ -3,29 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {
-  getPatientPrescriptionsByDni,
-  getPrescriptionsWithPatient,
-  ListPrescriptionsWithPatientResponse,
-} from "../_actions/prescriptions.actions";
+import { GeneralOutgoingProductStock, getForSaleProductStock, getForSaleProductStockAndBranch } from "@/app/(admin)/(inventory)/stock/_actions/stock.actions";
+import { ProductUse } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
 
-export type PrescriptionsFilter =
-  | { type: "ALL"; limit?: number; offset?: number }
-  | { type: "BY_DNI"; dni: string };
+export type ProductsStockFilter =
+  | { type: "ALL"; productSale: ProductUse; limit?: number; offset?: number;  }
+  | { type: "BY_BRANCH"; productSale: ProductUse; branchId: string };
 
-export const PrescriptionsFilterType = {
+export const productsStockFilterType = {
   ALL: "ALL",
-  BY_DNI: "BY_DNI",
+  BY_DNI: "BY_BRANCH",
 };
 
-export type PrescriptionsFilterType = keyof typeof PrescriptionsFilterType;
+export type ProductsStockFilterType = keyof typeof productsStockFilterType;
 
-const PRESCRIPTION_QUERY_KEY = ["prescriptions"] as const;
+const PRODUCTSTOCK_QUERY_KEY = ["products-with-stock-for-sale"] as const;
 
-export function useUnifiedPrescriptions() {
+export function useUnifiedProductsStock() {
   // Filtro por defecto: "ALL" (todos los almacenes)
   const queryClient = useQueryClient();
-  const [filter, setFilter] = useState<PrescriptionsFilter>({ type: "ALL" });
+  const [filter, setFilter] = useState<ProductsStockFilter>({ type: "ALL", productSale: "VENTA" });
   // const [success, setSuccess] = useState(false);
 
   // Referencia para bloquear la invalidación de caché en el primer render
@@ -35,30 +32,34 @@ export function useUnifiedPrescriptions() {
   const unifiedQuery = useQuery({
     // El queryKey varía según el tipo y parámetros
     //queryKey: ["stock", filter],
-    queryKey: PRESCRIPTION_QUERY_KEY,
+    queryKey: PRODUCTSTOCK_QUERY_KEY,
     queryFn: async () => {
       try {
-        let response: ListPrescriptionsWithPatientResponse;
+        let response: GeneralOutgoingProductStock;
         switch (filter.type) {
           case "ALL": {
-            response = await getPrescriptionsWithPatient(
-              filter.limit,
-              filter.offset
-            );
+            response = await getForSaleProductStock({
+                productUse: filter.productSale
+              });
             if ("error" in response) {
               toast.error(response.error);
             }
             break;
           }
-          case "BY_DNI": {
-            response = await getPatientPrescriptionsByDni(filter.dni);
+          case "BY_BRANCH": {
+            response = await getForSaleProductStockAndBranch({
+              productUse: filter.productSale,
+              branchId: filter.branchId,
+            });
             if ("error" in response) {
               toast.error(response.error);
             }
             break;
           }
           default: {
-            response = await getPrescriptionsWithPatient();
+            response = await getForSaleProductStock({
+              productUse: "VENTA"
+            });
             if ("error" in response) {
               toast.error(response.error);
             }
@@ -85,16 +86,16 @@ export function useUnifiedPrescriptions() {
       return;
     }
     queryClient
-      .invalidateQueries({ queryKey: PRESCRIPTION_QUERY_KEY })
+      .invalidateQueries({ queryKey: PRODUCTSTOCK_QUERY_KEY })
       .catch(() => toast.error("Error al actualizar"));
   }, [filter, queryClient]);
 
   // Helpers para actualizar el filtro
-  function setFilterAllPrescriptions(limit = 10, offset = 0) {
-    setFilter({ type: "ALL", limit, offset });
+  function setFilterAllForSaleProductsStock(limit = 10, offset = 0) {
+    setFilter({ type: "ALL", productSale: "VENTA", limit, offset });
   }
-  function setFilterByDni(dni: string) {
-    setFilter({ type: "BY_DNI", dni });
+  function setFilterForSaleProductsStockByBranch(dni: string) {
+    setFilter({ type: "BY_BRANCH", productSale: "VENTA", branchId: dni });
   }
   // function setFilterByType(orderType: OrderType) {
   //   setFilter({ type: "BY_TYPE", orderType });
@@ -109,7 +110,7 @@ export function useUnifiedPrescriptions() {
     isError: unifiedQuery.isError,
     query: unifiedQuery,
     filter, // Por si quieres leer el tipo de filtro actual
-    setFilterAllPrescriptions,
-    setFilterByDni
+    setFilterAllForSaleProductsStock,
+    setFilterForSaleProductsStockByBranch
   };
 }

@@ -65,7 +65,7 @@ import { cn } from "@/lib/utils";
 export function FilterOrderDialog() {
   const FILTER_DIALOG_MESSAGES = {
     button: "Opciones de filtrado",
-    title: "Filtrar Stock",
+    title: "Filtrar Órdenes",
     description: `Escoge una opción para filtrar las órdenes.`,
     cancel: "Cerrar",
     submitButton: "Aplicar",
@@ -76,7 +76,7 @@ export function FilterOrderDialog() {
       BY_STATUS: {
         label: "Por Estado",
         value: OrdersFilterType.BY_STATUS,
-        description: "Selecciona un estado de órden para filtrar el stock",
+        description: "Selecciona un estado de órden para filtrarlas",
       },
       BY_TYPE: {
         label: "Por Tipo de Órden",
@@ -90,10 +90,15 @@ export function FilterOrderDialog() {
           "Selecciona un estado y tipo de órden",
       },
       ALL: {
-        label: "Todos los almacenes",
+        label: "Ùltimas Órdenes",
         value: OrdersFilterType.ALL,
-        description: "Muestra todo las órdenes",
+        description: "Muestra las ùltimas órdenes registradas.",
       },
+      BY_ORDER_NUMBER:{
+        label: "Por Número de Órden",
+        value: OrdersFilterType.BY_ORDER_NUMBER,
+        description: "Selecciona un número de órden para filtrarlas"
+      }
     }),
     []
   );
