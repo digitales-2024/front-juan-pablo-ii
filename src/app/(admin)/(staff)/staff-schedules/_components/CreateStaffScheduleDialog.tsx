@@ -14,7 +14,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Drawer,
@@ -23,7 +22,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { CreateStaffScheduleForm } from "./CreateStaffScheduleForm";
 import { format } from "date-fns-tz";
@@ -104,7 +102,7 @@ export function CreateStaffScheduleDialog() {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { createMutation } = useStaffSchedules();
   const { staff } = useStaff();
-  const { branches } = useBranches();
+  // const { branches } = useBranches();
   const queryClient = useQueryClient();
 
   const form = useForm<CreateStaffScheduleDto>({

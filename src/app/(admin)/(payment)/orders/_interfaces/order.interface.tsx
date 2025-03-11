@@ -31,7 +31,7 @@ export type EnumConfig = {
   backgroundColor: string;
   textColor: string;
   hoverBgColor: string;
-  hoverTextColor?:string
+  hoverTextColor?: string
   importantBgColor?: string;
   importantHoverBgColor?: string;
   importantTextColor?: string;
@@ -93,7 +93,7 @@ export const orderTypeEnumOptions: EnumOptions<OrderType>[] = [
   }
 ]
 
-export const orderStatusConfig: Record<OrderStatus, EnumConfig> = { 
+export const orderStatusConfig: Record<OrderStatus, EnumConfig> = {
   DRAFT: {
     name: "Borrador",
     backgroundColor: "bg-[#F5F5F5]",
@@ -315,22 +315,22 @@ export type Payment = {
   updatedAt: string;
 };
 export type DetailedOrder = {
- id: string;
- code?: string;
- type: OrderType;
- movementTypeId: string;
- referenceId: string;
- sourceId?: string;
- targetId?: string;
- status: OrderStatus
- currency: string;
- subtotal: number;
- tax: number;
- total: number;
- date: string;
- notes?: string;
- isActive: boolean;
- metadata?: Record<string, never>;
+  id: string;
+  code?: string;
+  type: OrderType;
+  movementTypeId: string;
+  referenceId: string;
+  sourceId?: string;
+  targetId?: string;
+  status: OrderStatus
+  currency: string;
+  subtotal: number;
+  tax: number;
+  total: number;
+  date: string;
+  notes?: string;
+  isActive: boolean;
+  metadata?: Record<string, never>;
   payments: Payment[];
 }
 
@@ -435,7 +435,7 @@ export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
 };
 
 export type PaymentOptions = 'CANCEL' | 'PROCESS' | 'VERIFY' | 'REJECT' | 'REFUND' | 'CLOSE' | 'RESTORE';
-export const paymentOptionButtons: Record<PaymentOptions,EnumConfig > = {
+export const paymentOptionButtons: Record<PaymentOptions, EnumConfig> = {
   CANCEL: {
     name: "Cancelar",
     backgroundColor: "bg-[#FFEBEE]",
@@ -552,7 +552,7 @@ export const processPaymentSchema = z.object({
   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
   amount: z.coerce.number(),
   voucherNumber: z.string().optional(),
-  date: z.string().min(1,"La fecha es requerida").refine((val) => !isNaN(Date.parse(val)), {
+  date: z.string().min(1, "La fecha es requerida").refine((val) => !isNaN(Date.parse(val)), {
     message: "La fecha debe ser una cadena de fecha válida ISO 8601",
   }),
   description: z.string().optional(),

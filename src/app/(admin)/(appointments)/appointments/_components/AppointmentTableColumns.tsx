@@ -20,7 +20,8 @@ import { PencilIcon, BanIcon, ActivityIcon } from "lucide-react";
 import { DeactivateAppointmentDialog } from "./DeactivateAppointmentDialog"; // Asegúrate de que este componente exista
 import { ReactivateAppointmentDialog } from "./ReactivateAppointmentDialog"; // Asegúrate de que este componente exista
 import { Checkbox } from "@/components/ui/checkbox";
-import { Appointment } from "../_interfaces/appointments.interface";
+import { Appointment, appointmentStatusConfig, AppointmentStatus } from "../_interfaces/appointments.interface";
+import { cn } from "@/lib/utils";
 
 export const columns: ColumnDef<Appointment>[] = [
     {
@@ -56,44 +57,92 @@ export const columns: ColumnDef<Appointment>[] = [
     {
         accessorKey: "start",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Inicio" />
+            <DataTableColumnHeader column={column} title="Fecha y Hora" />
         ),
-        cell: ({ row }) => format(new Date(row.original.start), "PPp", { locale: es }),
+        cell: ({ row }) => {
+            const startDate = new Date(row.original.start);
+            const endDate = new Date(row.original.end);
+            return (
+                <div className="flex flex-col">
+                    <span className="font-medium">
+                        {format(startDate, "PPP", { locale: es })}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                        {format(startDate, "HH:mm", { locale: es })} - {format(endDate, "HH:mm", { locale: es })}
+                    </span>
+                </div>
+            );
+        },
     },
     {
-        accessorKey: "end",
+        accessorKey: "patient",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Fin" />
+            <DataTableColumnHeader column={column} title="Paciente" />
         ),
-        cell: ({ row }) => format(new Date(row.original.end), "PPp", { locale: es }),
+        cell: ({ row }) => {
+            const patient = row.original.patient;
+            return patient ? `${patient.name} ${patient.lastName}` : "N/A";
+        },
     },
     {
-        accessorKey: "patientId",
+        accessorKey: "staff",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="ID del Paciente" />
+            <DataTableColumnHeader column={column} title="Doctor" />
         ),
+        cell: ({ row }) => {
+            const staff = row.original.staff;
+            return staff ? `${staff.name} ${staff.lastName}` : "N/A";
+        },
+    },
+    {
+        accessorKey: "service",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Servicio" />
+        ),
+        cell: ({ row }) => {
+            const service = row.original.service;
+            return service ? service.name : "N/A";
+        },
+    },
+    {
+        accessorKey: "branch",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Sucursal" />
+        ),
+        cell: ({ row }) => {
+            const branch = row.original.branch;
+            return branch ? branch.name : "N/A";
+        },
     },
     {
         accessorKey: "status",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Estado" />
         ),
-        cell: ({ row }) => (
-            <Badge variant={row.original.status === "PENDING" ? "secondary" : "success"}>
-                {row.original.status}
-            </Badge>
-        ),
-    },
-    {
-        accessorKey: "isActive",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Activo" />
-        ),
-        cell: ({ row }) => (
-            <Badge variant={row.original.isActive ? "success" : "destructive"}>
-                {row.original.isActive ? "Sí" : "No"}
-            </Badge>
-        ),
+        cell: ({ row }) => {
+            const status = row.original.status as AppointmentStatus;
+            const statusConfig = appointmentStatusConfig[status];
+
+            if (!statusConfig) {
+                return <Badge variant="outline">{status}</Badge>;
+            }
+
+            const StatusIcon = statusConfig.icon;
+
+            return (
+                <Badge
+                    className={cn(
+                        statusConfig.backgroundColor,
+                        statusConfig.textColor,
+                        statusConfig.hoverBgColor,
+                        "flex space-x-1 items-center justify-center text-sm"
+                    )}
+                >
+                    <StatusIcon className="size-4" />
+                    <span>{statusConfig.name}</span>
+                </Badge>
+            );
+        },
     },
     {
         id: "Acciones",
