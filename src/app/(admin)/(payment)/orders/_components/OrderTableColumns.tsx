@@ -13,7 +13,7 @@ import {
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ellipsis} from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 // import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 // import { UpdateStorageSheet } from "./UpdateStorageSheet";
@@ -138,44 +138,47 @@ export const columns: ColumnDef<DetailedOrder>[] = [
           <span>{config.name}</span>
         </Badge>
       );
-      },
     },
-    {
-      accessorKey: "payments.status",
-      meta: { title: "Estado de pago" },
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Estado de Pago" />
-      ),
-      cell: ({ row }) => {
-        // orderTypeConfig
-        // orderStatusConfig
-        const order = row.original;
-        const regularPayment = order.payments.find(
-          (payment) => payment.type !== "REFUND"
-        );
-        const refundPayment = order.payments.find(
-          (payment) => payment.type === "REFUND"
-        );  
-        const config = paymentStatusConfig[regularPayment?.status ?? refundPayment?.status ?? "PENDING"];
-        const Icon = config.icon;
-        return (
-          // <span>
-          //   {row.original.status || "Sin tipo de almacén"}
-          // </span>
-          <Badge
-            className={cn(
-              config.backgroundColor,
-              config.textColor,
-              config.hoverBgColor,
-              "flex space-x-1 items-center justify-center text-sm"
-            )}
-          >
-            <Icon className="size-4"></Icon>
-            <span>{config.name}</span>
-          </Badge>
-        );
-        },
-      },
+  },
+  {
+    accessorKey: "payments.status",
+    meta: { title: "Estado de pago" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado de Pago" />
+    ),
+    cell: ({ row }) => {
+      // orderTypeConfig
+      // orderStatusConfig
+      const order = row.original;
+      const regularPayment = order.payments.find(
+        (payment) => payment.type !== "REFUND"
+      );
+      const refundPayment = order.payments.find(
+        (payment) => payment.type === "REFUND"
+      );
+      const config =
+        paymentStatusConfig[
+          regularPayment?.status ?? refundPayment?.status ?? "PENDING"
+        ];
+      const Icon = config.icon;
+      return (
+        // <span>
+        //   {row.original.status || "Sin tipo de almacén"}
+        // </span>
+        <Badge
+          className={cn(
+            config.backgroundColor,
+            config.textColor,
+            config.hoverBgColor,
+            "flex space-x-1 items-center justify-center text-sm"
+          )}
+        >
+          <Icon className="size-4"></Icon>
+          <span>{config.name}</span>
+        </Badge>
+      );
+    },
+  },
   // {
   //   accessorKey: "",
   //   meta: { title: "Estado de Órden" },
@@ -254,6 +257,23 @@ export const columns: ColumnDef<DetailedOrder>[] = [
         {row.original.isActive ? "Activo" : "Inactivo"}
       </Badge>
     ),
+  },
+  {
+    accessorKey: "metadata",
+    size: 10,
+    meta: {
+      title: "Detalles",
+    },
+    header: () => <div>Detalles</div>,
+    cell: ({ row }) => {
+      const MetadataDialog: ReactElement = <div></div>
+      return <div>
+        {/* <ShowPrescriptionDetailsDialog
+          data={row.original}
+        ></ShowPrescriptionDetailsDialog> */}
+        <MetadataDialog></MetadataDialog>
+      </div>
+    },
   },
   // {
   //   accessorKey: "createdAt",
@@ -337,19 +357,23 @@ export const columns: ColumnDef<DetailedOrder>[] = [
               onOpenChange={setShowEditSheet}
               showTrigger={false}
             /> */}
-            {couldCloseAndStore && showDeleteDialog && <DeactivateStorageDialog
-              order={row.original}
-              open={showDeleteDialog}
-              onOpenChange={setShowDeleteDialog}
-              showTrigger={false}
-            />}
+            {couldCloseAndStore && showDeleteDialog && (
+              <DeactivateStorageDialog
+                order={row.original}
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+                showTrigger={false}
+              />
+            )}
 
-            {showReactivateDialog && <ReactivateOrderDialog
-              order={row.original}
-              open={showReactivateDialog}
-              onOpenChange={setShowReactivateDialog}
-              showTrigger={false}
-            />}
+            {showReactivateDialog && (
+              <ReactivateOrderDialog
+                order={row.original}
+                open={showReactivateDialog}
+                onOpenChange={setShowReactivateDialog}
+                showTrigger={false}
+              />
+            )}
 
             {shouldProcessPayment && showProcessPaymentDialog && (
               <ProcessPaymentDialog
@@ -502,8 +526,8 @@ export const columns: ColumnDef<DetailedOrder>[] = [
               )}
 
               {couldCloseAndStore && isActive && <DropdownMenuSeparator />}
-              {
-                couldCloseAndStore && isActive && <DropdownMenuItem
+              {couldCloseAndStore && isActive && (
+                <DropdownMenuItem
                   onSelect={() => setShowDeleteDialog(true)}
                   disabled={!isActive}
                   className={cn(
@@ -515,15 +539,13 @@ export const columns: ColumnDef<DetailedOrder>[] = [
                   {
                     <paymentOptionButtons.CLOSE.icon></paymentOptionButtons.CLOSE.icon>
                   }
-                  {
-                    paymentOptionButtons.CLOSE.name
-                  }
+                  {paymentOptionButtons.CLOSE.name}
                 </DropdownMenuItem>
-              }
+              )}
 
               {couldCloseAndStore && !isActive && <DropdownMenuSeparator />}
-              {
-                couldCloseAndStore && !isActive && <DropdownMenuItem
+              {couldCloseAndStore && !isActive && (
+                <DropdownMenuItem
                   onSelect={() => setShowReactivateDialog(true)}
                   disabled={!isActive}
                   className={cn(
@@ -535,11 +557,9 @@ export const columns: ColumnDef<DetailedOrder>[] = [
                   {
                     <paymentOptionButtons.RESTORE.icon></paymentOptionButtons.RESTORE.icon>
                   }
-                  {
-                    paymentOptionButtons.RESTORE.name
-                  }
+                  {paymentOptionButtons.RESTORE.name}
                 </DropdownMenuItem>
-              }
+              )}
 
               {/* {isSuperAdmin && (
                 <DropdownMenuItem

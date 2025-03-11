@@ -489,6 +489,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/order/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener orden por ID */
+        get: operations["OrderController_findOneDetailed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/order/search/detailed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener orden por ID */
+        get: operations["OrderController_searchOneDetailed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/order/{id}": {
         parameters: {
             query?: never;
@@ -6219,6 +6253,150 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
+        PatientDetailsMetadata: {
+            /** @description Nombre completo del paciente */
+            fullName: string;
+            /** @description DNI del paciente */
+            dni?: string;
+            /** @description Dirección del paciente */
+            address?: string;
+            /** @description Teléfono del paciente */
+            phone?: string;
+        };
+        TransactionDetails: {
+            /** @description Subtotal de la transacción */
+            subtotal: number;
+            /** @description Impuesto aplicado */
+            tax: number;
+            /** @description Total de la transacción */
+            total: number;
+        };
+        MedicalAppointmentOrderDetails: {
+            /**
+             * @description Tipo de transacción: consulta médica
+             * @enum {string}
+             */
+            transactionType: "MEDICAL_APPOINTMENT";
+            /** @description ID de la sucursal */
+            branchId: string;
+            /** @description ID de la cita médica */
+            appointmentId: string;
+            /** @description ID del personal médico */
+            staffId?: string;
+            /** @description ID del servicio médico */
+            serviceId?: string;
+            /** @description Tipo de cita médica */
+            appointmentType?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de inicio de la cita
+             */
+            appointmentStart?: string;
+            /**
+             * Format: date-time
+             * @description Fecha y hora de fin de la cita
+             */
+            appointmentEnd?: string;
+            /**
+             * Format: date-time
+             * @description Fecha de la consulta
+             */
+            consultationDate: string;
+            /** @description Detalles de la transacción */
+            transactionDetails: components["schemas"]["TransactionDetails"];
+        };
+        MedicalAppointmentMetadata: {
+            /** @description Detalles del paciente */
+            patientDetails: components["schemas"]["PatientDetailsMetadata"];
+            /** @description Detalles de la orden de consulta médica */
+            orderDetails: components["schemas"]["MedicalAppointmentOrderDetails"];
+        };
+        AppointmentOrder: {
+            /**
+             * @description ID único de la orden
+             * @example 5f8d0a3e-7d5b-4d3e-a6c4-3a7d9b2d4c1a
+             */
+            id: string;
+            /**
+             * @description Código de referencia de la orden
+             * @example ORD-20240224-001
+             */
+            code?: string;
+            /**
+             * @description Tipo de orden
+             * @example MEDICAL_PRESCRIPTION_ORDER
+             * @enum {string}
+             */
+            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            /**
+             * @description ID del tipo de movimiento asociado
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            movementTypeId: string;
+            /**
+             * @description ID de referencia externa
+             * @example REF-12345
+             */
+            referenceId: string;
+            /**
+             * @description ID del origen de fondos. Por lo general, se refiere al proveeder. No existe entidad proveedor
+             * @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+             */
+            sourceId?: string;
+            /**
+             * @description ID del destino de fondos, por lo general se refiere al almacén de destino
+             * @example b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7
+             */
+            targetId?: string;
+            /**
+             * @description Estado actual de la orden
+             * @example PENDING
+             * @enum {string}
+             */
+            status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            /**
+             * @description Moneda de la transacción
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Subtotal de la orden (sin impuestos)
+             * @example 150.75
+             */
+            subtotal: number;
+            /**
+             * @description Impuestos aplicados
+             * @example 27.14
+             */
+            tax: number;
+            /**
+             * @description Total a pagar (subtotal + impuestos)
+             * @example 177.89
+             */
+            total: number;
+            /**
+             * Format: date-time
+             * @description Fecha de creación de la orden
+             * @example 2024-02-24T15:30:00Z
+             */
+            date: string;
+            /**
+             * @description Notas adicionales
+             * @example Orden creada para paciente Juan Pérez
+             */
+            notes?: string;
+            /** @description Estado de eliminación lógica. */
+            isActive: boolean;
+            /**
+             * @description Metadatos adicionales en formato JSON
+             * @example {
+             *       "pacienteId": "PAT-12345",
+             *       "medicoId": "DOC-67890",
+             *       "seguro": "Seguro Salud Total"
+             *     }
+             */
+            metadata?: components["schemas"]["MedicalAppointmentMetadata"];
+        };
         PrescriptionProductItemDto: {
             /**
              * @description ID del producto
@@ -6303,6 +6481,142 @@ export interface components {
              */
             metadata?: Record<string, never>;
         };
+        ProductMovement: {
+            /** @description Identificador único del producto */
+            productId: string;
+            /** @description Identificador único del almacén */
+            storageId: string;
+            /** @description Nombre del producto */
+            name: string;
+            /** @description Cantidad del producto */
+            quantity: number;
+            /** @description Subtotal del producto */
+            subtotal: number;
+            /** @description Cantidad del producto */
+            price: number;
+        };
+        BaseServiceItem: {
+            /** @description Identificador único del servicio */
+            id: string;
+            /** @description Nombre del servicio */
+            name: string;
+            /** @description Cantidad del servicio */
+            quantity: number;
+        };
+        PrescriptionOrderDetails: {
+            /**
+             * @description Tipo de transacción: receta médica
+             * @enum {string}
+             */
+            transactionType: "PRESCRIPTION";
+            /** @description ID de la sucursal */
+            branchId: string;
+            /** @description ID del personal */
+            staffId: string;
+            /**
+             * Format: date-time
+             * @description Fecha de la receta
+             */
+            prescriptionDate: string;
+            /** @description Productos de la venta */
+            products: components["schemas"]["ProductMovement"][];
+            /** @description Servicios */
+            services: components["schemas"]["BaseServiceItem"][];
+            /** @description Detalles de la transacción */
+            transactionDetails: components["schemas"]["TransactionDetails"];
+        };
+        MedicalPrescriptionMetadata: {
+            /** @description Detalles del paciente */
+            patientDetails: components["schemas"]["PatientDetailsMetadata"];
+            /** @description Detalles de la orden de receta médica */
+            orderDetails: components["schemas"]["PrescriptionOrderDetails"];
+        };
+        PrescriptionOrder: {
+            /**
+             * @description ID único de la orden
+             * @example 5f8d0a3e-7d5b-4d3e-a6c4-3a7d9b2d4c1a
+             */
+            id: string;
+            /**
+             * @description Código de referencia de la orden
+             * @example ORD-20240224-001
+             */
+            code?: string;
+            /**
+             * @description Tipo de orden
+             * @example MEDICAL_PRESCRIPTION_ORDER
+             * @enum {string}
+             */
+            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            /**
+             * @description ID del tipo de movimiento asociado
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            movementTypeId: string;
+            /**
+             * @description ID de referencia externa
+             * @example REF-12345
+             */
+            referenceId: string;
+            /**
+             * @description ID del origen de fondos. Por lo general, se refiere al proveeder. No existe entidad proveedor
+             * @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+             */
+            sourceId?: string;
+            /**
+             * @description ID del destino de fondos, por lo general se refiere al almacén de destino
+             * @example b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7
+             */
+            targetId?: string;
+            /**
+             * @description Estado actual de la orden
+             * @example PENDING
+             * @enum {string}
+             */
+            status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            /**
+             * @description Moneda de la transacción
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Subtotal de la orden (sin impuestos)
+             * @example 150.75
+             */
+            subtotal: number;
+            /**
+             * @description Impuestos aplicados
+             * @example 27.14
+             */
+            tax: number;
+            /**
+             * @description Total a pagar (subtotal + impuestos)
+             * @example 177.89
+             */
+            total: number;
+            /**
+             * Format: date-time
+             * @description Fecha de creación de la orden
+             * @example 2024-02-24T15:30:00Z
+             */
+            date: string;
+            /**
+             * @description Notas adicionales
+             * @example Orden creada para paciente Juan Pérez
+             */
+            notes?: string;
+            /** @description Estado de eliminación lógica. */
+            isActive: boolean;
+            /**
+             * @description Metadatos adicionales en formato JSON
+             * @example {
+             *       "pacienteId": "PAT-12345",
+             *       "medicoId": "DOC-67890",
+             *       "seguro": "Seguro Salud Total"
+             *     }
+             */
+            metadata?: components["schemas"]["MedicalPrescriptionMetadata"];
+        };
         ProductSaleItemDto: {
             /**
              * @description ID del producto
@@ -6381,6 +6695,111 @@ export interface components {
              *     }
              */
             metadata?: Record<string, never>;
+        };
+        SaleOrderDetails: {
+            /**
+             * @description Tipo de transacción: venta
+             * @enum {string}
+             */
+            transactionType: "SALE";
+            /** @description ID de la sucursal */
+            branchId: string;
+            /** @description Productos de la venta */
+            products: components["schemas"]["ProductMovement"][];
+            /** @description Detalles de la transacción */
+            transactionDetails: components["schemas"]["TransactionDetails"];
+        };
+        ProductSaleMetadata: {
+            /** @description Detalles del paciente */
+            patientDetails: components["schemas"]["PatientDetailsMetadata"];
+            /** @description Detalles de la orden de venta */
+            orderDetails: components["schemas"]["SaleOrderDetails"];
+        };
+        ProductSaleOrder: {
+            /**
+             * @description ID único de la orden
+             * @example 5f8d0a3e-7d5b-4d3e-a6c4-3a7d9b2d4c1a
+             */
+            id: string;
+            /**
+             * @description Código de referencia de la orden
+             * @example ORD-20240224-001
+             */
+            code?: string;
+            /**
+             * @description Tipo de orden
+             * @example MEDICAL_PRESCRIPTION_ORDER
+             * @enum {string}
+             */
+            type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_APPOINTMENT_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
+            /**
+             * @description ID del tipo de movimiento asociado
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            movementTypeId: string;
+            /**
+             * @description ID de referencia externa
+             * @example REF-12345
+             */
+            referenceId: string;
+            /**
+             * @description ID del origen de fondos. Por lo general, se refiere al proveeder. No existe entidad proveedor
+             * @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+             */
+            sourceId?: string;
+            /**
+             * @description ID del destino de fondos, por lo general se refiere al almacén de destino
+             * @example b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7
+             */
+            targetId?: string;
+            /**
+             * @description Estado actual de la orden
+             * @example PENDING
+             * @enum {string}
+             */
+            status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
+            /**
+             * @description Moneda de la transacción
+             * @example PEN
+             */
+            currency: string;
+            /**
+             * @description Subtotal de la orden (sin impuestos)
+             * @example 150.75
+             */
+            subtotal: number;
+            /**
+             * @description Impuestos aplicados
+             * @example 27.14
+             */
+            tax: number;
+            /**
+             * @description Total a pagar (subtotal + impuestos)
+             * @example 177.89
+             */
+            total: number;
+            /**
+             * Format: date-time
+             * @description Fecha de creación de la orden
+             * @example 2024-02-24T15:30:00Z
+             */
+            date: string;
+            /**
+             * @description Notas adicionales
+             * @example Orden creada para paciente Juan Pérez
+             */
+            notes?: string;
+            /** @description Estado de eliminación lógica. */
+            isActive: boolean;
+            /**
+             * @description Metadatos adicionales en formato JSON
+             * @example {
+             *       "pacienteId": "PAT-12345",
+             *       "medicoId": "DOC-67890",
+             *       "seguro": "Seguro Salud Total"
+             *     }
+             */
+            metadata?: components["schemas"]["ProductSaleMetadata"];
         };
         CreatePatientDto: {
             /**
@@ -8492,6 +8911,80 @@ export interface operations {
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_findOneDetailed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la orden */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orden encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOrder"];
+                };
+            };
+            /** @description ID de orden inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_searchOneDetailed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la orden */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orden encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOrder"][];
+                };
+            };
+            /** @description ID de orden inválido */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -14858,7 +15351,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Order"];
+                    "application/json": components["schemas"]["AppointmentOrder"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -14896,7 +15389,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Order"];
+                    "application/json": components["schemas"]["PrescriptionOrder"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
@@ -14934,7 +15427,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Order"];
+                    "application/json": components["schemas"]["ProductSaleOrder"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
