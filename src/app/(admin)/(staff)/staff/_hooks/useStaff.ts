@@ -117,6 +117,8 @@ export const useStaff = () => {
     UpdateStaffVariables
   >({
     mutationFn: async ({ id, data }) => {
+      console.log("🚀 ~ mutationFn: ~ id:", id)
+      console.log("🚀 ~ mutationFn: ~ data:", data)
       const response = await updateStaff(id, data);
       if ("error" in response) {
         throw new Error(response.error);
