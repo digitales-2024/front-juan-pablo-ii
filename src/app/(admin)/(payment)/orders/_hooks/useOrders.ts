@@ -9,6 +9,10 @@ import {
   // getDetailedOrderById,
   getOrderById,
   OneOrderGetResponse,
+  OneDetailedOrderGetResponse,
+  getDetailedOrderById,
+  searchDetailedOrderById,
+  ListDetailedOrderResponse,
   // ListDetailedOrderResponse
 } from "../_actions/order.actions";
 import { toast } from "sonner";
@@ -89,12 +93,53 @@ export const useOrders = () => {
         } catch (error) {
           const message = error instanceof Error ? error.message : "Error desconocido";
           toast.error(message);
+          return {};
+        }
+      },
+      staleTime: 1000 * 60 * 5,
+    });
+  }
+
+  function useOneDetailedOrderQuery(orderId: string) {
+    return useQuery({
+      queryKey: ["detailed-order", orderId],
+      queryFn: async () => {
+        try {
+          const response: OneDetailedOrderGetResponse = await getDetailedOrderById(orderId);
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return {};
+        }
+      },
+      staleTime: 1000 * 60 * 5,
+    });
+  }
+
+  function useSearchDetailedOrderQuery(orderId: string) {
+    return useQuery({
+      queryKey: ["searched-detailed-orders", orderId],
+      queryFn: async () => {
+        try {
+          const response: ListDetailedOrderResponse = await searchDetailedOrderById(orderId);
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
           return [];
         }
       },
       staleTime: 1000 * 60 * 5,
     });
   }
+
 
   const createMutation = useMutation<BaseApiResponse<Order>, Error, CreateOrderDto>({
     mutationFn: async (data) => {
@@ -219,6 +264,8 @@ export const useOrders = () => {
     activeOrdersQuery,
     // detailedOrdersQuery,
     useOneOrderQuery,
+    useOneDetailedOrderQuery,
+    useSearchDetailedOrderQuery,
     createMutation,
     updateMutation,
     deleteMutation,

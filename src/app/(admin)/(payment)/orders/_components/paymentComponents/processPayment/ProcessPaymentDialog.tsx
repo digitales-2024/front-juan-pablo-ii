@@ -61,7 +61,7 @@ export function ProcessPaymentDialog({
     submitButton: `Procesar ${SUBJECT_ENTITYNAME}`,
     cancel: "Cancelar",
   } as const;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(props.open ?? false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { processPaymentMutation } = usePayments();
@@ -97,6 +97,7 @@ export function ProcessPaymentDialog({
         {
           onSuccess: () => {
             onSuccess?.();
+            props.onOpenChange?.(false)
             setOpen(false);
             form.reset();
           },
@@ -117,6 +118,7 @@ export function ProcessPaymentDialog({
 
   const handleClose = () => {
     form.reset();
+    props.onOpenChange?.(false)
     setOpen(false);
   };
 
@@ -170,7 +172,10 @@ export function ProcessPaymentDialog({
 
   if (isDesktop) {
     return (
-      <Dialog {...props} open={open} onOpenChange={setOpen}>
+      <Dialog {...props} open={props.open ?? open} onOpenChange={()=>{
+        props.onOpenChange?.(!open)
+        setOpen(!open)
+      }}>
         {showTrigger && (
           <DialogTrigger asChild>
             <TriggerButton />
@@ -195,7 +200,10 @@ export function ProcessPaymentDialog({
   }
 
   return (
-    <Drawer {...props} open={open} onOpenChange={setOpen}>
+    <Drawer {...props} open={open} onOpenChange={()=>{
+      props.onOpenChange?.(!open)
+      setOpen(!open)
+    }}>
       {showTrigger && (
         <DrawerTrigger asChild>
           <TriggerButton />

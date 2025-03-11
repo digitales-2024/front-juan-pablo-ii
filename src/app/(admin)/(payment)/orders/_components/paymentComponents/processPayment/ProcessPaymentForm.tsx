@@ -137,8 +137,8 @@ export function ProcessPaymentForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid sm:grid-cols-4 gap-4">
-          <div className="sm:col-span-3">
+        <div className="p-2 sm:p-1 overflow-auto max-h-[calc(80dvh-4rem)] grid sm:grid-cols-4 gap-4 place-items-start">
+          <div className="sm:col-span-2 w-full p-0">
             <FormField
               control={form.control}
               name="paymentMethod"
@@ -190,7 +190,7 @@ export function ProcessPaymentForm({
             />
           </div>
 
-          <div className="sm:col-span-1">
+          <div className="sm:col-span-2 w-full">
             <FormField
               control={form.control}
               name={FORMSTATICS.date.name}
@@ -250,15 +250,23 @@ export function ProcessPaymentForm({
             control={form.control}
             name={FORMSTATICS.amount.name}
             render={({ field }) => (
-              <FormItem className="sm:col-span-2">
+              <FormItem className="sm:col-span-2 w-full">
                 <FormLabel>{FORMSTATICS.amount.label}</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    disabled={true}
-                    placeholder={FORMSTATICS.amount.placeholder}
-                    type={FORMSTATICS.amount.type}
-                  />
+                  <div className="flex space-x-2 items-center">
+                    <span>
+                      {
+                        'S/. '
+                      }
+                    </span>
+                    <Input
+                      {...field}
+                      disabled={true}
+                      className="!text-base font-bold"
+                      placeholder={FORMSTATICS.amount.placeholder}
+                      type={FORMSTATICS.amount.type}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
                 <CustomFormDescription
@@ -272,7 +280,7 @@ export function ProcessPaymentForm({
             control={form.control}
             name={FORMSTATICS.voucherNumber.name}
             render={({ field }) => (
-              <FormItem className="sm:col-span-2">
+              <FormItem className="sm:col-span-2 w-full">
                 <FormLabel>{FORMSTATICS.voucherNumber.label}</FormLabel>
                 <FormControl>
                   <Input
@@ -287,12 +295,11 @@ export function ProcessPaymentForm({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name={FORMSTATICS.description.name}
             render={({ field }) => (
-              <FormItem >
+              <FormItem className="w-full sm:col-span-4">
                 <FormLabel>{FORMSTATICS.description.label}</FormLabel>
                 <FormControl>
                   <Textarea

@@ -17,6 +17,7 @@ import { createSafeAction } from "@/utils/createSafeAction";
 
 export type OrderResponse = BaseApiResponse<Order> | { error: string };
 export type OneOrderGetResponse = Order | { error: string };
+export type OneDetailedOrderGetResponse = DetailedOrder | { error: string };
 // export type DetailedOrderResponse = BaseApiResponse<DetailedStorage> | { error: string };
 export type ListOrderResponse = Order[] | { error: string };
 export type ListDetailedOrderResponse = DetailedOrder[] | { error: string };
@@ -255,6 +256,43 @@ export async function getOrderById(id: string): Promise<OneOrderGetResponse> {
     return { error: "Error desconocido" };
   }
 }
+
+export async function getDetailedOrderById(id: string): Promise<OneDetailedOrderGetResponse> {
+  try {
+    const [order, error] = await http.get<OneDetailedOrderGetResponse>(`/order/detailed/${id}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener la orden",
+      };
+    }
+    return order;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export async function searchDetailedOrderById(id: string): Promise<ListDetailedOrderResponse> {
+  try {
+    const [order, error] = await http.get<ListDetailedOrderResponse>(`/order/search/detailed/${id}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener la orden",
+      };
+    }
+    return order;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
 
 // export async function getDetailedOrderById(id: string): Promise<ListDetailedStorageResponse> {
 //   try {

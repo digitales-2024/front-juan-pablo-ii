@@ -26,16 +26,17 @@ import SmallErrorMessage from "../SmallErrorMessage";
 import NotFoundSearchResults from "./NotFoundSearchResults";
 //import { ALIGN_OPTIONS } from "@radix-ui/react-popper";
 
-export type ComboBoxItemType = {
+export type ComboBoxItemType<V> = {
   value: string;
   label: string;
+  entity?: V;
 };
 
 type ComboboxProps<T> = {
   value?: string;
   label?: string;
-  onSelect: (value: string, label?: string) => void;
-  items: ComboBoxItemType[];
+  onSelect: (value: string, label?: string, entity?: T) => void;
+  items: ComboBoxItemType<T>[];
   queryState: UseQueryResult<T[], Error>;
   searchPlaceholder?: string;
   noResultsMsg?: string;
@@ -184,7 +185,7 @@ export function SearchCombobox<T = unknown>({
                 value={item.value}
                 keywords={[item.label]}
                 onSelect={(value) => {
-            onSelect(value, item.label);
+            onSelect(value, item.label, item?.entity);
             setOpen(false);
                 }}
                 disabled={isSelected}

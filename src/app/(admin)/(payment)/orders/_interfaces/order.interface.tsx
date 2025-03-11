@@ -1,5 +1,5 @@
 import { components } from "@/types/api";
-import { ArrowDownToDot, ArrowUpFromDot, Banknote, CircleX, Divide, DollarSign, Gift, Hourglass, LucideIcon, NotebookPen, PartyPopper, Pill, RefreshCcwDot, RotateCcw, Sliders, Smartphone, Stethoscope, TriangleAlert, Undo2, Wallet } from "lucide-react";
+import { Archive, ArrowDownToDot, ArrowUpFromDot, Banknote, CircleX, Divide, DollarSign, Gift, Hourglass, LucideIcon, NotebookPen, PartyPopper, Pill, RefreshCcwDot, RotateCcw, Sliders, Smartphone, StepForward, Stethoscope, TriangleAlert, Undo2, Wallet } from "lucide-react";
 import { z } from "zod";
 
 // Tipos base de la API
@@ -102,7 +102,7 @@ export const orderStatusConfig: Record<OrderStatus, EnumConfig> = {
     icon: NotebookPen,
   },
   PENDING: {
-    name: "Pendiente",
+    name: "No completado",
     backgroundColor: "bg-[#FFF8E1]",
     hoverBgColor: "hover:bg-[#FFECB3]",
     textColor: "text-[#FFA000]",
@@ -151,7 +151,7 @@ export const orderStatusEnumOptions: EnumOptions<OrderStatus>[] = [
     value: "DRAFT"
   },
   {
-    label: "Pendiente",
+    label: "No completado",
     value: "PENDING"
   },
   {
@@ -337,21 +337,21 @@ export type DetailedOrder = {
 
 export const paymentStatusConfig: Record<PaymentStatus, EnumConfig> = {
   PENDING: {
-    name: "Pendiente",
+    name: "No pagado",
     backgroundColor: "bg-[#FFF8E1]",
     hoverBgColor: "hover:bg-[#FFECB3]",
     textColor: "text-[#FFA000]",
     icon: Hourglass,
   },
   PROCESSING: {
-    name: "En proceso",
+    name: "Pagando",
     backgroundColor: "bg-[#E0F2F1]",
     hoverBgColor: "hover:bg-[#B2DFDB]",
     textColor: "text-[#00796B]",
     icon: RefreshCcwDot,
   },
   COMPLETED: {
-    name: "Completado",
+    name: "Pagado",
     backgroundColor: "bg-[#E8F5E9]",
     hoverBgColor: "hover:bg-[#C8E6C9]",
     textColor: "text-[#388E3C]",
@@ -433,6 +433,59 @@ export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
     icon: Smartphone,
   },
 };
+
+export type PaymentOptions = 'CANCEL' | 'PROCESS' | 'VERIFY' | 'REJECT' | 'REFUND' | 'CLOSE' | 'RESTORE';
+export const paymentOptionButtons: Record<PaymentOptions,EnumConfig > = {
+  CANCEL: {
+    name: "Cancelar",
+    backgroundColor: "bg-[#FFEBEE]",
+    hoverBgColor: "hover:bg-[#FFCDD2]",
+    textColor: "text-[#D32F2F]",
+    icon: CircleX,
+  },
+  PROCESS: {
+    name: "Procesar",
+    backgroundColor: "bg-[#E0F2F1]",
+    hoverBgColor: "hover:bg-[#B2DFDB]",
+    textColor: "text-[#00796B]",
+    icon: StepForward,
+  },
+  VERIFY: {
+    name: "Verificar",
+    backgroundColor: "bg-[#E8F5E9]",
+    hoverBgColor: "hover:bg-[#C8E6C9]",
+    textColor: "text-[#388E3C]",
+    icon: PartyPopper,
+  },
+  REJECT: {
+    name: "Rechazar",
+    backgroundColor: "bg-[#FFEBEE]",
+    hoverBgColor: "hover:bg-[#FFCDD2]",
+    textColor: "text-[#D32F2F]",
+    icon: CircleX,
+  },
+  REFUND: {
+    name: "Reembolsar",
+    backgroundColor: "bg-[#F3E5F5]",
+    hoverBgColor: "hover:bg-[#CE93D8]",
+    textColor: "text-[#8E24AA]",
+    icon: Undo2,
+  },
+  CLOSE: {
+    name: "Archivar",
+    backgroundColor: "bg-[#FFF3E0]",
+    hoverBgColor: "hover:bg-[#FFE0B2]",
+    textColor: "text-[#F57C00]",
+    icon: Archive,
+  },
+  RESTORE: {
+    name: "Restaurar",
+    backgroundColor: "bg-[#FFF8E1]",
+    hoverBgColor: "hover:bg-[#FFECB3]",
+    textColor: "text-[#FFA000]",
+    icon: NotebookPen,
+  }
+}
 
 export type CreatePaymentDto = components['schemas']['CreatePaymentDto'];
 export type UpdatePaymentDto = components['schemas']['UpdatePaymentDto'];
