@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/data-table/DataTable";
 import { AppointmentResponse } from "../_interfaces/apoointments-medical.inteface";
-import { useMemo } from "react";
+
 import { getAppointmentColumns } from "./ApoointmentTableColumns";
 
 interface UserRole {
@@ -15,7 +15,7 @@ interface AppointmentTableProps {
   data: AppointmentResponse[];
   userRole: UserRole;
   userId?: string;
-  onRefresh: () => void;
+  onRefresh?: () => void;
 }
 
 export function AppointmentTable({
@@ -25,10 +25,7 @@ export function AppointmentTable({
   onRefresh,
 }: AppointmentTableProps) {
   // Generar columnas basadas en el rol del usuario
-  const columns = useMemo(
-    () => getAppointmentColumns(userRole, userId, onRefresh),
-    [userRole, userId, onRefresh]
-  );
+  const columns = getAppointmentColumns(userRole, userId, onRefresh)
 
   return (
     <DataTable
@@ -45,7 +42,7 @@ export function AppointmentTable({
         end: true,
         status: true,
         medicalHistoryId: false, // Ocultamos el ID pero lo usamos para navegación
-        actions: true,
+        // Eliminamos la propiedad "actions" que causa el error
       }}
     />
   );

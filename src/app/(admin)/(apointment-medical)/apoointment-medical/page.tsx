@@ -7,8 +7,9 @@ import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
 import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 import { useAppointment } from "./_hooks/useApointmentMedical";
-import { useCallback, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { AppointmentResponse } from "./_interfaces/apoointments-medical.inteface";
+import { CalendarClock, Stethoscope, Users } from "lucide-react"; // Importamos algunos iconos
 
 export default function PageAppointments() {
   const { user } = useAuth();
@@ -31,15 +32,34 @@ export default function PageAppointments() {
   // Consultas condicionadas por rol
   const doctorQuery = isDoctor
     ? useDoctorConfirmedAppointments(user?.id ?? "")
-    : { data: undefined, isLoading: false, isError: false, error: null };
+    : {
+        data: undefined,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: () => Promise.resolve(),
+      };
   const branchQuery = isReceptionist
     ? useBranchConfirmedAppointments(user?.id ?? "")
-    : { data: undefined, isLoading: false, isError: false, error: null };
+    : {
+        data: undefined,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: () => Promise.resolve(),
+      };
   const adminQuery = isSuperAdmin
     ? useAllConfirmedAppointments()
-    : { data: undefined, isLoading: false, isError: false, error: null };
+    : {
+        data: undefined,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: () => Promise.resolve(),
+      };
 
   // Cargar los datos según el rol del usuario
+  
   useEffect(() => {
     if (!user) {
       setError(new Error("Usuario no autenticado"));
@@ -73,25 +93,6 @@ export default function PageAppointments() {
     adminQuery.data,
   ]);
 
-  // Función para actualizar la lista tras confirmar/marcar no asistencia
-  const refreshAppointments = useCallback(() => {
-    // Esta función se pasará a la tabla para actualizar los datos
-    if (isDoctor && doctorQuery.refetch) {
-      doctorQuery.refetch();
-    } else if (isReceptionist && branchQuery.refetch) {
-      branchQuery.refetch();
-    } else if (isSuperAdmin && adminQuery.refetch) {
-      adminQuery.refetch();
-    }
-  }, [
-    isDoctor,
-    isReceptionist,
-    isSuperAdmin,
-    doctorQuery,
-    branchQuery,
-    adminQuery,
-  ]);
-
   if (isLoading) {
     return <LoadingCategories />;
   }
@@ -109,8 +110,8 @@ export default function PageAppointments() {
     notFound();
   }
 
+  // Mensaje mejorado para cuando no hay citas
   if (!appointments.length) {
-    // Si no hay citas, mostramos un mensaje adecuado pero no redirigimos a notFound
     return (
       <>
         <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap gap-x-4">
@@ -119,8 +120,28 @@ export default function PageAppointments() {
             description={METADATA.description}
           />
         </div>
-        <div className="flex items-center justify-center p-8">
-          <p className="text-lg text-gray-500">No hay citas disponibles</p>
+        <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
+          <div className="p-6 bg-sky-50 rounded-full mb-6">
+            <CalendarClock className="h-12 w-12 text-sky-500" />
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+            No hay citas programadas
+          </h2>
+          <p className="text-gray-500 text-center max-w-md mb-6">
+            {isDoctor
+              ? "Actualmente no tienes citas médicas programadas para atender."
+              : "No se encontraron citas programadas en el sistema."}
+          </p>
+          <div className="flex flex-wrap justify-center gap-6 mt-2">
+            <div className="flex items-center p-3 bg-emerald-50 rounded-lg">
+              <Stethoscope className="h-5 w-5 text-emerald-600 mr-2" />
+              <span className="text-emerald-700">Consulta médica</span>
+            </div>
+            <div className="flex items-center p-3 bg-amber-50 rounded-lg">
+              <Users className="h-5 w-5 text-amber-600 mr-2" />
+              <span className="text-amber-700">Atención a pacientes</span>
+            </div>
+          </div>
         </div>
       </>
     );
@@ -140,7 +161,6 @@ export default function PageAppointments() {
             isReceptionist,
           }}
           userId={user?.id}
-          onRefresh={refreshAppointments}
         />
       </div>
     </>
