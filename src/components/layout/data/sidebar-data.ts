@@ -71,7 +71,7 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Activos",
-              url: "/medical-records",
+              url: "/apoointment-medical",
               icon: ShieldCheck,
             },
             {

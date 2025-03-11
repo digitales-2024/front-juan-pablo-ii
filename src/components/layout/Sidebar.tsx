@@ -32,8 +32,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         // Si el usuario es médico, redirigirlo a registros médicos
         if (user?.roles?.some(role => role.name === "MEDICO")) {
             // Verificamos la ruta actual para evitar redirecciones innecesarias
-            if (window.location.pathname !== "/medical-records") {
-                router.push("/medical-records");
+            if (window.location.pathname !== "/apoointment-medical") {
+                router.push("/apoointment-medical");
             }
         }
     }, [user, router]);
