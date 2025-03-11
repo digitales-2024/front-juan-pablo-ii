@@ -34,16 +34,20 @@ import { usePayments } from "../../../_hooks/usePayment";
 import { toast } from "sonner";
 import { ConfirmOrderDialog } from "./ConfirmDialog";
 import { VerifyPaymentForm } from "./VerifyPaymentForm";
+import { DialogProps } from "@radix-ui/react-dialog";
 
-interface ProcessPaymentDialogProps {
+interface VerifyPaymentDialogProps extends DialogProps{
   order: Order;
   payment: Payment;
+  showTrigger?: boolean;
 }
 
-export function ProcessPaymentDialog({
+export function VerifyPaymentDialog({
   order,
   payment,
-}: ProcessPaymentDialogProps) {
+  showTrigger = true,
+  ...props
+}: VerifyPaymentDialogProps) {
   const SUBJECT_ENTITYNAME = "pago";
   const VERIFY_PAYMENT_MESSAGES = {
     button: `Verificar ${SUBJECT_ENTITYNAME}`,
@@ -55,7 +59,7 @@ export function ProcessPaymentDialog({
     submitButton: `Verificar ${SUBJECT_ENTITYNAME}`,
     cancel: "Cancelar",
   } as const;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(props.open ?? false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { verifyPaymentMutation } = usePayments();
@@ -84,6 +88,7 @@ export function ProcessPaymentDialog({
         },
         {
           onSuccess: () => {
+            props.onOpenChange?.(false)
             setOpen(false);
             form.reset();
           },
@@ -104,6 +109,7 @@ export function ProcessPaymentDialog({
 
   const handleClose = () => {
     form.reset();
+    props.onOpenChange?.(false)
     setOpen(false);
   };
 
@@ -164,10 +170,15 @@ export function ProcessPaymentDialog({
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <TriggerButton />
-        </DialogTrigger>
+      <Dialog {...props} open={props.open ?? open} onOpenChange={()=>{
+        props.onOpenChange?.(!open)
+        setOpen(!open)
+      }}>
+        {showTrigger && (
+          <DialogTrigger asChild>
+            <TriggerButton />
+          </DialogTrigger>
+        )}
         <DialogContent className="max-w-xl max-h-[calc(100vh-4rem)]">
           <DialogHeader>
             <DialogTitle>{VERIFY_PAYMENT_MESSAGES.title}</DialogTitle>
@@ -187,10 +198,15 @@ export function ProcessPaymentDialog({
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <TriggerButton />
-      </DrawerTrigger>
+    <Drawer {...props} open={open} onOpenChange={()=>{
+      props.onOpenChange?.(!open)
+      setOpen(!open)
+    }}>
+      {showTrigger && (
+        <DrawerTrigger asChild>
+          <TriggerButton />
+        </DrawerTrigger>
+      )}
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{VERIFY_PAYMENT_MESSAGES.title}</DrawerTitle>

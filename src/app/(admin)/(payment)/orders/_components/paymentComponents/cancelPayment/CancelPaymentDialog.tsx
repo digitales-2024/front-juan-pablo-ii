@@ -34,15 +34,19 @@ import { usePayments } from "../../../_hooks/usePayment";
 import { toast } from "sonner";
 import { ConfirmOrderDialog } from "./ConfirmDialog";
 import { CancelPaymentForm } from "./CancelPaymentForm";
+import { DialogProps } from "@radix-ui/react-dialog";
 
-interface CancelPaymentDialogProps {
+interface CancelPaymentDialogProps extends DialogProps {
   order: Order;
   payment: Payment;
+  showTrigger?: boolean;
 }
 
 export function CancelPaymentDialog({
   order,
   payment,
+  showTrigger = true,
+  ...props
 }: CancelPaymentDialogProps) {
   const SUBJECT_ENTITYNAME = "órden";
   const CANCEL_PAYMENT_MESSAGES = {
@@ -55,7 +59,7 @@ export function CancelPaymentDialog({
     submitButton: `Cancelar ${SUBJECT_ENTITYNAME}`,
     cancel: "Salir",
   } as const;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(props.open ?? false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { cancelPaymentMutation } = usePayments();
@@ -82,6 +86,7 @@ export function CancelPaymentDialog({
         },
         {
           onSuccess: () => {
+            props.onOpenChange?.(false)
             setOpen(false);
             form.reset();
           },
@@ -102,6 +107,7 @@ export function CancelPaymentDialog({
 
   const handleClose = () => {
     form.reset();
+    props.onOpenChange?.(false)
     setOpen(false);
   };
 
@@ -162,10 +168,15 @@ export function CancelPaymentDialog({
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <TriggerButton />
-        </DialogTrigger>
+      <Dialog {...props} open={props.open ?? open} onOpenChange={()=>{
+        props.onOpenChange?.(!open)
+        setOpen(!open)
+      }}>
+        {showTrigger && (
+          <DialogTrigger asChild>
+            <TriggerButton />
+          </DialogTrigger>
+        )}
         <DialogContent className="max-w-xl max-h-[calc(100vh-4rem)]">
           <DialogHeader>
             <DialogTitle>{CANCEL_PAYMENT_MESSAGES.title}</DialogTitle>
@@ -185,10 +196,15 @@ export function CancelPaymentDialog({
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <TriggerButton />
-      </DrawerTrigger>
+    <Drawer {...props} open={props.open ?? open} onOpenChange={()=>{
+      props.onOpenChange?.(!open)
+      setOpen(!open)
+    }}>
+      {showTrigger && (
+        <DrawerTrigger asChild>
+          <TriggerButton />
+        </DrawerTrigger>
+      )}
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{CANCEL_PAYMENT_MESSAGES.title}</DrawerTitle>

@@ -46,8 +46,8 @@ interface ProcessPaymentDialogProps extends DialogProps {
 export function ProcessPaymentDialog({
   order,
   payment,
-  showTrigger = true,
   onSuccess,
+  showTrigger = true,
   ...props
 }: ProcessPaymentDialogProps) {
   const SUBJECT_ENTITYNAME = "pago";

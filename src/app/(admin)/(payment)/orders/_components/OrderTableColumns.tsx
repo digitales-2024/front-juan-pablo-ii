@@ -35,6 +35,10 @@ import { cn } from "@/lib/utils";
 import { ProcessPaymentDialog } from "./paymentComponents/processPayment/ProcessPaymentDialog";
 import { DeactivateStorageDialog } from "./DeactivateOrderDialog";
 import { ReactivateOrderDialog } from "./ReactivateOrderDialog";
+import { VerifyPaymentDialog } from "./paymentComponents/verifyPayment/VerifyPaymentDialog";
+import { RefundPaymentDialog } from "./paymentComponents/refundPayment/RefundPaymentDialog";
+import { CancelPaymentDialog } from "./paymentComponents/cancelPayment/CancelPaymentDialog";
+import { RejectPaymentDialog } from "./paymentComponents/rejectPayment/RejectPaymentDialog";
 // import Image from "next/image";
 
 export const columns: ColumnDef<DetailedOrder>[] = [
@@ -358,39 +362,39 @@ export const columns: ColumnDef<DetailedOrder>[] = [
             )}
 
             {shouldVerifyPayment && showVerifyPaymentDialog && (
-              <ProcessPaymentDialog
+              <VerifyPaymentDialog
                 open={showVerifyPaymentDialog}
                 onOpenChange={setShowVerifyPaymentDialog}
                 order={order}
                 payment={regularPayment}
-              ></ProcessPaymentDialog>
+              ></VerifyPaymentDialog>
             )}
 
             {couldCancelOrder && showCancelOrderDialog && (
-              <ProcessPaymentDialog
+              <CancelPaymentDialog
                 open={showCancelOrderDialog}
                 onOpenChange={setShowCancelOrderDialog}
                 order={order}
                 payment={regularPayment}
-              ></ProcessPaymentDialog>
+              ></CancelPaymentDialog>
             )}
 
             {couldRejectPayment && showRejectPaymentDialog && (
-              <ProcessPaymentDialog
+              <RejectPaymentDialog
                 open={showRejectPaymentDialog}
                 onOpenChange={setShowRejectPaymentDialog}
                 order={order}
                 payment={regularPayment}
-              ></ProcessPaymentDialog>
+              ></RejectPaymentDialog>
             )}
 
             {couldRefundPayment && showRefundPaymentDialog && (
-              <ProcessPaymentDialog
+              <RefundPaymentDialog
                 open={showRefundPaymentDialog}
                 onOpenChange={setShowRefundPaymentDialog}
                 order={order}
                 payment={regularPayment}
-              ></ProcessPaymentDialog>
+              ></RefundPaymentDialog>
             )}
           </div>
           <DropdownMenu>
