@@ -27,6 +27,9 @@ import { useEffect, useState } from "react";
 import { getUsers } from "@/app/(admin)/users/actions";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
+import { AutoComplete } from "@/components/ui/autocomplete";
+import { Option } from "@/types/statics/forms";
 
 interface CreateStaffFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -42,6 +45,7 @@ export function CreateStaffForm({
 }: CreateStaffFormProps) {
   const { staffTypes } = useStaffTypes();
   const { user } = useAuth();
+  const { activeBranchesQuery: responseBranches } = useBranches();
   const [filteredUsers, setFilteredUsers] = useState<UserResponseDto[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
@@ -53,7 +57,7 @@ export function CreateStaffForm({
     const checkPermission = () => {
       const hasAccess =
         user?.isSuperAdmin ??
-        user?.roles?.some((role) => role.name === "GERENTE") ?? 
+        user?.roles?.some((role) => role.name === "GERENTE") ??
         false;
 
       setHasPermission(hasAccess);
@@ -62,21 +66,21 @@ export function CreateStaffForm({
 
     const loadUsers = async () => {
       if (!checkPermission()) return;
-    
+
       setIsLoadingUsers(true);
       try {
         const usersResponse = await getUsers();
-    
+
         if (Array.isArray(usersResponse)) {
           // Asegúrate de que TypeScript sepa que es un array de UserResponseDto
           const usersArray = usersResponse as UserResponseDto[];
-          
+
           // Filtrar usuarios (excluir SUPER_ADMIN y GERENTE)
           const filtered = usersArray.filter((user) => {
             if (user.isSuperAdmin) return false;
             return !user.roles?.some((role) => role.name === "GERENTE");
           });
-    
+
           setFilteredUsers(filtered);
           console.log("Usuarios filtrados:", filtered);
         } else {
@@ -91,6 +95,13 @@ export function CreateStaffForm({
 
     void loadUsers();
   }, [user]);
+
+  // Transformar las sucursales a opciones para el componente AutoComplete
+  const branchesOptions: Option[] =
+    responseBranches?.data?.map((branch) => ({
+      label: branch.name,
+      value: branch.id,
+    })) ?? [];
 
   // Manejar selección de usuario existente
   // Actualiza la función handleUserSelect
@@ -146,8 +157,8 @@ export function CreateStaffForm({
                   onCheckedChange={handleToggleChange}
                   className="data-[state=checked]:bg-primary" // Mejorar visibilidad
                 />
-                <Label 
-                  htmlFor="use-existing-user" 
+                <Label
+                  htmlFor="use-existing-user"
                   className="text-sm sm:text-base font-medium"
                 >
                   Asignar usuario existente
@@ -157,15 +168,17 @@ export function CreateStaffForm({
 
             {useExistingUser && (
               <div className="w-full">
-                <FormLabel className="text-sm sm:text-base mb-2 block">Seleccionar usuario</FormLabel>
+                <FormLabel className="text-sm sm:text-base mb-2 block">
+                  Seleccionar usuario
+                </FormLabel>
                 <Select onValueChange={handleUserSelect}>
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccione un usuario" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent 
-                    position="popper" 
+                  <SelectContent
+                    position="popper"
                     className="max-h-[300px] overflow-y-auto w-[min(calc(100vw-2rem),350px)] sm:w-[350px]"
                     align="start"
                   >
@@ -197,6 +210,44 @@ export function CreateStaffForm({
           </div>
         )}
 
+        <FormField
+          control={form.control}
+          name="branchId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Selecione la sucursal del personal</FormLabel>
+              <FormControl>
+                {branchesOptions.length > 0 ? (
+                  <AutoComplete
+                    options={branchesOptions}
+                    placeholder="Seleccione una sucursal"
+                    emptyMessage="No hay sucursales disponibles"
+                    value={
+                      branchesOptions.find(
+                        (option) => option.value === field.value
+                      ) ?? undefined
+                    }
+                    onValueChange={(option) => {
+                      field.onChange(option?.value || "");
+                    }}
+                  />
+                ) : (
+                  <Input
+                    disabled={true}
+                    placeholder="No hay sucursales disponibles"
+                    type="text"
+                  />
+                )}
+              </FormControl>
+              <div className="text-xs text-muted-foreground mt-1">
+                {branchesOptions.length === 0 && (
+                  <span>No hay sucursales disponibles o activas.</span>
+                )}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {/* Formulario con grid responsivo mejorado */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField

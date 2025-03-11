@@ -27,6 +27,7 @@ import {
   updateProductSchema,
   UpdateProductInput,
   Product,
+  productUseOptions,
 } from "../_interfaces/products.interface";
 import { PencilIcon, RefreshCcw } from "lucide-react";
 import { useProducts } from "../_hooks/useProduct";
@@ -37,9 +38,10 @@ import LoadingDialogForm from "./LoadingDialogForm";
 import GeneralErrorMessage from "./errorComponents/GeneralErrorMessage";
 import { Textarea } from "@/components/ui/textarea";
 import { Option } from "@/types/statics/forms";
-import { UPDATEFORMSTATICS as FORMSTATICS} from "../_statics/forms";
+import { UPDATEFORMSTATICS as FORMSTATICS } from "../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
 import { METADATA } from "../_statics/metadata";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface UpdateProductSheetProps {
   product: Product;
@@ -93,8 +95,7 @@ export function UpdateProductSheet({
   const form = useForm<UpdateProductInput>({
     resolver: zodResolver(updateProductSchema),
     defaultValues: {
-      categoriaId:
-        product.categoriaId ?? FORMSTATICS.categoriaId.defaultValue,
+      categoriaId: product.categoriaId ?? FORMSTATICS.categoriaId.defaultValue,
       tipoProductoId:
         product.tipoProductoId ?? FORMSTATICS.tipoProductoId.defaultValue,
       name: product.name ?? FORMSTATICS.name.defaultValue,
@@ -103,10 +104,8 @@ export function UpdateProductSheet({
         product.unidadMedida ?? FORMSTATICS.unidadMedida.defaultValue,
       proveedor: product.proveedor ?? FORMSTATICS.proveedor.defaultValue,
       uso: product.uso ?? FORMSTATICS.uso.defaultValue,
-      usoProducto:
-        product.usoProducto ?? FORMSTATICS.usoProducto.defaultValue,
-      description:
-        product.description ?? FORMSTATICS.description.defaultValue,
+      usoProducto: product.usoProducto ?? FORMSTATICS.usoProducto.defaultValue,
+      description: product.description ?? FORMSTATICS.description.defaultValue,
       codigoProducto:
         product.codigoProducto ?? FORMSTATICS.codigoProducto.defaultValue,
       descuento: product.descuento ?? FORMSTATICS.descuento.defaultValue,
@@ -134,7 +133,10 @@ export function UpdateProductSheet({
             form.reset();
           },
           onError: (error) => {
-            console.error(`Error al actualizar ${METADATA.entityName.toLowerCase()}:`, error);
+            console.error(
+              `Error al actualizar ${METADATA.entityName.toLowerCase()}:`,
+              error
+            );
             if (error.message.includes("No autorizado")) {
               setTimeout(() => {
                 form.reset();
@@ -211,9 +213,12 @@ export function UpdateProductSheet({
       )}
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Actualizar {METADATA.entityName.toLowerCase()}</SheetTitle>
+          <SheetTitle>
+            Actualizar {METADATA.entityName.toLowerCase()}
+          </SheetTitle>
           <SheetDescription>
-            Actualiza la información de este(a) {METADATA.entityName.toLowerCase()} y guarda los cambios
+            Actualiza la información de este(a){" "}
+            {METADATA.entityName.toLowerCase()} y guarda los cambios
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">
@@ -410,18 +415,31 @@ export function UpdateProductSheet({
                 />
                 <FormField
                   control={form.control}
-                  name={FORMSTATICS.usoProducto.name}
+                  name="uso"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{FORMSTATICS.usoProducto.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder={FORMSTATICS.usoProducto.placeholder}
-                        />
-                      </FormControl>
+                      <FormLabel>{FORMSTATICS.uso.label}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={FORMSTATICS.uso.placeholder}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.values(productUseOptions).map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <CustomFormDescription
-                        required={FORMSTATICS.usoProducto.required}
+                        required={FORMSTATICS.uso.required}
                       ></CustomFormDescription>
                       <FormMessage />
                     </FormItem>

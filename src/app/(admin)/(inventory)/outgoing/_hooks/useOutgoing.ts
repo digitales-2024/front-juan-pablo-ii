@@ -77,11 +77,12 @@ export const useOutgoing = () => {
       return response;
     },
     onSuccess: async (res) => {
-      queryClient.setQueryData<DetailedOutgoing[] | undefined>(
-        ["detailed-outcomes"], (oldIncomes) => {
-          if (!oldIncomes) return [res.data];
-          return [...oldIncomes, res.data];
-      });
+      // queryClient.setQueryData<DetailedOutgoing[] | undefined>(
+      //   ["detailed-outcomes"], (oldIncomes) => {
+      //     if (!oldIncomes) return [res.data];
+      //     return [...oldIncomes, res.data];
+      // });
+      await queryClient.refetchQueries({ queryKey: ["detailed-outcomes"] });
       await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
       await queryClient.refetchQueries({ queryKey: ["stock"] });
       toast.success(res.message);

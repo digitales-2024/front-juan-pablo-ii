@@ -11,11 +11,14 @@ import { FilterOrderDialog } from "./_components/FilterComponents/FilterOrdersDi
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
 import { useCallback } from "react";
+import SearchOrderCombobox from "./_components/FilterComponents/SearchOrderCombobox";
+import { DetailedOrder } from "./_interfaces/order.interface";
 
 export default function PageOrders() {
   const {
     query: response,
     setFilterAllOrders,
+    setFilterByOrderId,
   } = useUnifiedOrders();
 
   const onSubmitAllStorages = useCallback(() => {
@@ -27,6 +30,28 @@ export default function PageOrders() {
       toast.success("Stock filtrado correctamente");
     }
   }, [setFilterAllOrders]);
+
+  const onSubmitOrderId = useCallback(
+    (value: string, order?: DetailedOrder) => {
+      if (order) {
+        setFilterByOrderId({
+          orderId: value,
+          order: order,
+        });
+      } else {
+        setFilterByOrderId({
+          orderId: value,
+        });
+      }
+      if (response.isError) {
+        toast.error("Error al filtrar stock");
+      }
+      // if (response.data) {
+      //   toast.success("Stock filtrado correctamente");
+      // }
+    },
+    [setFilterByOrderId]
+  );
 
   if (response.isLoading) {
     return <Loading />;
@@ -46,7 +71,12 @@ export default function PageOrders() {
       <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap gap-x-4">
         <PageHeader title={METADATA.title} description={METADATA.description} />
       </div>
-      <div className="p-1 flex space-x-3">
+      <div className="p-1 flex flex-col sm:flex-row space-x-3 space-y-1">
+        <SearchOrderCombobox
+          onValueChange={(val, entity) => {
+            onSubmitOrderId(val, entity as DetailedOrder);
+          }}
+        ></SearchOrderCombobox>
         <FilterOrderDialog></FilterOrderDialog>
         <Button
           onClick={onSubmitAllStorages}

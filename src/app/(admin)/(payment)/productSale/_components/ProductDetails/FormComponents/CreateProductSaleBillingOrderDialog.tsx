@@ -10,7 +10,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CreatePrescriptionOrderForm } from "./CreateProductSaleBillingOrderForm";
 import {
   Dialog,
   DialogContent,
@@ -36,51 +35,63 @@ import {
   CreateProductSaleBillingInput,
   createProductSaleBillingSchema,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
+import {
+  CreateProductSaleBillingOrderForm
+} from "./CreateProductSaleBillingOrderForm";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CREATE_OUTGOING_MESSAGES = {
-  button: "Crear salida",
-  title: "Registrar nueva salida",
-  description: "Rellena los campos para registrar una nueva salida",
-  success: "Salida creada exitosamente",
-  submitButton: "Crear salida",
+  button: "Nueva venta",
+  title: "Registrar nueva venta de productos",
+  description: "Rellena los campos para registrar una venta de productos",
+  success: "Venta creada exitosamente",
+  submitButton: "Procesar venta",
   cancel: "Cancelar",
 } as const;
 
-export function CreatePrescriptionBillingProcessDialog() {
+export function CreateProductSaleBillingProcessDialog() {
   const [open, setOpen] = useState(false);
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  // const queryClient = useQueryClient();
   const { createSaleOrderMutation } = useBilling();
   const dispatch = useSelectProductDispatch();
+  const router = useRouter();
 
-  //type CreateProductSaleBillingInput = {
-  //   products: {
-  //       productId: string;
-  //       quantity: number;
-  //   }[];
-  //   storageId: string;
-  //   branchId: string;
-  //   currency: string;
-  //   paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
-  //   storageLocation?: string | undefined;
-  //   batchNumber?: string | undefined;
-  //   referenceId?: string | undefined;
-  //   notes?: string | undefined;
-  //   metadata?: Record<...> | undefined;
-  // }
+// export const createProductSaleBillingSchema = z.object({
+//   branchId: z.string({
+//     required_error: "Debe seleccionar la sucursal que genera la venta",
+//   }),
+//   patientId: z.string({
+//     required_error: "Debe seleccionar un paciente",
+//   }),
+//   storageLocation: z.string().optional(),
+//   batchNumber: z.string().optional(),
+//   referenceId: z.string().optional(),
+//   currency: z.string(),
+//   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
+//   notes: z.string().optional(),
+//   metadata: z.record(z.never()).optional(),
+//   products: z.array(z.object({
+//     productId: z.string(),
+//     quantity: z.coerce.number(),
+//     storageId: z.string({
+//       required_error: "Debe seleccionar un almacén",
+//     }),
+//   })),
+// }) satisfies z.ZodType<CreateProductSaleBillingDto>;
   const form = useForm<CreateProductSaleBillingInput>({
     resolver: zodResolver(createProductSaleBillingSchema, undefined, {
       raw: true, //to be able to use useFIeldArray
     }),
     defaultValues: {
-      patient: undefined, //required
       branchId: undefined, //required
-      currency: undefined, //required
-      paymentMethod: "CASH", //required
+      patientId: undefined, //required
       storageLocation: undefined,
       batchNumber: undefined,
       referenceId: undefined,
+      currency: "PEN",
+      paymentMethod: "CASH",
       notes: undefined,
       metadata: undefined,
       products: [],
@@ -92,9 +103,9 @@ export function CreatePrescriptionBillingProcessDialog() {
   const fieldArray = useFieldArray({
     control: formControl,
     name: "products",
-    // rules: {
-    //   minLength: 1,
-    // },
+    rules: {
+      minLength: 1,
+    },
   });
   const { remove } = fieldArray;
 
@@ -118,29 +129,20 @@ export function CreatePrescriptionBillingProcessDialog() {
     // console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
     if (createSaleOrderMutation.isPending || isCreatePending) return;
 
-    //   {
-    //     "name": "INgreso regulacion",
-    //     "storageId": "61de3a1b-9538-48a0-8cdc-62edafcef760",
-    //     "date": "2025-02-11",
-    //     "state": true,
-    //     "description": "",
-    //     "referenceId": "",
-    //     "movement": [
-    //         {
-    //             "productId": "4d42f81a-2d5f-4bc5-8ad1-992c6a537934",
-    //             "quantity": 4
-    //         },
-    //         {
-    //             "productId": "397d68a1-cb47-4402-9546-0ab7b57ec93f",
-    //             "quantity": 2
-    //         }
-    //     ]
-    // }
-
     startCreateTransition(() => {
       createSaleOrderMutation.mutate(input, {
         onSuccess: (res) => {
           form.reset();
+          toast.success('Venta creada exitosamente: ' + res.data.id, {
+            action: {
+              label: "Ver órden",
+              onClick: async () => {
+                // history.push(`/admin/inventory/incoming/${res.data.id}`)
+                await router.push('/orders')
+              },
+            },
+            duration: 10000,
+          });
           setOpen(false);
         },
         onError: (error) => {
@@ -213,7 +215,7 @@ export function CreatePrescriptionBillingProcessDialog() {
               {CREATE_OUTGOING_MESSAGES.description}
             </DialogDescription>
           </DialogHeader>
-          <CreatePrescriptionOrderForm
+          <CreateProductSaleBillingOrderForm
             form={form}
             onSubmit={handleSubmit}
             controlledFieldArray={fieldArray}
@@ -222,7 +224,7 @@ export function CreatePrescriptionBillingProcessDialog() {
             <DialogFooter>
               <DialogFooterContent />
             </DialogFooter>
-          </CreatePrescriptionOrderForm>
+          </CreateProductSaleBillingOrderForm>
         </DialogContent>
       </Dialog>
     );
@@ -240,7 +242,7 @@ export function CreatePrescriptionBillingProcessDialog() {
             {CREATE_OUTGOING_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
-        <CreatePrescriptionOrderForm
+        <CreateProductSaleBillingOrderForm
           form={form}
           onSubmit={handleSubmit}
           controlledFieldArray={fieldArray}
@@ -249,7 +251,7 @@ export function CreatePrescriptionBillingProcessDialog() {
           <DrawerFooter>
             <DialogFooterContent />
           </DrawerFooter>
-        </CreatePrescriptionOrderForm>
+        </CreateProductSaleBillingOrderForm>
       </DrawerContent>
     </Drawer>
   );

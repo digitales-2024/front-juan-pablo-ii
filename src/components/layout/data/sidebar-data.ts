@@ -8,6 +8,7 @@ import {
   DollarSign,
   FileHeart,
   FileText,
+  HandCoins,
   Handshake,
   Home,
   Hospital,
@@ -82,7 +83,7 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Activos",
-              url: "/medical-records",
+              url: "/apoointment-medical",
               icon: ShieldCheck,
             },
             {
@@ -152,6 +153,11 @@ export const sidebarData: SidebarData = {
               title: "Notas medicas",
               url: "/prescriptions",
               icon: FileHeart,
+            },
+            {
+              title: "Venta de productos",
+              url: "/productSale",
+              icon: HandCoins,
             },
             {
               title: "Órdenes",

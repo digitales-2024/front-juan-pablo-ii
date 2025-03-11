@@ -92,6 +92,30 @@ const  getActiveProductsHandler = async () => {
 
 export const getActiveProducts = await createSafeAction(GetProductSchema, getActiveProductsHandler);
 
+
+const  getAllActiveForSale = async () => {
+  try {
+    const [products, error] = await http.get<ListActiveProducts>("/product/active/for-sale");
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener los productos activos",
+      };
+    }
+    if (!Array.isArray(products)) {
+      return { error: "Respuesta inválida del servidor" };
+    }
+    return { data: products };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export const getActiveForSaleProducts = await createSafeAction(GetProductSchema, getAllActiveForSale);
+
 export async function getProductById (id: string) : Promise<ProductResponse> {
   try {
     const [product, error] = await http.get<ProductResponse>(`/product/${id}`);

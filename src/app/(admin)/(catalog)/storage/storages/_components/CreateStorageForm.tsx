@@ -1,4 +1,3 @@
-
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
@@ -37,13 +36,16 @@ export function CreateStorageForm({
   form,
   onSubmit,
 }: CreateProductFormProps) {
-
   const { activeTypeStoragesQuery: responseStorageTypes } = useTypeStorages();
   const { activeStaffQuery: responseStaff } = useStaff();
   const { activeBranchesQuery: responseBranches } = useBranches();
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
-  if (responseStorageTypes.isLoading && responseBranches.isLoading && responseStaff.isLoading) {
+  if (
+    responseStorageTypes.isLoading &&
+    responseBranches.isLoading &&
+    responseStaff.isLoading
+  ) {
     return <LoadingDialogForm />;
   } else {
     if (responseStorageTypes.isError) {
@@ -58,33 +60,35 @@ export function CreateStorageForm({
       return <LoadingDialogForm />;
     }
     if (responseStaff.isError) {
-          return (
-            <GeneralErrorMessage
-              error={responseStaff.error}
-              reset={responseStaff.refetch}
-            />
-          );
-        }
-        if (!responseStaff.data) {
-          return <LoadingDialogForm />;
-        }
-        if (responseBranches.isError) {
-          return responseBranches.error ? (
-            <GeneralErrorMessage
-              error={responseBranches.error}
-              reset={responseBranches.refetch}
-            />
-          ) : null;
-        }
-        if (!responseBranches.data) {
-          return <LoadingDialogForm />;
-        }
+      return (
+        <GeneralErrorMessage
+          error={responseStaff.error}
+          reset={responseStaff.refetch}
+        />
+      );
+    }
+    if (!responseStaff.data) {
+      return <LoadingDialogForm />;
+    }
+    if (responseBranches.isError) {
+      return responseBranches.error ? (
+        <GeneralErrorMessage
+          error={responseBranches.error}
+          reset={responseBranches.refetch}
+        />
+      ) : null;
+    }
+    if (!responseBranches.data) {
+      return <LoadingDialogForm />;
+    }
   }
 
   if (
     METADATA.dataDependencies &&
-    (responseStorageTypes.data.length === 0 || responseStaff.data.length === 0 ||
-      responseBranches.data.length === 0) ){
+    (responseStorageTypes.data.length === 0 ||
+      responseStaff.data.length === 0 ||
+      responseBranches.data.length === 0)
+  ) {
     return (
       <DataDependencyErrorMessage
         error={
@@ -111,12 +115,10 @@ export function CreateStorageForm({
     value: staff.id,
   }));
 
-  const branchesOptions: Option[] = responseBranches.data.map(
-    (branch) => ({
-      label: branch.name,
-      value: branch.id,
-    })
-  );
+  const branchesOptions: Option[] = responseBranches.data.map((branch) => ({
+    label: branch.name,
+    value: branch.id,
+  }));
 
   // export const createStorageSchema = z.object({
   //   name: z.string().min(1, "El nombre es requerido"),
@@ -148,48 +150,50 @@ export function CreateStorageForm({
               </FormItem>
             )}
           />
-            {/* Campo de tipo de almacén */}
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.typeStorageId.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>
-                    {FORMSTATICS.typeStorageId.label}
-                  </FormLabel>
-                  <FormControl>
-                    <AutoComplete
-                      options={storageTypesOptions}
-                      placeholder={FORMSTATICS.typeStorageId.placeholder}
-                      emptyMessage={FORMSTATICS.typeStorageId.emptyMessage!}
-                      value={
-                        storageTypesOptions.find(
-                          (option) => option.value === field.value
-                        ) ?? undefined
-                      }
-                      onValueChange={(option) => {
-                        field.onChange(option?.value || "");
-                      }}
-                    />
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.typeStorageId.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-                      {/* Campo de Sucursal */}
+          {/* Campo de tipo de almacén */}
           <FormField
-              control={form.control}
-              name={FORMSTATICS.branchId.name}
-              render={({ field }) => (
-                <FormItem className="col-span-1">
-                  <FormLabel htmlFor={FORMSTATICS.branchId.name}>{FORMSTATICS.branchId.label}</FormLabel>
-                  <FormControl>
-                    {
-                      branchesOptions.length>0 ? <AutoComplete
+            control={form.control}
+            name={FORMSTATICS.typeStorageId.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>{FORMSTATICS.typeStorageId.label}</FormLabel>
+                <FormControl>
+                  <AutoComplete
+                    options={storageTypesOptions}
+                    placeholder={FORMSTATICS.typeStorageId.placeholder}
+                    emptyMessage={FORMSTATICS.typeStorageId.emptyMessage!}
+                    value={
+                      storageTypesOptions.find(
+                        (option) => option.value === field.value
+                      ) ?? undefined
+                    }
+                    onValueChange={(option) => {
+                      field.onChange(option?.value || "");
+                    }}
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.typeStorageId.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Campo de Sucursal */}
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.branchId.name}
+            render={({ field }) => (
+              <FormItem className="col-span-1">
+                <FormLabel htmlFor={FORMSTATICS.branchId.name}>
+                  {FORMSTATICS.branchId.label}
+                </FormLabel>
+                <FormControl>
+                  {branchesOptions.length > 0 ? (
+                    <AutoComplete
                       options={branchesOptions}
                       placeholder={FORMSTATICS.branchId.placeholder}
-                      emptyMessage={FORMSTATICS.branchId.emptyMessage??''}
+                      emptyMessage={FORMSTATICS.branchId.emptyMessage ?? ""}
                       value={
                         branchesOptions.find(
                           (option) => option.value === field.value
@@ -198,37 +202,37 @@ export function CreateStorageForm({
                       onValueChange={(option) => {
                         field.onChange(option?.value || "");
                       }}
-                    /> : (
-                      <Input
-                        disabled={true}
-                        placeholder={FORMSTATICS.branchId.placeholder}
-                        type={FORMSTATICS.branchId.type}
-                      />
-                    )
-                    }
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.branchId.required}>
-                    { branchesOptions.length===0 && <span>No hay sucursales disponibles o activas.</span>}
-                  </CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Campo de personal */}
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.staffId.name}
-              render={({ field }) => (
-                <FormItem className="col-span-1">
-                  <FormLabel>
-                    {FORMSTATICS.staffId.label}
-                  </FormLabel>
-                  <FormControl>
-                    {
-                      staffOptions.length>0 ? <AutoComplete
+                    />
+                  ) : (
+                    <Input
+                      disabled={true}
+                      placeholder={FORMSTATICS.branchId.placeholder}
+                      type={FORMSTATICS.branchId.type}
+                    />
+                  )}
+                </FormControl>
+                <CustomFormDescription required={FORMSTATICS.branchId.required}>
+                  {branchesOptions.length === 0 && (
+                    <span>No hay sucursales disponibles o activas.</span>
+                  )}
+                </CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Campo de personal */}
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.staffId.name}
+            render={({ field }) => (
+              <FormItem className="col-span-1">
+                <FormLabel>{FORMSTATICS.staffId.label}</FormLabel>
+                <FormControl>
+                  {staffOptions.length > 0 ? (
+                    <AutoComplete
                       options={staffOptions}
                       placeholder={FORMSTATICS.staffId.placeholder}
-                      emptyMessage={FORMSTATICS.staffId.emptyMessage??''}
+                      emptyMessage={FORMSTATICS.staffId.emptyMessage ?? ""}
                       value={
                         staffOptions.find(
                           (option) => option.value === field.value
@@ -237,23 +241,25 @@ export function CreateStorageForm({
                       onValueChange={(option) => {
                         field.onChange(option?.value || "");
                       }}
-                    /> : (
-                      <Input
-                        disabled={true}
-                        placeholder={FORMSTATICS.name.placeholder}
-                        type={FORMSTATICS.staffId.type}
-                      />
-                    )
-                    }
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.staffId.required}>
-                    { staffOptions.length===0 && <span>No hay personal disponible o activo.</span>}
-                  </CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-                      <FormField
+                    />
+                  ) : (
+                    <Input
+                      disabled={true}
+                      placeholder={FORMSTATICS.name.placeholder}
+                      type={FORMSTATICS.staffId.type}
+                    />
+                  )}
+                </FormControl>
+                <CustomFormDescription required={FORMSTATICS.staffId.required}>
+                  {staffOptions.length === 0 && (
+                    <span>No hay personal disponible o activo.</span>
+                  )}
+                </CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
             control={form.control}
             name={FORMSTATICS.location.name}
             render={({ field }) => (
