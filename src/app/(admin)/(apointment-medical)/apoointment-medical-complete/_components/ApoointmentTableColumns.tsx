@@ -27,7 +27,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useAppointment } from "../_hooks/useApointmentMedical";
+import { useAppointmentComplete } from "../_hooks/useApointmentMedical";
 import { toast } from "sonner";
 
 interface UserRole {
@@ -63,7 +63,7 @@ export const getAppointmentColumns = (
   userId?: string,
   onRefresh?: () => void
 ): ColumnDef<AppointmentResponse>[] => {
-  const { updateStatusMutation } = useAppointment();
+  const { updateStatusMutation } = useAppointmentComplete();
 
   const baseColumns: ColumnDef<AppointmentResponse>[] = [
     {
