@@ -893,6 +893,9 @@ export type CreateProductSaleBillingInput = z.infer<
 export type CreatePrescriptionBillingInput = z.infer<
   typeof createPrescriptionBillingSchema
 >;
+export type CreatePrescriptionBillingLocalInput = z.infer<
+  typeof createPrescriptionBillingLocalSchema
+>;
 export type CreateProductPurchaseBillingInput = z.infer<
   typeof createProductPurchaseBillingSchema
 >;

@@ -30,8 +30,10 @@ import {
 } from "@/components/ui/drawer";
 import { useBilling } from "@/app/(admin)/(payment)/orders/_hooks/useBilling";
 import {
-  CreatePrescriptionBillingInput,
-  createPrescriptionBillingSchema,
+  // CreatePrescriptionBillingInput,
+  // createPrescriptionBillingSchema,
+  createPrescriptionBillingLocalSchema,
+  CreatePrescriptionBillingLocalInput
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -68,9 +70,9 @@ export function CreatePrescriptionBillingProcessDialog({
   const { servicesQuery } = useServices();
 
   // 5. Form y Field Array
-  const form = useForm<CreatePrescriptionBillingInput>({
+  const form = useForm<CreatePrescriptionBillingLocalInput>({
     resolver: zodResolver(
-      createPrescriptionBillingSchema
+      createPrescriptionBillingLocalSchema
     ),
     defaultValues: async () => {
       setIsLoading(true);
@@ -137,7 +139,7 @@ export function CreatePrescriptionBillingProcessDialog({
 
   // 3. Contextos (useContext)
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { createSaleOrderMutation } = useBilling();
+  const { createPrescriptionOrderMutation } = useBilling();
   // const { useStorageByBranchQuery } = useStorages();
 
   // // 4. Queries y datos externos
@@ -181,9 +183,9 @@ export function CreatePrescriptionBillingProcessDialog({
   }, [form]);
 
   const onSubmit = useCallback(
-    (input: CreatePrescriptionBillingInput) => {
+    (input: CreatePrescriptionBillingLocalInput) => {
       startCreateTransition(() => {
-        createSaleOrderMutation.mutate(input, {
+        createPrescriptionOrderMutation.mutate(input, {
           onSuccess: () => {
             form.reset();
             setOpen(false);
@@ -196,7 +198,7 @@ export function CreatePrescriptionBillingProcessDialog({
         });
       });
     },
-    [createSaleOrderMutation, form, startCreateTransition]
+    [createPrescriptionOrderMutation, form, startCreateTransition]
   );
 
   useEffect(() => {
@@ -223,7 +225,7 @@ export function CreatePrescriptionBillingProcessDialog({
         onConfirm={async ()=>{ await form.handleSubmit(onSubmit)()}}
         trigger={
           <div>
-            {(isCreatePending || createSaleOrderMutation.isPending) && (
+            {(isCreatePending || createPrescriptionOrderMutation.isPending) && (
               <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
             )}
             <span>
@@ -231,7 +233,7 @@ export function CreatePrescriptionBillingProcessDialog({
             </span>
           </div>
         }
-        isLoading={isCreatePending || createSaleOrderMutation.isPending}
+        isLoading={isCreatePending || createPrescriptionOrderMutation.isPending}
         confirmationText="Confirmar"
       >
       </ConfirmOrderDialog>

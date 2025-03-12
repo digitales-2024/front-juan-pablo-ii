@@ -37,7 +37,8 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
-  CreatePrescriptionBillingInput,
+  // CreatePrescriptionBillingInput,
+  CreatePrescriptionBillingLocalInput,
   paymentMethodConfig,
   paymentMethodOptions,
   ProductSaleItemDto,
@@ -82,10 +83,10 @@ interface CreatePrescriptionOrderFormProps
   stockDataQuery: UseQueryResult<OutgoingProductStock[], Error>;
   serviceDataQuery: UseQueryResult<ServiceData[], Error>;
   //originalStorageId: string;
-  form: UseFormReturn<CreatePrescriptionBillingInput>;
+  form: UseFormReturn<CreatePrescriptionBillingLocalInput>;
   // controlledProductFieldArray: UseFieldArrayReturn<CreatePrescriptionBillingInput>;
   // controlledServiceFieldArray: UseFieldArrayReturn<CreatePrescriptionBillingInput>;
-  onSubmit: (data: CreatePrescriptionBillingInput) => void;
+  onSubmit: (data: CreatePrescriptionBillingLocalInput) => void;
   onDialogClose?: () => void;
 }
 
