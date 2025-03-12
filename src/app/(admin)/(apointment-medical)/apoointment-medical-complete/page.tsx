@@ -12,7 +12,7 @@ import { AppointmentResponse } from "./_interfaces/apoointments-medical.inteface
 import { CalendarClock, Stethoscope, Users } from "lucide-react";
 import { toast } from "sonner";
 
-export default function PageAppointments() {
+export default function PageAppointmentsComplete() {
   const { user } = useAuth();
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
