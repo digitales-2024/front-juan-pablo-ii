@@ -592,6 +592,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/order/{id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Completar una orden */
+        post: operations["OrderController_completeOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/order/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancelar una orden y sus pagos asociados */
+        post: operations["OrderController_cancelOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/order/{id}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reembolsar una orden y sus pagos asociados */
+        post: operations["OrderController_refundOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/order/{type}/status/{status}": {
         parameters: {
             query?: never;
@@ -1208,6 +1259,23 @@ export interface paths {
         head?: never;
         /** Cancelar cita médica */
         patch: operations["AppointmentController_cancel"];
+        trace?: never;
+    };
+    "/api/v1/appointments/{id}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reembolsar cita médica */
+        patch: operations["AppointmentController_refund"];
         trace?: never;
     };
     "/api/v1/appointments/{id}/no-show": {
@@ -4570,6 +4638,13 @@ export interface components {
              * @example El paciente no pudo asistir por motivos personales
              */
             cancellationReason: string;
+        };
+        RefundAppointmentDto: {
+            /**
+             * @description Motivo del reembolso
+             * @example El paciente solicitó reembolso por problemas de salud
+             */
+            refundReason: string;
         };
         NoShowAppointmentDto: {
             /**
@@ -8877,6 +8952,117 @@ export interface operations {
             };
         };
     };
+    OrderController_completeOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la orden a completar */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orden completada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Orden no encontrada o no puede ser completada */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_cancelOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la orden a cancelar */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orden cancelada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Orden no encontrada o no puede ser cancelada */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_refundOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID de la orden a reembolsar */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orden reembolsada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Orden no encontrada o no puede ser reembolsada */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OrderController_findByStatusType: {
         parameters: {
             query?: never;
@@ -10692,6 +10878,46 @@ export interface operations {
         };
         responses: {
             /** @description Cita médica cancelada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Appointment"];
+                };
+            };
+            /** @description Datos de entrada inválidos o cita no encontrada */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AppointmentController_refund: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefundAppointmentDto"];
+            };
+        };
+        responses: {
+            /** @description Cita médica reembolsada exitosamente */
             200: {
                 headers: {
                     [name: string]: unknown;

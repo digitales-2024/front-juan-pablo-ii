@@ -16,8 +16,9 @@ import {
     DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { CalendarIcon, XIcon } from "lucide-react";
+import { CalendarIcon, XIcon, RefreshCcw, CreditCard } from "lucide-react";
 import { CancelAppointmentDialog } from "./CancelAppointmentDialog";
+import { RefundAppointmentDialog } from "./RefundAppointmentDialog";
 import { Appointment, appointmentStatusConfig, AppointmentStatus } from "../_interfaces/appointments.interface";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +51,16 @@ export const columns: ColumnDef<Appointment>[] = [
         cell: ({ row }) => {
             const patient = row.original.patient;
             return patient ? `${patient.name} ${patient.lastName}` : "N/A";
+        },
+    },
+    {
+        accessorKey: "patientDni",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="DNI" />
+        ),
+        cell: ({ row }) => {
+            const patient = row.original.patient;
+            return patient?.dni || "N/A";
         },
     },
     {
@@ -121,9 +132,11 @@ export const columns: ColumnDef<Appointment>[] = [
         cell: function Cell({ row }) {
             const [showCancelDialog, setShowCancelDialog] = useState(false);
             const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+            const [showRefundDialog, setShowRefundDialog] = useState(false);
             const appointment = row.original;
             const isActive = appointment.isActive;
             const isPending = appointment.status === "PENDING";
+            const isConfirmed = appointment.status === "CONFIRMED";
 
             return (
                 <div>
@@ -131,6 +144,12 @@ export const columns: ColumnDef<Appointment>[] = [
                         appointment={appointment}
                         open={showCancelDialog}
                         onOpenChange={setShowCancelDialog}
+                        showTrigger={false}
+                    />
+                    <RefundAppointmentDialog
+                        appointment={appointment}
+                        open={showRefundDialog}
+                        onOpenChange={setShowRefundDialog}
                         showTrigger={false}
                     />
                     <DropdownMenu>
@@ -151,6 +170,27 @@ export const columns: ColumnDef<Appointment>[] = [
                                 Reprogramar
                                 <DropdownMenuShortcut>
                                     <CalendarIcon className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onSelect={() => window.location.href = '/orders'}
+                                disabled={!isActive}
+                                className="text-emerald-600"
+                            >
+                                Pagar
+                                <DropdownMenuShortcut>
+                                    <CreditCard className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                onSelect={() => setShowRefundDialog(true)}
+                                disabled={!isActive || !isConfirmed}
+                                className="text-amber-600"
+                            >
+                                Reembolsar
+                                <DropdownMenuShortcut>
+                                    <RefreshCcw className="size-4" aria-hidden="true" />
                                 </DropdownMenuShortcut>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />

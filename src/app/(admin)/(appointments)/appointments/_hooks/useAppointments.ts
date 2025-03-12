@@ -7,10 +7,11 @@ import {
     UpdateAppointmentDto,
     DeleteAppointmentsDto,
     PaginatedAppointmentsResponse,
-    CancelAppointmentDto
+    CancelAppointmentDto,
+    RefundAppointmentDto
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
-import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment } from "../_actions/appointments.action";
+import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment } from "../_actions/appointments.action";
 import { useState } from "react";
 
 interface UpdateAppointmentVariables {
@@ -21,6 +22,11 @@ interface UpdateAppointmentVariables {
 interface CancelAppointmentVariables {
     id: string;
     data: CancelAppointmentDto;
+}
+
+interface RefundAppointmentVariables {
+    id: string;
+    data: RefundAppointmentDto;
 }
 
 export const useAppointments = () => {
@@ -240,6 +246,33 @@ export const useAppointments = () => {
         },
     });
 
+    // Mutación para reembolsar una cita
+    const refundMutation = useMutation<BaseApiResponse<Appointment>, Error, RefundAppointmentVariables>({
+        mutationFn: async ({ id, data }) => {
+            const response = await refundAppointment(id, data);
+            if ("error" in response) {
+                throw new Error(response.error);
+            }
+            return response;
+        },
+        onSuccess: (res, variables) => {
+            // Actualizar las citas en la caché
+            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
+
+            toast.success("Cita reembolsada exitosamente");
+        },
+        onError: (error) => {
+            console.error("💥 Error al reembolsar la cita:", error);
+            if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+                toast.error("No tienes permisos para realizar esta acción");
+            } else {
+                toast.error(error.message || "Error al reembolsar la cita");
+            }
+        },
+    });
+
     return {
         appointmentsQuery,
         activeAppointmentsQuery,
@@ -253,5 +286,6 @@ export const useAppointments = () => {
         deleteMutation,
         reactivateMutation,
         cancelMutation,
+        refundMutation,
     };
 };
