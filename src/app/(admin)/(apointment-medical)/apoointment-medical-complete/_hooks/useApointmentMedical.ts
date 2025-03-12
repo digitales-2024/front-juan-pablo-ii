@@ -20,7 +20,7 @@ import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
  * 
  * @returns Conjunto de funciones y hooks para gestionar las citas médicas
  */
-export const useAppointment = () => {
+export const useAppointmentComplete = () => {
   // Hooks existentes...
 
   /**
