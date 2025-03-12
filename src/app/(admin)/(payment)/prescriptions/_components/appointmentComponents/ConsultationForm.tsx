@@ -5,6 +5,7 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
+	CardFooter,
 } from "@/components/ui/card";
 import { UseFormReturn } from "react-hook-form";
 import {
@@ -52,18 +53,18 @@ export default function ConsultationForm({
 }: ConsultationFormProps) {
 	console.log('🧩 ConsultationForm renderizado, onSubmit es:', typeof onSubmit);
 
-	// const handleFormSubmit = async (data: ConsultationSchema) => {
-	// 	console.group('📝 DATOS DEL FORMULARIO AL ENVIAR');
-	// 	console.log('Valores del formulario:', data);
-	// 	console.groupEnd();
+	const handleFormSubmit = async (data: ConsultationSchema) => {
+		console.group('📝 DATOS DEL FORMULARIO AL ENVIAR');
+		console.log('Valores del formulario:', data);
+		console.groupEnd();
 
-	// 	try {
-	// 		await onSubmit(data);
-	// 		console.log('✅ Formulario procesado exitosamente');
-	// 	} catch (error) {
-	// 		console.error('❌ Error al procesar el formulario:', error);
-	// 	}
-	// };
+		try {
+			await onSubmit(data);
+			console.log('✅ Formulario procesado exitosamente');
+		} catch (error) {
+			console.error('❌ Error al procesar el formulario:', error);
+		}
+	};
 
 	// Obtener los valores actuales del formulario para mostrar en el resumen
 	const paymentMethod = form.watch("paymentMethod");

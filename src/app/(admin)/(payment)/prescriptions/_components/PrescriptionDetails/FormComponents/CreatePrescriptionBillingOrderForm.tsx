@@ -15,13 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CREATE_PRESCRIPTION_ORDER_FORMSTATICS as STATIC_FORM } from "../../../_statics/forms";
 import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescription";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import {
   Table,
@@ -44,9 +38,7 @@ import {
   ProductSaleItemDto,
   ServiceSaleItemDto,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
-import {
-  useProductsStock,
-} from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
+import { useProductsStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
 import {
@@ -66,6 +58,11 @@ import LoadingDialogForm from "../../LoadingDialogForm";
 import GeneralErrorMessage from "../../errorComponents/GeneralErrorMessage";
 import { UseQueryResult } from "@tanstack/react-query";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  useSelectedServicesAppointments,
+  useSelectedServicesAppointmentsDispatch,
+} from "../../../_hooks/useCreateAppointmentForOrder";
+import { CreateAppointmentDialog } from "../../appointmentComponents/CreateAppointmentDialog";
 type ServiceData = {
   id: string;
   name: string;
@@ -75,7 +72,7 @@ type ServiceData = {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-}
+};
 interface CreatePrescriptionOrderFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
@@ -96,6 +93,7 @@ type ProductItem = ProductSaleItemDto & {
   selected: boolean;
 };
 type ServiceItem = ServiceSaleItemDto & {
+  hasMadeAppointment: boolean;
   isEditing: boolean;
   hasChanges: boolean;
   selected: boolean;
@@ -168,6 +166,9 @@ export function CreatePrescriptionOrderForm({
   const { productStockQuery: reponseProductsStock } = useProductsStock();
   const { activeProductsQuery: reponseProducts } = useProducts();
   const { activeBranchesQuery: responseBranches } = useBranches();
+  //INITIALIZATION OF STORAGE
+  const selectedServicesAppointmentsData = useSelectedServicesAppointments();
+  const dispatch = useSelectedServicesAppointmentsDispatch();
 
   // Inicializar datos locales desde el formulario
   useEffect(() => {
@@ -189,6 +190,7 @@ export function CreatePrescriptionOrderForm({
     setServicesTableFormData(
       formServices.map((service) => ({
         ...service,
+        hasMadeAppointment: false,
         isEditing: false,
         hasChanges: false,
         selected: false,
@@ -222,12 +224,11 @@ export function CreatePrescriptionOrderForm({
 
     if (serviceDataQuery.data)
       serviceDataQuery.data.forEach((service) => {
-      dataMap[service.id] = service;
-    });
+        dataMap[service.id] = service;
+      });
 
     return dataMap;
-  }
-  , [prescription]);
+  }, [prescription]);
 
   // Calculate service totals (only selected services)
   const calculateServiceTotals = useCallback(() => {
@@ -287,7 +288,7 @@ export function CreatePrescriptionOrderForm({
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error calculando totales de servicios: " + error.message);
-      } else{
+      } else {
         toast.error("Error calculando totales de servicios.");
       }
     } finally {
@@ -337,12 +338,34 @@ export function CreatePrescriptionOrderForm({
       .filter((service) => service.selected)
       .map(({ isEditing, hasChanges, selected, ...service }) => service);
 
+    //Appointmentnt creation validation
+    if (selectedServices.length !== selectedServicesAppointmentsData.length) {
+      toast.error("Debe crear una cita para cada servicio antes de guardar");
+      return;
+    }
+
+    const selectedServicesWithAppointmentId = selectedServices.map(
+      (service) => {
+        const appointmentReference = selectedServicesAppointmentsData.find(
+          (s) => s.serviceId === service.serviceId
+        );
+        return {
+          ...service,
+          appointmentId: appointmentReference?.appointmentId,
+        };
+      }
+    );
+
     // Update main form with selected services
-    form.setValue("services", selectedServices);
+    form.setValue("services", selectedServicesWithAppointmentId);
 
     // Mark that there are no pending changes
     setServicesTableFormData((prev) =>
-      prev.map((item) => ({ ...item, hasChanges: false }))
+      prev.map((item) => ({
+        ...item,
+        hasChanges: false,
+        hasMadeAppointment: true,
+      }))
     );
 
     calculateServiceTotals();
@@ -709,7 +732,7 @@ export function CreatePrescriptionOrderForm({
   //   calculateTotalsWithDebounce,
   // ]);
 
-  const SaveServiceTableButton = () =>{
+  const SaveServiceTableButton = () => {
     return (
       <Button
         type="button"
@@ -722,7 +745,7 @@ export function CreatePrescriptionOrderForm({
         Guardar cambios
       </Button>
     );
-  }
+  };
 
   const SaveProductTableButton = () => (
     <Button
@@ -932,8 +955,9 @@ export function CreatePrescriptionOrderForm({
                             </TableCell>
                             <TableCell>
                               <FormItem>
-                              <Input
-                                  disabled={ !field.selected }
+                                <Input
+                                  //disabled={ !field.selected || field.hasMadeAppointment }
+                                  disabled //Always 1 service per prescription
                                   type="number"
                                   className={cn(
                                     "text-center",
@@ -993,9 +1017,18 @@ export function CreatePrescriptionOrderForm({
                               </span>
                             </TableCell>
                             <TableCell>
-                              <Button type="button" disabled={ !field.selected } variant={'ghost'} className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">
+                              {/* <Button type="button" disabled={ !field.selected || field.hasMadeAppointment } variant={'ghost'} className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">
                                 <CalendarPlus></CalendarPlus>
-                              </Button>
+                              </Button> */}
+
+                              <CreateAppointmentDialog
+                                className="bg-emerald-500/10 text-emerald-900 hover:bg-emeral/20 hover:text-emerald-900"
+                                patientId={prescription.patientId}
+                                serviceId={field.serviceId}
+                                disabled={
+                                  !field.selected || field.hasMadeAppointment
+                                }
+                              ></CreateAppointmentDialog>
                             </TableCell>
                           </TableRow>
                         );
@@ -1019,17 +1052,13 @@ export function CreatePrescriptionOrderForm({
                             currency: "PEN",
                           })}
                         </TableCell>
-                        <TableCell
-                          className="text-lg text-primary font-bold"
-                        >
+                        <TableCell className="text-lg text-primary font-bold">
                           {serviceTotals.total.toLocaleString("es-PE", {
                             style: "currency",
                             currency: "PEN",
                           })}
                         </TableCell>
-                        <TableCell
-                          colSpan={1}
-                        ></TableCell>
+                        <TableCell colSpan={1}></TableCell>
                       </TableRow>
                     )}
                   </TableBody>
@@ -1038,7 +1067,9 @@ export function CreatePrescriptionOrderForm({
                 <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
                   {/* <SelectProductDialog form={form} /> */}
                   <SaveServiceTableButton></SaveServiceTableButton>
-                  <CustomFormDescription required={FORMSTATICS.services.required} />
+                  <CustomFormDescription
+                    required={FORMSTATICS.services.required}
+                  />
                   {form.formState.errors.services && (
                     <FormMessage className="text-destructive">
                       {form.formState.errors.services.message}

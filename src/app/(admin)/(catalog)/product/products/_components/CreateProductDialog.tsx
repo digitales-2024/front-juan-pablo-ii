@@ -70,7 +70,7 @@ export function CreateProductDialog() {
       precio: 0,
       unidadMedida: "",
       proveedor: "",
-      uso: "",
+      uso: undefined,
       usoProducto: "",
       description: "",
       codigoProducto: "",
