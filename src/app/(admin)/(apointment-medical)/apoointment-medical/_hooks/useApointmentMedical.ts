@@ -19,7 +19,7 @@ import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
  * 
  * @returns Conjunto de funciones y hooks para gestionar las citas médicas
  */
-export const useAppointment = () => {
+export const useAppointmentConfirmed = () => {
 
   /**
    * Obtiene las citas confirmadas según el rol del usuario
