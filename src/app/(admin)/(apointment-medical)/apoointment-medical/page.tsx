@@ -5,129 +5,102 @@ import { PageHeader } from "@/components/PageHeader";
 import { notFound } from "next/navigation";
 import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
-import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
-import { useAppointment } from "./_hooks/useApointmentMedical";
-import { useEffect, useState, useCallback } from "react";
-import { AppointmentResponse } from "./_interfaces/apoointments-medical.inteface";
+import { useAppointmentConfirmed } from "./_hooks/useApointmentMedical";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { CalendarClock, Stethoscope, Users } from "lucide-react";
 import { toast } from "sonner";
 
-export default function PageAppointments() {
-  const { user } = useAuth();
-  const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  // Mejoramos la detección de roles
-  const isSuperAdmin = user?.isSuperAdmin === true;
-  const isSuperAdminRole = user?.roles?.some(role => role.name === "SUPER_ADMIN") ?? false;
-  const isDoctor = user?.roles?.some(role => role.name === "MEDICO") ?? false;
-  const isReceptionist = user?.roles?.some(role => role.name === "ADMINISTRATIVO") ?? false;
-  
-  // Determinamos definitivamente si es admin (cualquiera de las dos formas)
-  const isAdmin = isSuperAdmin || isSuperAdminRole;
-
+export default function PageAppointmentsComplete() {
+  const { useRoleBasedConfirmedAppointments } = useAppointmentConfirmed();
   const {
-    useDoctorConfirmedAppointments,
-    useBranchConfirmedAppointments,
-    useAllConfirmedAppointments,
-  } = useAppointment();
+    data: appointments = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+    userRole,
+    userId
+  } = useRoleBasedConfirmedAppointments();
+  
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const initialLoadDone = useRef(false);
+  const [isDataReady, setIsDataReady] = useState(false);
 
-  // Obtenemos los datos con los hooks correspondientes
-  const doctorData = useDoctorConfirmedAppointments(user?.id ?? "");
-  const branchData = useBranchConfirmedAppointments(user?.id ?? "");
-  const adminData = useAllConfirmedAppointments(); // No requiere ID
+  // Combinar estados de carga para mejor UX
+  const isShowLoading = isLoading || isRefreshing || !isDataReady;
 
-  // Función mejorada para refrescar datos
   const handleRefresh = useCallback(() => {
-    setIsLoading(true);
+    if (isRefreshing) return; // Evitar solicitudes múltiples
+    setIsRefreshing(true);
+    setIsDataReady(false);
     
     try {
-      if (isDoctor) {
-        void doctorData.refetch().then(response => {
-          if (response?.data) {
-            setAppointments(response.data);
-            toast.success("Citas del médico actualizadas");
-          }
-          setIsLoading(false);
-        });
-      } else if (isReceptionist) {
-        void branchData.refetch().then(response => {
-          if (response?.data) {
-            setAppointments(response.data);
-            toast.success("Citas de la sucursal actualizadas");
-          }
-          setIsLoading(false);
-        });
-      } else if (isAdmin) {
-        void adminData.refetch().then(response => {
-          if (response?.data) {
-            setAppointments(response.data);
-            toast.success("Todas las citas actualizadas");
-          }
-          setIsLoading(false);
-        });
-      } else {
-        setIsLoading(false);
-        toast.error("No se pudo determinar el rol del usuario");
-      }
+      void refetch().then((result) => {
+        const successMessage = userRole.isDoctor 
+          ? "Citas médicas actualizadas" 
+          : userRole.isReceptionist 
+            ? "Citas médicas actualizadas" 
+            : "Citas médicas actualizadas";
+        
+        // Pequeño retraso para asegurar que la UI esté lista antes de mostrar los datos
+        setTimeout(() => {
+          setIsDataReady(true);
+          setIsRefreshing(false);
+          
+        // Solo mostramos el mensaje de éxito si hay datos o si es la carga inicial
+        if (result.data && result.data.length > 0 || !initialLoadDone.current) {
+          toast.success(successMessage);
+        }
+        }, 300);
+      });
     } catch (err) {
       console.error("Error al refrescar datos:", err);
       toast.error("Error al actualizar los datos");
-      setIsLoading(false);
+      setIsRefreshing(false);
+      setIsDataReady(true);
     }
-  }, [isDoctor, isReceptionist, isAdmin, doctorData, branchData, adminData]);
+  }, [refetch, userRole, isRefreshing]);
 
+  // Efecto para la carga inicial ÚNICA
   useEffect(() => {
-    if (!user) {
-      setError(new Error("Usuario no autenticado"));
-      setIsLoading(false);
-      return;
+    if (!initialLoadDone.current) {
+      initialLoadDone.current = true;
+      handleRefresh();
     }
+  }, [handleRefresh]);
 
-    setIsLoading(true);
-
-    try {
-      if (isDoctor) {
-        setAppointments(doctorData.data ?? []);
-      } else if (isReceptionist) {
-        setAppointments(branchData.data ?? []);
-      } else if (isAdmin) { // Cambiamos a isAdmin
-        setAppointments(adminData.data ?? []);
-      } else {
-        // Si no tiene ningún rol reconocido
-        console.warn("Usuario sin rol reconocido:", user);
-        setAppointments([]);
+  // Efecto separado SOLO para visibilityChange
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('Página visible, actualizando datos...');
+        handleRefresh();
       }
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Error desconocido"));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    user,
-    isDoctor, isReceptionist, isAdmin, // Cambiamos a isAdmin
-    doctorData.data, branchData.data, adminData.data,
-  ]);
+    };
 
-  if (isLoading) {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [handleRefresh]);
+
+  // Cuando los datos iniciales están disponibles pero aún no marcados como listos
+  useEffect(() => {
+    if (!isLoading && !isRefreshing && !isDataReady && appointments) {
+      setIsDataReady(true);
+    }
+  }, [isLoading, isRefreshing, appointments, isDataReady]);
+
+  if (isShowLoading) {
     return <LoadingCategories />;
   }
 
-  if (
-    error ||
-    (isDoctor && doctorData.isError) ||
-    (isReceptionist && branchData.isError) ||
-    (isAdmin && adminData.isError)
-  ) {
-    console.error(
-      "Error:",
-      error ?? doctorData.error ?? branchData.error ?? adminData.error
-    );
+  if (isError) {
+    console.error("Error:", error);
     notFound();
   }
 
-  // Mensaje mejorado para cuando no hay citas
   if (!appointments.length) {
     return (
       <>
@@ -145,7 +118,7 @@ export default function PageAppointments() {
             No hay citas programadas
           </h2>
           <p className="text-gray-500 text-center max-w-md mb-6">
-            {isDoctor
+            {userRole.isDoctor
               ? "Actualmente no tienes citas médicas programadas para atender."
               : "No se encontraron citas programadas en el sistema."}
           </p>
@@ -173,11 +146,11 @@ export default function PageAppointments() {
         <AppointmentTable
           data={appointments}
           userRole={{
-            isSuperAdmin: isAdmin, // Pasamos isAdmin como isSuperAdmin
-            isDoctor,
-            isReceptionist,
+            isSuperAdmin: userRole.isAdmin,
+            isDoctor: userRole.isDoctor,
+            isReceptionist: userRole.isReceptionist,
           }}
-          userId={user?.id}
+          userId={userId}
           onRefresh={handleRefresh}
         />
       </div>

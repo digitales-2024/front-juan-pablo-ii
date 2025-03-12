@@ -67,9 +67,11 @@ export async function getPatientById(id: string): Promise<PatientResponse> {
   }
 }
 
-export async function getPatientByDni (dni:string) {
+export async function getPatientByDni(dni: string) {
   try {
-    const [patient, error] = await http.get<ListPatientResponse>(`/paciente/dni/${dni}`);
+    const [patient, error] = await http.get<ListPatientResponse>(
+      `/paciente/dni/${dni}`
+    );
     if (error) {
       return {
         error:
@@ -83,7 +85,7 @@ export async function getPatientByDni (dni:string) {
     if (error instanceof Error) return { error: error.message };
     return { error: "Error desconocido" };
   }
-};
+}
 
 /* export type PatientResponse = BaseApiResponse<Patient> | { error: string }; */
 /**
@@ -134,15 +136,17 @@ export async function createPatient(
     // Procesar los datos del paciente
     Object.entries(formData.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        serverFormData.append(key, typeof value === "object" ? JSON.stringify(value) : String(value));
-        
+        serverFormData.append(
+          key,
+          typeof value === "object" ? JSON.stringify(value) : String(value)
+        );
       } else {
         serverFormData.append(key, ""); // Asegurarse de que los campos vacíos se envíen como cadenas vacías
       }
     });
 
     // Procesar la imagen si existe
-    if (formData.image instanceof File || typeof formData.image === 'string') {
+    if (formData.image instanceof File || typeof formData.image === "string") {
       serverFormData.append("image", formData.image);
     }
 
@@ -179,22 +183,31 @@ export async function updatePatient(
   id: string,
   formData: UpdatePatientFormData
 ): Promise<PatientResponse> {
+ /*  console.log("🚀 ~ formData antes de enviar los datos:", formData); */
   try {
     const serverFormData = new FormData();
 
-    // Procesar los datos del paciente
-    Object.entries(formData.data).forEach(([key, value]) => {
+    // 1. Extraer los campos relevantes del objeto formData.data
+  
+    const { image: _imageData, ...patientData } = formData.data;
+
+    // 2. Procesar los datos del paciente (excluyendo id e image)
+    Object.entries(patientData).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        if (typeof value === "object" && !(value instanceof File)) {
+       
+        if (typeof value === "object" && value !== null && !('name' in value && 'lastModified' in value)) {
           serverFormData.append(key, JSON.stringify(value));
         } else {
-          serverFormData.append(key, typeof value === "object" ? JSON.stringify(value) : String(value));
+          serverFormData.append(
+            key,
+       
+            typeof value === "object" ? JSON.stringify(value) : String(value)
+          );
         }
-        
       }
     });
 
-    // Añadir la URL de la imagen existente como string
+    // 3. Añadir la URL de la imagen existente como string
     if (
       formData.data.patientPhoto &&
       typeof formData.data.patientPhoto === "string"
@@ -202,25 +215,18 @@ export async function updatePatient(
       serverFormData.append("patientPhoto", formData.data.patientPhoto);
     }
 
-    // Añadir el nuevo archivo de imagen o undefined si es null
-  /*   if (formData.image !== null) {
-      serverFormData.append("image", formData.image);
-    } else {
-      serverFormData.append("image", undefined);
-    } */
-
+    // 4. Añadir el nuevo archivo de imagen como campo independiente
+   
     if (formData.image instanceof File) {
       serverFormData.append("image", formData.image);
     }
 
-    // Añadir el id al FormData
-    serverFormData.append("id", id);
+    // 5. NO añadir el ID al FormData - se incluye en la URL
 
-    // Log para verificar los datos antes de enviarlos
-    console.log(
-      "Datos enviados al servidor:",
+  /*   console.log(
+      "Datos enviados al servidor paciente:",
       Object.fromEntries(serverFormData.entries())
-    );
+    ); */
 
     const [response, error] = await http.multipartPatch<PatientResponse>(
       `/paciente/${id}/update-with-image`,
