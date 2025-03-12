@@ -1,12 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  getDoctorConfirmedAppointments,
   getDoctorCompletedAppointments,
-  getAllConfirmedAppointments,
   getAllCompletedAppointments,
-  getBranchConfirmedAppointments,
   getBranchCompletedAppointments,
   updateAppointmentStatus,
+  // Importaciones de Confirmed no necesarias para este contexto
 } from "../_actions/appoointmentMedical.actions";
 import { toast } from "sonner";
 import {
@@ -14,6 +12,7 @@ import {
   UpdateAppointmentUserDto,
 } from "../_interfaces/apoointments-medical.inteface";
 import { BaseApiResponse } from "@/types/api/types";
+import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 
 /**
  * Hook personalizado para gestionar citas médicas en la aplicación
@@ -22,31 +21,73 @@ import { BaseApiResponse } from "@/types/api/types";
  * @returns Conjunto de funciones y hooks para gestionar las citas médicas
  */
 export const useAppointment = () => {
+  // Hooks existentes...
 
   /**
-   * Obtiene las citas confirmadas para un médico específico
+   * Obtiene las citas completadas según el rol del usuario
+   * Este hook determina automáticamente qué consulta realizar basándose en el rol
    * 
-   * @param doctorId - ID del médico para consultar sus citas
-   * @returns Hook de query con los datos de citas confirmadas, estado de carga y posibles errores
-   * @example
-   * ```tsx
-   * const { data, isLoading, error } = useDoctorConfirmedAppointments("123");
-   * ```
+   * @returns Hook de query con los datos de citas completadas según el rol del usuario
    */
-  const useDoctorConfirmedAppointments = (doctorId: string) =>
-    useQuery<AppointmentResponse[], Error>({
-      queryKey: ["doctor-confirmed-appointments", doctorId],
-      queryFn: async () => {
-        const response = await getDoctorConfirmedAppointments(doctorId);
+  const useRoleBasedCompletedAppointments = () => {
+    const { user } = useAuth();
+    
+    // Determinar el rol del usuario
+    const isSuperAdmin = user?.isSuperAdmin === true;
+    const isSuperAdminRole = user?.roles?.some(role => role.name === "SUPER_ADMIN") ?? false;
+    const isDoctor = user?.roles?.some(role => role.name === "MEDICO") ?? false;
+    const isReceptionist = user?.roles?.some(role => role.name === "ADMINISTRATIVO") ?? false;
+    const isAdmin = isSuperAdmin || isSuperAdminRole;
+    
+    // Determinar la función y key de query según el rol
+    let queryFn;
+    let queryKey;
+    let enabled = true;
+    
+    if (isDoctor && user?.id) {
+      queryFn = async () => {
+        const response = await getDoctorCompletedAppointments(user.id);
         if (!response || "error" in response) {
-          throw new Error(
-            response?.error || "No se encontraron citas confirmadas"
-          );
+          throw new Error(response?.error || "No se encontraron citas completadas");
         }
         return response;
-      },
-      enabled: !!doctorId,
-    });
+      };
+      queryKey = ["doctor-completed-appointments", user.id];
+    } else if (isReceptionist && user?.id) {
+      queryFn = async () => {
+        const response = await getBranchCompletedAppointments(user.id);
+        if (!response || "error" in response) {
+          throw new Error(response?.error || "No se encontraron citas completadas de la sucursal");
+        }
+        return response;
+      };
+      queryKey = ["branch-completed-appointments", user.id];
+    } else if (isAdmin) {
+      queryFn = async () => {
+        const response = await getAllCompletedAppointments();
+        if (!response || "error" in response) {
+          throw new Error(response?.error || "No se encontraron citas completadas");
+        }
+        return response;
+      };
+      queryKey = ["all-completed-appointments"];
+    } else {
+      // Usuario sin rol definido
+      queryFn = () => Promise.resolve([]);
+      queryKey = ["no-appointments"];
+      enabled = false;
+    }
+    
+    return {
+      ...useQuery<AppointmentResponse[], Error>({
+        queryKey,
+        queryFn,
+        enabled,
+      }),
+      userRole: { isAdmin, isDoctor, isReceptionist },
+      userId: user?.id
+    };
+  };
 
   /**
    * Obtiene las citas completadas para un médico específico
@@ -74,29 +115,6 @@ export const useAppointment = () => {
     });
 
   /**
-   * Obtiene todas las citas confirmadas (acceso administrativo)
-   * 
-   * @returns Hook de query con los datos de todas las citas confirmadas, estado de carga y posibles errores
-   * @example
-   * ```tsx
-   * const { data, isLoading, error } = useAllConfirmedAppointments();
-   * ```
-   */
-  const useAllConfirmedAppointments = () =>
-    useQuery<AppointmentResponse[], Error>({
-      queryKey: ["all-confirmed-appointments"],
-      queryFn: async () => {
-        const response = await getAllConfirmedAppointments();
-        if (!response || "error" in response) {
-          throw new Error(
-            response?.error || "No se encontraron citas confirmadas"
-          );
-        }
-        return response;
-      },
-    });
-
-  /**
    * Obtiene todas las citas completadas (acceso administrativo)
    * 
    * @returns Hook de query con los datos de todas las citas completadas, estado de carga y posibles errores
@@ -117,32 +135,6 @@ export const useAppointment = () => {
         }
         return response;
       },
-    });
-
-  /**
-   * Obtiene citas confirmadas para la sucursal asociada a un usuario específico
-   * 
-   * @param userId - ID del usuario de mesón para consultar citas de su sucursal
-   * @returns Hook de query con los datos de citas confirmadas de la sucursal, estado de carga y posibles errores
-   * @example
-   * ```tsx
-   * const { data, isLoading, error } = useBranchConfirmedAppointments("456");
-   * ```
-   */
-  const useBranchConfirmedAppointments = (userId: string) =>
-    useQuery<AppointmentResponse[], Error>({
-      queryKey: ["branch-confirmed-appointments", userId],
-      queryFn: async () => {
-        const response = await getBranchConfirmedAppointments(userId);
-        if (!response || "error" in response) {
-          throw new Error(
-            response?.error ||
-              "No se encontraron citas confirmadas de la sucursal"
-          );
-        }
-        return response;
-      },
-      enabled: !!userId,
     });
 
   /**
@@ -231,17 +223,17 @@ export const useAppointment = () => {
 
   return {
     // Queries para citas de médicos específicos
-    useDoctorConfirmedAppointments,
     useDoctorCompletedAppointments,
 
     // Queries para administradores
-    useAllConfirmedAppointments,
     useAllCompletedAppointments,
 
     // Queries para citas de una sucursal específica
-    useBranchConfirmedAppointments,
     useBranchCompletedAppointments,
 
+    // Agregamos el nuevo hook integrado
+    useRoleBasedCompletedAppointments,
+    
     // Mutación para actualizar estado
     updateStatusMutation,
   };
