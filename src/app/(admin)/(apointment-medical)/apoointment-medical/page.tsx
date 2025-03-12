@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
 import { useAppointmentConfirmed } from "./_hooks/useApointmentMedical";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { CalendarClock, Stethoscope, Users } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,29 +23,76 @@ export default function PageAppointmentsComplete() {
   } = useRoleBasedConfirmedAppointments();
   
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const initialLoadDone = useRef(false);
+  const [isDataReady, setIsDataReady] = useState(false);
+
+  // Combinar estados de carga para mejor UX
+  const isShowLoading = isLoading || isRefreshing || !isDataReady;
 
   const handleRefresh = useCallback(() => {
+    if (isRefreshing) return; // Evitar solicitudes múltiples
     setIsRefreshing(true);
+    setIsDataReady(false);
     
     try {
-      void refetch().then(() => {
+      void refetch().then((result) => {
         const successMessage = userRole.isDoctor 
-          ? "Citas del médico actualizadas" 
+          ? "Citas médicas actualizadas" 
           : userRole.isReceptionist 
-            ? "Citas de la sucursal actualizadas" 
-            : "Todas las citas actualizadas";
-            
-        toast.success(successMessage);
-        setIsRefreshing(false);
+            ? "Citas médicas actualizadas" 
+            : "Citas médicas actualizadas";
+        
+        // Pequeño retraso para asegurar que la UI esté lista antes de mostrar los datos
+        setTimeout(() => {
+          setIsDataReady(true);
+          setIsRefreshing(false);
+          
+        // Solo mostramos el mensaje de éxito si hay datos o si es la carga inicial
+        if (result.data && result.data.length > 0 || !initialLoadDone.current) {
+          toast.success(successMessage);
+        }
+        }, 300);
       });
     } catch (err) {
       console.error("Error al refrescar datos:", err);
       toast.error("Error al actualizar los datos");
       setIsRefreshing(false);
+      setIsDataReady(true);
     }
-  }, [refetch, userRole]);
+  }, [refetch, userRole, isRefreshing]);
 
-  if (isLoading || isRefreshing) {
+  // Efecto para la carga inicial ÚNICA
+  useEffect(() => {
+    if (!initialLoadDone.current) {
+      initialLoadDone.current = true;
+      handleRefresh();
+    }
+  }, [handleRefresh]);
+
+  // Efecto separado SOLO para visibilityChange
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('Página visible, actualizando datos...');
+        handleRefresh();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [handleRefresh]);
+
+  // Cuando los datos iniciales están disponibles pero aún no marcados como listos
+  useEffect(() => {
+    if (!isLoading && !isRefreshing && !isDataReady && appointments) {
+      setIsDataReady(true);
+    }
+  }, [isLoading, isRefreshing, appointments, isDataReady]);
+
+  if (isShowLoading) {
     return <LoadingCategories />;
   }
 
