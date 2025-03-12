@@ -5,13 +5,13 @@ import { PageHeader } from "@/components/PageHeader";
 import { notFound } from "next/navigation";
 import LoadingCategories from "./loading";
 import { METADATA } from "./_statics/metadata";
-import { useAppointment } from "./_hooks/useApointmentMedical";
+import { useAppointmentConfirmed } from "./_hooks/useApointmentMedical";
 import { useState, useCallback } from "react";
 import { CalendarClock, Stethoscope, Users } from "lucide-react";
 import { toast } from "sonner";
 
 export default function PageAppointmentsComplete() {
-  const { useRoleBasedConfirmedAppointments } = useAppointment();
+  const { useRoleBasedConfirmedAppointments } = useAppointmentConfirmed();
   const {
     data: appointments = [],
     isLoading,
