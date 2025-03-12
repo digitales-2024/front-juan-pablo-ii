@@ -15,6 +15,11 @@ import { useAppointments } from "@/app/(admin)/(appointments)/appointments/_hook
 import { format } from "date-fns";
 import { CreateAppointmentDto } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
+import { EventType, EventStatus } from "@/app/(admin)/(staff)/schedules/_interfaces/event.interface";
+import { useBilling } from "@/app/(admin)/(payment)/orders/_hooks/useBilling";
+import { CreateMedicalAppointmentBillingDto } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
@@ -31,6 +36,9 @@ export default function Consultation() {
 	const [selectedBranchId, setSelectedBranchId] = useState("");
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const { createMutation } = useAppointments();
+	const queryClient = useQueryClient();
+	const { createMutation: createEventMutation } = useEvents();
+	const { createMedicalAppointmentOrderMutation } = useBilling();
 
 	const form = useForm<ConsultationSchema>({
 		resolver: zodResolver(consultationsSchema),
@@ -260,6 +268,37 @@ export default function Consultation() {
 				duracionMinutos: 15
 			});
 
+			// Crear evento de tipo CITA con color gris usando el hook useEvents
+			let eventId = null;
+			try {
+				console.log('🗓️ Creando evento de calendario para la cita...');
+
+				// Crear el objeto para el evento
+				const eventData = {
+					title: `Cita: Paciente`,
+					color: 'gray', // Color gris inicial
+					type: EventType.CITA,
+					status: EventStatus.PENDING,
+					start: startDate.toISOString(),
+					end: endDate.toISOString(),
+					staffId: data.staffId,
+					branchId: data.branchId
+				};
+
+				console.log('📦 Datos del evento a crear:', eventData);
+
+				// Usar la mutación del hook useEvents para crear el evento
+				const eventResult = await createEventMutation.mutateAsync(eventData);
+				console.log('✅ Evento creado exitosamente:', eventResult);
+
+				// Guardar el ID del evento para asociarlo con la cita
+				eventId = eventResult.data?.id;
+				console.log('🔑 ID del evento creado:', eventId);
+			} catch (eventError) {
+				console.error('❌ Error al crear el evento:', eventError);
+				// No interrumpimos el flujo principal si falla la creación del evento
+			}
+
 			// Crear objeto para createMutation
 			const appointmentToCreate: CreateAppointmentDto = {
 				staffId: data.staffId,
@@ -271,7 +310,8 @@ export default function Consultation() {
 				type: "CONSULTA" as const,
 				notes: data.notes || "",
 				status: "PENDING" as const,
-				paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET"
+				paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET",
+				eventId: eventId || undefined // Añadir el ID del evento a la cita
 			};
 
 			console.log('📦 OBJETO FINAL PARA CREAR APPOINTMENT:', appointmentToCreate);
@@ -280,14 +320,50 @@ export default function Consultation() {
 			const result = await createMutation.mutateAsync(appointmentToCreate);
 			console.log('✅ Mutation completada exitosamente con resultado:', result);
 
+			// Invalidar la query después de crear la cita
+			queryClient.invalidateQueries({ queryKey: ['paginated-appointments'] });
+
 			console.log("🎉 Appointment creado exitosamente");
+
+			// Crear la orden de facturación para la cita médica
+			try {
+				console.log('💰 Creando orden de facturación para la cita médica...');
+
+				// Verificar que tenemos el ID del appointment
+				if (result.data && result.data.id) {
+					// Crear el objeto para la facturación
+					const billingData: CreateMedicalAppointmentBillingDto = {
+						appointmentId: result.data.id,
+						paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET",
+						currency: "PEN", // Moneda peruana (soles)
+						notes: data.notes || "",
+						metadata: {}
+					};
+
+					console.log('📦 Datos de facturación a crear:', billingData);
+
+					// Usar la mutación del hook useBilling para crear la orden
+					const billingResult = await createMedicalAppointmentOrderMutation.mutateAsync(billingData);
+					console.log('✅ Orden de facturación creada exitosamente:', billingResult);
+
+					// Mostrar mensaje de éxito
+					toast.success("Cita agendada y facturada exitosamente");
+				} else {
+					console.error('❌ No se pudo obtener el ID del appointment para crear la facturación');
+					toast.success("Cita agendada exitosamente, pero no se pudo crear la facturación");
+				}
+			} catch (billingError) {
+				console.error('❌ Error al crear la orden de facturación:', billingError);
+				toast.success("Cita agendada exitosamente, pero hubo un error al crear la facturación");
+				// No interrumpimos el flujo principal si falla la creación de la facturación
+			}
+
 			// En lugar de resetear todo el formulario, solo limpiamos algunos campos
 			// pero mantenemos la fecha, hora, personal y sucursal seleccionados
 			form.setValue("notes", "");
 			form.setValue("paymentMethod", "" as any);
 			// Mantenemos: date, time, staffId, branchId
 			setShowForm(false);
-			toast.success("Cita agendada exitosamente");
 		} catch (error) {
 			// Manejo de error mejorado
 			console.error('❌ ERROR en handleSubmit:', error);

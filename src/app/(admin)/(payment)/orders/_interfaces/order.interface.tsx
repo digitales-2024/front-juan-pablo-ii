@@ -54,7 +54,7 @@ export type EnumConfig = {
   backgroundColor: string;
   textColor: string;
   hoverBgColor: string;
-  hoverTextColor?: string;
+  hoverTextColor?:  string;
   importantBgColor?: string;
   importantHoverBgColor?: string;
   importantTextColor?: string;

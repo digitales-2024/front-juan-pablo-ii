@@ -74,6 +74,15 @@ export const colorOptions = [
 			dark: "dark:bg-sky-700 dark:border-sky-700 bg-sky-700/10 text-sky-700",
 		},
 	},
+	{
+		value: "gray",
+		label: "Gris",
+		class: {
+			base: "bg-gray-500 border-gray-500 bg-gray-500/10 hover:bg-gray-500/20 text-gray-500",
+			light: "bg-gray-300 border-gray-300 bg-gray-300/10 text-gray-300",
+			dark: "dark:bg-gray-700 dark:border-gray-700 bg-gray-700/10 text-gray-700",
+		},
+	},
 ];
 
 // orange
@@ -83,3 +92,4 @@ export const colorOptions = [
 // amber
 // emerald
 // sky
+// gray

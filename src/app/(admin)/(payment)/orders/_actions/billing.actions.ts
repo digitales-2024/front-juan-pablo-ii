@@ -8,6 +8,7 @@ import {
   DeleteOrdersDto,
   SubmitDraftOrderDto,
   CreateProductSaleBillingDto,
+  CreateMedicalAppointmentBillingDto,
 } from "../_interfaces/order.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
@@ -283,6 +284,33 @@ export async function submitDraftOrder(
   try {
     const [responseData, error] = await http.post<OrderResponse>(
       `/order/${id}/submit-draft`,
+      data
+    );
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return responseData;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+/**
+ * Crea una nueva orden de cita médica en el catálogo.
+ *
+ * @param data - Un objeto con la información de la orden de cita médica a crear.
+ * @returns Un objeto con una propiedad `data` que contiene la orden creada,
+ *          o un objeto con una propiedad `error` que contiene un mensaje de error.
+ */
+export async function createMedicalAppointmentOrder(
+  data: CreateMedicalAppointmentBillingDto
+): Promise<OrderResponse> {
+  try {
+    const [responseData, error] = await http.post<OrderResponse>(
+      "/billing/medical-appointment",
       data
     );
 

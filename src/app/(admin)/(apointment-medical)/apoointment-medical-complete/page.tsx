@@ -28,15 +28,15 @@ export default function PageAppointments() {
   const isAdmin = isSuperAdmin || isSuperAdminRole;
 
   const {
-    useDoctorConfirmedAppointments,
-    useBranchConfirmedAppointments,
-    useAllConfirmedAppointments,
+    useDoctorCompletedAppointments,
+    useBranchCompletedAppointments,
+    useAllCompletedAppointments,
   } = useAppointment();
 
   // Obtenemos los datos con los hooks correspondientes
-  const doctorData = useDoctorConfirmedAppointments(user?.id ?? "");
-  const branchData = useBranchConfirmedAppointments(user?.id ?? "");
-  const adminData = useAllConfirmedAppointments(); // No requiere ID
+  const doctorData = useDoctorCompletedAppointments(user?.id ?? "");
+  const branchData = useBranchCompletedAppointments(user?.id ?? "");
+  const adminData = useAllCompletedAppointments(); // No requiere ID
 
   // Función mejorada para refrescar datos
   const handleRefresh = useCallback(() => {

@@ -1,10 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import CalendarProvider from './calendar/CalendarProvider';
 import Calendar from './calendar/Calendar';
 import { EventFilterParams } from '@/app/(admin)/(staff)/schedules/_hooks/useEvents';
-import { Mode } from '@/app/(admin)/(staff)/schedules/_types/CalendarTypes';
+import { CalendarEvent, Mode } from '@/app/(admin)/(staff)/schedules/_types/CalendarTypes';
 import { EventFilters } from './calendar/header/filters/EventFilters';
 
 export default function CalendarAppointments() {
@@ -17,6 +17,8 @@ export default function CalendarAppointments() {
         branchId: undefined,
         staffScheduleId: undefined,
     });
+    const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+    console.log("calendarEvents", calendarEvents);
 
     const queryClient = useQueryClient();
 
@@ -24,9 +26,18 @@ export default function CalendarAppointments() {
         setAppliedFilters(prev => ({
             ...prev,
             ...newFilters,
+            type: 'CITA',
             status: 'CONFIRMED'
         }));
     };
+
+    useEffect(() => {
+        console.log('🔄 [CalendarAppointments] Eventos actualizados:', calendarEvents);
+    }, [calendarEvents]);
+
+    useEffect(() => {
+        console.log('🔄 [CalendarAppointments] Filtros aplicados:', appliedFilters);
+    }, [appliedFilters]);
 
     return (
         <div className="flex flex-col h-full">
@@ -36,7 +47,7 @@ export default function CalendarAppointments() {
                 currentDate={date}
             />
             <CalendarProvider
-                setEvents={() => { }}
+                setEvents={setCalendarEvents}
                 mode={mode}
                 setMode={setMode}
                 date={date}
@@ -44,14 +55,7 @@ export default function CalendarAppointments() {
                 calendarIconIsToday={true}
                 filters={appliedFilters}
             >
-                <Calendar
-                    events={[]}
-                    setEvents={() => { }}
-                    mode={mode}
-                    setMode={setMode}
-                    date={date}
-                    setDate={setDate}
-                />
+                <Calendar />
             </CalendarProvider>
         </div>
     );
