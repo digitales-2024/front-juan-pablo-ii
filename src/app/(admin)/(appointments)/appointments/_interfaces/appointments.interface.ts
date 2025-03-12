@@ -10,6 +10,7 @@ export type Appointment = components['schemas']['Appointment'] & {
 export type CreateAppointmentDto = components['schemas']['CreateAppointmentDto'];
 export type UpdateAppointmentDto = components['schemas']['UpdateAppointmentDto'];
 export type DeleteAppointmentsDto = components['schemas']['DeleteAppointmentsDto'];
+export type CancelAppointmentDto = components['schemas']['CancelAppointmentDto'];
 
 // Interfaz para la respuesta paginada
 export interface PaginatedAppointmentsResponse {
@@ -137,3 +138,8 @@ export const updateAppointmentSchema = z.object({
     type: z.enum(["CONSULTA", "OTRO"]).optional(),
     notes: z.string().optional(),
 }) satisfies z.ZodType<UpdateAppointmentDto>;
+
+// Schema de validación para cancelar cita
+export const cancelAppointmentSchema = z.object({
+    cancellationReason: z.string().min(1, "El motivo de cancelación es requerido"),
+}) satisfies z.ZodType<CancelAppointmentDto>;
