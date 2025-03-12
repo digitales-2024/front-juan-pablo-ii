@@ -14,6 +14,7 @@ import { z } from 'zod';
 type CreateServiceResponse = BaseApiResponse | { error: string };
 type UpdateServiceResponse = BaseApiResponse | { error: string };
 type DeleteServiceResponse = BaseApiResponse | { error: string };
+type OneServiceResponse = Service | { error: string };
 
 // Schema para getServices
 const GetServicesSchema = z.object({});
@@ -46,6 +47,24 @@ const getServicesHandler = async () => {
 }
 
 export const getServices = await createSafeAction(GetServicesSchema, getServicesHandler);
+
+export async function getServiceById (id: string) : Promise<OneServiceResponse> {
+  try {
+    const [service, error] = await http.get<OneServiceResponse>(`/services/${id}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener el almacén",
+      };
+    }
+    return service;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
 
 export async function createService(
   data: CreateServiceDto

@@ -6,13 +6,16 @@ import { PatientDetailsMetadata } from "../../_interfaces/order.interface";
 import { Branch } from "@/app/(admin)/branches/_interfaces/branch.interface";
 
 interface CommonDataMetadataPropsDesktop {
-    patientData: PatientDetailsMetadata
-    branchData?: Branch
+  patientData: PatientDetailsMetadata;
+  branchData?: Branch;
 }
-function CommonDataMetadata({ branchData, patientData} : CommonDataMetadataPropsDesktop) {
+function CommonDataMetadata({
+  branchData,
+  patientData,
+}: CommonDataMetadataPropsDesktop) {
   return (
     <>
-      <div>
+      {/* <div>
         <div className="flex rounded-sm bg-primary/10 p-4 w-fit space-x-4 items-center">
           <div className="flex space-x-2">
             <Building2 className="text-primary"></Building2>
@@ -24,17 +27,27 @@ function CommonDataMetadata({ branchData, patientData} : CommonDataMetadataProps
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex rounded-sm bg-primary/10 p-4 w-fit space-x-4 items-center">
+      </div> */}
+      <div className="flex rounded-sm bg-primary/10 p-4 w-fit space-x-4 items-start !mt-0">
         <div className="flex space-x-2">
-          <SquareUserRound className="text-primary"></SquareUserRound>
+          <div className="flex flex-col gap-1 justify-center items-start">
+          <Building2 className="text-primary"></Building2>
+            <Label className="text-sm font-medium">Sucursal creación</Label>
+            <span className="text-sm text-muted-foreground">
+              {branchData?.name ?? "Sin nombre"}
+            </span>
+          </div>
+        </div>
+        <Separator orientation="vertical"></Separator>
+        <div className="flex space-x-2">
           <div className="flex flex-col gap-2 justify-center items-start">
+          <SquareUserRound className="text-primary"></SquareUserRound>
             <Label className="text-sm font-medium">Paciente</Label>
             <div className="space-y-1">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-muted-foreground block">
                 {patientData.fullName}
               </span>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-muted-foreground block">
                 {patientData.dni ?? "No hay DNI"}
               </span>
             </div>
@@ -42,8 +55,8 @@ function CommonDataMetadata({ branchData, patientData} : CommonDataMetadataProps
         </div>
         <Separator orientation="vertical"></Separator>
         <div className="flex space-x-2">
-          <MapPinHouse className="text-primary"></MapPinHouse>
           <div className="flex flex-col gap-1 justify-center items-start">
+          <MapPinHouse className="text-primary"></MapPinHouse>
             <Label className="text-sm font-medium">Contacto</Label>
             <span className="text-sm text-muted-foreground">
               {patientData.address ?? "Sin dirección"}
@@ -58,4 +71,4 @@ function CommonDataMetadata({ branchData, patientData} : CommonDataMetadataProps
   );
 }
 
-export default CommonDataMetadata;
+export { CommonDataMetadata };

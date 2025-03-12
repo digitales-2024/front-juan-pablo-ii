@@ -41,26 +41,27 @@ export function ProductMovementsMetadataTable({
   //   { id: "3", name: "Depósito" }
   // ];
 
-  const productsIds = data.map((item) => item.productId);
+  console.log("received metadata: ", data);
+  const productsIds = data.map((item) => item.id);
 
   const manyProductsQuery = useManyProductsStock();
   const { productStockQuery } = manyProductsQuery(productsIds, orderId);
 
   if (productStockQuery.isLoading) {
-    return (
-      <TableSkeleton></TableSkeleton>
-    );
+    return <TableSkeleton></TableSkeleton>;
   }
   if (productStockQuery.isError) {
-    return <GeneralErrorMessage
+    return (
+      <GeneralErrorMessage
         error={productStockQuery.error}
         reset={productStockQuery.refetch}
-    ></GeneralErrorMessage>;
+      ></GeneralErrorMessage>
+    );
   }
 
-    if (!productStockQuery.data) {
-        return <TableSkeleton></TableSkeleton>;
-    }
+  if (!productStockQuery.data) {
+    return <TableSkeleton></TableSkeleton>;
+  }
   return (
     <Card className="w-full" {...rest}>
       <CardHeader>
@@ -94,8 +95,8 @@ export function ProductMovementsMetadataTable({
               <TableRow>
                 <TableHead>Codigo</TableHead>
                 <TableHead>Nombre</TableHead>
-                <TableHead>Cantidad</TableHead>
-                <TableHead>Total</TableHead>
+                <TableHead className="text-center">Cantidad</TableHead>
+                <TableHead className="text-center">Total</TableHead>
                 <TableHead>Almacén de salida</TableHead>
                 {/* <TableHead>Sucursal</TableHead> */}
               </TableRow>
@@ -112,58 +113,77 @@ export function ProductMovementsMetadataTable({
                 </TableRow>
               ) : (
                 data.map((item, index) => {
-
-                    const productData = productStockQuery.data.find(
-                        (stock) => stock.id === item.productId
-                    );
-                    const stockData = productData?.Stock.find(
-                        (stock) => stock.Storage.id === item.storageId
-                    );
-                    const storageData = stockData?.Storage
-                    return (
-                  <TableRow key={item.productId ?? index}>
-                    <TableCell>
-                      {productData?.codigoProducto ?? "Cantidad no disponible"}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {item.name ?? "N/A"}
-                    </TableCell>
-                    <TableCell>{item.quantity ?? 0}</TableCell>
-                    <TableCell>
-                      {item.quantity ?? "Cantidad no disponible"}
-                    </TableCell>
-                    {/* <TableCell>
+                  const productData = productStockQuery.data.find(
+                    (stock) => stock.id === item.id
+                  );
+                  const stockData = productData?.Stock.find(
+                    (stock) => stock.Storage.id === item.storageId
+                  );
+                  const storageData = stockData?.Storage;
+                  const total = isNaN(item.quantity * item.price)
+                    ? "No disponible"
+                    : item.quantity * item.price;
+                  return (
+                    <TableRow key={item.id ?? index}>
+                      <TableCell>
+                        {productData?.codigoProducto ??
+                          "Cantidad no disponible"}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {item.name ?? "N/A"}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.quantity ?? "Cantidad no disponible"}
+                      </TableCell>
+                      {/* <TableCell>
                       {selectedStorage ? 
                         storages.find(s => s.id === selectedStorage)?.name ?? 'No seleccionado' : 
                         'No seleccionado'}
                     </TableCell> */}
-                    <TableCell>
-                      {item.price.toLocaleString(
-                        "es-PE",
-                        { 
-                            minimumFractionDigits: 2, maximumFractionDigits: 2 ,
-                            currency: "PEN"
-                        }
-                      ) ?? "Precio no disponible"}
-                    </TableCell>
-                    <TableCell>
-                      {storageData?.name ?? "Almacén no disponible"}
-                    </TableCell>
-                  </TableRow>
-                )})
+                      <TableCell className="text-center">
+                        {total.toLocaleString("es-PE", {
+                          style: "currency",
+                          currency: "PEN",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }) ?? "Precio no disponible"}
+                      </TableCell>
+                      <TableCell>
+                        {storageData?.name ?? "Almacén no disponible"}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
               {
                 <TableRow className="font-bold bg-muted/50">
-                    <TableCell colSpan={2} className="text-right">
-                        Totales:
-                    </TableCell>
-                    <TableCell>
-                        {data.reduce((total, item) => total + (item.quantity ?? 0), 0)}
-                    </TableCell>
-                    <TableCell>
-                        ${data.reduce((total, item) => total + (item.price ?? 0), 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2, currency: "PEN" })}
-                    </TableCell>
-                    <TableCell></TableCell>
+                  <TableCell colSpan={2} className="text-start">
+                    Totales:
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {data.reduce(
+                      (total, item) => total + (item.quantity ?? 0),
+                      0
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {data
+                      .reduce(
+                        (total, item) =>
+                          total +
+                          (isNaN((item.price ?? 0) * (item.quantity ?? 0))
+                            ? 0
+                            : (item.price ?? 0) * (item.quantity ?? 0)),
+                        0
+                      )
+                      .toLocaleString("es-PE", {
+                        style: "currency",
+                        currency: "PEN",
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                  </TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               }
             </TableBody>

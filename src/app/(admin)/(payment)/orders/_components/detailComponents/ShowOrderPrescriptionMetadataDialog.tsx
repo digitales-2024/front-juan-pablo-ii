@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { CalendarCheck2, Hospital, Notebook, PillBottle } from "lucide-react";
+import { Boxes, Calendar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,41 +18,97 @@ import {
   DrawerFooter,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { PrescriptionMedicamentsCardTable } from "./PrescriptionMedicamentsCardTable";
-import { PrescriptionWithPatient } from "../../_interfaces/prescription.interface";
-import { PrescriptionServicesCardTable } from "./OrderPatientDetailsMetadataCardTable";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
+import { MedicalPrescriptionMetadata } from "../../_interfaces/order.interface";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ProductMovementsMetadataTable } from "./ProductMovementMetadataCardTable";
+import { TransactionDetailsMetadataCardTable } from "./TransactionDetailMetadataCardTable";
+import { CommonDataMetadataMobile } from "./CommonDataMetadataMobile";
+import { CommonDataMetadata } from "./CommonDataMetadata";
+import { BaseServiceItemMetadataCardTable } from "./BaseServiceItemMetadataCardTable";
+import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
+import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ProductSaleMetadata } from "../../_interfaces/order.interface";
 
-export function ShowSaleMetadataDetailsDialog({
+export function ShowPrescriptionMetadataDetailsDialog({
   data,
+  orderId,
 }: {
-  data: ProductSaleMetadata //MedicalPrescriptionMetadata //MedicalAppointmentMetadata;
+  data: MedicalPrescriptionMetadata; //MedicalPrescriptionMetadata //MedicalAppointmentMetadata;
+  orderId: string;
 }) {
-  const SHOW_PRESCRIPTION_DETAILS_MESSAGES = {
+  const SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES = {
     button: "Mostrar Detalles",
-    title: "Detalles de receta",
-    description: `Aquí puedes ver el detalle de la receta.`,
+    title: "Detalles de venta por receta médica",
+    description: `Aquí puedes ver el detalle de la venta por receta médica.`,
     cancel: "Cerrar",
   } as const;
   const [open, setOpen] = useState(false);
   //   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  // const { oneBranchQuery } = useBranches();
-  // const branchQuery = oneBranchQuery(data.);
+  const { oneBranchQuery } = useBranches();
+  const branchQuery = oneBranchQuery(data.orderDetails.branchId);
+  const { oneStaffQuery } = useStaff();
+  const staffData = oneStaffQuery(data.orderDetails.staffId);
 
+  if (branchQuery.isLoading || staffData.isLoading) {
+    return (
+      <Button type="button" disabled className="w-full flex items-center gap-2">
+        <Skeleton className="h-4 w-4 rounded-full" />
+        <Skeleton className="h-4 w-24" />
+      </Button>
+    );
+  }
 
+  if (branchQuery.isError) {
+    toast.error("Error al cargar la sucursal", {
+      action: {
+        label: "Recargar",
+        onClick: async () => {
+          await branchQuery.refetch();
+        },
+      }
+    });
+    return (
+      <Button type="button" disabled className="w-full flex items-center gap-2">
+        Error
+      </Button>
+    );
+  }
+
+  if (staffData.isError) {
+    toast.error("Error al cargar el personal", {
+      action: {
+        label: "Recargar",
+        onClick: async () => {
+          await branchQuery.refetch();
+        },
+      }
+    });
+    return (
+      <Button type="button" disabled className="w-full flex items-center gap-2">
+        Error
+      </Button>
+    );
+  }
+
+  if (!staffData.data) {
+    return (
+      <Button type="button" disabled className="w-full flex items-center gap-2">
+        <Skeleton className="h-4 w-4 rounded-full" />
+        <Skeleton className="h-4 w-24" />
+      </Button>
+    );
+  }
+
+  if (!branchQuery.data) {
+    return (
+      <Button type="button" disabled className="w-full flex items-center gap-2">
+        <Skeleton className="h-4 w-4 rounded-full" />
+        <Skeleton className="h-4 w-24" />
+      </Button>
+    );
+  }
 
   const handleClose = () => {
     setOpen(false);
@@ -66,7 +122,7 @@ export function ShowSaleMetadataDetailsDialog({
         className="w-full"
         onClick={handleClose}
       >
-        {SHOW_PRESCRIPTION_DETAILS_MESSAGES.cancel}
+        {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.cancel}
       </Button>
     </div>
   );
@@ -79,8 +135,8 @@ export function ShowSaleMetadataDetailsDialog({
       aria-label="Open menu"
       className="flex p-2 data-[state=open]:bg-muted text-sm bg-primary/10 hover:scale-105 hover:transition-all"
     >
-      <PillBottle className="text-primary !size-6" />
-      {SHOW_PRESCRIPTION_DETAILS_MESSAGES.button}
+      <Boxes className="text-primary !size-6" />
+      {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.button}
     </Button>
   );
 
@@ -94,63 +150,52 @@ export function ShowSaleMetadataDetailsDialog({
           <DialogHeader className="sm:flex-row justify-between">
             <div className="space-y-2">
               <DialogTitle className="w-full">
-                {SHOW_PRESCRIPTION_DETAILS_MESSAGES.title}
+                {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.title}
               </DialogTitle>
               <DialogDescription className="w-full text-balance">
-                {SHOW_PRESCRIPTION_DETAILS_MESSAGES.description}
+                {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.description}
               </DialogDescription>
-            </div>
-            <div className="flex rounded-sm bg-primary/10 p-4 w-fit space-x-4 items-center">
-              <div className="flex space-x-2">
-                <CalendarCheck2 className="text-primary"></CalendarCheck2>
-                <div className="flex flex-col gap-1 justify-center items-start">
-                  <Label className="text-sm font-medium">Fecha creación</Label>
-                  <span className="text-sm text-muted-foreground">
-                    {format(data.registrationDate, "PP", { locale: es })}
-                  </span>
+              <div className="flex flex-col space-y-1">
+                <div className="flex space-x-2">
+                  <Calendar className="text-primary"></Calendar>
+                  <Label>Fecha de la receta</Label>
                 </div>
+                <span>{data.orderDetails.prescriptionDate ?? "Sin fecha"}</span>
               </div>
-              <Separator orientation="vertical"></Separator>
-              <div className="flex space-x-2">
-                <Hospital className="text-primary"></Hospital>
-                <div className="flex flex-col gap-1 justify-center items-start">
-                  <Label className="text-sm font-medium">Sucursal</Label>
-                  <span className="text-sm text-muted-foreground">
-                    {branchQuery.isLoading && "Cargando..."}
-                    {branchQuery.isError && "Error al cargar la sucursal"}
-                    {branchQuery.isSuccess &&
-                      (branchQuery.data.name ?? "Sin nombre")}
-                  </span>
+              {staffData.data && (
+                <div className="flex flex-col space-y-1">
+                  <div className="flex space-x-2">
+                    <User className="text-primary"></User>
+                    <Label>Personal que generó la órden</Label>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="capitalize block">{`${
+                      staffData.data.name ?? "NN"
+                    } ${staffData.data.lastName ?? "NN"}`}</span>
+                    <span className="capitalize block text-muted-foreground">
+                      {staffData.data.email ?? "No email"}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
+            <CommonDataMetadata
+              patientData={data.patientDetails}
+              branchData={branchQuery.data}
+            ></CommonDataMetadata>
           </DialogHeader>
           <div className="overflow-auto max-h-full space-y-3">
             {/* <MovementsTable data={data}></MovementsTable> */}
-            <PrescriptionServicesCardTable
-              data={data.prescriptionServices}
-            ></PrescriptionServicesCardTable>
-            <PrescriptionMedicamentsCardTable
-              data={data.prescriptionMedicaments}
-            ></PrescriptionMedicamentsCardTable>
-            {data.description && (
-              <Card className="w-full">
-                <CardHeader>
-                  <CardTitle className="text-primary flex space-x-2 items-center">
-                    <Notebook></Notebook>
-                    <span>Notas adicionales</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Información adicional ingresada por el médico
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="w-full px-5 rounded-md">
-                  <div className="bg-primary/10 py-4 px-4 overflow-x-auto text-start text-pretty w-full rounded-md">
-                    {data.description}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            <BaseServiceItemMetadataCardTable
+              data={data.orderDetails.services}
+            ></BaseServiceItemMetadataCardTable>
+            <ProductMovementsMetadataTable
+              orderId={orderId}
+              data={data.orderDetails.products}
+            ></ProductMovementsMetadataTable>
+            <TransactionDetailsMetadataCardTable
+              data={data.orderDetails.transactionDetails}
+            ></TransactionDetailsMetadataCardTable>
           </div>
           <DialogFooter>
             <DialogFooterContent />
@@ -165,67 +210,56 @@ export function ShowSaleMetadataDetailsDialog({
       <DrawerTrigger asChild>
         <TriggerButton />
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="overflow-auto">
         <DialogHeader className="sm:flex-row justify-between">
           <div className="space-y-2">
             <DialogTitle className="w-full">
-              {SHOW_PRESCRIPTION_DETAILS_MESSAGES.title}
+              {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.title}
             </DialogTitle>
             <DialogDescription className="w-full text-balance">
-              {SHOW_PRESCRIPTION_DETAILS_MESSAGES.description}
+              {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.description}
             </DialogDescription>
-          </div>
-          <div className="flex rounded-sm bg-primary/10 p-4 w-full space-x-4 items-center justify-center">
-            <div className="flex space-x-2">
-              <CalendarCheck2 className="text-primary"></CalendarCheck2>
-              <div className="flex flex-col gap-1 justify-center items-start">
-                <Label className="text-sm font-medium">Fecha creación</Label>
-                <span className="text-sm text-muted-foreground">
-                  {format(data.registrationDate, "PP", { locale: es })}
-                </span>
+            <div className="flex flex-col space-y-1">
+              <div className="flex space-x-2">
+                <Calendar className="text-primary"></Calendar>
+                <Label>Fecha de la receta</Label>
               </div>
+              <span>{data.orderDetails.prescriptionDate ?? "Sin fecha"}</span>
             </div>
-            <Separator orientation="vertical"></Separator>
-            <div className="flex space-x-2">
-              <Hospital className="text-primary"></Hospital>
-              <div className="flex flex-col gap-1 justify-center items-start">
-                <Label className="text-sm font-medium">Sucursal</Label>
-                <span className="text-sm text-muted-foreground">
-                  {branchQuery.isLoading && "Cargando..."}
-                  {branchQuery.isError && "Error al cargar la sucursal"}
-                  {branchQuery.isSuccess &&
-                    (branchQuery.data.name ?? "Sin nombre")}
-                </span>
+            {staffData.data && (
+              <div className="flex flex-col space-y-1">
+                <div className="flex space-x-2">
+                  <User className="text-primary"></User>
+                  <Label>Personal que generò la órden</Label>
+                </div>
+                <div className="space-y-1">
+                  <span className="capitalize block">{`${
+                    staffData.data.name ?? "NN"
+                  } ${staffData.data.lastName ?? "NN"}`}</span>
+                  <span className="capitalize block text-muted-foreground">
+                    {staffData.data.email ?? "No email"}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
+          <CommonDataMetadataMobile
+            branchData={branchQuery.data}
+            patientData={data.patientDetails}
+          ></CommonDataMetadataMobile>
         </DialogHeader>
         <div className="overflow-auto max-h-[calc(100dvh-12rem)] space-y-3">
           {/* <MovementsTable data={data}></MovementsTable> */}
-          <PrescriptionServicesCardTable
-            data={data.prescriptionServices}
-          ></PrescriptionServicesCardTable>
-          <PrescriptionMedicamentsCardTable
-            data={data.prescriptionMedicaments}
-          ></PrescriptionMedicamentsCardTable>
-          {data.description && (
-              <Card className="w-full">
-                <CardHeader>
-                  <CardTitle className="text-primary flex space-x-2 items-center">
-                  <Notebook></Notebook>
-                    <span>Notas adicionales</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Información adicional ingresada por el médico
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="w-full px-5 rounded-md">
-                  <div className="bg-primary/10 py-4 px-4 overflow-x-auto text-start text-pretty w-full rounded-md">
-                    {data.description}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+          <BaseServiceItemMetadataCardTable
+            data={data.orderDetails.services}
+          ></BaseServiceItemMetadataCardTable>
+          <ProductMovementsMetadataTable
+            orderId={orderId}
+            data={data.orderDetails.products}
+          ></ProductMovementsMetadataTable>
+          <TransactionDetailsMetadataCardTable
+            data={data.orderDetails.transactionDetails}
+          ></TransactionDetailsMetadataCardTable>
         </div>
         <DrawerFooter>
           <DialogFooterContent />

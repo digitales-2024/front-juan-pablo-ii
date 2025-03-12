@@ -3817,15 +3817,8 @@ export interface components {
             notes?: string;
             /** @description Estado de eliminación lógica. */
             isActive: boolean;
-            /**
-             * @description Metadatos adicionales en formato JSON
-             * @example {
-             *       "pacienteId": "PAT-12345",
-             *       "medicoId": "DOC-67890",
-             *       "seguro": "Seguro Salud Total"
-             *     }
-             */
-            metadata?: Record<string, never>;
+            /** @description Metadatos adicionales en formato JSON */
+            metadata?: string;
         };
         Payment: {
             id: string;
@@ -3927,15 +3920,8 @@ export interface components {
             notes?: string;
             /** @description Estado de eliminación lógica. */
             isActive: boolean;
-            /**
-             * @description Metadatos adicionales en formato JSON
-             * @example {
-             *       "pacienteId": "PAT-12345",
-             *       "medicoId": "DOC-67890",
-             *       "seguro": "Seguro Salud Total"
-             *     }
-             */
-            metadata?: Record<string, never>;
+            /** @description Metadatos adicionales en formato JSON */
+            metadata?: string;
             /** @description Detalles del pago */
             payments: components["schemas"]["Payment"][];
         };
@@ -6387,14 +6373,7 @@ export interface components {
             notes?: string;
             /** @description Estado de eliminación lógica. */
             isActive: boolean;
-            /**
-             * @description Metadatos adicionales en formato JSON
-             * @example {
-             *       "pacienteId": "PAT-12345",
-             *       "medicoId": "DOC-67890",
-             *       "seguro": "Seguro Salud Total"
-             *     }
-             */
+            /** @description Metadatos adicionales en formato JSON */
             metadata?: components["schemas"]["MedicalAppointmentMetadata"];
         };
         PrescriptionProductItemDto: {
@@ -6483,7 +6462,7 @@ export interface components {
         };
         ProductMovement: {
             /** @description Identificador único del producto */
-            productId: string;
+            id: string;
             /** @description Identificador único del almacén */
             storageId: string;
             /** @description Nombre del producto */
@@ -6607,14 +6586,7 @@ export interface components {
             notes?: string;
             /** @description Estado de eliminación lógica. */
             isActive: boolean;
-            /**
-             * @description Metadatos adicionales en formato JSON
-             * @example {
-             *       "pacienteId": "PAT-12345",
-             *       "medicoId": "DOC-67890",
-             *       "seguro": "Seguro Salud Total"
-             *     }
-             */
+            /** @description Metadatos adicionales en formato JSON */
             metadata?: components["schemas"]["MedicalPrescriptionMetadata"];
         };
         ProductSaleItemDto: {
@@ -6791,14 +6763,7 @@ export interface components {
             notes?: string;
             /** @description Estado de eliminación lógica. */
             isActive: boolean;
-            /**
-             * @description Metadatos adicionales en formato JSON
-             * @example {
-             *       "pacienteId": "PAT-12345",
-             *       "medicoId": "DOC-67890",
-             *       "seguro": "Seguro Salud Total"
-             *     }
-             */
+            /** @description Metadatos adicionales en formato JSON */
             metadata?: components["schemas"]["ProductSaleMetadata"];
         };
         CreatePatientDto: {

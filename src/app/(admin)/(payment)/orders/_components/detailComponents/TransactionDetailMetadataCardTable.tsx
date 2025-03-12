@@ -40,24 +40,21 @@ export function TransactionDetailsMetadataCardTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead colSpan={3}></TableHead>
-                <TableHead>Total</TableHead>
+                <TableHead className="text-center w-full">Total</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {!data ? (
                 <TableRow>
                   <TableCell
-                    colSpan={4}
-                    className="text-center text-black/50 font-bold"
+                    className="text-center w-full text-black/50 font-bold"
                   >
                     No hay totales
                   </TableCell>
                 </TableRow>
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3}></TableCell>
-                  <TableCell className="text-ellipsis">
+                  <TableCell className="text-center w-full text-primary font-bold text-lg">
                     {data.total.toLocaleString("es-PE", {
                       style: "currency",
                       currency: "PEN",

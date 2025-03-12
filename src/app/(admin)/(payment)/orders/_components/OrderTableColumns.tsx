@@ -8,6 +8,7 @@ import {
   orderTypeConfig,
   paymentOptionButtons,
   paymentStatusConfig,
+  ProductSaleMetadata,
 } from "../_interfaces/order.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
@@ -39,6 +40,8 @@ import { VerifyPaymentDialog } from "./paymentComponents/verifyPayment/VerifyPay
 import { RefundPaymentDialog } from "./paymentComponents/refundPayment/RefundPaymentDialog";
 import { CancelPaymentDialog } from "./paymentComponents/cancelPayment/CancelPaymentDialog";
 import { RejectPaymentDialog } from "./paymentComponents/rejectPayment/RejectPaymentDialog";
+import { ShowProductSaleMetadataDetailsDialog } from "./detailComponents/ShowProductSaleMetadataDialog";
+import { toast } from "sonner";
 // import Image from "next/image";
 
 export const columns: ColumnDef<DetailedOrder>[] = [
@@ -247,18 +250,6 @@ export const columns: ColumnDef<DetailedOrder>[] = [
     ),
   },
   {
-    accessorKey: "isActive",
-    meta: { title: "Elim. Lógica" },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Elim. Lógica" />
-    ),
-    cell: ({ row }) => (
-      <Badge variant={row.original.isActive ? "success" : "destructive"}>
-        {row.original.isActive ? "Activo" : "Inactivo"}
-      </Badge>
-    ),
-  },
-  {
     accessorKey: "metadata",
     size: 10,
     meta: {
@@ -266,14 +257,57 @@ export const columns: ColumnDef<DetailedOrder>[] = [
     },
     header: () => <div>Detalles</div>,
     cell: ({ row }) => {
-      const MetadataDialog: ReactElement = <div></div>
+      if (!row.original.metadata) {
+        return null;
+      }
+      let metadata: unknown = null;
+      try {
+        if (row.original.metadata) {
+          metadata = JSON.parse(row.original.metadata);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error("Error al parsear metadata: " + error.message);
+        }
+        toast.error("Error al parsear metadata");
+        return null;
+      }
+      
+      let MetadataDialog: ()=>ReactElement = () => <div></div>;
+      switch (row.original.type) {
+        case "PRODUCT_SALE_ORDER":
+          MetadataDialog = ()=>(<ShowProductSaleMetadataDetailsDialog
+            data={metadata as ProductSaleMetadata}
+            orderId={row.original.id}
+          ></ShowProductSaleMetadataDetailsDialog>)
+          break;
+        // case "":
+        //   MetadataDialog = <div>
+        //     {/* <ShowPrescriptionDetailsDialog
+        //       data={row.original}
+        //     ></ShowPrescriptionDetailsDialog> */}
+        //   </div>
+        //   break;
+        default:
+          MetadataDialog = ()=> <div></div>
+          break;
+      }
       return <div>
-        {/* <ShowPrescriptionDetailsDialog
-          data={row.original}
-        ></ShowPrescriptionDetailsDialog> */}
-        <MetadataDialog></MetadataDialog>
+        {<MetadataDialog/>}
       </div>
     },
+  },
+  {
+    accessorKey: "isActive",
+    meta: { title: "¿Archivado?" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="¿Archivado?" />
+    ),
+    cell: ({ row }) => (
+      <Badge variant={row.original.isActive ? "success" : "destructive"}>
+        {row.original.isActive ? "Activo" : "Archivado"}
+      </Badge>
+    ),
   },
   // {
   //   accessorKey: "createdAt",

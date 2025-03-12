@@ -393,7 +393,7 @@ export type DetailedOrder = {
   date: string;
   notes?: string;
   isActive: boolean;
-  metadata?: Record<string, never>;
+  metadata?: string; //is JSON stringified
   payments: Payment[];
 };
 
@@ -708,33 +708,47 @@ export type ServiceSaleItemDto = {
   serviceId: string;
   quantity: number;
 };
+export type ServiceSaleLocalItemDto = {
+  serviceId: string;
+  quantity: number;
+  appointmentId? : string; //Artificial field
+};
 export type CreateServiceSaleBillingDtoPrototype =
   components["schemas"]["CreateMedicalPrescriptionBillingDto"];
 
 // {
-//   appointmentIds: string[];
-//   products: components["schemas"]["PrescriptionProductItemDto"][];
-//   patientId: string;
-//   recipeId: string;
-//   branchId: string;
-//   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
-//   amountPaid?: number;
-//   currency: string;
-//   voucherNumber?: string;
-//   notes?: string;
-//   metadata?: Record<string, never>;
+  //   branchId: string;
+  //   patientId: string;
+  //   recipeId: string;
+  //   currency: string; 
+  //   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+  //   notes?: string;
+  //   amountPaid?: number; //NO deberia
+  //   voucherNumber?: string; //NO deberia
+  //   products: components["schemas"]["PrescriptionProductItemDto"][];
+  //   appointmentIds: string[];
+  //   metadata?: Record<string, never>;
 // };
+
 export type CreatePrescriptionBillingDto = {
   branchId: string;
   patientId: string;
-  storageLocation?: string;
-  batchNumber?: string;
-  referenceId?: string;
   currency: string;
   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   products: ProductSaleItemDto[];
-  services: ServiceSaleItemDto[];
+  appointmentIds: string[];
+  metadata?: Record<string, never>;
+};
+
+export type CreatePrescriptionBillingLocalDto = {
+  branchId: string;
+  patientId: string;
+  currency: string;
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+  notes?: string;
+  products: ProductSaleItemDto[];
+  services: ServiceSaleLocalItemDto[];
   metadata?: Record<string, never>;
 };
 
@@ -782,7 +796,7 @@ export const createProductSaleBillingSchema = z.object({
     .min(1, { message: "Debe seleccionar al menos un producto" }),
 }) satisfies z.ZodType<CreateProductSaleBillingDto>;
 
-export const createPrescriptionBillingSchema = z
+export const createPrescriptionBillingLocalSchema = z
   .object({
     branchId: z.string({
       required_error: "Debe seleccionar la sucursal que genera la venta",
@@ -814,10 +828,41 @@ export const createPrescriptionBillingSchema = z
         quantity: z.coerce
           .number()
           .min(1, { message: "La cantidad debe ser mayor a 0" }),
+        appointmentId: z.string().optional(),
       })
     ),
   })
   .refine((data) => data.products.length > 0 || data.services.length > 0, {
+    message: "Debe agregar al menos un producto o un servicio",
+    path: ["products"],
+  }) satisfies z.ZodType<CreatePrescriptionBillingLocalDto>;
+
+  export const createPrescriptionBillingSchema = z
+  .object({
+    branchId: z.string({
+      required_error: "Debe seleccionar la sucursal que genera la venta",
+    }),
+    patientId: z.string({
+      required_error: "Debe seleccionar un paciente",
+    }),
+    currency: z.string(),
+    paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
+    notes: z.string().optional(),
+    metadata: z.record(z.never()).optional(),
+    products: z.array(
+      z.object({
+        productId: z.string(),
+        quantity: z.coerce
+          .number()
+          .min(1, { message: "La cantidad debe ser mayor a 0" }),
+        storageId: z.string({
+          required_error: "Debe seleccionar un almacén",
+        }),
+      })
+    ),
+    appointmentIds: z.array(z.string()),
+  })
+  .refine((data) => data.products.length > 0 || data.appointmentIds.length > 0, {
     message: "Debe agregar al menos un producto o un servicio",
     path: ["products"],
   }) satisfies z.ZodType<CreatePrescriptionBillingDto>;
@@ -866,7 +911,7 @@ export type SaleOrderDetailsPrototype =
   components["schemas"]["SaleOrderDetails"];
 export type ProductMovementPrototype = components["schemas"]["ProductMovement"];
 export type ProductMovement = {
-  productId: string;
+  id: string;
   storageId: string;
   name: string;
   quantity: number;

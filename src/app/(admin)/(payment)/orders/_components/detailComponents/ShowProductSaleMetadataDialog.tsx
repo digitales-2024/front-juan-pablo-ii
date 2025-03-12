@@ -2,13 +2,7 @@
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import {
-  Building2,
-  CalendarCheck2,
-  Hospital,
-  MapPinHouse,
-  Notebook,
-  PillBottle,
-  SquareUserRound,
+  Boxes,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,27 +20,15 @@ import {
   DrawerFooter,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { PrescriptionMedicamentsCardTable } from "./PrescriptionMedicamentsCardTable";
-import { PrescriptionWithPatient } from "../../_interfaces/prescription.interface";
-import { PrescriptionServicesCardTable } from "./OrderPatientDetailsMetadataCardTable";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { ProductSaleMetadata } from "../../_interfaces/order.interface";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProductMovementsMetadataTable } from "./ProductMovementMetadtaCardTable";
+import { ProductMovementsMetadataTable } from "./ProductMovementMetadataCardTable";
 import { TransactionDetailsMetadataCardTable } from "./TransactionDetailMetadataCardTable";
+import { CommonDataMetadataMobile } from "./CommonDataMetadataMobile";
+import { CommonDataMetadata } from "./CommonDataMetadata";
 
-export function ShowSaleMetadataDetailsDialog({
+export function ShowProductSaleMetadataDetailsDialog({
   data,
   orderId,
 }: {
@@ -107,7 +89,7 @@ export function ShowSaleMetadataDetailsDialog({
       aria-label="Open menu"
       className="flex p-2 data-[state=open]:bg-muted text-sm bg-primary/10 hover:scale-105 hover:transition-all"
     >
-      <PillBottle className="text-primary !size-6" />
+      <Boxes className="text-primary !size-6" />
       {SHOW_SALE_METADATA_DETAILS_MESSAGES.button}
     </Button>
   );
@@ -128,50 +110,10 @@ export function ShowSaleMetadataDetailsDialog({
                 {SHOW_SALE_METADATA_DETAILS_MESSAGES.description}
               </DialogDescription>
             </div>
-            <div>
-              <div className="flex rounded-sm bg-primary/10 p-4 w-fit space-x-4 items-center">
-                <div className="flex space-x-2">
-                  <Building2 className="text-primary"></Building2>
-                  <div className="flex flex-col gap-1 justify-center items-start">
-                    <Label className="text-sm font-medium">
-                      Sucursal creación
-                    </Label>
-                    <span className="text-sm text-muted-foreground">
-                      {branchQuery.data?.name ?? "Sin nombre"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex rounded-sm bg-primary/10 p-4 w-fit space-x-4 items-center">
-              <div className="flex space-x-2">
-                <SquareUserRound className="text-primary"></SquareUserRound>
-                <div className="flex flex-col gap-2 justify-center items-start">
-                  <Label className="text-sm font-medium">Paciente</Label>
-                  <div className="space-y-1">
-                    <span className="text-sm text-muted-foreground">
-                      {data.patientDetails.fullName}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {data.patientDetails.dni ?? "No hay DNI"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <Separator orientation="vertical"></Separator>
-              <div className="flex space-x-2">
-                <MapPinHouse className="text-primary"></MapPinHouse>
-                <div className="flex flex-col gap-1 justify-center items-start">
-                  <Label className="text-sm font-medium">Contacto</Label>
-                  <span className="text-sm text-muted-foreground">
-                    {data.patientDetails.address ?? "Sin dirección"}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {data.patientDetails.phone ?? "Sin teléfono"}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <CommonDataMetadata
+              patientData={data.patientDetails}
+              branchData={branchQuery.data}
+            ></CommonDataMetadata>
           </DialogHeader>
           <div className="overflow-auto max-h-full space-y-3">
             {/* <MovementsTable data={data}></MovementsTable> */}
@@ -196,7 +138,7 @@ export function ShowSaleMetadataDetailsDialog({
       <DrawerTrigger asChild>
         <TriggerButton />
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="overflow-auto">
         <DialogHeader className="sm:flex-row justify-between">
           <div className="space-y-2">
             <DialogTitle className="w-full">
@@ -206,49 +148,10 @@ export function ShowSaleMetadataDetailsDialog({
               {SHOW_SALE_METADATA_DETAILS_MESSAGES.description}
             </DialogDescription>
           </div>
-          <div className="flex flex-col">
-            <div className="flex space-x-2">
-              <Building2 className="text-primary"></Building2>
-              <div className="flex flex-col gap-1 justify-center items-start">
-                <Label className="text-sm font-medium">Sucursal creación</Label>
-                <span className="text-sm text-muted-foreground">
-                  {branchData?.name ?? "Sin nombre"}
-                </span>
-              </div>
-            </div>
-            <div className="flex rounded-sm bg-primary/10 p-4 w-full space-x-4 items-center justify-center">
-              <div className="flex space-x-2">
-                <SquareUserRound className="text-primary"></SquareUserRound>
-                <div className="flex flex-col gap-1 justify-center items-start">
-                  <Label className="text-sm font-medium">Paciente</Label>
-                  <div className="space-y-1">
-                    <span className="text-sm text-muted-foreground">
-                      {patientData.fullName}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {patientData.dni ?? "No hay DNI"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <Separator orientation="vertical"></Separator>
-              <div className="flex space-x-2">
-                <Hospital className="text-primary"></Hospital>
-                <div className="flex flex-col gap-1 justify-center items-start">
-                  <MapPinHouse className="text-primary"></MapPinHouse>
-                  <div className="flex flex-col gap-1 justify-center items-start">
-                    <Label className="text-sm font-medium">Contacto</Label>
-                    <span className="text-sm text-muted-foreground">
-                      {patientData.address ?? "Sin dirección"}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {patientData.phone ?? "Sin teléfono"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <CommonDataMetadataMobile
+            branchData={branchQuery.data}
+            patientData={data.patientDetails}
+          ></CommonDataMetadataMobile>
         </DialogHeader>
         <div className="overflow-auto max-h-[calc(100dvh-12rem)] space-y-3">
           {/* <MovementsTable data={data}></MovementsTable> */}
