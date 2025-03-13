@@ -47,6 +47,7 @@ export type UpdateAppointmentResponseBase =
 export async function getDoctorConfirmedAppointments(
   doctorId: string
 ): Promise<AppointmentsResponseBase> {
+  console.log("🚀 ~ getDoctorConfirmedAppointments:", doctorId)
   try {
     const [appointments, error] = await http.get<AppointmentResponse[]>(
       `/appointments-user/doctor/${doctorId}/confirmed`
@@ -90,6 +91,7 @@ export async function getDoctorConfirmedAppointments(
 export async function getDoctorCompletedAppointments(
   doctorId: string
 ): Promise<AppointmentsResponseBase> {
+  console.log("🚀 ~ getDoctorCompletedAppointments:", doctorId)
   try {
     const [appointments, error] = await http.get<AppointmentResponse[]>(
       `/appointments-user/doctor/${doctorId}/completed`
@@ -130,6 +132,7 @@ export async function getDoctorCompletedAppointments(
  */
 export async function getAllConfirmedAppointments(): Promise<AppointmentsResponseBase> {
   try {
+    console.log("🚀 ~ getAllConfirmedAppointments")
     const [appointments, error] = await http.get<AppointmentResponse[]>(
       `/appointments-user/admin/confirmed`
     );
@@ -169,6 +172,7 @@ export async function getAllConfirmedAppointments(): Promise<AppointmentsRespons
  */
 export async function getAllCompletedAppointments(): Promise<AppointmentsResponseBase> {
   try {
+    console.log("🚀 ~ getAllCompletedAppointments")
     const [appointments, error] = await http.get<AppointmentResponse[]>(
       `/appointments-user/admin/completed`
     );
@@ -214,6 +218,7 @@ export async function getAllCompletedAppointments(): Promise<AppointmentsRespons
 export async function getBranchConfirmedAppointments(
   userId: string
 ): Promise<AppointmentsResponseBase> {
+  console.log("🚀 ~ getBranchConfirmedAppointments:", userId)
   try {
     const [appointments, error] = await http.get<AppointmentResponse[]>(
       `/appointments-user/branch/${userId}/confirmed`
@@ -260,6 +265,7 @@ export async function getBranchConfirmedAppointments(
 export async function getBranchCompletedAppointments(
   userId: string
 ): Promise<AppointmentsResponseBase> {
+  console.log("🚀 ~ getBranchCompletedAppointments:", userId)
   try {
     const [appointments, error] = await http.get<AppointmentResponse[]>(
       `/appointments-user/branch/${userId}/completed`
@@ -308,6 +314,7 @@ export async function updateAppointmentStatus(
   id: string,
   data: UpdateAppointmentUserDto
 ): Promise<UpdateAppointmentResponseBase> {
+  console.log("🚀 ~ data:", data)
   try {
     const [response, error] = await http.patch<
       BaseApiResponse<AppointmentResponse>
