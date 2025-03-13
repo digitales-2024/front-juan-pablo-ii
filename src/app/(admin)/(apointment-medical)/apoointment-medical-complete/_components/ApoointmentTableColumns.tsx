@@ -27,7 +27,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useAppointment } from "../_hooks/useApointmentMedical";
+import { useAppointmentComplete } from "../_hooks/useApointmentMedical";
 import { toast } from "sonner";
 
 interface UserRole {
@@ -63,7 +63,7 @@ export const getAppointmentColumns = (
   userId?: string,
   onRefresh?: () => void
 ): ColumnDef<AppointmentResponse>[] => {
-  const { updateStatusMutation } = useAppointment();
+  const { updateStatusMutation } = useAppointmentComplete();
 
   const baseColumns: ColumnDef<AppointmentResponse>[] = [
     {
@@ -216,35 +216,6 @@ export const getAppointmentColumns = (
         );
       },
     },
-  ];
-
-  // Columnas adicionales para administrativos y super admin
-  const additionalColumns: ColumnDef<AppointmentResponse>[] = [
-    {
-      accessorKey: "staff",
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title="Médico"
-          className="text-center justify-center flex items-center"
-        >
-          <div className="flex items-center justify-center w-full">
-            <UserRound className="h-4 w-4 mr-1 text-amber-600" />
-            <span>Médico</span>
-          </div>
-        </DataTableColumnHeader>
-      ),
-      cell: ({ row }) => (
-        <div className={cellContainerClass}>
-          <div className={cellBgStyles.staff}>
-            <div className="flex items-center">
-              <UserRound className={cn(cellIconClass, "text-amber-600")} />
-              <span>{row.original.staff}</span>
-            </div>
-          </div>
-        </div>
-      ),
-    },
     {
       accessorKey: "branch",
       header: ({ column }) => (
@@ -291,6 +262,35 @@ export const getAppointmentColumns = (
                 />
               </svg>
               <span>{row.original.branch}</span>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  // Columnas adicionales para administrativos y super admin
+  const additionalColumns: ColumnDef<AppointmentResponse>[] = [
+    {
+      accessorKey: "staff",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title="Médico"
+          className="text-center justify-center flex items-center"
+        >
+          <div className="flex items-center justify-center w-full">
+            <UserRound className="h-4 w-4 mr-1 text-amber-600" />
+            <span>Médico</span>
+          </div>
+        </DataTableColumnHeader>
+      ),
+      cell: ({ row }) => (
+        <div className={cellContainerClass}>
+          <div className={cellBgStyles.staff}>
+            <div className="flex items-center">
+              <UserRound className={cn(cellIconClass, "text-amber-600")} />
+              <span>{row.original.staff}</span>
             </div>
           </div>
         </div>

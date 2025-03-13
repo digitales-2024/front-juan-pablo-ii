@@ -16,44 +16,14 @@ import {
     DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { PencilIcon, BanIcon, ActivityIcon } from "lucide-react";
-import { DeactivateAppointmentDialog } from "./DeactivateAppointmentDialog"; // Asegúrate de que este componente exista
-import { ReactivateAppointmentDialog } from "./ReactivateAppointmentDialog"; // Asegúrate de que este componente exista
-import { Checkbox } from "@/components/ui/checkbox";
+import { CalendarIcon, XIcon, RefreshCcw, CreditCard } from "lucide-react";
+import { CancelAppointmentDialog } from "./CancelAppointmentDialog";
+import { RefundAppointmentDialog } from "./RefundAppointmentDialog";
+import { RescheduleAppointmentDialog } from "./RescheduleAppointmentDialog";
 import { Appointment, appointmentStatusConfig, AppointmentStatus } from "../_interfaces/appointments.interface";
 import { cn } from "@/lib/utils";
 
 export const columns: ColumnDef<Appointment>[] = [
-    {
-        id: "select",
-        size: 10,
-        header: ({ table }) => (
-            <div className="px-2">
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label="Select all"
-                    className="translate-y-0.5"
-                />
-            </div>
-        ),
-        cell: ({ row }) => (
-            <div className="px-2">
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label="Select row"
-                    className="translate-y-0.5"
-                />
-            </div>
-        ),
-        enableSorting: false,
-        enableHiding: false,
-        enablePinning: true,
-    },
     {
         accessorKey: "start",
         header: ({ column }) => (
@@ -82,6 +52,16 @@ export const columns: ColumnDef<Appointment>[] = [
         cell: ({ row }) => {
             const patient = row.original.patient;
             return patient ? `${patient.name} ${patient.lastName}` : "N/A";
+        },
+    },
+    {
+        accessorKey: "patientDni",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="DNI" />
+        ),
+        cell: ({ row }) => {
+            const patient = row.original.patient;
+            return patient?.dni || "N/A";
         },
     },
     {
@@ -151,29 +131,34 @@ export const columns: ColumnDef<Appointment>[] = [
             <DataTableColumnHeader column={column} title="Acciones" />
         ),
         cell: function Cell({ row }) {
-            const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
-            const [showReactivateDialog, setShowReactivateDialog] = useState(false);
-            const [showEditSheet, setShowEditSheet] = useState(false);
+            const [showCancelDialog, setShowCancelDialog] = useState(false);
+            const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+            const [showRefundDialog, setShowRefundDialog] = useState(false);
             const appointment = row.original;
             const isActive = appointment.isActive;
+            const isPending = appointment.status === "PENDING";
+            const isConfirmed = appointment.status === "CONFIRMED";
 
             return (
                 <div>
-                    {isActive ? (
-                        <DeactivateAppointmentDialog
-                            appointment={appointment}
-                            open={showDeactivateDialog}
-                            onOpenChange={setShowDeactivateDialog}
-                            showTrigger={false}
-                        />
-                    ) : (
-                        <ReactivateAppointmentDialog
-                            appointment={appointment}
-                            open={showReactivateDialog}
-                            onOpenChange={setShowReactivateDialog}
-                            showTrigger={false}
-                        />
-                    )}
+                    <CancelAppointmentDialog
+                        appointment={appointment}
+                        open={showCancelDialog}
+                        onOpenChange={setShowCancelDialog}
+                        showTrigger={false}
+                    />
+                    <RefundAppointmentDialog
+                        appointment={appointment}
+                        open={showRefundDialog}
+                        onOpenChange={setShowRefundDialog}
+                        showTrigger={false}
+                    />
+                    <RescheduleAppointmentDialog
+                        appointment={appointment}
+                        open={showRescheduleDialog}
+                        onOpenChange={setShowRescheduleDialog}
+                        showTrigger={false}
+                    />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
@@ -186,36 +171,46 @@ export const columns: ColumnDef<Appointment>[] = [
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40">
                             <DropdownMenuItem
-                                onSelect={() => setShowEditSheet(true)}
-                                disabled={!isActive}
+                                onSelect={() => setShowRescheduleDialog(true)}
+                                disabled={!isActive || !isConfirmed}
                             >
-                                Editar
+                                Reprogramar
                                 <DropdownMenuShortcut>
-                                    <PencilIcon className="size-4" aria-hidden="true" />
+                                    <CalendarIcon className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onSelect={() => window.location.href = '/orders'}
+                                disabled={!isActive}
+                                className="text-emerald-600"
+                            >
+                                Pagar
+                                <DropdownMenuShortcut>
+                                    <CreditCard className="size-4" aria-hidden="true" />
                                 </DropdownMenuShortcut>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            {isActive ? (
-                                <DropdownMenuItem
-                                    onSelect={() => setShowDeactivateDialog(true)}
-                                    className="text-destructive"
-                                >
-                                    Desactivar
-                                    <DropdownMenuShortcut>
-                                        <BanIcon className="size-4" aria-hidden="true" />
-                                    </DropdownMenuShortcut>
-                                </DropdownMenuItem>
-                            ) : (
-                                <DropdownMenuItem
-                                    onSelect={() => setShowReactivateDialog(true)}
-                                    className="text-green-600"
-                                >
-                                    Reactivar
-                                    <DropdownMenuShortcut>
-                                        <ActivityIcon className="size-4" aria-hidden="true" />
-                                    </DropdownMenuShortcut>
-                                </DropdownMenuItem>
-                            )}
+                            <DropdownMenuItem
+                                onSelect={() => setShowRefundDialog(true)}
+                                disabled={!isActive || !isConfirmed}
+                                className="text-amber-600"
+                            >
+                                Reembolsar
+                                <DropdownMenuShortcut>
+                                    <RefreshCcw className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                onSelect={() => setShowCancelDialog(true)}
+                                disabled={!isActive || !isPending}
+                                className="text-destructive"
+                            >
+                                Cancelar
+                                <DropdownMenuShortcut>
+                                    <XIcon className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>

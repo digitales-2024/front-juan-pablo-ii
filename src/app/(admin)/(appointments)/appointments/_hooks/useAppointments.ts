@@ -6,16 +6,34 @@ import {
     CreateAppointmentDto,
     UpdateAppointmentDto,
     DeleteAppointmentsDto,
-    PaginatedAppointmentsResponse
+    PaginatedAppointmentsResponse,
+    CancelAppointmentDto,
+    RefundAppointmentDto,
+    RescheduleAppointmentDto
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
-import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments } from "../_actions/appointments.action";
+import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment } from "../_actions/appointments.action";
 import { useState } from "react";
 import { useSelectedServicesAppointmentsDispatch } from "@/app/(admin)/(payment)/prescriptions/_hooks/useCreateAppointmentForOrder";
 
 interface UpdateAppointmentVariables {
     id: string;
     data: UpdateAppointmentDto;
+}
+
+interface CancelAppointmentVariables {
+    id: string;
+    data: CancelAppointmentDto;
+}
+
+interface RefundAppointmentVariables {
+    id: string;
+    data: RefundAppointmentDto;
+}
+
+interface RescheduleAppointmentVariables {
+    id: string;
+    data: RescheduleAppointmentDto;
 }
 
 export const useAppointments = () => {
@@ -239,6 +257,87 @@ export const useAppointments = () => {
         },
     });
 
+    // Mutación para cancelar una cita
+    const cancelMutation = useMutation<BaseApiResponse<Appointment>, Error, CancelAppointmentVariables>({
+        mutationFn: async ({ id, data }) => {
+            const response = await cancelAppointment(id, data);
+            if ("error" in response) {
+                throw new Error(response.error);
+            }
+            return response;
+        },
+        onSuccess: (res, variables) => {
+            // Actualizar las citas en la caché
+            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
+
+            toast.success("Cita cancelada exitosamente");
+        },
+        onError: (error) => {
+            console.error("💥 Error al cancelar la cita:", error);
+            if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+                toast.error("No tienes permisos para realizar esta acción");
+            } else {
+                toast.error(error.message || "Error al cancelar la cita");
+            }
+        },
+    });
+
+    // Mutación para reembolsar una cita
+    const refundMutation = useMutation<BaseApiResponse<Appointment>, Error, RefundAppointmentVariables>({
+        mutationFn: async ({ id, data }) => {
+            const response = await refundAppointment(id, data);
+            if ("error" in response) {
+                throw new Error(response.error);
+            }
+            return response;
+        },
+        onSuccess: (res, variables) => {
+            // Actualizar las citas en la caché
+            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
+
+            toast.success("Cita reembolsada exitosamente");
+        },
+        onError: (error) => {
+            console.error("💥 Error al reembolsar la cita:", error);
+            if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+                toast.error("No tienes permisos para realizar esta acción");
+            } else {
+                toast.error(error.message || "Error al reembolsar la cita");
+            }
+        },
+    });
+
+    // Mutación para reprogramar una cita
+    const rescheduleMutation = useMutation<BaseApiResponse<Appointment>, Error, RescheduleAppointmentVariables>({
+        mutationFn: async ({ id, data }) => {
+            const response = await rescheduleAppointment(id, data);
+            if ("error" in response) {
+                throw new Error(response.error);
+            }
+            return response;
+        },
+        onSuccess: (res, variables) => {
+            // Actualizar las citas en la caché
+            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
+
+            toast.success("Cita reprogramada exitosamente");
+        },
+        onError: (error) => {
+            console.error("💥 Error al reprogramar la cita:", error);
+            if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+                toast.error("No tienes permisos para realizar esta acción");
+            } else {
+                toast.error(error.message || "Error al reprogramar la cita");
+            }
+        },
+    });
+
     return {
         appointmentsQuery,
         activeAppointmentsQuery,
@@ -252,5 +351,8 @@ export const useAppointments = () => {
         updateMutation,
         deleteMutation,
         reactivateMutation,
+        cancelMutation,
+        refundMutation,
+        rescheduleMutation,
     };
 };

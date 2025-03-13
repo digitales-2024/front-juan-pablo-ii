@@ -12,7 +12,7 @@ export default function CalendarAppointments() {
     const [date, setDate] = useState<Date>(new Date());
     const [appliedFilters, setAppliedFilters] = useState<EventFilterParams>({
         type: 'CITA',
-        status: 'CONFIRMED',
+        status: undefined,
         staffId: undefined,
         branchId: undefined,
         staffScheduleId: undefined,
@@ -26,8 +26,7 @@ export default function CalendarAppointments() {
         setAppliedFilters(prev => ({
             ...prev,
             ...newFilters,
-            type: 'CITA',
-            status: 'CONFIRMED'
+            type: 'CITA'
         }));
     };
 

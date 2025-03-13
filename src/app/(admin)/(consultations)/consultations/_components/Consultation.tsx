@@ -15,6 +15,10 @@ import { useAppointments } from "@/app/(admin)/(appointments)/appointments/_hook
 import { format } from "date-fns";
 import { CreateAppointmentDto } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
 import { toast } from "sonner";
+import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
+import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
+import { getPatientById } from "@/app/(admin)/(patient)/patient/_actions/patient.actions";
+import { getStaffById } from "@/app/(admin)/(staff)/staff/_actions/staff.actions";
 
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
@@ -31,6 +35,10 @@ export default function Consultation() {
 	const [selectedBranchId, setSelectedBranchId] = useState("");
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const { createMutation } = useAppointments();
+
+	// Mover los hooks al nivel superior del componente
+	const { usePatientById } = usePatients();
+	const { oneStaffQuery } = useStaff();
 
 	const form = useForm<ConsultationSchema>({
 		resolver: zodResolver(consultationsSchema),
@@ -247,7 +255,7 @@ export default function Consultation() {
 			console.log('🕒 Hora en Lima calculada desde UTC:', limaHourFromUTC + ':' + startDate.getUTCMinutes());
 
 			// Crear fecha de fin (15 minutos después)
-			const endDate = new Date(startDate.getTime());
+			const endDate = new Date(startDate);
 			endDate.setUTCMinutes(endDate.getUTCMinutes() + 15);
 
 			console.log('📅 Fechas procesadas:', {
@@ -259,6 +267,93 @@ export default function Consultation() {
 				endHourLima: (limaHourFromUTC) + ':' + endDate.getUTCMinutes(),
 				duracionMinutos: 15
 			});
+
+			// Obtener datos del paciente y staff directamente usando las acciones
+			let patientName = 'Paciente desconocido';
+			let patientDni = 'DNI no disponible';
+			let staffName = 'Staff desconocido';
+
+			try {
+				// Obtener paciente
+				const patientResponse = await getPatientById(data.patientId);
+				console.log('👤 Datos del paciente (estructura completa):', JSON.stringify(patientResponse, null, 2));
+
+				// Verificar si patientResponse existe y no tiene error
+				if (patientResponse && !('error' in patientResponse)) {
+					try {
+						// Intentar acceder a los datos del paciente
+						// La respuesta puede tener diferentes estructuras dependiendo de la API
+						let patient;
+
+						if (patientResponse.data) {
+							// Si tiene estructura BaseApiResponse con data
+							patient = patientResponse.data;
+						} else if (typeof patientResponse === 'object') {
+							// Si es directamente el objeto Patient
+							patient = patientResponse;
+						}
+
+						// Verificar si tenemos un objeto patient válido con las propiedades necesarias
+						if (patient && typeof patient === 'object') {
+							if ('name' in patient) {
+								patientName = `${patient.name} ${patient.lastName || ''}`.trim();
+								patientDni = patient.dni || 'DNI no disponible';
+								console.log('✅ Datos del paciente obtenidos correctamente:', patientName, patientDni);
+							} else {
+								console.log('⚠️ El objeto patient no tiene la propiedad name:', patient);
+							}
+						} else {
+							console.log('⚠️ No se pudo obtener un objeto patient válido');
+						}
+					} catch (error) {
+						console.error('❌ Error al procesar los datos del paciente:', error);
+					}
+				} else {
+					console.log('⚠️ Error en patientResponse o no existe:', patientResponse);
+				}
+
+				// Obtener staff
+				const staffResponse = await getStaffById(data.staffId);
+				if (staffResponse && !('error' in staffResponse)) {
+					// staffResponse es directamente el objeto Staff
+					const staff = staffResponse;
+					staffName = `${staff.name} ${staff.lastName || ''}`.trim();
+				}
+			} catch (error) {
+				console.error('Error al obtener datos de paciente o staff:', error);
+				// Continuamos con los valores por defecto
+			}
+
+			// Crear evento de tipo CITA con color gris usando el hook useEvents
+			let eventId = null;
+			try {
+				console.log('🗓️ Creando evento de calendario para la cita...');
+
+				// Crear el objeto para el evento
+				const eventData = {
+					title: `Cita: ${patientName}-${patientDni} Doctor: ${staffName}`,
+					color: 'gray', // Color gris inicial
+					type: EventType.CITA,
+					status: EventStatus.PENDING,
+					start: startDate.toISOString(),
+					end: endDate.toISOString(),
+					staffId: data.staffId,
+					branchId: data.branchId
+				};
+
+				console.log('📦 Datos del evento a crear:', eventData);
+
+				// Usar la mutación del hook useEvents para crear el evento
+				const eventResult = await createEventMutation.mutateAsync(eventData);
+				console.log('✅ Evento creado exitosamente:', eventResult);
+
+				// Guardar el ID del evento para asociarlo con la cita
+				eventId = eventResult.data?.id;
+				console.log('🔑 ID del evento creado:', eventId);
+			} catch (eventError) {
+				console.error('❌ Error al crear el evento:', eventError);
+				// No interrumpimos el flujo principal si falla la creación del evento
+			}
 
 			// Crear objeto para createMutation
 			const appointmentToCreate: CreateAppointmentDto = {
@@ -281,6 +376,40 @@ export default function Consultation() {
 			console.log('✅ Mutation completada exitosamente con resultado:', result);
 
 			console.log("🎉 Appointment creado exitosamente");
+
+			// Crear la orden de facturación para la cita médica
+			try {
+				console.log('💰 Creando orden de facturación para la cita médica...');
+
+				// Verificar que tenemos el ID del appointment
+				if (result.data && result.data.id) {
+					// Crear el objeto para la facturación
+					const billingData: CreateMedicalAppointmentBillingDto = {
+						appointmentId: result.data.id,
+						paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET",
+						currency: "PEN", // Moneda peruana (soles)
+						notes: data.notes || "",
+						metadata: {}
+					};
+
+					console.log('📦 Datos de facturación a crear:', billingData);
+
+					// Usar la mutación del hook useBilling para crear la orden
+					const billingResult = await createMedicalAppointmentOrderMutation.mutateAsync(billingData);
+					console.log('✅ Orden de facturación creada exitosamente:', billingResult);
+
+					// Mostrar mensaje de éxito
+					// toast.success("Cita agendada y facturada exitosamente");
+				} else {
+					console.error('❌ No se pudo obtener el ID del appointment para crear la facturación');
+					toast.success("Cita agendada exitosamente, pero no se pudo crear la facturación");
+				}
+			} catch (billingError) {
+				console.error('❌ Error al crear la orden de facturación:', billingError);
+				toast.success("Cita agendada exitosamente, pero hubo un error al crear la facturación");
+				// No interrumpimos el flujo principal si falla la creación de la facturación
+			}
+
 			// En lugar de resetear todo el formulario, solo limpiamos algunos campos
 			// pero mantenemos la fecha, hora, personal y sucursal seleccionados
 			form.setValue("notes", "");
