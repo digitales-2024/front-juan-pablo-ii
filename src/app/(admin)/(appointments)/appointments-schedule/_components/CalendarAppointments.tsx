@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import CalendarProvider from './calendar/CalendarProvider';
 import Calendar from './calendar/Calendar';
-import { EventFilterParams } from '@/app/(admin)/(staff)/schedules/_hooks/useEvents';
+import { EventFilterParams } from '@/app/(admin)/(staff)/schedules/_actions/event.actions';
 import { CalendarEvent, Mode } from '@/app/(admin)/(staff)/schedules/_types/CalendarTypes';
 import { EventFilters } from './calendar/header/filters/EventFilters';
 
