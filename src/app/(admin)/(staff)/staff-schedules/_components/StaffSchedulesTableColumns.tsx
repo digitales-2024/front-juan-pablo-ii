@@ -69,6 +69,13 @@ export const columns: ColumnDef<StaffSchedule>[] = [
     cell: ({ row }) => `${row.original.staff?.name} ${row.original.staff?.lastName}`,
   },
   {
+    accessorKey: "branch.name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Sucursal" />
+    ),
+    cell: ({ row }) => row.original.branch?.name || "Sin sucursal",
+  },
+  {
     accessorKey: "daysOfWeek",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Días" />

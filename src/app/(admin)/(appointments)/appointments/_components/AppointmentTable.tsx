@@ -53,6 +53,7 @@ export function AppointmentTable({
                 cancellationReason: false,
                 createdAt: false,
                 updatedAt: false,
+                // La columna patientDni estará visible por defecto al no incluirla aquí
             }}
             onTableChange={handleTableChange}
             totalCount={totalCount}

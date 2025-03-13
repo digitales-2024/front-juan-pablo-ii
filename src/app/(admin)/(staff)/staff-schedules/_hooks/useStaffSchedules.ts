@@ -81,12 +81,19 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
       const staffFromCache = queryClient.getQueryData<Staff[]>(["staff"]);
       const selectedStaff = staffFromCache?.find(member => member.id === variables.staffId);
 
+      // Obtener la sucursal desde la queryClient
+      const branchesFromCache = queryClient.getQueryData<any[]>(["branches"]);
+      const selectedBranch = branchesFromCache?.find(branch => branch.id === variables.branchId);
+
       // Actualizar ambas versiones de la query
       const newSchedule = {
         ...res.data,
         staff: selectedStaff ? {
           name: selectedStaff.name,
           lastName: selectedStaff.lastName
+        } : undefined,
+        branch: selectedBranch ? {
+          name: selectedBranch.name
         } : undefined
       };
 
@@ -136,7 +143,7 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
       }
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: (res, variables) => {
       const queryKeysToUpdate = [
         ["staff-schedules", null],  // Nombre actualizado
         ["staff-schedules", {}],    // Versión con filtros vacíos
@@ -152,7 +159,8 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
               return {
                 ...schedule,
                 ...res.data,
-                staff: schedule.staff // Mantener datos existentes
+                staff: schedule.staff, // Mantener datos existentes del staff
+                branch: schedule.branch // Mantener datos existentes de la sucursal
               };
             }
             return schedule;
@@ -160,10 +168,28 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
         });
       });
 
+      // Invalidar todas las queries de calendar-turns
+      queryClient.invalidateQueries({
+        queryKey: ['calendar-turns'],
+        exact: false
+      });
+
       toast.success("Horario actualizado exitosamente");
+
+      // Regenerar eventos si el horario no es de tipo YEARLY
+      if (res.data?.id && variables.data.recurrence?.frequency !== 'YEARLY') {
+        generateEventsMutation.mutate(res.data.id, {
+          onSuccess: () => {
+            // Invalidar nuevamente después de generar los eventos
+            queryClient.invalidateQueries({
+              queryKey: ['calendar-turns'],
+              exact: false
+            });
+          }
+        });
+      }
     },
     onError: (error) => {
-      console.error("💥 Error en la mutación:", error);
       if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
