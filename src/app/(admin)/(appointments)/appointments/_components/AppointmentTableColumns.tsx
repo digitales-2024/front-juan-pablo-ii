@@ -172,7 +172,7 @@ export const columns: ColumnDef<Appointment>[] = [
                         <DropdownMenuContent align="end" className="w-40">
                             <DropdownMenuItem
                                 onSelect={() => setShowRescheduleDialog(true)}
-                                disabled={!isActive || !isPending}
+                                disabled={!isActive || !isConfirmed}
                             >
                                 Reprogramar
                                 <DropdownMenuShortcut>

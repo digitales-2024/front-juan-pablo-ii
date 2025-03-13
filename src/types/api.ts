@@ -1295,6 +1295,23 @@ export interface paths {
         patch: operations["AppointmentController_markAsNoShow"];
         trace?: never;
     };
+    "/api/v1/appointments/{id}/reschedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reprogramar cita médica */
+        patch: operations["AppointmentController_reschedule"];
+        trace?: never;
+    };
     "/api/v1/events/filter": {
         parameters: {
             query?: never;
@@ -4544,6 +4561,8 @@ export interface components {
             noShowReason: string;
             rescheduledFromId: string;
             isActive: boolean;
+            /** @description Motivo de la reprogramación */
+            rescheduleReason?: string;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -4652,6 +4671,18 @@ export interface components {
              * @example El paciente no se presentó sin previo aviso
              */
             noShowReason: string;
+        };
+        RescheduleAppointmentDto: {
+            /**
+             * @description Nueva fecha y hora de la cita
+             * @example 2024-03-20T15:00:00Z
+             */
+            newDateTime: string;
+            /**
+             * @description Motivo de la reprogramación
+             * @example El paciente solicitó cambiar la fecha por motivos personales
+             */
+            rescheduleReason: string;
         };
         Event: Record<string, never>;
         /**
@@ -6198,7 +6229,8 @@ export interface components {
             name: string;
             precio: number;
             codigoProducto: string;
-            uso: Record<string, never>;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             unidadMedida: string;
             Stock: components["schemas"]["StockProduct"][];
         };
@@ -10982,6 +11014,46 @@ export interface operations {
             };
         };
     };
+    AppointmentController_reschedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RescheduleAppointmentDto"];
+            };
+        };
+        responses: {
+            /** @description Cita médica reprogramada exitosamente */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Appointment"];
+                };
+            };
+            /** @description Datos de entrada inválidos o cita no encontrada */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     EventController_findEventsByFilter: {
         parameters: {
             query?: {
@@ -10992,7 +11064,7 @@ export interface operations {
                 /** @description ID de la sucursal para filtrar eventos */
                 branchId?: string;
                 /** @description Estado del evento (PENDING, CONFIRMED, CANCELLED, COMPLETED, NO_SHOW) */
-                status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+                status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW" | "RESCHEDULED";
                 /** @description ID del horario del personal para filtrar eventos */
                 staffScheduleId?: string;
                 /** @description Fecha inicial (YYYY-MM-DD) */
@@ -14697,7 +14769,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
-                use: unknown;
+                use: "VENTA" | "INTERNO" | "OTRO";
             };
             cookie?: never;
         };
@@ -14722,7 +14794,7 @@ export interface operations {
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
                 branchId: string;
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
-                productUse: unknown;
+                productUse: "VENTA" | "INTERNO" | "OTRO";
             };
             cookie?: never;
         };
