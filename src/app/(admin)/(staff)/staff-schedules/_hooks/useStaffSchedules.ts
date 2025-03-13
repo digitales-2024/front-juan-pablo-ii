@@ -81,12 +81,19 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
       const staffFromCache = queryClient.getQueryData<Staff[]>(["staff"]);
       const selectedStaff = staffFromCache?.find(member => member.id === variables.staffId);
 
+      // Obtener la sucursal desde la queryClient
+      const branchesFromCache = queryClient.getQueryData<any[]>(["branches"]);
+      const selectedBranch = branchesFromCache?.find(branch => branch.id === variables.branchId);
+
       // Actualizar ambas versiones de la query
       const newSchedule = {
         ...res.data,
         staff: selectedStaff ? {
           name: selectedStaff.name,
           lastName: selectedStaff.lastName
+        } : undefined,
+        branch: selectedBranch ? {
+          name: selectedBranch.name
         } : undefined
       };
 
@@ -152,7 +159,8 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
               return {
                 ...schedule,
                 ...res.data,
-                staff: schedule.staff // Mantener datos existentes
+                staff: schedule.staff, // Mantener datos existentes del staff
+                branch: schedule.branch // Mantener datos existentes de la sucursal
               };
             }
             return schedule;
@@ -163,7 +171,6 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
       toast.success("Horario actualizado exitosamente");
     },
     onError: (error) => {
-      console.error("💥 Error en la mutación:", error);
       if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {

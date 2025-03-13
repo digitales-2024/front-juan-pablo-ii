@@ -7,6 +7,9 @@ export type StaffSchedule = components['schemas']['StaffSchedule'] & {
     name: string;
     lastName: string;
   };
+  branch?: {
+    name: string;
+  };
 };
 export type CreateStaffScheduleDto = components['schemas']['CreateStaffScheduleDto'];
 export type UpdateStaffScheduleDto = components['schemas']['UpdateStaffScheduleDto'];
