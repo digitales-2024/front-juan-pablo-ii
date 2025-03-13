@@ -14,6 +14,7 @@ import {
 import { BaseApiResponse } from "@/types/api/types";
 import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment } from "../_actions/appointments.action";
 import { useState } from "react";
+import { useSelectedServicesAppointmentsDispatch } from "@/app/(admin)/(payment)/prescriptions/_hooks/useCreateAppointmentForOrder";
 
 interface UpdateAppointmentVariables {
     id: string;
@@ -41,6 +42,7 @@ export const useAppointments = () => {
         page: 1,
         limit: 10
     });
+    const dispatch = useSelectedServicesAppointmentsDispatch();
 
     // Query para obtener las citas
     const appointmentsQuery = useQuery({
@@ -121,6 +123,36 @@ export const useAppointments = () => {
             toast.success(res.message);
         },
         onError: (error) => {
+            toast.error(error.message);
+        }
+    });
+
+    const createMutationForOrder = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
+        mutationFn: async (data) => {
+            console.log("Datos enviados para crear la cita:", data);
+            const response = await createAppointment(data);
+            if ("error" in response) {
+                throw new Error(response.error);
+            }
+            return response;
+        },
+        onSuccess: (res) => {
+            queryClient.setQueryData<Appointment[]>(["appointments"], (oldAppointments) => {
+                if (!oldAppointments) return [res.data];
+                return [...oldAppointments, res.data];
+            });
+
+            //Always remember to initilize useSelectedServicesAppointments wherever in the code
+            dispatch({ type: "append", payload: [{
+                appointmentId: res.data.id,
+                serviceId: res.data.serviceId
+            }] });
+
+            toast.success(res.message);
+            toast.success("Cita guardada para la orden")
+        },
+        onError: (error) => {
+            dispatch({ type: "clear" });
             toast.error(error.message);
         }
     });
@@ -315,6 +347,7 @@ export const useAppointments = () => {
         pagination,
         setPagination,
         createMutation,
+        createMutationForOrder,
         updateMutation,
         deleteMutation,
         reactivateMutation,

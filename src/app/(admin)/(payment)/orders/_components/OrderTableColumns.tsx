@@ -4,16 +4,19 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import {
   DetailedOrder,
+  MedicalAppointmentMetadata,
+  MedicalPrescriptionMetadata,
   orderStatusConfig,
   orderTypeConfig,
   paymentOptionButtons,
   paymentStatusConfig,
+  ProductSaleMetadata,
 } from "../_interfaces/order.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ellipsis} from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 // import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 // import { UpdateStorageSheet } from "./UpdateStorageSheet";
@@ -39,6 +42,10 @@ import { VerifyPaymentDialog } from "./paymentComponents/verifyPayment/VerifyPay
 import { RefundPaymentDialog } from "./paymentComponents/refundPayment/RefundPaymentDialog";
 import { CancelPaymentDialog } from "./paymentComponents/cancelPayment/CancelPaymentDialog";
 import { RejectPaymentDialog } from "./paymentComponents/rejectPayment/RejectPaymentDialog";
+import { ShowProductSaleMetadataDetailsDialog } from "./detailComponents/ShowProductSaleMetadataDialog";
+import { toast } from "sonner";
+import { ShowPrescriptionMetadataDetailsDialog } from "./detailComponents/ShowOrderPrescriptionMetadataDialog";
+import { ShowAppointmentMetadataDialog } from "./detailComponents/ShowAppointmentMetadataDialog";
 // import Image from "next/image";
 
 export const columns: ColumnDef<DetailedOrder>[] = [
@@ -138,44 +145,47 @@ export const columns: ColumnDef<DetailedOrder>[] = [
           <span>{config.name}</span>
         </Badge>
       );
-      },
     },
-    {
-      accessorKey: "payments.status",
-      meta: { title: "Estado de pago" },
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Estado de Pago" />
-      ),
-      cell: ({ row }) => {
-        // orderTypeConfig
-        // orderStatusConfig
-        const order = row.original;
-        const regularPayment = order.payments.find(
-          (payment) => payment.type !== "REFUND"
-        );
-        const refundPayment = order.payments.find(
-          (payment) => payment.type === "REFUND"
-        );  
-        const config = paymentStatusConfig[regularPayment?.status ?? refundPayment?.status ?? "PENDING"];
-        const Icon = config.icon;
-        return (
-          // <span>
-          //   {row.original.status || "Sin tipo de almacén"}
-          // </span>
-          <Badge
-            className={cn(
-              config.backgroundColor,
-              config.textColor,
-              config.hoverBgColor,
-              "flex space-x-1 items-center justify-center text-sm"
-            )}
-          >
-            <Icon className="size-4"></Icon>
-            <span>{config.name}</span>
-          </Badge>
-        );
-        },
-      },
+  },
+  {
+    accessorKey: "payments.status",
+    meta: { title: "Estado de pago" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado de Pago" />
+    ),
+    cell: ({ row }) => {
+      // orderTypeConfig
+      // orderStatusConfig
+      const order = row.original;
+      const regularPayment = order.payments.find(
+        (payment) => payment.type !== "REFUND"
+      );
+      const refundPayment = order.payments.find(
+        (payment) => payment.type === "REFUND"
+      );
+      const config =
+        paymentStatusConfig[
+          regularPayment?.status ?? refundPayment?.status ?? "PENDING"
+        ];
+      const Icon = config.icon;
+      return (
+        // <span>
+        //   {row.original.status || "Sin tipo de almacén"}
+        // </span>
+        <Badge
+          className={cn(
+            config.backgroundColor,
+            config.textColor,
+            config.hoverBgColor,
+            "flex space-x-1 items-center justify-center text-sm"
+          )}
+        >
+          <Icon className="size-4"></Icon>
+          <span>{config.name}</span>
+        </Badge>
+      );
+    },
+  },
   // {
   //   accessorKey: "",
   //   meta: { title: "Estado de Órden" },
@@ -244,14 +254,70 @@ export const columns: ColumnDef<DetailedOrder>[] = [
     ),
   },
   {
+    accessorKey: "metadata",
+    size: 10,
+    meta: {
+      title: "Detalles",
+    },
+    header: () => <div>Detalles</div>,
+    cell: ({ row }) => {
+      if (!row.original.metadata) {
+        return null;
+      }
+      let metadata: unknown = null;
+      try {
+        if (row.original.metadata) {
+          metadata = JSON.parse(row.original.metadata);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error("Error al parsear metadata: " + error.message);
+        }
+        toast.error("Error al parsear metadata");
+        return null;
+      }
+      
+      let MetadataDialog: ()=>ReactElement = () => <div></div>;
+      switch (row.original.type) {
+        case "PRODUCT_SALE_ORDER":
+          MetadataDialog = ()=>(<ShowProductSaleMetadataDetailsDialog
+            data={metadata as ProductSaleMetadata}
+            orderId={row.original.id}
+          ></ShowProductSaleMetadataDetailsDialog>)
+          break;
+        case "MEDICAL_PRESCRIPTION_ORDER":
+          MetadataDialog = ()=>{
+            return <ShowPrescriptionMetadataDetailsDialog
+            data={metadata as MedicalPrescriptionMetadata}
+            orderId={row.original.id}
+            ></ShowPrescriptionMetadataDetailsDialog>
+          }
+          break;
+
+        case "MEDICAL_APPOINTMENT_ORDER":
+          MetadataDialog = ()=> <ShowAppointmentMetadataDialog
+            data={metadata as MedicalAppointmentMetadata}
+            orderId={row.original.id}
+          ></ShowAppointmentMetadataDialog>
+          break;
+        default:
+          MetadataDialog = ()=> <div></div>
+          break;
+      }
+      return <div>
+        {<MetadataDialog/>}
+      </div>
+    },
+  },
+  {
     accessorKey: "isActive",
-    meta: { title: "Elim. Lógica" },
+    meta: { title: "¿Archivado?" },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Elim. Lógica" />
+      <DataTableColumnHeader column={column} title="¿Archivado?" />
     ),
     cell: ({ row }) => (
       <Badge variant={row.original.isActive ? "success" : "destructive"}>
-        {row.original.isActive ? "Activo" : "Inactivo"}
+        {row.original.isActive ? "Activo" : "Archivado"}
       </Badge>
     ),
   },
@@ -337,19 +403,23 @@ export const columns: ColumnDef<DetailedOrder>[] = [
               onOpenChange={setShowEditSheet}
               showTrigger={false}
             /> */}
-            {couldCloseAndStore && showDeleteDialog && <DeactivateStorageDialog
-              order={row.original}
-              open={showDeleteDialog}
-              onOpenChange={setShowDeleteDialog}
-              showTrigger={false}
-            />}
+            {couldCloseAndStore && showDeleteDialog && (
+              <DeactivateStorageDialog
+                order={row.original}
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+                showTrigger={false}
+              />
+            )}
 
-            {showReactivateDialog && <ReactivateOrderDialog
-              order={row.original}
-              open={showReactivateDialog}
-              onOpenChange={setShowReactivateDialog}
-              showTrigger={false}
-            />}
+            {showReactivateDialog && (
+              <ReactivateOrderDialog
+                order={row.original}
+                open={showReactivateDialog}
+                onOpenChange={setShowReactivateDialog}
+                showTrigger={false}
+              />
+            )}
 
             {shouldProcessPayment && showProcessPaymentDialog && (
               <ProcessPaymentDialog
@@ -502,8 +572,8 @@ export const columns: ColumnDef<DetailedOrder>[] = [
               )}
 
               {couldCloseAndStore && isActive && <DropdownMenuSeparator />}
-              {
-                couldCloseAndStore && isActive && <DropdownMenuItem
+              {couldCloseAndStore && isActive && (
+                <DropdownMenuItem
                   onSelect={() => setShowDeleteDialog(true)}
                   disabled={!isActive}
                   className={cn(
@@ -515,15 +585,13 @@ export const columns: ColumnDef<DetailedOrder>[] = [
                   {
                     <paymentOptionButtons.CLOSE.icon></paymentOptionButtons.CLOSE.icon>
                   }
-                  {
-                    paymentOptionButtons.CLOSE.name
-                  }
+                  {paymentOptionButtons.CLOSE.name}
                 </DropdownMenuItem>
-              }
+              )}
 
               {couldCloseAndStore && !isActive && <DropdownMenuSeparator />}
-              {
-                couldCloseAndStore && !isActive && <DropdownMenuItem
+              {couldCloseAndStore && !isActive && (
+                <DropdownMenuItem
                   onSelect={() => setShowReactivateDialog(true)}
                   disabled={!isActive}
                   className={cn(
@@ -535,11 +603,9 @@ export const columns: ColumnDef<DetailedOrder>[] = [
                   {
                     <paymentOptionButtons.RESTORE.icon></paymentOptionButtons.RESTORE.icon>
                   }
-                  {
-                    paymentOptionButtons.RESTORE.name
-                  }
+                  {paymentOptionButtons.RESTORE.name}
                 </DropdownMenuItem>
-              }
+              )}
 
               {/* {isSuperAdmin && (
                 <DropdownMenuItem

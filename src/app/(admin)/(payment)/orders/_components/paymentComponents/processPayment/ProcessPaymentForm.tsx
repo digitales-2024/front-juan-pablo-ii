@@ -285,6 +285,7 @@ export function ProcessPaymentForm({
                 <FormControl>
                   <Input
                     {...field}
+                    value={field.value ?? ''}
                     placeholder={FORMSTATICS.voucherNumber.placeholder}
                   />
                 </FormControl>
