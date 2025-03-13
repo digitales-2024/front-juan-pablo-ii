@@ -5,6 +5,7 @@ import {
   getTopServicesBySucursalKPI,
   getCotizacionesPorEstadoKPI,
   getIngresosPorSucursalKPI,
+  getKpiCardsDataKPI,
 } from "../_actions/KPI.actions";
 import { PacientesPorSucursalData } from "../_interfaces/KPI.interface";
 
@@ -134,13 +135,42 @@ export const useKPI = () => {
     });
   };
 
+  /**
+   * Hook para obtener datos de KPI Cards
+   */
+
+  interface KpiCardsData {
+    totalIngresos: number;
+    ingresoPromedio: number;
+    totalPacientes: number;
+    citasCompletadas: number;
+    citasPendientes: number;
+  }
+  const useKpiCardsData = () => {
+    return useQuery<KpiCardsData, Error>({
+      queryKey: ["kpi-cards-data"],
+      queryFn: async () => {
+        const response = await getKpiCardsDataKPI();
+
+        if (response.error || !response.data) {
+          throw new Error(response.error ?? "No se pudieron obtener los datos");
+        }
+
+        return response.data;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
+      refetchOnWindowFocus: false,
+    });
+  };
+
   return {
     // Queries
     usePacientesPorSucursal,
     useCitasPorSucursal,
     useTopServicesPorSucursal,
     useCotizacionesPorEstado,
-    // Nuevo hook
     useIngresosPorSucursal,
+    // Nuevo hook
+    useKpiCardsData,
   };
 };
