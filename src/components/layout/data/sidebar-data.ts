@@ -150,7 +150,7 @@ export const sidebarData: SidebarData = {
           icon: DollarSign,
           items: [
             {
-              title: "Notas medicas",
+              title: "Recetas medicas",
               url: "/prescriptions",
               icon: FileHeart,
             },

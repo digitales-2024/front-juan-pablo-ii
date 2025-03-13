@@ -614,7 +614,7 @@ export function AddHistoryModal({
                     className="w-full sm:w-auto flex items-center gap-2"
                   >
                     <ClipboardPlus className="w-4 h-4" />
-                    Agregar Nota Médica
+                    Agregar Receta Médica
                   </Button>
                   <Button
                     type="button"
@@ -646,7 +646,7 @@ export function AddHistoryModal({
                       variant="outline"
                       className="bg-green-50 text-green-700 hover:bg-green-100 transition-colors px-3 py-1"
                     >
-                      Nota Médica Agregada
+                      Receta Médica Agregada
                       <button
                         onClick={handleRemovePrescription}
                         className="ml-2 hover:text-red-600"
