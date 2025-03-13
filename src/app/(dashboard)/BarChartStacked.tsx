@@ -58,7 +58,7 @@ export function KPIBarChartStacked() {
         <CardTitle>
           <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-primary" />
-            Top servicios por sucursal
+            Top servicios mas demandados por sucursal
           </h3>
         </CardTitle>
       </CardHeader>
