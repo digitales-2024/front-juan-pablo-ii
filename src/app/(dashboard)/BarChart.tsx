@@ -38,7 +38,7 @@ export function KPIBarChart() {
           {" "}
           <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-primary" />
-            Ingresos generales por mes
+            Ingresos generales
           </h3>
         </CardTitle>
       </CardHeader>
