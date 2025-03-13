@@ -70,7 +70,7 @@ export function CreateProductDialog() {
       precio: 0,
       unidadMedida: "",
       proveedor: "",
-      uso: undefined,
+      uso: "OTRO",
       usoProducto: "",
       description: "",
       codigoProducto: "",
@@ -82,7 +82,7 @@ export function CreateProductDialog() {
   });
 
   function handleSubmit(input: CreateProductInput) {
-    console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
+    console.log('Ingresando a handdle submit', createMutation.isPending, isCreatePending);
     if (createMutation.isPending || isCreatePending) return;
 
     startCreateTransition(() => {
@@ -117,8 +117,8 @@ export function CreateProductDialog() {
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         disabled={isCreatePending || createMutation.isPending}
         className="w-full"
       >
@@ -142,9 +142,9 @@ export function CreateProductDialog() {
   );
 
   const TriggerButton = () => (
-    <Button 
+    <Button
       onClick={() => setOpen(true)}
-      variant="outline" 
+      variant="outline"
       size="sm"
     >
       <Plus className="size-4 mr-2" aria-hidden="true" />
@@ -211,7 +211,7 @@ function DevelopmentZodError({ form }: { form: UseFormReturn<CreateProductInput>
       setErrors(form.formState.errors);
     }
   }, [form.formState.errors]);
-  return  (
+  return (
     <div>
       <div>
         {

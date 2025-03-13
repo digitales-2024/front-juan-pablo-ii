@@ -3592,6 +3592,91 @@ export interface paths {
         patch: operations["ApponitmentUserController_updateStatus"];
         trace?: never;
     };
+    "/api/v1/dashboard/citas-por-sucursal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener datos de citas por sucursal para KPI */
+        get: operations["DashboardController_getCitasPorSucursal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/top-servicios-por-sucursal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener top 12 servicios más demandados por sucursal */
+        get: operations["DashboardController_getTopServicesBySucursal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/cotizaciones-por-estado": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener datos de cotizaciones pagadas vs pendientes */
+        get: operations["DashboardController_getCotizacionesPorEstado"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/ingresos-por-sucursal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener ingresos diarios por sucursal */
+        get: operations["DashboardController_getIngresosPorSucursal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/kpi-cards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener datos para los KPI Cards */
+        get: operations["DashboardController_getKpiCardsData"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -17908,6 +17993,175 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    DashboardController_getCitasPorSucursal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Datos de citas agrupados por mes y sucursal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Datos de citas por sucursal obtenidos con éxito */
+                        message?: string;
+                        data?: {
+                            /** @example Enero */
+                            month?: string;
+                            /** @example 12 */
+                            JLBYR?: number;
+                            /** @example 8 */
+                            Yanahuara?: number;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    DashboardController_getTopServicesBySucursal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Top servicios agrupados por sucursal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Top servicios por sucursal obtenidos con éxito */
+                        message?: string;
+                        data?: {
+                            /** @example Consulta General */
+                            serviceName?: string;
+                            /** @example 120 */
+                            JLBYR?: number;
+                            /** @example 80 */
+                            Yanahuara?: number;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    DashboardController_getCotizacionesPorEstado: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Datos de cotizaciones agrupados por mes y estado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Datos de cotizaciones por estado obtenidos con éxito */
+                        message?: string;
+                        data?: {
+                            /** @example Enero */
+                            month?: string;
+                            /** @example 12 */
+                            pendientes?: number;
+                            /** @example 8 */
+                            pagadas?: number;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    DashboardController_getIngresosPorSucursal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ingresos agrupados por día y sucursal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Ingresos por sucursal obtenidos con éxito */
+                        message?: string;
+                        data?: {
+                            ingresos?: Record<string, never>[];
+                            /** @example [
+                             *       "JLBYR",
+                             *       "Yanahuara"
+                             *     ] */
+                            sucursales?: string[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    DashboardController_getKpiCardsData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Datos para los KPI Cards */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Datos de KPI Cards obtenidos con éxito */
+                        message?: string;
+                        data?: {
+                            /** @example 5231.89 */
+                            totalIngresos?: number;
+                            /** @example 174.4 */
+                            ingresoPromedio?: number;
+                            /** @example 235 */
+                            totalPacientes?: number;
+                            /** @example 124 */
+                            citasCompletadas?: number;
+                            /** @example 15 */
+                            citasPendientes?: number;
+                        };
+                    };
+                };
             };
         };
     };
