@@ -19,10 +19,14 @@ import { KPIBarChartCustom } from "./(dashboard)/BarChartCustom";
 import { KPIAreaChart } from "./(dashboard)/AreaChart";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useKPI } from "./(dashboard)/_hooks/useKPI";
 
 export default function Home() {
   const [currentDateTime, setCurrentDateTime] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Obtener datos para los KPI Cards
+  const { data: kpiData, isLoading: kpiLoading, refetch } = useKPI().useKpiCardsData();
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -45,10 +49,24 @@ export default function Home() {
 
   const refreshData = () => {
     setIsRefreshing(true);
-    // Aquí podrías implementar la lógica real para refrescar datos
-    setTimeout(() => {
+    // Refrescar los datos usando la función de refetch proporcionada por useQuery
+    refetch().then(() => {
       setIsRefreshing(false);
-    }, 1000);
+    }).catch(() => {
+      setIsRefreshing(false);
+    });
+  };
+
+  // Formateo de valores para mostrar en los KPI Cards
+  const formatCurrency = (value: number) => {
+    return `S/ ${value.toLocaleString('es-PE', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    })}`;
+  };
+
+  const formatNumber = (value: number) => {
+    return value.toLocaleString('es-PE');
   };
 
   return (
@@ -57,7 +75,9 @@ export default function Home() {
         {/* Header con título y botón de actualización */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-primary">Dashboard</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-primary">
+              Dashboard
+            </h1>
             <p className="text-sm text-gray-500 mt-1">
               Inicio general del sistema
             </p>
@@ -92,66 +112,78 @@ export default function Home() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-            <Link
-              href="/ingresos"
-              className="block transition-transform hover:scale-105"
-            >
-              <KPICard
-                title="Total Ingresos"
-                value="S/ 5,231.89"
-                description="Total de ingresos del mes"
-                icon={<DollarSign className="h-5 w-5 text-green-600" />}
-                className="shadow-md hover:shadow-lg border-l-4 border-l-green-500"
-              />
-            </Link>
-            <Link
-              href="/pacientes"
-              className="block transition-transform hover:scale-105"
-            >
-              <KPICard
-                title="Pacientes"
-                value="235"
-                description="Total de pacientes registrados"
-                icon={<Users className="h-5 w-5 text-blue-600" />}
-                className="shadow-md hover:shadow-lg border-l-4 border-l-blue-500"
-              />
-            </Link>
-            <Link
-              href="/citas"
-              className="block transition-transform hover:scale-105"
-            >
-              <KPICard
-                title="Citas"
-                value="124"
-                description="Total de citas registradas"
-                icon={<Calendar className="h-5 w-5 text-indigo-600" />}
-                className="shadow-md hover:shadow-lg border-l-4 border-l-indigo-500"
-              />
-            </Link>
-            <Link
-              href="/citas-pendientes"
-              className="block transition-transform hover:scale-105"
-            >
-              <KPICard
-                title="Citas pendientes"
-                value="15"
-                description="Citas pendientes"
-                icon={<AlertTriangle className="h-5 w-5 text-amber-600" />}
-                className="shadow-md hover:shadow-lg border-l-4 border-l-amber-500"
-              />
-            </Link>
-            <Link
-              href="/ingresos-promedio"
-              className="block transition-transform hover:scale-105"
-            >
-              <KPICard
-                title="Ingreso promedio"
-                value="S/ 998.50"
-                description="Ingreso promedio"
-                icon={<DollarSign className="h-5 w-5 text-purple-600" />}
-                className="shadow-md hover:shadow-lg border-l-4 border-l-purple-500"
-              />
-            </Link>
+            {kpiLoading ? (
+              // Mostrar placeholders durante la carga
+              <>
+                {[...Array.from({ length: 5 })].map((_, i) => (
+                  <div key={i} className="h-28 bg-gray-100 animate-pulse rounded-lg"></div>
+                ))}
+              </>
+            ) : (
+              // Mostrar KPI Cards con datos reales
+              <>
+                <Link
+                  href="/orders"
+                  className="block transition-transform hover:scale-105"
+                >
+                  <KPICard
+                    title="Total Ingresos por mes"
+                    value={formatCurrency(kpiData?.totalIngresos ?? 0)}
+                    description="Total de ingresos del mes"
+                    icon={<DollarSign className="h-5 w-5 text-green-600" />}
+                    className="shadow-md hover:shadow-lg border-l-4 border-l-green-500"
+                  />
+                </Link>
+                <Link
+                  href="/patient"
+                  className="block transition-transform hover:scale-105"
+                >
+                  <KPICard
+                    title="Total de Pacientes"
+                    value={formatNumber(kpiData?.totalPacientes ?? 0)}
+                    description="Total de pacientes registrados"
+                    icon={<Users className="h-5 w-5 text-blue-600" />}
+                    className="shadow-md hover:shadow-lg border-l-4 border-l-blue-500"
+                  />
+                </Link>
+                <Link
+                  href="/appointments"
+                  className="block transition-transform hover:scale-105"
+                >
+                  <KPICard
+                    title="Citas completadas"
+                    value={formatNumber(kpiData?.citasCompletadas ?? 0)}
+                    description="Total de citas completadas"
+                    icon={<Calendar className="h-5 w-5 text-indigo-600" />}
+                    className="shadow-md hover:shadow-lg border-l-4 border-l-indigo-500"
+                  />
+                </Link>
+                <Link
+                  href="/appointments-schedule"
+                  className="block transition-transform hover:scale-105"
+                >
+                  <KPICard
+                    title="Citas pendientes"
+                    value={formatNumber(kpiData?.citasPendientes ?? 0)}
+                    description="Citas pendientes"
+                    icon={<AlertTriangle className="h-5 w-5 text-amber-600" />}
+                    className="shadow-md hover:shadow-lg border-l-4 border-l-amber-500"
+                  />
+                </Link>
+                <Link
+                  href="/orders"
+                  className="block transition-transform hover:scale-105"
+                >
+                  <KPICard
+                    title="Ingreso promedio por día"
+                    value={formatCurrency(kpiData?.ingresoPromedio ?? 0)}
+                    description="Ingreso promedio"
+                    icon={<DollarSign className="h-5 w-5 text-purple-600" />}
+                    className="shadow-md hover:shadow-lg border-l-4 border-l-purple-500"
+                  />
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -163,20 +195,20 @@ export default function Home() {
             <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
               <KPIBarChart />
             </div>
-            
+
             {/* Gráfico de líneas - Nuevos pacientes */}
             <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
               <KPILineChartMultiple />
             </div>
           </div>
-          
+
           {/* Columna derecha - Gráficos secundarios (33%) */}
           <div className="lg:col-span-1 grid grid-cols-1 gap-4 h-full">
             {/* Gráfico de barras customizadas - Servicios más demandados */}
             <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 h-1/2">
               <KPIBarChartCustom />
             </div>
-            
+
             {/* Gráfico de barras apiladas - Comparativa por área */}
             <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 h-1/2">
               <KPIBarChartStacked />
