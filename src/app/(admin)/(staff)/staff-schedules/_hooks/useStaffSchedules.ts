@@ -143,7 +143,7 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
       }
       return response;
     },
-    onSuccess: (res) => {
+    onSuccess: (res, variables) => {
       const queryKeysToUpdate = [
         ["staff-schedules", null],  // Nombre actualizado
         ["staff-schedules", {}],    // Versión con filtros vacíos
@@ -168,7 +168,26 @@ export const useStaffSchedules = (filters?: { staffId?: string; branchId?: strin
         });
       });
 
+      // Invalidar todas las queries de calendar-turns
+      queryClient.invalidateQueries({
+        queryKey: ['calendar-turns'],
+        exact: false
+      });
+
       toast.success("Horario actualizado exitosamente");
+
+      // Regenerar eventos si el horario no es de tipo YEARLY
+      if (res.data?.id && variables.data.recurrence?.frequency !== 'YEARLY') {
+        generateEventsMutation.mutate(res.data.id, {
+          onSuccess: () => {
+            // Invalidar nuevamente después de generar los eventos
+            queryClient.invalidateQueries({
+              queryKey: ['calendar-turns'],
+              exact: false
+            });
+          }
+        });
+      }
     },
     onError: (error) => {
       if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {

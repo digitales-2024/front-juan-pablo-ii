@@ -4914,6 +4914,11 @@ export interface components {
              */
             branchId?: string;
             /**
+             * @description Título del horario
+             * @example Turno Mañana
+             */
+            title?: string;
+            /**
              * @description Color del horario
              * @example sky
              */
@@ -4945,11 +4950,6 @@ export interface components {
              *     ]
              */
             exceptions?: string[];
-            /**
-             * @description Título del horario (requerido)
-             * @example Turno Mañana
-             */
-            title: string;
         };
         DeleteStaffSchedulesDto: {
             ids: string[];
