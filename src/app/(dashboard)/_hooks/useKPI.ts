@@ -8,8 +8,23 @@ import {
   getKpiCardsDataKPI,
 } from "../_actions/KPI.actions";
 import { PacientesPorSucursalData } from "../_interfaces/KPI.interface";
+import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 
 export const useKPI = () => {
+  // Obtener información del usuario autenticado
+  const { user } = useAuth();
+  
+  // Determinar el rol del usuario
+  const isSuperAdmin = user?.isSuperAdmin === true;
+  const isSuperAdminRole = user?.roles?.some(role => role.name === "SUPER_ADMIN") ?? false;
+  const isDoctor = user?.roles?.some(role => role.name === "MEDICO") ?? false;
+  const isReceptionist = user?.roles?.some(role => role.name === "ADMINISTRATIVO") ?? false;
+  const isAdmin = isSuperAdmin || isSuperAdminRole;
+
+  // Banderas de permiso según el rol
+  const canAccessFullDashboard = isAdmin;
+  const canAccessPartialDashboard = isReceptionist || isDoctor;
+
   /**
    * Hook para obtener y gestionar los datos de pacientes por sucursal
    * @param year Año opcional para filtrar los datos
@@ -29,6 +44,7 @@ export const useKPI = () => {
       },
       staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
       refetchOnWindowFocus: false, // No recargar al enfocar la ventana
+      enabled: canAccessFullDashboard, // Solo disponible para admin
     });
   };
 
@@ -47,8 +63,9 @@ export const useKPI = () => {
 
         return response.data;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
-      refetchOnWindowFocus: false, // No recargar al enfocar la ventana
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+      enabled: canAccessFullDashboard, // Solo disponible para admin
     });
   };
 
@@ -72,16 +89,15 @@ export const useKPI = () => {
 
         return response.data;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
+      enabled: canAccessFullDashboard, // Solo disponible para admin
     });
   };
 
   /**
    * Hook para obtener cotizaciones por estado
    */
-
-  // Añadir esta interfaz a tu archivo de interfaces
   interface CotizacionesPorEstadoData {
     month: string;
     pendientes: number;
@@ -100,18 +116,18 @@ export const useKPI = () => {
 
         return response.data;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
+      enabled: canAccessFullDashboard, // Solo disponible para admin
     });
   };
 
   /**
    * Hook para obtener ingresos por sucursal
    */
-
   interface IngresosPorSucursalData {
     date: string;
-    [sucursal: string]: number | string; // El valor puede ser un número (monto) o string (fecha)
+    [sucursal: string]: number | string;
   }
 
   interface IngresosSucursalesResponse {
@@ -130,15 +146,15 @@ export const useKPI = () => {
 
         return response.data;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
+      enabled: canAccessFullDashboard, // Solo disponible para admin
     });
   };
 
   /**
    * Hook para obtener datos de KPI Cards
    */
-
   interface KpiCardsData {
     totalIngresos: number;
     ingresoPromedio: number;
@@ -158,7 +174,7 @@ export const useKPI = () => {
 
         return response.data;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
     });
   };
@@ -170,7 +186,11 @@ export const useKPI = () => {
     useTopServicesPorSucursal,
     useCotizacionesPorEstado,
     useIngresosPorSucursal,
-    // Nuevo hook
     useKpiCardsData,
+    
+    // Información de permisos para el componente
+    canAccessFullDashboard,
+    canAccessPartialDashboard,
+    userRole: { isAdmin, isReceptionist, isDoctor }
   };
 };
