@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPatientsSucursalKPI, getCitasPorSucursalKPI } from "../_actions/KPI.actions";
+import {
+  getPatientsSucursalKPI,
+  getCitasPorSucursalKPI,
+  getTopServicesBySucursalKPI,
+} from "../_actions/KPI.actions";
 import { PacientesPorSucursalData } from "../_interfaces/KPI.interface";
 
 export const useKPI = () => {
@@ -13,11 +17,11 @@ export const useKPI = () => {
       queryKey: ["pacientes-por-sucursal", year],
       queryFn: async () => {
         const response = await getPatientsSucursalKPI({ year });
-        
+
         if (response.error || !response.data) {
           throw new Error(response.error ?? "No se pudieron obtener los datos");
         }
-        
+
         return response.data;
       },
       staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
@@ -33,11 +37,11 @@ export const useKPI = () => {
       queryKey: ["citas-por-sucursal"],
       queryFn: async () => {
         const response = await getCitasPorSucursalKPI();
-        
+
         if (response.error || !response.data) {
           throw new Error(response.error ?? "No se pudieron obtener los datos");
         }
-        
+
         return response.data;
       },
       staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
@@ -45,9 +49,36 @@ export const useKPI = () => {
     });
   };
 
+  /**
+   * Hook para obtener los 12 servicios más demandados por sucursal
+   */
+  interface TopServiciosData {
+    serviceName: string;
+    JLBYR: number;
+    Yanahuara: number;
+  }
+  const useTopServicesPorSucursal = () => {
+    return useQuery<TopServiciosData[], Error>({
+      queryKey: ["top-servicios-por-sucursal"],
+      queryFn: async () => {
+        const response = await getTopServicesBySucursalKPI();
+
+        if (response.error || !response.data) {
+          throw new Error(response.error ?? "No se pudieron obtener los datos");
+        }
+
+        return response.data;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
+      refetchOnWindowFocus: false,
+    });
+  };
+
   return {
     // Queries
     usePacientesPorSucursal,
     useCitasPorSucursal,
+    // Nuevo hook
+    useTopServicesPorSucursal,
   };
 };
