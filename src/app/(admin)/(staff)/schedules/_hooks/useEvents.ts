@@ -32,7 +32,7 @@ export interface EventFilterParams {
   staffId?: string;
   type: 'TURNO' | 'CITA' | 'OTRO';
   branchId?: string;
-  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
+  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW' | 'RESCHEDULED';
   staffScheduleId?: string;
   startDate?: string;
   endDate?: string;
