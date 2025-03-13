@@ -185,7 +185,7 @@ export function AddPrescriptionModal({
           <DialogHeader>
             <div className="flex justify-between items-center">
               <DialogTitle className="text-2xl font-semibold">
-                Nota Médica
+                Receta Médica
               </DialogTitle>
             </div>
             {/* Switch control */}
@@ -198,7 +198,7 @@ export function AddPrescriptionModal({
                       : "text-muted-foreground"
                   }`}
                 />
-                <span className="font-medium">Nota Médica</span>
+                <span className="font-medium">Receta Médica</span>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
@@ -239,10 +239,10 @@ export function AddPrescriptionModal({
                 {/* Sección de Servicios */}
                 <Card>
                   <CardContent className="p-4 space-y-4">
-                    <h3 className="font-semibold">Servicios</h3>
+                    <h3 className="font-semibold">Agregar Servicios</h3>
                     <div className="grid grid-cols-1 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="service-selector">Servicio</Label>
+                        <Label htmlFor="service-selector">Recetar Servicio</Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -315,6 +315,7 @@ export function AddPrescriptionModal({
                               }))
                             }
                             min={1}
+                            disabled={true} // Bloquea el campo para que el usuario no pueda interactuar
                           />
                         </div>
                         <div className="space-y-2 sm:col-span-2">
@@ -391,10 +392,10 @@ export function AddPrescriptionModal({
                 {/* Sección de Medicamentos */}
                 <Card>
                   <CardContent className="p-4 space-y-4">
-                    <h3 className="font-semibold">Medicamentos</h3>
+                    <h3 className="font-semibold">Agregar productos si es requerido *Opcional</h3>
                     <div className="grid grid-cols-1 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="medicament-selector">Medicamento</Label>
+                        <Label htmlFor="medicament-selector">Venta productos, medicamentos internos</Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -412,7 +413,7 @@ export function AddPrescriptionModal({
                                     (product) =>
                                       product.id === newMedicament.productId
                                   )?.name
-                                : "Seleccionar medicamento"}
+                                : "Seleccionar productos"}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
@@ -547,10 +548,10 @@ export function AddPrescriptionModal({
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <ClipboardPenLine className="h-16 w-16 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-medium mb-2">
-                  Nota Médica Desactivada
+                  Receta Médica Desactivada
                 </h3>
                 <p className="text-muted-foreground max-w-md">
-                  Active el interruptor arriba para crear una nueva nota médica
+                  Active el interruptor arriba para crear una nueva receta médica
                   con medicamentos y servicios.
                 </p>
               </div>
