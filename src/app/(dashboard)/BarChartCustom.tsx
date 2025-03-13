@@ -54,7 +54,7 @@ export function KPIBarChartCustom() {
           {" "}
           <h3 className="text-md font-medium text-gray-800 mb-2 flex items-center gap-2">
             <PieChart className="h-4 w-4 text-primary" />
-            Servicios mas demandados        </h3>
+            Cotizaciones pagadas vs pendientes      </h3>
         </CardTitle>
       </CardHeader>
       <CardContent>
