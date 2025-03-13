@@ -19,6 +19,7 @@ import { useState } from "react";
 import { CalendarIcon, XIcon, RefreshCcw, CreditCard } from "lucide-react";
 import { CancelAppointmentDialog } from "./CancelAppointmentDialog";
 import { RefundAppointmentDialog } from "./RefundAppointmentDialog";
+import { RescheduleAppointmentDialog } from "./RescheduleAppointmentDialog";
 import { Appointment, appointmentStatusConfig, AppointmentStatus } from "../_interfaces/appointments.interface";
 import { cn } from "@/lib/utils";
 
@@ -150,6 +151,12 @@ export const columns: ColumnDef<Appointment>[] = [
                         appointment={appointment}
                         open={showRefundDialog}
                         onOpenChange={setShowRefundDialog}
+                        showTrigger={false}
+                    />
+                    <RescheduleAppointmentDialog
+                        appointment={appointment}
+                        open={showRescheduleDialog}
+                        onOpenChange={setShowRescheduleDialog}
                         showTrigger={false}
                     />
                     <DropdownMenu>

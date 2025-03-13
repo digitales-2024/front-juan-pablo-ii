@@ -8,7 +8,8 @@ import {
     DeleteAppointmentsDto,
     PaginatedAppointmentsResponse,
     CancelAppointmentDto,
-    RefundAppointmentDto
+    RefundAppointmentDto,
+    RescheduleAppointmentDto
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { createSafeAction } from '@/utils/createSafeAction';
@@ -19,6 +20,7 @@ type UpdateAppointmentResponse = BaseApiResponse | { error: string };
 type DeleteAppointmentResponse = BaseApiResponse | { error: string };
 type CancelAppointmentResponse = BaseApiResponse | { error: string };
 type RefundAppointmentResponse = BaseApiResponse | { error: string };
+type RescheduleAppointmentResponse = BaseApiResponse | { error: string };
 
 // Definir el esquema correctamente
 const GetAppointmentsSchema = z.object({
@@ -220,5 +222,26 @@ export async function refundAppointment(
     } catch (error) {
         if (error instanceof Error) return { error: error.message };
         return { error: "Error desconocido al reembolsar la cita" };
+    }
+}
+
+export async function rescheduleAppointment(
+    id: string,
+    data: RescheduleAppointmentDto
+): Promise<RescheduleAppointmentResponse> {
+    try {
+        const [response, error] = await http.patch<BaseApiResponse>(`/appointments/${id}/reschedule`, data);
+
+        if (error) {
+            if (error.statusCode === 401) {
+                return { error: "No autorizado. Por favor, inicie sesión nuevamente." };
+            }
+            return { error: error.message };
+        }
+
+        return response;
+    } catch (error) {
+        if (error instanceof Error) return { error: error.message };
+        return { error: "Error desconocido al reprogramar la cita" };
     }
 } 
