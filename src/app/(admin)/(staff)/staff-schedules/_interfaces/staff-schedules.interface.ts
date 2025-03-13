@@ -44,14 +44,15 @@ export const createStaffScheduleSchema = z.object({
   exceptions: z.array(
     z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato YYYY-MM-DD requerido")
   )
-}) satisfies z.ZodType<CreateStaffScheduleDto>;
+});
 
-// Schema de actualización corregido
+// Schema de actualización actualizado para coincidir con el nuevo DTO del backend
+// Ahora incluimos el campo title como opcional
 export const updateStaffScheduleSchema = z.object({
+  title: z.string().min(1, "El título es requerido").optional(),
   staffId: z.string().min(1, "El personal es requerido").optional(),
   branchId: z.string().min(1, "La sucursal es requerida").optional(),
-  title: z.string().min(1, "El título es requerido"),
-  color: z.string().min(1, "El color es requerido"),
+  color: z.string().min(1, "El color es requerido").optional(),
   startTime: timeSchema.optional(),
   endTime: timeSchema.optional(),
   daysOfWeek: z.array(z.enum([
@@ -66,4 +67,4 @@ export const updateStaffScheduleSchema = z.object({
   exceptions: z.array(
     z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato YYYY-MM-DD requerido")
   ).optional().default([])
-}) satisfies z.ZodType<UpdateStaffScheduleDto>;
+});

@@ -68,6 +68,8 @@ export async function updateStaffSchedule(
   data: UpdateStaffScheduleDto
 ): Promise<UpdateStaffScheduleResponse> {
   try {
+    console.log("Datos enviados al backend:", data);
+
     const [schedule, error] = await http.patch<BaseApiResponse>(`/staff-schedule/${id}`, data);
 
     if (error) {
