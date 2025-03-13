@@ -3,6 +3,7 @@ import {
   getPatientsSucursalKPI,
   getCitasPorSucursalKPI,
   getTopServicesBySucursalKPI,
+  getCotizacionesPorEstadoKPI,
 } from "../_actions/KPI.actions";
 import { PacientesPorSucursalData } from "../_interfaces/KPI.interface";
 
@@ -74,11 +75,40 @@ export const useKPI = () => {
     });
   };
 
+  /**
+   * Hook para obtener cotizaciones por estado
+   */
+
+  // Añadir esta interfaz a tu archivo de interfaces
+  interface CotizacionesPorEstadoData {
+    month: string;
+    pendientes: number;
+    pagadas: number;
+  }
+
+  const useCotizacionesPorEstado = () => {
+    return useQuery<CotizacionesPorEstadoData[], Error>({
+      queryKey: ["cotizaciones-por-estado"],
+      queryFn: async () => {
+        const response = await getCotizacionesPorEstadoKPI();
+
+        if (response.error || !response.data) {
+          throw new Error(response.error ?? "No se pudieron obtener los datos");
+        }
+
+        return response.data;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos de caché fresca
+      refetchOnWindowFocus: false,
+    });
+  };
+
   return {
     // Queries
     usePacientesPorSucursal,
     useCitasPorSucursal,
-    // Nuevo hook
     useTopServicesPorSucursal,
+    // Nuevo hook
+    useCotizacionesPorEstado,
   };
 };
