@@ -82,7 +82,6 @@ export async function getTopServicesBySucursalKPI(): Promise<
     const url = "/dashboard/top-servicios-por-sucursal";
 
     const [response, error] = await http.get(url);
-    console.log("🚀 ~ response:", response)
 
     // Si hay error, retornarlo
     if (error) {
@@ -91,6 +90,40 @@ export async function getTopServicesBySucursalKPI(): Promise<
 
     // Si todo está bien, retornar los datos
     return { data: (response as { data: TopServiciosData[] }).data };
+  } catch (error) {
+    console.error("Error fetching patient data:", error);
+    return { error: "Error inesperado al obtener datos" };
+  }
+}
+
+// Añadir esta interfaz a tu archivo de interfaces
+export interface CotizacionesPorEstadoData {
+  month: string;
+  pendientes: number;
+  pagadas: number;
+}
+
+// Añadir esta función al archivo de acciones
+/**
+ * Obtiene los datos de cotizaciones pagadas vs pendientes
+ * @returns Datos formateados o un objeto de error
+ */
+export async function getCotizacionesPorEstadoKPI(): Promise<
+  ApiResponse<CotizacionesPorEstadoData[]>
+> {
+  try {
+    // Realizar la petición al backend
+    const url = "/dashboard/cotizaciones-por-estado";
+
+    const [response, error] = await http.get(url);
+
+    // Si hay error, retornarlo
+    if (error) {
+      return { error: "Error al obtener datos de cotizaciones por estado" };
+    }
+
+    // Si todo está bien, retornar los datos
+    return { data: (response as { data: CotizacionesPorEstadoData[] }).data };
   } catch (error) {
     console.error("Error fetching patient data:", error);
     return { error: "Error inesperado al obtener datos" };
