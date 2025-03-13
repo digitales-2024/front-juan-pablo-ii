@@ -24,6 +24,7 @@ export const useAppointments = () => {
         page: 1,
         limit: 10
     });
+    const dispatch = useSelectedServicesAppointmentsDispatch();
 
     // Query para obtener las citas
     const appointmentsQuery = useQuery({
@@ -124,7 +125,6 @@ export const useAppointments = () => {
             });
 
             //Always remember to initilize useSelectedServicesAppointments wherever in the code
-            const dispatch = useSelectedServicesAppointmentsDispatch();
             dispatch({ type: "append", payload: [{
                 appointmentId: res.data.id,
                 serviceId: res.data.serviceId
@@ -134,7 +134,6 @@ export const useAppointments = () => {
             toast.success("Cita guardada para la orden")
         },
         onError: (error) => {
-            const dispatch = useSelectedServicesAppointmentsDispatch();
             dispatch({ type: "clear" });
             toast.error(error.message);
         }

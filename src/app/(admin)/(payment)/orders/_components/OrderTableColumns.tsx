@@ -4,6 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import {
   DetailedOrder,
+  MedicalAppointmentMetadata,
+  MedicalPrescriptionMetadata,
   orderStatusConfig,
   orderTypeConfig,
   paymentOptionButtons,
@@ -42,6 +44,8 @@ import { CancelPaymentDialog } from "./paymentComponents/cancelPayment/CancelPay
 import { RejectPaymentDialog } from "./paymentComponents/rejectPayment/RejectPaymentDialog";
 import { ShowProductSaleMetadataDetailsDialog } from "./detailComponents/ShowProductSaleMetadataDialog";
 import { toast } from "sonner";
+import { ShowPrescriptionMetadataDetailsDialog } from "./detailComponents/ShowOrderPrescriptionMetadataDialog";
+import { ShowAppointmentMetadataDialog } from "./detailComponents/ShowAppointmentMetadataDialog";
 // import Image from "next/image";
 
 export const columns: ColumnDef<DetailedOrder>[] = [
@@ -281,13 +285,21 @@ export const columns: ColumnDef<DetailedOrder>[] = [
             orderId={row.original.id}
           ></ShowProductSaleMetadataDetailsDialog>)
           break;
-        // case "":
-        //   MetadataDialog = <div>
-        //     {/* <ShowPrescriptionDetailsDialog
-        //       data={row.original}
-        //     ></ShowPrescriptionDetailsDialog> */}
-        //   </div>
-        //   break;
+        case "MEDICAL_PRESCRIPTION_ORDER":
+          MetadataDialog = ()=>{
+            return <ShowPrescriptionMetadataDetailsDialog
+            data={metadata as MedicalPrescriptionMetadata}
+            orderId={row.original.id}
+            ></ShowPrescriptionMetadataDetailsDialog>
+          }
+          break;
+
+        case "MEDICAL_APPOINTMENT_ORDER":
+          MetadataDialog = ()=> <ShowAppointmentMetadataDialog
+            data={metadata as MedicalAppointmentMetadata}
+            orderId={row.original.id}
+          ></ShowAppointmentMetadataDialog>
+          break;
         default:
           MetadataDialog = ()=> <div></div>
           break;

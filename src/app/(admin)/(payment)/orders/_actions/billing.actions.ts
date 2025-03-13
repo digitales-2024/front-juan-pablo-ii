@@ -158,11 +158,16 @@ export async function createPrescriptionOrder(
       .map((service) => service.appointmentId)
       .filter((id): id is string => id !== undefined);
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { services, ...rest } = data;
+
     return {
-      ...data,
+      ...rest,
       appointmentIds,
     };
   })(data);
+
+  console.log('data send to the server', JSON.stringify(toPrescriptionBillingDto))
 
   try {
     const [responseData, error] = await http.post<OrderResponse>(

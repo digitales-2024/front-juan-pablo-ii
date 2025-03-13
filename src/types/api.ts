@@ -6109,7 +6109,8 @@ export interface components {
             name: string;
             precio: number;
             codigoProducto: string;
-            uso: Record<string, never>;
+            /** @enum {string} */
+            uso: "VENTA" | "INTERNO" | "OTRO";
             unidadMedida: string;
             Stock: components["schemas"]["StockProduct"][];
         };
@@ -6549,6 +6550,10 @@ export interface components {
             name: string;
             /** @description Cantidad del servicio */
             quantity: number;
+            /** @description Id del servicio */
+            serviceId: string;
+            /** @description Precio del servicio */
+            servicePrice: number;
         };
         PrescriptionOrderDetails: {
             /**
@@ -14821,7 +14826,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
-                use: unknown;
+                use: "VENTA" | "INTERNO" | "OTRO";
             };
             cookie?: never;
         };
@@ -14846,7 +14851,7 @@ export interface operations {
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
                 branchId: string;
                 /** @description Ambito de uso del producto: VENTA, INTERNO, etc */
-                productUse: unknown;
+                productUse: "VENTA" | "INTERNO" | "OTRO";
             };
             cookie?: never;
         };

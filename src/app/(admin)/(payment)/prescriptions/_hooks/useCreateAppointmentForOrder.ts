@@ -43,7 +43,10 @@ const useSelectedServicesAppointments = () => {
     initialData: [],
   });
 
-  return selectedServicesAppointmentsIds.data ?? [];
+  return {
+    dataQuery: selectedServicesAppointmentsIds,
+    data: selectedServicesAppointmentsIds.data ?? [],
+  };
 };
 
 const useSelectedServicesAppointmentsDispatch = () => {

@@ -54,7 +54,7 @@ export type EnumConfig = {
   backgroundColor: string;
   textColor: string;
   hoverBgColor: string;
-  hoverTextColor?:  string;
+  hoverTextColor?: string;
   importantBgColor?: string;
   importantHoverBgColor?: string;
   importantTextColor?: string;
@@ -711,28 +711,29 @@ export type ServiceSaleItemDto = {
 export type ServiceSaleLocalItemDto = {
   serviceId: string;
   quantity: number;
-  appointmentId? : string; //Artificial field
+  appointmentId?: string; //Artificial field
 };
 export type CreateServiceSaleBillingDtoPrototype =
   components["schemas"]["CreateMedicalPrescriptionBillingDto"];
 
 // {
-  //   branchId: string;
-  //   patientId: string;
-  //   recipeId: string;
-  //   currency: string; 
-  //   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
-  //   notes?: string;
-  //   amountPaid?: number; //NO deberia
-  //   voucherNumber?: string; //NO deberia
-  //   products: components["schemas"]["PrescriptionProductItemDto"][];
-  //   appointmentIds: string[];
-  //   metadata?: Record<string, never>;
+//   branchId: string;
+//   patientId: string;
+//   recipeId: string;
+//   currency: string;
+//   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+//   notes?: string;
+//   amountPaid?: number; //NO deberia
+//   voucherNumber?: string; //NO deberia
+//   products: components["schemas"]["PrescriptionProductItemDto"][];
+//   appointmentIds: string[];
+//   metadata?: Record<string, never>;
 // };
 
 export type CreatePrescriptionBillingDto = {
   branchId: string;
   patientId: string;
+  recipeId: string;
   currency: string;
   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
@@ -744,6 +745,7 @@ export type CreatePrescriptionBillingDto = {
 export type CreatePrescriptionBillingLocalDto = {
   branchId: string;
   patientId: string;
+  recipeId: string;
   currency: string;
   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
@@ -804,6 +806,9 @@ export const createPrescriptionBillingLocalSchema = z
     patientId: z.string({
       required_error: "Debe seleccionar un paciente",
     }),
+    recipeId: z.string({
+      required_error: "Debe seleccionar una receta",
+    }),
     storageLocation: z.string().optional(),
     batchNumber: z.string().optional(),
     referenceId: z.string().optional(),
@@ -837,13 +842,16 @@ export const createPrescriptionBillingLocalSchema = z
     path: ["products"],
   }) satisfies z.ZodType<CreatePrescriptionBillingLocalDto>;
 
-  export const createPrescriptionBillingSchema = z
+export const createPrescriptionBillingSchema = z
   .object({
     branchId: z.string({
       required_error: "Debe seleccionar la sucursal que genera la venta",
     }),
     patientId: z.string({
       required_error: "Debe seleccionar un paciente",
+    }),
+    recipeId: z.string({
+      required_error: "Debe seleccionar una receta",
     }),
     currency: z.string(),
     paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
@@ -862,10 +870,13 @@ export const createPrescriptionBillingLocalSchema = z
     ),
     appointmentIds: z.array(z.string()),
   })
-  .refine((data) => data.products.length > 0 || data.appointmentIds.length > 0, {
-    message: "Debe agregar al menos un producto o un servicio",
-    path: ["products"],
-  }) satisfies z.ZodType<CreatePrescriptionBillingDto>;
+  .refine(
+    (data) => data.products.length > 0 || data.appointmentIds.length > 0,
+    {
+      message: "Debe agregar al menos un producto o un servicio",
+      path: ["products"],
+    }
+  ) satisfies z.ZodType<CreatePrescriptionBillingDto>;
 
 export const createProductPurchaseBillingSchema = z.object({
   products: z.array(
@@ -925,15 +936,15 @@ export type TransactionDetailsPrototype =
   components["schemas"]["TransactionDetails"];
 
 export type TransactionDetails = {
-    subtotal: number;
-    tax: number;
-    total: number;
-}
+  subtotal: number;
+  tax: number;
+  total: number;
+};
 export type SaleOrderDetails = {
   transactionType: "SALE";
   branchId: string;
   products: ProductMovement[];
-  transactionDetails: TransactionDetails
+  transactionDetails: TransactionDetails;
 };
 export type ProductSaleMetadata = {
   patientDetails: PatientDetailsMetadata;
@@ -942,14 +953,18 @@ export type ProductSaleMetadata = {
 
 export type MedicalPrescriptionMetadataPrototype =
   components["schemas"]["MedicalPrescriptionMetadata"];
-export type BaseServiceItemPrototype = components["schemas"]["BaseServiceItem"][];
+export type BaseServiceItemPrototype =
+  components["schemas"]["BaseServiceItem"][];
 export type BaseServiceItem = {
-  id: string;
+  id: string; //AppointmentId
   name: string;
   quantity: number;
-}
+  serviceId: string;
+  servicePrice: number;
+};
 
-export type PrescriptionOrderDetailsPrototype = components["schemas"]["PrescriptionOrderDetails"];
+export type PrescriptionOrderDetailsPrototype =
+  components["schemas"]["PrescriptionOrderDetails"];
 export type PrescriptionOrderDetails = {
   transactionType: "PRESCRIPTION";
   branchId: string;
@@ -957,15 +972,17 @@ export type PrescriptionOrderDetails = {
   prescriptionDate: string;
   products: ProductMovement[];
   services: BaseServiceItem[];
-  transactionDetails: TransactionDetails
-}
+  transactionDetails: TransactionDetails;
+};
 export type MedicalPrescriptionMetadata = {
   patientDetails: PatientDetailsMetadata;
-  orderDetails: PrescriptionOrderDetails
-}
+  orderDetails: PrescriptionOrderDetails;
+};
 
-export type MedicalAppointmentMetadataPrototype = components["schemas"]["MedicalAppointmentMetadata"];
-export type MedicalAppointmentOrderDetailsPrototype = components["schemas"]["MedicalAppointmentOrderDetails"];
+export type MedicalAppointmentMetadataPrototype =
+  components["schemas"]["MedicalAppointmentMetadata"];
+export type MedicalAppointmentOrderDetailsPrototype =
+  components["schemas"]["MedicalAppointmentOrderDetails"];
 export type MedicalAppointmentOrderDetails = {
   transactionType: "MEDICAL_APPOINTMENT";
   branchId: string;
@@ -977,9 +994,8 @@ export type MedicalAppointmentOrderDetails = {
   appointmentEnd?: string;
   consultationDate: string;
   transactionDetails: TransactionDetails;
-}
+};
 export type MedicalAppointmentMetadata = {
-  patientDetails: PatientDetailsMetadata
-  orderDetails: MedicalAppointmentOrderDetails
-}
-
+  patientDetails: PatientDetailsMetadata;
+  orderDetails: MedicalAppointmentOrderDetails;
+};

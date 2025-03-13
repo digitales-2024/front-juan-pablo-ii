@@ -56,7 +56,7 @@ export const useBilling = () => {
     mutationFn: async (data) => {
       const response = await createPrescriptionOrder(data);
       if ("error" in response) {
-        throw new Error(response.error);
+        throw new Error("Error del servidor: " + response.error);
       }
       return response;
     },

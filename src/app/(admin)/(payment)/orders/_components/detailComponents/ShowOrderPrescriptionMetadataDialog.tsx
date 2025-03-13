@@ -15,7 +15,10 @@ import {
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
@@ -29,6 +32,8 @@ import { BaseServiceItemMetadataCardTable } from "./BaseServiceItemMetadataCardT
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export function ShowPrescriptionMetadataDetailsDialog({
   data,
@@ -47,13 +52,18 @@ export function ShowPrescriptionMetadataDetailsDialog({
   //   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { oneBranchQuery } = useBranches();
-  const branchQuery = oneBranchQuery(data.orderDetails.branchId);
   const { oneStaffQuery } = useStaff();
+  const branchQuery = oneBranchQuery(data.orderDetails.branchId);
   const staffData = oneStaffQuery(data.orderDetails.staffId);
 
   if (branchQuery.isLoading || staffData.isLoading) {
     return (
-      <Button type="button" disabled className="w-full flex items-center gap-2">
+      <Button
+        type="button"
+        variant={"outline"}
+        disabled
+        className="w-full flex items-center gap-2"
+      >
         <Skeleton className="h-4 w-4 rounded-full" />
         <Skeleton className="h-4 w-24" />
       </Button>
@@ -67,7 +77,7 @@ export function ShowPrescriptionMetadataDetailsDialog({
         onClick: async () => {
           await branchQuery.refetch();
         },
-      }
+      },
     });
     return (
       <Button type="button" disabled className="w-full flex items-center gap-2">
@@ -83,7 +93,7 @@ export function ShowPrescriptionMetadataDetailsDialog({
         onClick: async () => {
           await branchQuery.refetch();
         },
-      }
+      },
     });
     return (
       <Button type="button" disabled className="w-full flex items-center gap-2">
@@ -92,18 +102,23 @@ export function ShowPrescriptionMetadataDetailsDialog({
     );
   }
 
-  if (!staffData.data) {
-    return (
-      <Button type="button" disabled className="w-full flex items-center gap-2">
-        <Skeleton className="h-4 w-4 rounded-full" />
-        <Skeleton className="h-4 w-24" />
-      </Button>
-    );
-  }
+  // if (!staffData.data) {
+  //   return (
+  //     <Button type="button" disabled variant={'outline'} className="w-full flex items-center gap-2">
+  //       <Skeleton className="h-4 w-4 rounded-full" />
+  //       <Skeleton className="h-4 w-24" />
+  //     </Button>
+  //   );
+  // }
 
   if (!branchQuery.data) {
     return (
-      <Button type="button" disabled className="w-full flex items-center gap-2">
+      <Button
+        type="button"
+        disabled
+        variant={"outline"}
+        className="w-full flex items-center gap-2"
+      >
         <Skeleton className="h-4 w-4 rounded-full" />
         <Skeleton className="h-4 w-24" />
       </Button>
@@ -146,7 +161,7 @@ export function ShowPrescriptionMetadataDetailsDialog({
         <DialogTrigger asChild>
           <TriggerButton />
         </DialogTrigger>
-        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)]">
+        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)] overflow-auto">
           <DialogHeader className="sm:flex-row justify-between">
             <div className="space-y-2">
               <DialogTitle className="w-full">
@@ -155,13 +170,17 @@ export function ShowPrescriptionMetadataDetailsDialog({
               <DialogDescription className="w-full text-balance">
                 {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.description}
               </DialogDescription>
-              <div className="flex flex-col space-y-1">
-                <div className="flex space-x-2">
+              <div className="flex space-x-2 pt-2">
                   <Calendar className="text-primary"></Calendar>
-                  <Label>Fecha de la receta</Label>
+                  <div className="flex flex-col space-y-1">
+                    <Label>Fecha de la receta</Label>
+                    <span className="text-sm text-muted-foreground">
+                      {format(data.orderDetails.prescriptionDate, "PPP", {
+                        locale: es,
+                      }) ?? "Sin fecha"}
+                    </span>
+                  </div>
                 </div>
-                <span>{data.orderDetails.prescriptionDate ?? "Sin fecha"}</span>
-              </div>
               {staffData.data && (
                 <div className="flex flex-col space-y-1">
                   <div className="flex space-x-2">
@@ -186,13 +205,17 @@ export function ShowPrescriptionMetadataDetailsDialog({
           </DialogHeader>
           <div className="overflow-auto max-h-full space-y-3">
             {/* <MovementsTable data={data}></MovementsTable> */}
-            <BaseServiceItemMetadataCardTable
-              data={data.orderDetails.services}
-            ></BaseServiceItemMetadataCardTable>
-            <ProductMovementsMetadataTable
-              orderId={orderId}
-              data={data.orderDetails.products}
-            ></ProductMovementsMetadataTable>
+            {data.orderDetails.services && (
+              <BaseServiceItemMetadataCardTable
+                data={data.orderDetails.services}
+              ></BaseServiceItemMetadataCardTable>
+            )}
+            {data.orderDetails.products && (
+              <ProductMovementsMetadataTable
+                orderId={orderId}
+                data={data.orderDetails.products}
+              ></ProductMovementsMetadataTable>
+            )}
             <TransactionDetailsMetadataCardTable
               data={data.orderDetails.transactionDetails}
             ></TransactionDetailsMetadataCardTable>
@@ -211,14 +234,14 @@ export function ShowPrescriptionMetadataDetailsDialog({
         <TriggerButton />
       </DrawerTrigger>
       <DrawerContent className="overflow-auto">
-        <DialogHeader className="sm:flex-row justify-between">
+        <DrawerHeader className="sm:flex-row justify-between">
           <div className="space-y-2">
-            <DialogTitle className="w-full">
+            <DrawerTitle className="w-full">
               {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.title}
-            </DialogTitle>
-            <DialogDescription className="w-full text-balance">
+            </DrawerTitle>
+            <DrawerDescription className="w-full text-balance">
               {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.description}
-            </DialogDescription>
+            </DrawerDescription>
             <div className="flex flex-col space-y-1">
               <div className="flex space-x-2">
                 <Calendar className="text-primary"></Calendar>
@@ -247,16 +270,20 @@ export function ShowPrescriptionMetadataDetailsDialog({
             branchData={branchQuery.data}
             patientData={data.patientDetails}
           ></CommonDataMetadataMobile>
-        </DialogHeader>
+        </DrawerHeader>
         <div className="overflow-auto max-h-[calc(100dvh-12rem)] space-y-3">
           {/* <MovementsTable data={data}></MovementsTable> */}
-          <BaseServiceItemMetadataCardTable
-            data={data.orderDetails.services}
-          ></BaseServiceItemMetadataCardTable>
-          <ProductMovementsMetadataTable
-            orderId={orderId}
-            data={data.orderDetails.products}
-          ></ProductMovementsMetadataTable>
+          {data.orderDetails.services && (
+            <BaseServiceItemMetadataCardTable
+              data={data.orderDetails.services}
+            ></BaseServiceItemMetadataCardTable>
+          )}
+          {data.orderDetails.products && (
+            <ProductMovementsMetadataTable
+              orderId={orderId}
+              data={data.orderDetails.products}
+            ></ProductMovementsMetadataTable>
+          )}
           <TransactionDetailsMetadataCardTable
             data={data.orderDetails.transactionDetails}
           ></TransactionDetailsMetadataCardTable>

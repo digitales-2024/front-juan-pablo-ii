@@ -63,19 +63,30 @@ export function CreatePrescriptionBillingProcessDialog({
   const [isCreatePending, startCreateTransition] = useTransition();
   const [isFetchingError, setIsFetchingError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [wereProductsSaved, setWereProductsSaved] = useState<boolean>(false);
+  const [wereServicesSaved, setWereServicesSaved] = useState<boolean>(false);
 
   const existentMedicamentsIds = prescription.prescriptionMedicaments
     .filter((product) => product.id != undefined)
     .map((product) => product.id!);
   console.log("Prescription Medicaments Ids", existentMedicamentsIds);
+  const isDesktop = useMediaQuery("(min-width: 640px)");
   const manyProductsStock = useManyProductsStock();
   const { productStockQuery } = manyProductsStock(
     existentMedicamentsIds,
     prescription.id
   );
+  const { createPrescriptionOrderMutation } = useBilling();
   const { servicesQuery } = useServices();
   const dispatch = useSelectedServicesAppointmentsDispatch();
 
+  const onSaveProducts = () => {
+    setWereProductsSaved(true);
+  };
+
+  const onSaveServices = () => {
+    setWereServicesSaved(true);
+  };
   // 5. Form y Field Array
   const form = useForm<CreatePrescriptionBillingLocalInput>({
     resolver: zodResolver(createPrescriptionBillingLocalSchema),
@@ -87,6 +98,7 @@ export function CreatePrescriptionBillingProcessDialog({
         return {
           patientId: prescription.patientId, //required
           branchId: prescription.branchId, //required
+          recipeId: prescription.id,
           currency: "PEN", //required
           paymentMethod: "CASH", //required
           storageLocation: undefined,
@@ -109,6 +121,7 @@ export function CreatePrescriptionBillingProcessDialog({
       return {
         patientId: prescription.patientId, //required
         branchId: prescription.branchId, //required
+        recipeId: prescription.id,
         currency: "PEN", //required
         paymentMethod: "CASH", //required
         storageLocation: undefined,
@@ -145,10 +158,6 @@ export function CreatePrescriptionBillingProcessDialog({
   //   control: form.control,
   //   name: "services",
   // });
-
-  // 3. Contextos (useContext)
-  const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { createPrescriptionOrderMutation } = useBilling();
   // const { useStorageByBranchQuery } = useStorages();
 
   // // 4. Queries y datos externos
@@ -198,7 +207,7 @@ export function CreatePrescriptionBillingProcessDialog({
         createPrescriptionOrderMutation.mutate(input, {
           onSuccess: () => {
             form.reset();
-            dispatch({ type: "clear" });
+            dispatch({ type: "clear" }); //Elimina las referencias a las citas creadas
             setOpen(false);
           },
           onError: (error) => {
@@ -237,7 +246,7 @@ export function CreatePrescriptionBillingProcessDialog({
         }}
         trigger={
           <div>
-            {(isCreatePending || createPrescriptionOrderMutation.isPending) && (
+            {(isCreatePending ?? createPrescriptionOrderMutation.isPending) && (
               <RefreshCcw
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"
@@ -246,7 +255,12 @@ export function CreatePrescriptionBillingProcessDialog({
             <span>{CREATE_OUTGOING_MESSAGES.submitButton}</span>
           </div>
         }
-        isLoading={isCreatePending || createPrescriptionOrderMutation.isPending}
+        disabled={
+          isCreatePending ??
+          createPrescriptionOrderMutation.isPending ??
+          (!wereProductsSaved || !wereServicesSaved)
+        }
+        isLoading={isCreatePending ?? createPrescriptionOrderMutation.isPending}
         confirmationText="Confirmar"
       ></ConfirmOrderDialog>
       <Button
@@ -333,6 +347,8 @@ export function CreatePrescriptionBillingProcessDialog({
             prescription={prescription}
             stockDataQuery={productStockQuery}
             serviceDataQuery={servicesQuery}
+            onProductsSaved={onSaveProducts}
+            onServicesSaved={onSaveServices}
           >
             <DialogFooter>
               <DialogFooterContent />
@@ -363,6 +379,8 @@ export function CreatePrescriptionBillingProcessDialog({
           prescription={prescription}
           stockDataQuery={productStockQuery}
           serviceDataQuery={servicesQuery}
+          onProductsSaved={onSaveProducts}
+          onServicesSaved={onSaveServices}
         >
           <DrawerFooter>
             <DialogFooterContent />

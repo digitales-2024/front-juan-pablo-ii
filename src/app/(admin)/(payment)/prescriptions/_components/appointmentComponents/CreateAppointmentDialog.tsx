@@ -1,7 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { ArrowLeft, ArrowRight, CalendarDays, CalendarPlus, FileText } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarDays,
+  CalendarPlus,
+  FileText,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,9 +27,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  useSelectedServicesAppointmentsDispatch,
-} from "../../_hooks/useCreateAppointmentForOrder";
+import { useSelectedServicesAppointmentsDispatch } from "../../_hooks/useCreateAppointmentForOrder";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
@@ -33,8 +37,8 @@ import { Card, CardFooter } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
-    ConsultationSchema,
-    consultationsSchema,
+  ConsultationSchema,
+  consultationsSchema,
 } from "@/app/(admin)/(consultations)/consultations/type";
 import { useAppointments } from "@/app/(admin)/(appointments)/appointments/_hooks/useAppointments";
 import { CreateAppointmentDto } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
@@ -43,13 +47,13 @@ import LeftPanel from "@/app/(admin)/(consultations)/consultations/_components/L
 import ConsultationCalendarTime from "@/app/(admin)/(consultations)/consultations/_components/ConsultationCalendarTime";
 
 const CREATE_APPOINTMENT_FOR_ORDER_MESSAGES = {
-    button: "Agendar Cita",
-    title: "Agendar Nueva Cita",
-    description:
-        "Selecciona fecha, hora, médico y sucursal para agendar una nueva cita.",
-    success: "Cita agendada exitosamente",
-    submitButton: "Confirmar Cita",
-    cancel: "Cancelar",
+  button: "Agendar Cita",
+  title: "Agendar Nueva Cita",
+  description:
+    "Selecciona fecha, hora, médico y sucursal para agendar una nueva cita.",
+  success: "Cita agendada exitosamente",
+  submitButton: "Confirmar Cita",
+  cancel: "Cancelar",
 } as const;
 
 interface CreateAppointmentDialogProps
@@ -67,7 +71,7 @@ export function CreateAppointmentDialog({
   ...rest
 }: CreateAppointmentDialogProps) {
   const [open, setOpen] = useState(false);
-//   const [localSelectRows, setLocalSelectRows] = useState<ActiveProduct[]>([]);
+  //   const [localSelectRows, setLocalSelectRows] = useState<ActiveProduct[]>([]);
   // const selectedProductsTanstack = useSelectedProducts();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
@@ -80,8 +84,8 @@ export function CreateAppointmentDialog({
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   //First initialize the local storage for selected services store BEFORE INSTANTIATING "useAppointments"
-//   const selectedServicesAppointmentsData = useSelectedServicesAppointments();
-  const dispatch = useSelectedServicesAppointmentsDispatch();
+  //   const selectedServicesAppointmentsData = useSelectedServicesAppointments();
+  //const dispatch = useSelectedServicesAppointmentsDispatch();
   const { createMutationForOrder } = useAppointments();
 
   const form = useForm<ConsultationSchema>({
@@ -98,16 +102,16 @@ export function CreateAppointmentDialog({
     },
   });
 
-//   const handleSave = (selectedRows: ActiveProduct[]) => {
-//     // console.log('oldStateTanstack', selectedProductsTanstack);
-//     // console.log('handleSave', selectedRows);
-//     dispatch({ type: "append", payload: selectedRows });
-//     setOpen(false);
-//   };
+  //   const handleSave = (selectedRows: ActiveProduct[]) => {
+  //     // console.log('oldStateTanstack', selectedProductsTanstack);
+  //     // console.log('handleSave', selectedRows);
+  //     dispatch({ type: "append", payload: selectedRows });
+  //     setOpen(false);
+  //   };
 
   const handleClose = () => {
     //form.reset();
-    dispatch({ type: "clear" });
+    // dispatch({ type: "clear" });
     setOpen(false);
   };
 
@@ -337,13 +341,15 @@ export function CreateAppointmentDialog({
       // Mantenemos: date, time, staffId, branchId
       setShowForm(false);
       toast.success("Cita agendada exitosamente");
+      handleClose()
     } catch (error) {
       if (error instanceof Error) {
         toast.error(`Error al crear la cita: ${error.message}`);
+        console.error(error.message);
       } else {
         toast.error("Error desconocido al crear la cita");
       }
-      dispatch({ type: "clear" });
+      // dispatch({ type: "clear" });
     }
   };
 
@@ -377,7 +383,7 @@ export function CreateAppointmentDialog({
       {...rest}
       disabled={disabled}
     >
-      <CalendarPlus className="size-4 mr-2" aria-hidden="true" />
+      <CalendarPlus className="size-4 mr-2 text-primary" aria-hidden="true" />
       {CREATE_APPOINTMENT_FOR_ORDER_MESSAGES.button}
     </Button>
   );
@@ -457,6 +463,8 @@ export function CreateAppointmentDialog({
                   onBranchChange={handleBranchChange}
                   onServiceChange={handleServiceChange}
                   onPatientChange={handlePatientChange}
+                  form={form}
+                  notModifyDefaults={true}
                 />
                 <div className="relative">
                   {!showForm ? (
