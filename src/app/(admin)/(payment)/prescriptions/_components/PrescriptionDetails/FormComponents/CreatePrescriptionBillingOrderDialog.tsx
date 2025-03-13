@@ -30,10 +30,8 @@ import {
 } from "@/components/ui/drawer";
 import { useBilling } from "@/app/(admin)/(payment)/orders/_hooks/useBilling";
 import {
-  // CreatePrescriptionBillingInput,
-  // createPrescriptionBillingSchema,
-  createPrescriptionBillingLocalSchema,
-  CreatePrescriptionBillingLocalInput,
+  CreatePrescriptionBillingInput,
+  createPrescriptionBillingSchema,
 } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 import { PrescriptionWithPatient } from "../../../_interfaces/prescription.interface";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,13 +40,11 @@ import { toast } from "sonner";
 import { useManyProductsStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import { useServices } from "@/app/(admin)/services/_hooks/useServices";
 import { ConfirmOrderDialog } from "./ConfirmOrderDialog";
-import { useSelectedServicesAppointmentsDispatch } from "../../../_hooks/useCreateAppointmentForOrder";
 
 const CREATE_OUTGOING_MESSAGES = {
   button: "Generar venta",
   title: "Registrar venta por receta",
-  description:
-    "Rellena los campos para completar la venta de medicamentos según receta. Debes seleccionar los items para poder editar sus campos.",
+  description: "Rellena los campos para completar la venta de medicamentos según receta. Debes seleccionar los items para poder editar sus campos.",
   success: "Venta por receta registrada exitosamente",
   submitButton: "Procesar venta",
   cancel: "Cancelar",
@@ -63,33 +59,19 @@ export function CreatePrescriptionBillingProcessDialog({
   const [isCreatePending, startCreateTransition] = useTransition();
   const [isFetchingError, setIsFetchingError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [wereProductsSaved, setWereProductsSaved] = useState<boolean>(false);
-  const [wereServicesSaved, setWereServicesSaved] = useState<boolean>(false);
 
-  const existentMedicamentsIds = prescription.prescriptionMedicaments
-    .filter((product) => product.id != undefined)
-    .map((product) => product.id!);
-  console.log("Prescription Medicaments Ids", existentMedicamentsIds);
-  const isDesktop = useMediaQuery("(min-width: 640px)");
-  const manyProductsStock = useManyProductsStock();
-  const { productStockQuery } = manyProductsStock(
-    existentMedicamentsIds,
-    prescription.id
-  );
-  const { createPrescriptionOrderMutation } = useBilling();
+  console.log('prescriptionMedicaments', prescription.prescriptionMedicaments)
+  const existentMedicamentsIds = prescription.prescriptionMedicaments.filter(product => product.id != undefined).map((product) => product.id!);
+  console.log('Prescription Medicaments Ids', existentMedicamentsIds)
+  const manyProductsStock = useManyProductsStock()
+  const { productStockQuery } = manyProductsStock(existentMedicamentsIds, prescription.id)
   const { servicesQuery } = useServices();
-  const dispatch = useSelectedServicesAppointmentsDispatch();
 
-  const onSaveProducts = () => {
-    setWereProductsSaved(true);
-  };
-
-  const onSaveServices = () => {
-    setWereServicesSaved(true);
-  };
   // 5. Form y Field Array
-  const form = useForm<CreatePrescriptionBillingLocalInput>({
-    resolver: zodResolver(createPrescriptionBillingLocalSchema),
+  const form = useForm<CreatePrescriptionBillingInput>({
+    resolver: zodResolver(
+      createPrescriptionBillingSchema
+    ),
     defaultValues: async () => {
       setIsLoading(true);
       const result = await getActiveStoragesByBranch(prescription.branchId);
@@ -98,7 +80,6 @@ export function CreatePrescriptionBillingProcessDialog({
         return {
           patientId: prescription.patientId, //required
           branchId: prescription.branchId, //required
-          recipeId: prescription.id,
           currency: "PEN", //required
           paymentMethod: "CASH", //required
           storageLocation: undefined,
@@ -107,13 +88,11 @@ export function CreatePrescriptionBillingProcessDialog({
           notes: undefined,
           metadata: undefined,
           products: [],
-          services:
-            prescription.prescriptionServices.length > 0
-              ? prescription.prescriptionServices.map((service) => ({
-                  serviceId: service.id!,
-                  quantity: service.quantity ?? 1,
-                }))
-              : [],
+          services: prescription.prescriptionServices.length > 0 ? prescription.prescriptionServices.map((service) => ({
+            serviceId: service.id!,
+            quantity: service.quantity ?? 1,
+          }))
+          : [],
         };
       }
       setIsFetchingError(false);
@@ -121,7 +100,6 @@ export function CreatePrescriptionBillingProcessDialog({
       return {
         patientId: prescription.patientId, //required
         branchId: prescription.branchId, //required
-        recipeId: prescription.id,
         currency: "PEN", //required
         paymentMethod: "CASH", //required
         storageLocation: undefined,
@@ -129,13 +107,11 @@ export function CreatePrescriptionBillingProcessDialog({
         referenceId: undefined,
         notes: undefined,
         metadata: undefined,
-        services:
-          prescription.prescriptionServices.length > 0
-            ? prescription.prescriptionServices.map((service) => ({
-                serviceId: service.id!,
-                quantity: service.quantity ?? 1,
-              }))
-            : [],
+        services: prescription.prescriptionServices.length > 0 ? prescription.prescriptionServices.map((service) => ({
+          serviceId: service.id!,
+          quantity: service.quantity ?? 1,
+        }))
+        : [],
         // products:
         products:
           prescription.prescriptionMedicaments.length > 0
@@ -158,6 +134,10 @@ export function CreatePrescriptionBillingProcessDialog({
   //   control: form.control,
   //   name: "services",
   // });
+
+  // 3. Contextos (useContext)
+  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const { createSaleOrderMutation } = useBilling();
   // const { useStorageByBranchQuery } = useStorages();
 
   // // 4. Queries y datos externos
@@ -197,17 +177,15 @@ export function CreatePrescriptionBillingProcessDialog({
   const handleClose = useCallback(() => {
     // handleClearProductList();
     form.reset();
-    dispatch({ type: "clear" });
     setOpen(false);
   }, [form]);
 
   const onSubmit = useCallback(
-    (input: CreatePrescriptionBillingLocalInput) => {
+    (input: CreatePrescriptionBillingInput) => {
       startCreateTransition(() => {
-        createPrescriptionOrderMutation.mutate(input, {
+        createSaleOrderMutation.mutate(input, {
           onSuccess: () => {
             form.reset();
-            dispatch({ type: "clear" }); //Elimina las referencias a las citas creadas
             setOpen(false);
           },
           onError: (error) => {
@@ -218,7 +196,7 @@ export function CreatePrescriptionBillingProcessDialog({
         });
       });
     },
-    [createPrescriptionOrderMutation, form, startCreateTransition]
+    [createSaleOrderMutation, form, startCreateTransition]
   );
 
   useEffect(() => {
@@ -226,6 +204,7 @@ export function CreatePrescriptionBillingProcessDialog({
       toast.error("Error al obtener los almacenes de la sucursal");
     }
   }, []);
+  
 
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
@@ -241,28 +220,21 @@ export function CreatePrescriptionBillingProcessDialog({
       </Button> */}
 
       <ConfirmOrderDialog
-        onConfirm={async () => {
-          await form.handleSubmit(onSubmit)();
-        }}
+        onConfirm={async ()=>{ await form.handleSubmit(onSubmit)()}}
         trigger={
           <div>
-            {(isCreatePending ?? createPrescriptionOrderMutation.isPending) && (
-              <RefreshCcw
-                className="mr-2 size-4 animate-spin"
-                aria-hidden="true"
-              />
+            {(isCreatePending || createSaleOrderMutation.isPending) && (
+              <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
             )}
-            <span>{CREATE_OUTGOING_MESSAGES.submitButton}</span>
+            <span>
+              {CREATE_OUTGOING_MESSAGES.submitButton}
+            </span>
           </div>
         }
-        disabled={
-          isCreatePending ??
-          createPrescriptionOrderMutation.isPending ??
-          (!wereProductsSaved || !wereServicesSaved)
-        }
-        isLoading={isCreatePending ?? createPrescriptionOrderMutation.isPending}
+        isLoading={isCreatePending || createSaleOrderMutation.isPending}
         confirmationText="Confirmar"
-      ></ConfirmOrderDialog>
+      >
+      </ConfirmOrderDialog>
       <Button
         type="button"
         variant="outline"
@@ -277,16 +249,12 @@ export function CreatePrescriptionBillingProcessDialog({
   const LoadingButton = () => {
     return (
       <Skeleton className="h-9 w-24 animate-pulse rounded-md bg-secondary"></Skeleton>
-    );
-  };
+  );}
 
   const ErrorButtonSkeleton = () => {
     return (
-      <Skeleton className="h-9 w-24 animate-pulse rounded-md bg-secondary text-center">
-        Error
-      </Skeleton>
-    );
-  };
+      <Skeleton className="h-9 w-24 animate-pulse rounded-md bg-secondary text-center">Error</Skeleton>
+  );}
 
   const TriggerButton = () => {
     // if (isLoading || productStockQuery.isLoading || servicesQuery.isLoading) {
@@ -296,17 +264,17 @@ export function CreatePrescriptionBillingProcessDialog({
     // }
 
     return (
-      <Button
-        disabled={isFetchingError || productStockQuery.isError}
-        onClick={() => setOpen(true)}
-        variant="ghost"
-        size="sm"
-        aria-label="Open menu"
-        className="flex p-2 data-[state=open]:bg-muted text-sm bg-primary/10 hover:scale-105 hover:transition-all"
-      >
-        <Receipt className="text-primary !size-6" />
-        {CREATE_OUTGOING_MESSAGES.button}
-      </Button>
+    <Button
+      disabled={isFetchingError || productStockQuery.isError}
+      onClick={() => setOpen(true)}
+      variant="ghost"
+      size="sm"
+      aria-label="Open menu"
+      className="flex p-2 data-[state=open]:bg-muted text-sm bg-primary/10 hover:scale-105 hover:transition-all"
+    >
+      <Receipt className="text-primary !size-6" />
+      {CREATE_OUTGOING_MESSAGES.button}
+    </Button>
     );
   };
 
@@ -316,7 +284,8 @@ export function CreatePrescriptionBillingProcessDialog({
   }
 
   if (productStockQuery.isLoading || isLoading || servicesQuery.isLoading) {
-    return <LoadingButton />;
+    return <LoadingButton
+    />;
   }
 
   if (!productStockQuery.data || !servicesQuery.data) {
@@ -347,8 +316,6 @@ export function CreatePrescriptionBillingProcessDialog({
             prescription={prescription}
             stockDataQuery={productStockQuery}
             serviceDataQuery={servicesQuery}
-            onProductsSaved={onSaveProducts}
-            onServicesSaved={onSaveServices}
           >
             <DialogFooter>
               <DialogFooterContent />
@@ -379,8 +346,6 @@ export function CreatePrescriptionBillingProcessDialog({
           prescription={prescription}
           stockDataQuery={productStockQuery}
           serviceDataQuery={servicesQuery}
-          onProductsSaved={onSaveProducts}
-          onServicesSaved={onSaveServices}
         >
           <DrawerFooter>
             <DialogFooterContent />

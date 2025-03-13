@@ -18,7 +18,7 @@ export default function SearchOrderCombobox({
 }: SearchOrderComoBoxProps) {
   const DefaultSearchValue = "None"; //IMPORTANT: This value is used to SEND a request to the backend when the search input is empty
   const [value, setValue] = useState(defaultValue);
-  const [label, setLabel] = useState("Buscar por Nro. de Órden");
+  const [label, setLabel] = useState("Buscar paciente por Nro. de Órden");
   // const [entity, setEntity] = useState<T | null>(null);
   const [search, setSearch] = useState(DefaultSearchValue);
 

@@ -5,7 +5,6 @@ import {
   deleteServices,
   getServices,
   reactivateServices,
-  getServiceById,
 } from "../_actions/service.actions";
 import { toast } from "sonner";
 import {
@@ -47,29 +46,6 @@ export const useServices = () => {
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
-
-    function useOneServiceQuery(serviceId: string) {
-      return useQuery({
-        queryKey: ["service", serviceId],
-        queryFn: async () => {
-          try {
-            const response = await getServiceById(
-              serviceId
-            );
-            if (!response || "error" in response) {
-              throw new Error(response?.error || "No se recibió respuesta");
-            }
-            return response;
-          } catch (error) {
-            const message =
-              error instanceof Error ? error.message : "Error desconocido";
-            toast.error(message);
-            return undefined;
-          }
-        },
-        staleTime: 1000 * 60 * 5,
-      });
-    }
 
   // Mutación para crear servicio
   const createMutation = useMutation<BaseApiResponse<Service>, Error, CreateServiceDto>({
@@ -200,7 +176,6 @@ export const useServices = () => {
 
   return {
     servicesQuery,
-    useOneServiceQuery,
     services: servicesQuery.data,
     createMutation,
     updateMutation,
