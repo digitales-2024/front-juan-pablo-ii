@@ -4,6 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import {
   DetailedOrder,
+  MedicalAppointmentMetadata,
+  MedicalPrescriptionMetadata,
   orderStatusConfig,
   orderTypeConfig,
   paymentOptionButtons,
@@ -39,6 +41,10 @@ import { VerifyPaymentDialog } from "./paymentComponents/verifyPayment/VerifyPay
 import { RefundPaymentDialog } from "./paymentComponents/refundPayment/RefundPaymentDialog";
 import { CancelPaymentDialog } from "./paymentComponents/cancelPayment/CancelPaymentDialog";
 import { RejectPaymentDialog } from "./paymentComponents/rejectPayment/RejectPaymentDialog";
+import { ShowProductSaleMetadataDetailsDialog } from "./detailComponents/ShowProductSaleMetadataDialog";
+import { toast } from "sonner";
+import { ShowPrescriptionMetadataDetailsDialog } from "./detailComponents/ShowOrderPrescriptionMetadataDialog";
+import { ShowAppointmentMetadataDialog } from "./detailComponents/ShowAppointmentMetadataDialog";
 // import Image from "next/image";
 
 export const columns: ColumnDef<DetailedOrder>[] = [
@@ -242,6 +248,62 @@ export const columns: ColumnDef<DetailedOrder>[] = [
         }).format(row.original.total)}
       </span>
     ),
+  },
+  {
+    accessorKey: "metadata",
+    size: 10,
+    meta: {
+      title: "Detalles",
+    },
+    header: () => <div>Detalles</div>,
+    cell: ({ row }) => {
+      if (!row.original.metadata) {
+        return null;
+      }
+      let metadata: unknown = null;
+      try {
+        if (row.original.metadata) {
+          metadata = JSON.parse(row.original.metadata);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error("Error al parsear metadata: " + error.message);
+        }
+        toast.error("Error al parsear metadata");
+        return null;
+      }
+      
+      let MetadataDialog: ()=>ReactElement = () => <div></div>;
+      switch (row.original.type) {
+        case "PRODUCT_SALE_ORDER":
+          MetadataDialog = ()=>(<ShowProductSaleMetadataDetailsDialog
+            data={metadata as ProductSaleMetadata}
+            orderId={row.original.id}
+          ></ShowProductSaleMetadataDetailsDialog>)
+          break;
+        case "MEDICAL_PRESCRIPTION_ORDER":
+          MetadataDialog = ()=>{
+            return <ShowPrescriptionMetadataDetailsDialog
+            data={metadata as MedicalPrescriptionMetadata}
+            orderId={row.original.id}
+            ></ShowPrescriptionMetadataDetailsDialog>
+          }
+          break;
+
+        case "MEDICAL_APPOINTMENT_ORDER":
+          MetadataDialog = ()=> <ShowAppointmentMetadataDialog
+            data={metadata as MedicalAppointmentMetadata}
+            orderId={row.original.id}
+          ></ShowAppointmentMetadataDialog>
+          break;
+        default:
+          MetadataDialog = ()=> <div></div>
+          break;
+      }
+      return <div>
+        {<MetadataDialog/>}
+      </div>
+    },
   },
   {
     accessorKey: "isActive",

@@ -68,7 +68,7 @@ export default function ConsultationForm({
 
 	// Obtener los valores actuales del formulario para mostrar en el resumen
 	const paymentMethod = form.watch("paymentMethod");
-	const paymentMethodLabel = ListPaymentMethods.find(method => method.value === paymentMethod)?.label || "No seleccionado";
+	const paymentMethodLabel = ListPaymentMethods.find(method => method.value === paymentMethod)?.label ?? "No seleccionado";
 
 	return (
 		<Card>

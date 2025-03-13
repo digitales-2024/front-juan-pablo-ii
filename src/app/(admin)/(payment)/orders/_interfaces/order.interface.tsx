@@ -31,7 +31,7 @@ export type EnumConfig = {
   backgroundColor: string;
   textColor: string;
   hoverBgColor: string;
-  hoverTextColor?: string
+  hoverTextColor?: string;
   importantBgColor?: string;
   importantHoverBgColor?: string;
   importantTextColor?: string;
@@ -628,19 +628,25 @@ export type ServiceSaleItemDto = {
   serviceId: string;
   quantity: number;
 };
-export type CreateServiceSaleBillingDtoPrototype = components['schemas']['CreateMedicalPrescriptionBillingDto'];
+export type ServiceSaleLocalItemDto = {
+  serviceId: string;
+  quantity: number;
+  appointmentId?: string; //Artificial field
+};
+export type CreateServiceSaleBillingDtoPrototype =
+  components["schemas"]["CreateMedicalPrescriptionBillingDto"];
 
 // {
-//   appointmentIds: string[];
-//   products: components["schemas"]["PrescriptionProductItemDto"][];
+//   branchId: string;
 //   patientId: string;
 //   recipeId: string;
-//   branchId: string;
-//   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
-//   amountPaid?: number;
 //   currency: string;
-//   voucherNumber?: string;
+//   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
 //   notes?: string;
+//   amountPaid?: number; //NO deberia
+//   voucherNumber?: string; //NO deberia
+//   products: components["schemas"]["PrescriptionProductItemDto"][];
+//   appointmentIds: string[];
 //   metadata?: Record<string, never>;
 // };
 export type CreatePrescriptionBillingDto = {
@@ -649,11 +655,24 @@ export type CreatePrescriptionBillingDto = {
   storageLocation?: string;
   batchNumber?: string;
   referenceId?: string;
+  recipeId: string;
   currency: string;
   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   products: ProductSaleItemDto[];
-  services: ServiceSaleItemDto[];
+  appointmentIds: string[];
+  metadata?: Record<string, never>;
+};
+
+export type CreatePrescriptionBillingLocalDto = {
+  branchId: string;
+  patientId: string;
+  recipeId: string;
+  currency: string;
+  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
+  notes?: string;
+  products: ProductSaleItemDto[];
+  services: ServiceSaleLocalItemDto[];
   metadata?: Record<string, never>;
 };
 
@@ -695,38 +714,85 @@ export const createProductSaleBillingSchema = z.object({
   })).min(1, { message: "Debe seleccionar al menos un producto" }),
 }) satisfies z.ZodType<CreateProductSaleBillingDto>;
 
-export const createPrescriptionBillingSchema = z.object({
-  branchId: z.string({
-    required_error: "Debe seleccionar la sucursal que genera la venta",
-  }),
-  patientId: z.string({
-    required_error: "Debe seleccionar un paciente",
-  }),
-  storageLocation: z.string().optional(),
-  batchNumber: z.string().optional(),
-  referenceId: z.string().optional(),
-  currency: z.string(),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
-  notes: z.string().optional(),
-  metadata: z.record(z.never()).optional(),
-  products: z.array(z.object({
-    productId: z.string(),
-    quantity: z.coerce.number().min(1, { message: "La cantidad debe ser mayor a 0" }),
-    storageId: z.string({
-      required_error: "Debe seleccionar un almacén",
+export const createPrescriptionBillingLocalSchema = z
+  .object({
+    branchId: z.string({
+      required_error: "Debe seleccionar la sucursal que genera la venta",
     }),
-  })),
-  services: z.array(z.object({
-    serviceId: z.string(),
-    quantity: z.coerce.number().min(1, { message: "La cantidad debe ser mayor a 0" }),
-  })),
-}).refine(
-  data => data.products.length > 0 || data.services.length > 0,
-  {
+    patientId: z.string({
+      required_error: "Debe seleccionar un paciente",
+    }),
+    recipeId: z.string({
+      required_error: "Debe seleccionar una receta",
+    }),
+    storageLocation: z.string().optional(),
+    batchNumber: z.string().optional(),
+    referenceId: z.string().optional(),
+    currency: z.string(),
+    paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
+    notes: z.string().optional(),
+    metadata: z.record(z.never()).optional(),
+    products: z.array(
+      z.object({
+        productId: z.string(),
+        quantity: z.coerce
+          .number()
+          .min(1, { message: "La cantidad debe ser mayor a 0" }),
+        storageId: z.string({
+          required_error: "Debe seleccionar un almacén",
+        }),
+      })
+    ),
+    services: z.array(
+      z.object({
+        serviceId: z.string(),
+        quantity: z.coerce
+          .number()
+          .min(1, { message: "La cantidad debe ser mayor a 0" }),
+        appointmentId: z.string().optional(),
+      })
+    ),
+  })
+  .refine((data) => data.products.length > 0 || data.services.length > 0, {
     message: "Debe agregar al menos un producto o un servicio",
     path: ["products"],
-  }
-) satisfies z.ZodType<CreatePrescriptionBillingDto>;
+  }) satisfies z.ZodType<CreatePrescriptionBillingLocalDto>;
+
+export const createPrescriptionBillingSchema = z
+  .object({
+    branchId: z.string({
+      required_error: "Debe seleccionar la sucursal que genera la venta",
+    }),
+    patientId: z.string({
+      required_error: "Debe seleccionar un paciente",
+    }),
+    recipeId: z.string({
+      required_error: "Debe seleccionar una receta",
+    }),
+    currency: z.string(),
+    paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
+    notes: z.string().optional(),
+    metadata: z.record(z.never()).optional(),
+    products: z.array(
+      z.object({
+        productId: z.string(),
+        quantity: z.coerce
+          .number()
+          .min(1, { message: "La cantidad debe ser mayor a 0" }),
+        storageId: z.string({
+          required_error: "Debe seleccionar un almacén",
+        }),
+      })
+    ),
+    appointmentIds: z.array(z.string()),
+  })
+  .refine(
+    (data) => data.products.length > 0 || data.appointmentIds.length > 0,
+    {
+      message: "Debe agregar al menos un producto o un servicio",
+      path: ["products"],
+    }
+  ) satisfies z.ZodType<CreatePrescriptionBillingDto>;
 
 export const createProductPurchaseBillingSchema = z.object({
   products: z.array(z.object({
@@ -750,6 +816,96 @@ export type CreateProductSaleBillingInput = z.infer<typeof createProductSaleBill
 export type CreatePrescriptionBillingInput = z.infer<typeof createPrescriptionBillingSchema>;
 export type CreateProductPurchaseBillingInput = z.infer<typeof createProductPurchaseBillingSchema>;
 
+export type ProductSaleOrderMetadataPrototype =
+  components["schemas"]["ProductSaleMetadata"];
+export type PatientDetailsPrototype =
+  components["schemas"]["PatientDetailsMetadata"];
+export type PatientDetailsMetadata = {
+  fullName: string;
+  dni?: string;
+  address?: string;
+  phone?: string;
+};
+export type SaleOrderDetailsPrototype =
+  components["schemas"]["SaleOrderDetails"];
+export type ProductMovementPrototype = components["schemas"]["ProductMovement"];
+export type ProductMovement = {
+  id: string;
+  storageId: string;
+  name: string;
+  quantity: number;
+  subtotal: number;
+  price: number;
+};
+export type TransactionDetailsPrototype =
+  components["schemas"]["TransactionDetails"];
+
+export type TransactionDetails = {
+  subtotal: number;
+  tax: number;
+  total: number;
+};
+export type SaleOrderDetails = {
+  transactionType: "SALE";
+  branchId: string;
+  products: ProductMovement[];
+  transactionDetails: TransactionDetails;
+};
+export type ProductSaleMetadata = {
+  patientDetails: PatientDetailsMetadata;
+  orderDetails: SaleOrderDetails;
+};
+
+export type MedicalPrescriptionMetadataPrototype =
+  components["schemas"]["MedicalPrescriptionMetadata"];
+export type BaseServiceItemPrototype =
+  components["schemas"]["BaseServiceItem"][];
+export type BaseServiceItem = {
+  id: string; //AppointmentId
+  name: string;
+  quantity: number;
+  serviceId: string;
+  servicePrice: number;
+};
+
+export type PrescriptionOrderDetailsPrototype =
+  components["schemas"]["PrescriptionOrderDetails"];
+export type PrescriptionOrderDetails = {
+  transactionType: "PRESCRIPTION";
+  branchId: string;
+  staffId: string;
+  prescriptionDate: string;
+  products: ProductMovement[];
+  services: BaseServiceItem[];
+  transactionDetails: TransactionDetails;
+};
+export type MedicalPrescriptionMetadata = {
+  patientDetails: PatientDetailsMetadata;
+  orderDetails: PrescriptionOrderDetails;
+};
+
+export type MedicalAppointmentMetadataPrototype =
+  components["schemas"]["MedicalAppointmentMetadata"];
+export type MedicalAppointmentOrderDetailsPrototype =
+  components["schemas"]["MedicalAppointmentOrderDetails"];
+export type MedicalAppointmentOrderDetails = {
+  transactionType: "MEDICAL_APPOINTMENT";
+  branchId: string;
+  appointmentId: string;
+  staffId?: string;
+  serviceId?: string;
+  appointmentType?: string;
+  appointmentStart?: string;
+  appointmentEnd?: string;
+  consultationDate: string;
+  transactionDetails: TransactionDetails;
+};
+export type MedicalAppointmentMetadata = {
+  patientDetails: PatientDetailsMetadata;
+  orderDetails: MedicalAppointmentOrderDetails;
+};
+
+
 export type CreateMedicalAppointmentBillingDtoPrototype = components['schemas']['CreateMedicalAppointmentBillingDto'];
 export type CreateMedicalAppointmentBillingDto = {
   appointmentId: string;
@@ -759,18 +915,16 @@ export type CreateMedicalAppointmentBillingDto = {
   voucherNumber?: string;
   notes?: string;
   metadata?: Record<string, never>;
-};
+};	
 
 export const createMedicalAppointmentBillingSchema = z.object({
-  appointmentId: z.string({
-    required_error: "Debe proporcionar el ID de la cita",
-  }),
-  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
-  amountPaid: z.number().optional(),
-  currency: z.string(),
-  voucherNumber: z.string().optional(),
-  notes: z.string().optional(),
-  metadata: z.record(z.never()).optional(),
-}) satisfies z.ZodType<CreateMedicalAppointmentBillingDto>;
-
-export type CreateMedicalAppointmentBillingInput = z.infer<typeof createMedicalAppointmentBillingSchema>;
+    appointmentId: z.string({
+      required_error: "Debe proporcionar el ID de la cita",
+    }),
+    paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
+    amountPaid: z.number().optional(),
+    currency: z.string(),
+    voucherNumber: z.string().optional(),
+    notes: z.string().optional(),
+    metadata: z.record(z.never()).optional(),
+  }) satisfies z.ZodType<CreateMedicalAppointmentBillingDto>;

@@ -142,6 +142,50 @@ export async function createProductSaleOrder(
 }
 
 /**
+ * Crea una nueva orden en el catálogo.
+ *
+ * @param data - Un objeto con la información de la orden a crear.
+ * @returns Un objeto con una propiedad `data` que contiene la orden creada,
+ *          o un objeto con una propiedad `error` que contiene un mensaje de error.
+ */
+export async function createPrescriptionOrder(
+  data: CreatePrescriptionBillingLocalDto
+): Promise<OrderResponse> {
+  const toPrescriptionBillingDto: CreatePrescriptionBillingDto = ((data: CreatePrescriptionBillingLocalDto) => {
+    const appointmentIds = data.services
+      .filter((service) => service.appointmentId !== undefined)
+      .map((service) => service.appointmentId)
+      .filter((id): id is string => id !== undefined);
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { services, ...rest } = data;
+
+    return {
+      ...rest,
+      appointmentIds,
+    };
+  })(data);
+
+  console.log('data send to the server', JSON.stringify(toPrescriptionBillingDto))
+
+  try {
+    const [responseData, error] = await http.post<OrderResponse>(
+      "/billing/medical-prescription",
+      toPrescriptionBillingDto
+    );
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return responseData;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+/**
  * Actualiza una orden en el catálogo.
  *
  * @param id - El identificador único de la orden a actualizar.

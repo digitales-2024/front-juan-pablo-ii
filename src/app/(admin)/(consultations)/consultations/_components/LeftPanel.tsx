@@ -10,6 +10,9 @@ import { useServices } from "@/app/(admin)/services/_hooks/useServices";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
 import { useForm } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
+import { ConsultationSchema } from "../type";
+import { FormDescription } from "@/components/ui/form";
 
 interface LeftPanelProps {
   date: Date;
@@ -24,7 +27,9 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
   const [selectedMedico, setSelectedMedico] = useState<string | null>(null);
   const [selectedServicio, setSelectedServicio] = useState<string | null>(null);
   const [selectedSucursal, setSelectedSucursal] = useState<string | null>(null);
-  const [selectedPaciente, setSelectedPaciente] = useState<string | null>(null);
+  const [selectedPaciente, setSelectedPaciente] = useState<string | null>(
+    isPrescriptionOrderAppointment ? form.getValues('patientId') : null
+  );
   const { staff } = useStaff();
   const { services } = useServices();
   const { branches } = useBranches();
@@ -64,6 +69,13 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
     }
     console.groupEnd();
   };
+
+  const DefaultValueOrderDescription = ()=>{
+    const message = "Valor obligatorio para la orden"
+    return <FormDescription className="text-primary/80">
+      {message}
+    </FormDescription>
+  }
 
   return (
     <div className="flex gap-4">
@@ -109,9 +121,10 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
                 onServiceChange(value);
               }
             }}
-            description="Seleccione un servicio para la consulta"
+            description={!isPrescriptionOrderAppointment?"Seleccione un servicio para la consulta": undefined}
             placeholder="Selecciona un servicio"
           />
+          {isPrescriptionOrderAppointment && <DefaultValueOrderDescription></DefaultValueOrderDescription>}
         </div>
         <div className="mt-6">
           <Label
@@ -150,9 +163,10 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
                 onPatientChange(value);
               }
             }}
-            description="Seleccione un paciente para la consulta"
+            description={!isPrescriptionOrderAppointment?"Seleccione un paciente para la consulta": undefined}
             placeholder="Selecciona un paciente"
           />
+          {isPrescriptionOrderAppointment && <DefaultValueOrderDescription></DefaultValueOrderDescription>}
         </div>
       </div>
       <Separator

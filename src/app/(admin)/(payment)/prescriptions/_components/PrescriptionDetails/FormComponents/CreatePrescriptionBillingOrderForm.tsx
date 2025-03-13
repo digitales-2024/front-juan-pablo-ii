@@ -87,6 +87,10 @@ interface CreatePrescriptionOrderFormProps
   // controlledServiceFieldArray: UseFieldArrayReturn<CreatePrescriptionBillingInput>;
   onSubmit: (data: CreatePrescriptionBillingInput) => void;
   onDialogClose?: () => void;
+  onProductsSaved: () => void;
+  onServicesSaved: () => void;
+  // onSaveProductPending : () => void;
+  // onSabeServicesPending : () => void;
 }
 
 type ProductItem = ProductSaleItemDto & {
@@ -109,6 +113,8 @@ export function CreatePrescriptionOrderForm({
   // controlledServiceFieldArray,
   stockDataQuery,
   serviceDataQuery,
+  onProductsSaved,
+  onServicesSaved,
 }: CreatePrescriptionOrderFormProps) {
   const IGV = 0.18;
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
@@ -140,6 +146,9 @@ export function CreatePrescriptionOrderForm({
     ServiceItem[]
   >([]);
 
+  const [wereProductsSaved, setWereProductsSaved] = useState(false);
+  const [wereServicesSaved, setWereServicesSaved] = useState(false);
+
   const [showProductTotals, setShowProductTotals] = useState(false);
   const [productTotals, setProductTotals] = useState({
     total: 0,
@@ -167,6 +176,10 @@ export function CreatePrescriptionOrderForm({
   const { productStockQuery: reponseProductsStock } = useProductsStock();
   const { activeProductsQuery: reponseProducts } = useProducts();
   const { activeBranchesQuery: responseBranches } = useBranches();
+  //INITIALIZATION OF STORAGE
+  const { dataQuery: selectedServicesAppointmentsData } =
+    useSelectedServicesAppointments();
+  const dispatch = useSelectedServicesAppointmentsDispatch();
 
   // Inicializar datos locales desde el formulario
   useEffect(() => {
@@ -336,20 +349,86 @@ export function CreatePrescriptionOrderForm({
       .filter((service) => service.selected)
       .map(({ isEditing, hasChanges, selected, ...service }) => service);
 
+    //Appointmentnt creation validation
+    if (
+      selectedServices.length !== selectedServicesAppointmentsData.data.length
+    ) {
+      toast.error("Debe crear una cita para cada servicio antes de guardar");
+      return;
+    }
+
+    const selectedServicesWithAppointmentId = selectedServices.map(
+      (service) => {
+        const appointmentReference = selectedServicesAppointmentsData.data.find(
+          (s) => s.serviceId === service.serviceId
+        );
+        return {
+          ...service,
+          appointmentId: appointmentReference?.appointmentId,
+        };
+      }
+    );
+
     // Update main form with selected services
     form.setValue("services", selectedServices);
 
     // Mark that there are no pending changes
     setServicesTableFormData((prev) =>
-      prev.map((item) => ({ ...item, hasChanges: false }))
+      prev.map((item) => ({
+        ...item,
+        hasChanges: false,
+        // hasMadeAppointment: true,
+      }))
     );
 
     calculateServiceTotals();
 
+    //Saving state
+    setWereServicesSaved(true);
+    onServicesSaved(); //Communicate with parent
+
     toast.success(
       `${selectedServices.length} servicios guardados correctamente`
     );
-  }, [servicesTableFormData, form]);
+  }, [servicesTableFormData, form, selectedServicesAppointmentsData]);
+
+  const handleSomeAppointmentCreated = useCallback(() => {
+    if (selectedServicesAppointmentsData.data.length === 0) return;
+
+    // Comparar y solo actualizar si hay cambios reales
+    setServicesTableFormData((prev) => {
+      const updated = prev.map((item) => {
+        const appointmentReference = selectedServicesAppointmentsData.data.find(
+          (s) => s.serviceId === item.serviceId
+        );
+        const hasMadeAppointment = !!appointmentReference;
+
+        // Solo actualizar si cambia el estado de la cita
+        if (item.hasMadeAppointment !== hasMadeAppointment) {
+          return { ...item, hasMadeAppointment };
+        }
+        return item; // Sin cambios
+      });
+
+      // Si no hay cambios reales, devolver el estado anterior
+      const hasChanges = updated.some(
+        (item, index) =>
+          item.hasMadeAppointment !== prev[index].hasMadeAppointment
+      );
+
+      return hasChanges ? updated : prev;
+    });
+  }, [selectedServicesAppointmentsData.data]);
+
+  // 2. Actualizar solo cuando cambia selectedServicesAppointmentsData.data.length
+  useEffect(() => {
+    // Este efecto solo debe ejecutarse cuando cambie la cantidad de citas
+    // no cada vez que cualquier propiedad interna cambie
+    handleSomeAppointmentCreated();
+  }, [
+    selectedServicesAppointmentsData.data.length,
+    handleSomeAppointmentCreated,
+  ]);
 
   // Calcular totales (solo productos seleccionados)
   const calculateProductTotals = useCallback(() => {
@@ -467,6 +546,10 @@ export function CreatePrescriptionOrderForm({
     );
 
     calculateProductTotals();
+
+    //Saving States
+    setWereProductsSaved(true);
+    onProductsSaved(); //Communicate with parent
 
     toast.success(
       `${selectedProducts.length} productos guardados correctamente`
@@ -911,6 +994,9 @@ export function CreatePrescriptionOrderForm({
                                 onCheckedChange={() =>
                                   handleToggleServiceSelection(index)
                                 }
+                                disabled={
+                                  field.hasMadeAppointment || wereServicesSaved
+                                }
                                 aria-label="Seleccionar servicio"
                               />
                             </TableCell>
@@ -994,7 +1080,16 @@ export function CreatePrescriptionOrderForm({
                             <TableCell>
                               <Button type="button" disabled={ !field.selected } variant={'ghost'} className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">
                                 <CalendarPlus></CalendarPlus>
-                              </Button>
+                              </Button> */}
+
+                              <CreateAppointmentDialog
+                                className="bg-secondary-foreground/10 text-secondary-foreground hover:bg-secondary-foreground/20 hover:text-secondary-foreground"
+                                patientId={prescription.patientId}
+                                serviceId={field.serviceId}
+                                disabled={
+                                  !field.selected || field.hasMadeAppointment
+                                }
+                              ></CreateAppointmentDialog>
                             </TableCell>
                           </TableRow>
                         );
@@ -1143,20 +1238,19 @@ export function CreatePrescriptionOrderForm({
                           ? 0
                           : totalPriceWithIGV - totalIGV;
 
-                        // const maxStock = stockStorage?.stock ?? 0;
-                        console.log(
-                          "productTableFormData",
-                          productTableFormData
-                        );
-                        console.log(
-                          "StockQueryData is success",
-                          stockDataQuery.isSuccess
-                        );
-                        console.log("StockQueryData", stockDataQuery.data);
-                        console.log("productField", field);
-                        console.log("stockStorage", stockStorage);
-                        console.log("product", safeData);
-                        console.log("productId", field.productId);
+                        // console.log(
+                        //   "productTableFormData",
+                        //   productTableFormData
+                        // );
+                        // console.log(
+                        //   "StockQueryData is success",
+                        //   stockDataQuery.isSuccess
+                        // );
+                        // console.log("StockQueryData", stockDataQuery.data);
+                        // console.log("productField", field);
+                        // console.log("stockStorage", stockStorage);
+                        // console.log("product", safeData);
+                        // console.log("productId", field.productId);
 
                         return (
                           <TableRow
@@ -1184,6 +1278,7 @@ export function CreatePrescriptionOrderForm({
                                 onCheckedChange={() =>
                                   handleToggleProductSelection(index)
                                 }
+                                disabled={wereProductsSaved}
                                 aria-label="Seleccionar producto"
                               />
                             </TableCell>
