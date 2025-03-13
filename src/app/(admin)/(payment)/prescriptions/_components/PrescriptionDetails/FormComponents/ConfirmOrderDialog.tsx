@@ -14,22 +14,18 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RefreshCcw } from "lucide-react";
 
-interface ConfirmOrderDialogProps{
+interface ConfirmOrderDialogProps {
     onConfirm: () => Promise<void>;
     trigger: React.ReactNode;
-    confirmationText: string;
-    disabled? : boolean;
     isLoading?: boolean;
-    // isLoading?: boolean;
+    confirmationText: string;
 }
 
 export function ConfirmOrderDialog({
     onConfirm,
     trigger,
     confirmationText,
-    disabled,
-    isLoading
-    // 
+    isLoading = false,
 }: ConfirmOrderDialogProps) {
     const [open, setOpen] = React.useState(false);
 
@@ -40,7 +36,7 @@ export function ConfirmOrderDialog({
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger type="button" disabled={disabled} asChild className={cn(buttonVariants({
+            <DialogTrigger type="button" disabled={isLoading} asChild className={cn(buttonVariants({
                 variant: "default",
             }))}>{trigger}</DialogTrigger>
             <DialogContent>
@@ -54,7 +50,7 @@ export function ConfirmOrderDialog({
                     <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                         Cancelar
                     </Button>
-                    <Button type="button" onClick={handleConfirm} disabled={disabled} className="flex items-center gap-2">
+                    <Button type="button" onClick={handleConfirm} disabled={isLoading} className="flex items-center gap-2">
                         {(isLoading)&& (
                             <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
                         )}
