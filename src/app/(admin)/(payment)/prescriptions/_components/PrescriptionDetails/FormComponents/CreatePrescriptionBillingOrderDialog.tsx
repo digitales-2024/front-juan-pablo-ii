@@ -269,6 +269,9 @@ export function CreatePrescriptionBillingProcessDialog({
         variant="outline"
         className="w-full"
         onClick={handleClose}
+        disabled={isCreatePending ??
+          createPrescriptionOrderMutation.isPending ??
+          (!wereProductsSaved || !wereServicesSaved)}
       >
         {CREATE_OUTGOING_MESSAGES.cancel}
       </Button>
