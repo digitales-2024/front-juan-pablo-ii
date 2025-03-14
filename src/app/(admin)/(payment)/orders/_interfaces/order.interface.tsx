@@ -905,8 +905,7 @@ export type MedicalAppointmentMetadata = {
   orderDetails: MedicalAppointmentOrderDetails;
 };
 
-
-export type CreateMedicalAppointmentBillingDtoPrototype = components['schemas']['CreateMedicalAppointmentBillingDto'];
+  export type CreateMedicalAppointmentBillingDtoPrototype = components['schemas']['CreateMedicalAppointmentBillingDto'];
 export type CreateMedicalAppointmentBillingDto = {
   appointmentId: string;
   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
