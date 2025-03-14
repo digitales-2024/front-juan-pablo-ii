@@ -217,7 +217,7 @@ export const createOrderSchema = z.object({
   tax: z.number(),
   total: z.number(),
   notes: z.string().optional(),
-  metadata: z.record(z.never()).optional(),
+  metadata: z.string(z.never()).optional(),
 }) satisfies z.ZodType<CreateOrderDto>;
 
 // UpdateOrderDto: {
@@ -248,7 +248,7 @@ export const updateOrderSchema = z.object({
   tax: z.number().optional(),
   total: z.number().optional(),
   notes: z.string().optional(),
-  metadata: z.record(z.never()).optional(),
+  metadata: z.string(z.never()).optional(),
 }) satisfies z.ZodType<UpdateOrderDto>;
 
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
@@ -330,7 +330,7 @@ export type DetailedOrder = {
   date: string;
   notes?: string;
   isActive: boolean;
-  metadata?: Record<string, never>;
+  metadata?: string;
   payments: Payment[];
 }
 
@@ -922,7 +922,7 @@ export type MedicalAppointmentMetadata = {
   orderDetails: MedicalAppointmentOrderDetails;
 };
 
-  export type CreateMedicalAppointmentBillingDtoPrototype = components['schemas']['CreateMedicalAppointmentBillingDto'];
+export type CreateMedicalAppointmentBillingDtoPrototype = components['schemas']['CreateMedicalAppointmentBillingDto'];
 export type CreateMedicalAppointmentBillingDto = {
   appointmentId: string;
   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
@@ -931,16 +931,16 @@ export type CreateMedicalAppointmentBillingDto = {
   voucherNumber?: string;
   notes?: string;
   metadata?: Record<string, never>;
-};	
+};
 
 export const createMedicalAppointmentBillingSchema = z.object({
-    appointmentId: z.string({
-      required_error: "Debe proporcionar el ID de la cita",
-    }),
-    paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
-    amountPaid: z.number().optional(),
-    currency: z.string(),
-    voucherNumber: z.string().optional(),
-    notes: z.string().optional(),
-    metadata: z.record(z.never()).optional(),
-  }) satisfies z.ZodType<CreateMedicalAppointmentBillingDto>;
+  appointmentId: z.string({
+    required_error: "Debe proporcionar el ID de la cita",
+  }),
+  paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
+  amountPaid: z.number().optional(),
+  currency: z.string(),
+  voucherNumber: z.string().optional(),
+  notes: z.string().optional(),
+  metadata: z.record(z.never()).optional(),
+}) satisfies z.ZodType<CreateMedicalAppointmentBillingDto>;

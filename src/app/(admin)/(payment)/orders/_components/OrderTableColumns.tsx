@@ -10,12 +10,13 @@ import {
   orderTypeConfig,
   paymentOptionButtons,
   paymentStatusConfig,
+  ProductSaleMetadata,
 } from "../_interfaces/order.interface";
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ellipsis} from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 // import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 // import { UpdateStorageSheet } from "./UpdateStorageSheet";
@@ -144,44 +145,44 @@ export const columns: ColumnDef<DetailedOrder>[] = [
           <span>{config.name}</span>
         </Badge>
       );
-      },
     },
-    {
-      accessorKey: "payments.status",
-      meta: { title: "Estado de pago" },
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Estado de Pago" />
-      ),
-      cell: ({ row }) => {
-        // orderTypeConfig
-        // orderStatusConfig
-        const order = row.original;
-        const regularPayment = order.payments.find(
-          (payment) => payment.type !== "REFUND"
-        );
-        const refundPayment = order.payments.find(
-          (payment) => payment.type === "REFUND"
-        );  
-        const config = paymentStatusConfig[regularPayment?.status ?? refundPayment?.status ?? "PENDING"];
-        const Icon = config.icon;
-        return (
-          // <span>
-          //   {row.original.status || "Sin tipo de almacén"}
-          // </span>
-          <Badge
-            className={cn(
-              config.backgroundColor,
-              config.textColor,
-              config.hoverBgColor,
-              "flex space-x-1 items-center justify-center text-sm"
-            )}
-          >
-            <Icon className="size-4"></Icon>
-            <span>{config.name}</span>
-          </Badge>
-        );
-        },
-      },
+  },
+  {
+    accessorKey: "payments.status",
+    meta: { title: "Estado de pago" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado de Pago" />
+    ),
+    cell: ({ row }) => {
+      // orderTypeConfig
+      // orderStatusConfig
+      const order = row.original;
+      const regularPayment = order.payments.find(
+        (payment) => payment.type !== "REFUND"
+      );
+      const refundPayment = order.payments.find(
+        (payment) => payment.type === "REFUND"
+      );
+      const config = paymentStatusConfig[regularPayment?.status ?? refundPayment?.status ?? "PENDING"];
+      const Icon = config.icon;
+      return (
+        // <span>
+        //   {row.original.status || "Sin tipo de almacén"}
+        // </span>
+        <Badge
+          className={cn(
+            config.backgroundColor,
+            config.textColor,
+            config.hoverBgColor,
+            "flex space-x-1 items-center justify-center text-sm"
+          )}
+        >
+          <Icon className="size-4"></Icon>
+          <span>{config.name}</span>
+        </Badge>
+      );
+    },
+  },
   // {
   //   accessorKey: "",
   //   meta: { title: "Estado de Órden" },
@@ -272,36 +273,36 @@ export const columns: ColumnDef<DetailedOrder>[] = [
         toast.error("Error al parsear metadata");
         return null;
       }
-      
-      let MetadataDialog: ()=>ReactElement = () => <div></div>;
+
+      let MetadataDialog: () => ReactElement = () => <div></div>;
       switch (row.original.type) {
         case "PRODUCT_SALE_ORDER":
-          MetadataDialog = ()=>(<ShowProductSaleMetadataDetailsDialog
+          MetadataDialog = () => (<ShowProductSaleMetadataDetailsDialog
             data={metadata as ProductSaleMetadata}
             orderId={row.original.id}
           ></ShowProductSaleMetadataDetailsDialog>)
           break;
         case "MEDICAL_PRESCRIPTION_ORDER":
-          MetadataDialog = ()=>{
+          MetadataDialog = () => {
             return <ShowPrescriptionMetadataDetailsDialog
-            data={metadata as MedicalPrescriptionMetadata}
-            orderId={row.original.id}
+              data={metadata as MedicalPrescriptionMetadata}
+              orderId={row.original.id}
             ></ShowPrescriptionMetadataDetailsDialog>
           }
           break;
 
         case "MEDICAL_APPOINTMENT_ORDER":
-          MetadataDialog = ()=> <ShowAppointmentMetadataDialog
+          MetadataDialog = () => <ShowAppointmentMetadataDialog
             data={metadata as MedicalAppointmentMetadata}
             orderId={row.original.id}
           ></ShowAppointmentMetadataDialog>
           break;
         default:
-          MetadataDialog = ()=> <div></div>
+          MetadataDialog = () => <div></div>
           break;
       }
       return <div>
-        {<MetadataDialog/>}
+        {<MetadataDialog />}
       </div>
     },
   },
