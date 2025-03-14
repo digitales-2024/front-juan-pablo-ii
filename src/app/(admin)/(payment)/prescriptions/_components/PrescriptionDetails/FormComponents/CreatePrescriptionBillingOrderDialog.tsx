@@ -196,7 +196,7 @@ export function CreatePrescriptionBillingProcessDialog({
   const onSubmit = useCallback(
     (input: CreatePrescriptionBillingInput) => {
       startCreateTransition(() => {
-        createSaleOrderMutation.mutate(input, {
+        createPrescriptionOrderMutation.mutate(input, {
           onSuccess: () => {
             form.reset();
             dispatch({ type: "clear" }); //Elimina las referencias a las citas creadas
@@ -210,7 +210,7 @@ export function CreatePrescriptionBillingProcessDialog({
         });
       });
     },
-    [createSaleOrderMutation, form, startCreateTransition]
+    [createPrescriptionOrderMutation, form, startCreateTransition]
   );
 
   useEffect(() => {
