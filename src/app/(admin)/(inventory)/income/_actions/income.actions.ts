@@ -171,9 +171,10 @@ export async function updateIncomingStorage(
   data: UpdateIncomingStorageInput
 ): Promise<DetailedIncomingResponse> {
   try {
+    const isTransferenceQuery = data.isTransference ? "?isTransference=true" : "";
     const [responseData, error] = await http.patch<DetailedIncomingResponse>(
       
-      `/incoming/update/incomingStorage/${id}`,
+      `/incoming/update/incomingStorage/${id}${isTransferenceQuery}`,
       data
     );
 

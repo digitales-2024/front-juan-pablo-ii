@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProductStock, getProductStockByStorage, getProductsStock } from "../_actions/stock.actions";
+import { getForSaleProductStock, getForSaleProductStockAndBranch, getManyProductsStock, getManyProductsStockByStorage, getOneProductStockByStorage, getProductStock, getProductStockByStorage, getProductsStock } from "../_actions/stock.actions";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { OutgoingProducStockForm, OutgoingProductStock } from "../_interfaces/stock.interface";
+import { ProductUse } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
 
 export function ToOutgoingStockForm( data: OutgoingProductStock[] ): OutgoingProducStockForm[]{
   return data.map((ele)=>{return {...ele, storageId:""}})
@@ -33,27 +34,155 @@ export function useProductsStock() {
   return { productStockQuery };
 }
 
-export function useProductStockById(productId: string) {
-  const productStockQuery = useQuery({
-    queryKey: ["product-stock", productId],
-    queryFn: async () => {
-      try {
-        const response = await getProductStock({ productId });
-        if (!response || "error" in response) {
-          throw new Error(response?.error || "No se recibió respuesta");
+export function useProductsStockByUse() {
+  return (productUse: ProductUse) => {
+    const productStockQuery = useQuery({
+      queryKey: ["products-stock-by-use", productUse],
+      queryFn: async () => {
+        try {
+          const response = await getForSaleProductStock({ productUse });
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
         }
-        return response;
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Error desconocido";
-        toast.error(message);
-        return [];
-      }
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  
+    return { productStockQuery };
+  }
+}
 
-  return { productStockQuery };
+export function useProductsStockByUseAndBranch() {
+  return (productUse: ProductUse, branchId:string) => {
+    const productStockQuery = useQuery({
+      queryKey: ["products-stock-by-use-and-storage", productUse, branchId],
+      queryFn: async () => {
+        try {
+          const response = await getForSaleProductStockAndBranch({ productUse, branchId });
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
+        }
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  
+    return { productStockQuery };
+  }
+}
+
+export const useProductStockById = () =>{
+  return (productId: string) => {
+    const productStockQuery = useQuery({
+      queryKey: ["product-stock", productId],
+      queryFn: async () => {
+        try {
+          const response = await getProductStock({ productId });
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
+        }
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  
+    return { productStockQuery };
+  }
+}
+
+export const useOneProductStockByStorage = () =>{
+  return (productId: string, storageId: string) => {
+    const productStockQuery = useQuery({
+      queryKey: ["product-stock", productId, storageId],
+      queryFn: async () => {
+        try {
+          const response = await getOneProductStockByStorage({ productId, storageId });
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
+        }
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  
+    return { productStockQuery };
+  }
+}
+
+export const useManyProductsStockByStorage = () =>{
+  return (params: {productId: string, storageId: string}[]) => {
+    const productStockQuery = useQuery({
+      queryKey: ["products-stock-by-storage"],
+      queryFn: async () => {
+        try {
+          const response = await getManyProductsStockByStorage(params);
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
+        }
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  
+    return { productStockQuery };
+  }
+}
+
+export const useManyProductsStock = () =>{
+  return (params: string[], key:string) => {
+    const productStockQuery = useQuery({
+      queryKey: ["many-products-stock", key],
+      queryFn: async () => {
+        try {
+          const response = await getManyProductsStock(params);
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          console.log('response many products stock', response);
+          return response;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
+        }
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  
+    return { productStockQuery };
+  }
 }
 
 export function useProductsStockByStorage() {
@@ -67,6 +196,26 @@ export function useProductsStockByStorage() {
         }
         const data = ToOutgoingStockForm(response);
         return data;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Error desconocido";
+        toast.error(message);
+        return [];
+      }
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useStockByStorage (storageId: string) {
+  return useQuery({
+    queryKey: ["stock-by-storage", storageId],
+    queryFn: async () => {
+      try {
+        const response = await getProductStockByStorage({ storageId });
+        if (!response || "error" in response) {
+          throw new Error(response?.error || "No se recibió respuesta");
+        }
+        return response;
       } catch (error) {
         const message = error instanceof Error ? error.message : "Error desconocido";
         toast.error(message);

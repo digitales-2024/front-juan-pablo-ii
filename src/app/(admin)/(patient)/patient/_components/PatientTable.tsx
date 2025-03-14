@@ -33,7 +33,7 @@ export function PatientTable({ data }: PatientTableProps) {
         workplace: false,
         bloodType: false,
         primaryDoctor: false,
-        language: false,
+        sucursal: false,
         notes: false,
         patientPhoto: false,
         isActive: true,

@@ -97,18 +97,6 @@ export function CreateOutgoingForm({
   }, [syncProducts]);
 
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
-  // const STATEPROP_OPTIONS = useMemo(() => {
-  //   return [
-  //     {
-  //       label: "En Proceso",
-  //       value: false,
-  //     },
-  //     {
-  //       label: "Concretado",
-  //       value: true,
-  //     },
-  //   ];
-  // }, []);
 
   if (responseStorage.isLoading && reponseProducts.isLoading) {
     return <LoadingDialogForm />;
@@ -122,14 +110,6 @@ export function CreateOutgoingForm({
       );
     }
     if (!responseStorage.data) {
-      // toast.error("No se pudo cargar la información de almacenes", {
-      //   action: {
-      //     label: "Recargar",
-      //     onClick: async () => {
-      //       await responseStorage.refetch();
-      //     },
-      //   },
-      // });
       return (
         <LoadingDialogForm/>
       );
@@ -143,15 +123,6 @@ export function CreateOutgoingForm({
       ) : null;
     }
     if (!reponseProducts.data) {
-      // toast.error("No se pudo cargar la información de productos", {
-      //   action: {
-      //     label: "Recargar",
-      //     onClick: async () => {
-      //       await reponseProducts.refetch();
-      //     },
-      //   },
-      // });
-
       return (
         <LoadingDialogForm/>
       );
@@ -351,8 +322,8 @@ export function CreateOutgoingForm({
                   <TableRow>
                     <TableHead className="w-[100px]">Nombre</TableHead>
                     <TableHead>Cantidad</TableHead>
-                    <TableHead className="text-center">Stock Almacén</TableHead>
-                    <TableHead className="text-center">Stock Total</TableHead>
+                    <TableHead className="text-center text-balance max-w-10">Stock Almacén Seleccionado</TableHead>
+                    <TableHead className="text-center">Stock General</TableHead>
                     <TableHead className="text-center">Opciones</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -361,9 +332,7 @@ export function CreateOutgoingForm({
                 const data = selectedProducts.find((p) => p.id === field.productId);
                 const safeData: Partial<OutgoingProducStockForm> = data ?? {};
                 const safeWatch = watchFieldArray?.[index] ?? {};
-
                 //const price = safeData.precio ?? 0;
-
                 const storageSafeWatch = form.watch(FORMSTATICS.storageId.name);
                 const stockStorage = safeData.Stock?.find((stock) => stock.Storage.id === storageSafeWatch);
                 const totalStock = safeData.Stock?.reduce((acc, stock) => acc + stock.stock, 0) ?? 0;
@@ -454,7 +423,7 @@ export function CreateOutgoingForm({
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="flex justify-center">
+                <TableCell className="flex justify-center items-center">
                   <Button
                     type="button"
                     variant="outline"

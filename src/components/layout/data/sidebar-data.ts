@@ -7,12 +7,13 @@ import {
   Clock,
   DollarSign,
   FileHeart,
-  FileText,
+  HandCoins,
   Handshake,
   Home,
   Hospital,
   HousePlus,
   KeyRound,
+  ListTodo,
   Package,
   PackageMinus,
   PackageOpen,
@@ -31,7 +32,9 @@ import {
   Warehouse,
 } from "lucide-react";
 import { type SidebarData } from "../types";
+import { type Profile } from "@/app/(auth)/sign-in/_interfaces/auth.interface";
 
+// Datos completos de la barra lateral
 export const sidebarData: SidebarData = {
   user: {
     name: "satnaing",
@@ -48,15 +51,27 @@ export const sidebarData: SidebarData = {
           icon: Home,
         },
         {
-          title: "Calendario Citas",
-          url: "/appointments-schedule",
+          title: "Consultas",
+          url: "/consultations",
           icon: Handshake,
         },
         {
-          title: "Citas",
-          url: "/appointments",
+          title: "Gestión de Citas",
           icon: CalendarPlus,
-        },
+          items: [
+            {
+              title: "Calendario",
+              url: "/appointments-schedule",
+              icon: CalendarRange,
+            },
+            {
+              title: "Lista de Citas",
+              url: "/appointments",
+              icon: CalendarPlus,
+            },
+          ],
+        }
+
       ],
     },
     {
@@ -68,12 +83,12 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Activos",
-              url: "/medical-records",
+              url: "/apoointment-medical",
               icon: ShieldCheck,
             },
             {
               title: "Finalizados",
-              url: "/prescriptions",
+              url: "/apoointment-medical-complete",
               icon: ShieldBan,
             },
           ],
@@ -135,15 +150,25 @@ export const sidebarData: SidebarData = {
           icon: DollarSign,
           items: [
             {
-              title: "Órdenes",
-              url: "/orders",
-              icon: FileText,
+              title: "Recetas medicas",
+              url: "/prescriptions",
+              icon: FileHeart,
             },
             {
+              title: "Venta de productos",
+              url: "/productSale",
+              icon: HandCoins,
+            },
+            {
+              title: "Cotizaciones / Pagos",
+              url: "/orders",
+              icon: ListTodo,
+            },
+           /*  {
               title: "Pagos",
               url: "/invoices",
               icon: DollarSign,
-            },
+            }, */
           ],
         },
       ],
@@ -282,14 +307,67 @@ export const sidebarData: SidebarData = {
               url: "/users",
               icon: User,
             },
-            {
-              title: "Permisos",
-              url: "/permissions",
-              icon: KeyRound,
-            },
+            /*     {
+                  title: "Permisos",
+                  url: "/permissions",
+                  icon: KeyRound,
+                }, */
           ],
         },
       ],
     },
   ],
 };
+
+/**
+ * Función que filtra los elementos de la barra lateral según el rol del usuario
+ * @param profile - Perfil del usuario actual
+ * @returns Datos filtrados de la barra lateral
+ */
+export function getFilteredSidebarData(profile: Profile | null): SidebarData {
+  // Si no hay perfil, mostrar estructura básica
+  if (!profile) {
+    return sidebarData;
+  }
+
+  // Si es superadmin, mostrar todo
+  if (profile.isSuperAdmin) {
+    return {
+      user: {
+        name: profile.name,
+        email: profile.email,
+        avatar: "/avatars/shadcn.jpg",
+      },
+      navGroups: sidebarData.navGroups
+    };
+  }
+
+  // Obtener el rol principal del usuario
+  const userRole = profile.roles.length > 0 ? profile.roles[0].name : "";
+
+  // Crear una copia de los grupos de navegación
+  let filteredNavGroups = [...sidebarData.navGroups];
+
+  // Filtrar según el rol
+  if (userRole === "ADMINISTRATIVO") {
+    // Administrativo: Todo excepto "Accesos y Usuarios"
+    filteredNavGroups = filteredNavGroups.filter(
+      (group) => group.title !== "Accesos y Usuarios"
+    );
+  } else if (userRole === "MEDICO") {
+    // Médico: Solo "Registros Operativos"
+    filteredNavGroups = filteredNavGroups.filter(
+      (group) => group.title === "Registros Operativos"
+    );
+  }
+
+  // Retornar los datos filtrados
+  return {
+    user: {
+      name: profile.name,
+      email: profile.email,
+      avatar: "/avatars/shadcn.jpg",
+    },
+    navGroups: filteredNavGroups,
+  };
+}

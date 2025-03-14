@@ -45,7 +45,7 @@ export const createPatientSchema = z.object({
   workplace: z.string().optional(),
   bloodType: z.string().optional(),
   primaryDoctor: z.string().optional(),
-  language: z.string().optional(),
+  sucursal: z.string().min(1, "Por favor selecciona una sucursal"),
   notes: z.string().optional(),
   patientPhoto: fileSchema.optional(), // Usar el esquema personalizado para validar archivos
 }) satisfies z.ZodType<CreatePatientWithImage>;
@@ -68,7 +68,7 @@ export const updatePatientSchema = z.object({
   workplace: z.string().optional(),
   bloodType: z.string().optional(),
   primaryDoctor: z.string().optional(),
-  language: z.string().optional(),
+  sucursal: z.string(),
   notes: z.string().optional(),
   patientPhoto: z.string().optional(), // Usar el esquema personalizado para validar archivos
   image: fileSchema.optional(), // Usar el esquema personalizado para validar archivos

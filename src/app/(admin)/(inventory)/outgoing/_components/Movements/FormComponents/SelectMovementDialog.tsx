@@ -34,12 +34,14 @@ import GeneralErrorMessage from "../../errorComponents/GeneralErrorMessage";
 import { CreateOutgoingInput } from "../../../_interfaces/outgoing.interface";
 import { UseFormReturn } from "react-hook-form";
 import { useProductsStockByStorage, useUpdateProductStockByStorage } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
+import { Label } from "@/components/ui/label";
 
 const CREATE_PRODUCT_MESSAGES = {
   button: "Añadir producto(s)",
   title: "Seleccionar almacén de origen y productos en stock",
   description:
-    "Selecciona un alamacen y luego uno o varios productos en stock para añadir a la lista de movimientos.",
+    "Selecciona un almacén y luego uno o varios productos en stock para añadir a la lista de movimientos.",
+  onZeroStockSelectedItem: "Existen productos seleccionados en este almacén con stock en 0. Estos productos no serán añadidos a la lista de movimientos.",
   success: "Productos guardados exitosamente",
   submitButton: "Guardar selección",
   cancel: "Cancelar",
@@ -62,6 +64,7 @@ export function SelectProductDialog({
   const [localSelectRows, setLocalSelectRows] = useState<
     OutgoingProducStockForm[]
   >([]);
+  const [hasZeroStockRowsSelected, setHasZeroStockRowsSelected] = useState<boolean>(false);
   // const [selectedStorageHasChanged, setSelectedStorageHasChanged] = useState<boolean>(false);
   const [selectedStorageId, setSelectedStorageId] = useState<string | null>(form.getValues("storageId")??null);
   // const selectedProductsTanstack = useSelectedProducts();
@@ -72,16 +75,37 @@ export function SelectProductDialog({
   const dispatch = useSelectProductDispatch();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
+  const findZeroStockSelectedItems = (selectedRows: OutgoingProducStockForm[], selectedStorageId:string|null) => {
+    if (selectedStorageId === null) return;
+    const selectedStorageStocks = selectedRows.flatMap((row)=>(
+      row.Stock.map((stock)=>(
+        {
+          storageId: stock.Storage.id,
+          productId: row.id,
+          stock: stock.stock
+        }
+      ))
+    ))
+    const zeroStockSelectedItems = selectedStorageStocks.filter((stock) => (stock.stock === 0) && (stock.storageId === selectedStorageId));
+    return zeroStockSelectedItems;
+  }
+
+  const onRowSelectionChange= (selectedRows: OutgoingProducStockForm[]) => {
+    const zeroStockSelectedItems = findZeroStockSelectedItems(selectedRows, selectedStorageId);
+    if (zeroStockSelectedItems && zeroStockSelectedItems.length > 0){
+      setHasZeroStockRowsSelected(true);
+      // return;
+      const productsIds = zeroStockSelectedItems.map((item)=>item.productId);
+      setLocalSelectRows(()=>selectedRows.filter((row)=>!productsIds.includes(row.id)));
+      return;
+    }
+    setHasZeroStockRowsSelected(false);
+    setLocalSelectRows(() => [...selectedRows]);
+  }
+
   const handleSave = (selectedRows: OutgoingProducStockForm[]) => {
-    // console.log('oldStateTanstack', selectedProductsTanstack);
-    // console.log('handleSave', selectedRows);
     cleanProductStock();
     setSelectedStorageId(null);
-    // if (selectedStorageHasChanged) {
-    //   dispatch({ type: "replace", payload: selectedRows });
-    // } else {
-    //   dispatch({ type: "append", payload: selectedRows });
-    // }
     dispatch({ type: "replace", payload: selectedRows });
     setOpen(false);
   };
@@ -105,12 +129,6 @@ export function SelectProductDialog({
         onClick={() => handleSave(localSelectRows)}
         className="w-full"
       >
-        {/* {(isCreatePending || createMutation.isPending) && (
-                    <RefreshCcw
-                        className="mr-2 size-4 animate-spin"
-                        aria-hidden="true"
-                    />
-                )} */}
         {CREATE_PRODUCT_MESSAGES.submitButton}
       </Button>
       <Button
@@ -169,7 +187,7 @@ export function SelectProductDialog({
         <DialogTrigger asChild>
           <TriggerButton />
         </DialogTrigger>
-        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)]">
+        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)] overflow-auto">
           <DialogHeader>
             <DialogTitle>{CREATE_PRODUCT_MESSAGES.title}</DialogTitle>
             <DialogDescription>
@@ -219,14 +237,19 @@ export function SelectProductDialog({
             </Select>
           </div>
           { productsStockQuery.isLoading && <LoadingDialogForm />}
-          { selectedStorageId && <DataTable
-              columns={columns}
-              data={productsStockQuery.data??[]}
-              onRowSelectionChange={(selectedRows) => {
-                setLocalSelectRows(() => [...selectedRows]);
-              }}
-            />}
-          <DialogFooter>
+          { selectedStorageId && <div className="overflow-auto max-h-full">
+            <DataTable
+                columns={columns}
+                data={productsStockQuery.data??[]}
+                onRowSelectionChange={onRowSelectionChange}
+              />
+          </div>}
+          <DialogFooter className="space-x-2 space-y-2">
+            {
+              hasZeroStockRowsSelected && <p className="w-full flex items-center  text-center text-destructive text-sm text-pretty">
+                <span>{CREATE_PRODUCT_MESSAGES.onZeroStockSelectedItem}</span>
+              </p>
+            }
             <DialogFooterContent />
           </DialogFooter>
         </DialogContent>
@@ -246,16 +269,67 @@ export function SelectProductDialog({
             {CREATE_PRODUCT_MESSAGES.description}
           </DrawerDescription>
         </DrawerHeader>
+        <div className="w-full px-1 mb-4">
+            <Label>
+              Seleccione un almacén
+            </Label>
+            <Select
+              // onValueChange={(value) => {
+              //   updateProductStock({
+              //     productId: row.original.id,
+              //     storageId: value,
+              //   })
+              // }}
+              value={selectedStorageId??undefined}
+              onValueChange={
+                async (value) => {
+                  setSelectedStorageId(value);
+                  handleUpdateStorageFormField(value);
+                   await updateProductStock({storageId:value});
+                }
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Seleccione un almacén" />
+              </SelectTrigger>
+              <SelectContent>
+                <ScrollArea className="max-h-40">
+                  {responseStorage.data.length === 0 ? (
+                    <SelectGroup>
+                      <SelectLabel>No existe stock en ningún almacén</SelectLabel>
+                    </SelectGroup>
+                  ) : (
+                    <SelectGroup>
+                      <SelectLabel>Almacenes disponibles</SelectLabel>
+                      {responseStorage.data.map((storage) => (
+                        <SelectItem key={storage.id} value={storage.id}>
+                          <div className="capitalize">
+                            <span>{storage.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                </ScrollArea>
+              </SelectContent>
+            </Select>
+        </div>
         {
-          selectedStorageId && <DataTable
-          columns={columns}
-          data={productsStockQuery.data??[]}
-          onRowSelectionChange={(selectedRows) => {
-            setLocalSelectRows(() => [...selectedRows]);
-          }}
-        />
+          selectedStorageId && <div className="overflow-auto max-h-[calc(100dvh-12rem)]">
+            {productsStockQuery.isLoading && <LoadingDialogForm />}
+           {productsStockQuery.data&&<DataTable
+            columns={columns}
+            data={productsStockQuery.data??[]}
+            onRowSelectionChange={onRowSelectionChange}
+                    />}
+          </div>
         }
-        <DrawerFooter>
+        <DrawerFooter className="space-y-2">
+          {
+              hasZeroStockRowsSelected && <p className="w-full flex items-center  text-center text-destructive text-sm text-pretty">
+                {CREATE_PRODUCT_MESSAGES.onZeroStockSelectedItem}
+              </p>
+            }
           <DialogFooterContent />
         </DrawerFooter>
       </DrawerContent>

@@ -30,7 +30,7 @@ export const columns: ColumnDef<ActiveProduct>[] = [
 //   },
     {
         id: "select",
-        size: 10,
+        size: 5,
         header: ({ column }) => (
         <div className="px-2 flex space-x-2 items-center">
             {/* <Checkbox

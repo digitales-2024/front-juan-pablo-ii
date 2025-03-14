@@ -21,7 +21,6 @@ export function OutgoingTable({ data }: OutgoingTableProps) {
         description:false,
         state:false,
         // isTransference:false,
-        isActive:false
       }}
     />
   );

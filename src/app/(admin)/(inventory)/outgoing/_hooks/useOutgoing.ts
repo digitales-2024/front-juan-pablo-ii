@@ -77,11 +77,12 @@ export const useOutgoing = () => {
       return response;
     },
     onSuccess: async (res) => {
-      queryClient.setQueryData<DetailedOutgoing[] | undefined>(
-        ["detailed-outcomes"], (oldIncomes) => {
-          if (!oldIncomes) return [res.data];
-          return [...oldIncomes, res.data];
-      });
+      // queryClient.setQueryData<DetailedOutgoing[] | undefined>(
+      //   ["detailed-outcomes"], (oldIncomes) => {
+      //     if (!oldIncomes) return [res.data];
+      //     return [...oldIncomes, res.data];
+      // });
+      await queryClient.refetchQueries({ queryKey: ["detailed-outcomes"] });
       await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
       await queryClient.refetchQueries({ queryKey: ["stock"] });
       toast.success(res.message);
@@ -142,8 +143,17 @@ export const useOutgoing = () => {
           );
         }
       );
-      await queryClient.refetchQueries({ queryKey: ["stock-storages"] });
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ["stock-storages"] }),
+        queryClient.refetchQueries({
+          queryKey: ["product-stock-by-storage"],
+        }),
+        queryClient.refetchQueries({ queryKey: ["stock"] }),
+        res.data.isTransference ? queryClient.refetchQueries({ queryKey: ["detailed-incomings"] }) : null,
+      ]);
+      
       toast.success("Salida actualizada exitosamente");
+      void (res.data.isTransference && toast.success("Ingreso actualizado exitosamente"));
     },
     onError: (error) => {
       if (

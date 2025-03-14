@@ -4,7 +4,7 @@ import {
 } from "../_interfaces/outgoing.interface";
 import { CreateOutgoingDialog } from "./CreateOutgoingDialog";
 import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
-import { ReactivateOutgoingDialog } from "./ReactivateProductDialog";
+import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { useStorages } from "@/app/(admin)/(catalog)/storage/storages/_hooks/useStorages";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";

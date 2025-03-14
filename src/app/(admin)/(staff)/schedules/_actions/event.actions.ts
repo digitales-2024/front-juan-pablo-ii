@@ -16,7 +16,7 @@ export interface EventFilterParams {
   staffId?: string;
   type: 'TURNO' | 'CITA' | 'OTRO';
   branchId?: string;
-  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
+  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW' | 'RESCHEDULED';
   staffScheduleId?: string;
   startDate?: string;
   endDate?: string;
@@ -30,7 +30,7 @@ const GetEventsByFilterSchema = z.object({
   type: z.enum(['TURNO', 'CITA', 'OTRO']),
   branchId: z.string().optional(),
   status: z
-    .enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW'])
+    .enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW', 'RESCHEDULED'])
     .optional(),
   staffScheduleId: z.string().optional(),
   startDate: z

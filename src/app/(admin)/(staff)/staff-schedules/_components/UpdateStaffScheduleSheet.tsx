@@ -103,10 +103,32 @@ export function UpdateStaffScheduleSheet({
     if (updateMutation.isPending) return
 
     try {
+      console.log("Datos del formulario:", data)
+
+      // Crear un objeto con solo los campos que han cambiado
+      const changedData = {} as Partial<UpdateStaffScheduleDto>
+
+      // Añadir solo los campos que han cambiado
+      if (data.title !== schedule.title) changedData.title = data.title
+      if (data.color !== schedule.color) changedData.color = data.color
+      if (data.startTime !== schedule.startTime) changedData.startTime = data.startTime
+      if (data.endTime !== schedule.endTime) changedData.endTime = data.endTime
+      if (JSON.stringify(data.exceptions) !== JSON.stringify(schedule.exceptions))
+        changedData.exceptions = data.exceptions
+
+      console.log("Datos filtrados a enviar:", changedData)
+
+      // Si no hay cambios, mostrar mensaje y salir
+      if (Object.keys(changedData).length === 0) {
+        toast.info("No se detectaron cambios en el horario")
+        setOpen(false)
+        return
+      }
+
       await updateMutation.mutateAsync(
         {
           id: schedule.id,
-          data,
+          data: changedData,
         },
         {
           onSuccess: () => {
@@ -115,6 +137,7 @@ export function UpdateStaffScheduleSheet({
             toast.success("Horario actualizado exitosamente")
           },
           onError: (error) => {
+            console.error("Error al actualizar:", error)
             toast.error(error.message || "Error al actualizar el horario")
           },
         },
@@ -184,10 +207,6 @@ export function UpdateStaffScheduleSheet({
                   )}
                 />
 
-                <RecurrenceField form={form} />
-
-                {form.watch("recurrence.frequency") !== "YEARLY" && <DaysOfWeekField form={form} />}
-
                 <TimeRangeFields form={form} />
 
                 <ExceptionsField form={form} />
@@ -217,191 +236,6 @@ export function UpdateStaffScheduleSheet({
         </Form>
       </SheetContent>
     </Sheet>
-  )
-}
-
-interface RecurrenceFieldProps {
-  form: UseFormReturn<UpdateStaffScheduleDto>;
-}
-
-function RecurrenceField({ form }: RecurrenceFieldProps) {
-  return (
-    <FormField
-      control={form.control}
-      name="recurrence"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Patrón de repetición</FormLabel>
-          <Select
-            onValueChange={(value) => {
-              const option = RECURRENCE_OPTIONS.find((opt) => opt.label === value)
-              if (option) {
-                field.onChange({
-                  frequency: option.frequency,
-                  interval: option.interval,
-                })
-              }
-            }}
-            value={
-              RECURRENCE_OPTIONS.find(
-                (opt) => opt.frequency === field.value?.frequency && opt.interval === field.value?.interval,
-              )?.label || ""
-            }
-          >
-            <FormControl>
-              <SelectTrigger className="h-[56px]">
-                <SelectValue placeholder="Seleccione un patrón">
-                  {field.value && (
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">
-                        {
-                          RECURRENCE_OPTIONS.find(
-                            (opt) => opt.frequency === field.value?.frequency && opt.interval === field.value?.interval,
-                          )?.label
-                        }
-                      </span>
-                      <span className="text-muted-foreground text-sm">
-                        {
-                          RECURRENCE_OPTIONS.find(
-                            (opt) => opt.frequency === field.value?.frequency && opt.interval === field.value?.interval,
-                          )?.description
-                        }
-                      </span>
-                    </div>
-                  )}
-                </SelectValue>
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent className="min-w-[500px]">
-              {RECURRENCE_OPTIONS.map((option) => (
-                <SelectItem
-                  key={option.label}
-                  value={option.label}
-                  className="py-3 group hover:bg-blue-50 transition-colors"
-                >
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-baseline">
-                      <span className="font-medium text-base">{option.label}</span>
-                      <span className="text-muted-foreground text-sm ml-4">{option.description}</span>
-                    </div>
-                    <div className="text-xs text-blue-600 mt-1">{option.example}</div>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="mt-4 p-4 bg-blue-50 text-blue-600 rounded-lg space-y-3">
-            <p className="text-sm font-medium">¿Cómo funcionan los patrones?</p>
-            <ul className="list-disc pl-5 space-y-2.5">
-              {form.watch("recurrence.frequency") === "YEARLY" ? (
-                <li className="text-sm">
-                  <span className="font-medium block mb-1">Sin Patron:</span>
-                  Este horario no generará eventos automáticamente
-                </li>
-              ) : (
-                <>
-                  <li className="text-sm">
-                    <span className="font-medium block mb-1">Días seleccionados:</span>
-                    Define los días específicos de la semana que tendrán el horario
-                  </li>
-                  <li className="text-sm">
-                    <span className="font-medium block mb-1">Intervalo:</span>
-                    Determina cada cuánto se repite el ciclo
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
-
-          <div className="mt-4 p-4 bg-orange-50 rounded-lg">
-            <p className="text-sm text-orange-600">
-              {form.watch("recurrence.frequency") === "YEARLY" ? (
-                <>ⓘ Este horario no generará eventos automáticamente</>
-              ) : (
-                <>ⓘ La fecha "Válido hasta" marca el ÚLTIMO DÍA donde se aplicará el horario</>
-              )}
-            </p>
-          </div>
-        </FormItem>
-      )}
-    />
-  )
-}
-
-interface DaysOfWeekFieldProps {
-  form: UseFormReturn<UpdateStaffScheduleDto>;
-}
-
-function DaysOfWeekField({ form }: DaysOfWeekFieldProps) {
-  return (
-    <FormField
-      control={form.control}
-      name="daysOfWeek"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel className="flex items-center gap-2">
-            Días de aplicación
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[300px]">
-                  {form.watch("recurrence.frequency") === "DAILY"
-                    ? "El horario se aplicará todos los días de la semana automáticamente"
-                    : "Seleccione los días específicos para aplicar el horario"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </FormLabel>
-
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              {DAYS_PRESETS.map((preset) => (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  key={preset.label}
-                  onClick={() => form.setValue("daysOfWeek", [...preset.days], { shouldValidate: true })}
-                >
-                  {preset.label}
-                </Button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {DAYS_OF_WEEK.map((day) => (
-                <FormField
-                  key={day.value}
-                  control={form.control}
-                  name="daysOfWeek"
-                  render={({ field: innerField }) => (
-                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={innerField.value?.includes(day.value)}
-                          onCheckedChange={(checked) => {
-                            const currentValue = innerField.value || []
-                            if (checked) {
-                              innerField.onChange([...currentValue, day.value])
-                            } else {
-                              innerField.onChange(currentValue.filter((value) => value !== day.value))
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormLabel className="font-normal">{day.label}</FormLabel>
-                    </FormItem>
-                  )}
-                />
-              ))}
-            </div>
-          </div>
-        </FormItem>
-      )}
-    />
   )
 }
 

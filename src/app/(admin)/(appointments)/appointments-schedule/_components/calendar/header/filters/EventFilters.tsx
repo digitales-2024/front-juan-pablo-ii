@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { format, endOfMonth } from "date-fns";
 import { EventFilterParams } from "@/app/(admin)/(staff)/schedules/_actions/event.actions";
+import { appointmentStatusEnumOptions } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
 
 interface EventFiltersProps {
   appliedFilters: EventFilterParams;
@@ -25,15 +26,16 @@ interface EventFiltersProps {
   currentDate: Date;
 }
 
-export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps) {
+export function EventFilters({ appliedFilters, onFilterChange, currentDate }: EventFiltersProps) {
   const queryClient = useQueryClient();
   const { branches } = useBranches();
   const { staff } = useStaff();
 
-  const [filter, setFilter] = useState<Omit<EventFilterParams, 'type' | 'status'>>({
+  const [filter, setFilter] = useState<Omit<EventFilterParams, 'type'>>({
     startDate: format(currentDate, "yyyy-MM-01"),
     endDate: format(endOfMonth(currentDate), "yyyy-MM-dd"),
-    staffScheduleId: undefined
+    staffScheduleId: undefined,
+    status: appliedFilters.status
   });
 
   const staffOptions = (staff || queryClient.getQueryData<Staff[]>(["staff"]) || []).filter(s => s.isActive);
@@ -43,13 +45,12 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
     const handler = setTimeout(() => {
       onFilterChange({
         ...filter,
-        type: 'TURNO' as const,
-        status: 'CONFIRMED' as const
+        type: 'CITA' as const
       } as EventFilterParams);
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [filter]);
+  }, [filter, onFilterChange]);
 
   const handleFilterChange = (key: keyof EventFilterParams, value: string) => {
     setFilter(prev => ({
@@ -97,7 +98,7 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
   return (
     <Card className="w-full bg-background shadow-md">
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
             <Label htmlFor="staffId" className="text-sm font-medium text-foreground">
               Personal
@@ -122,6 +123,29 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
                 <SelectValue placeholder="Seleccione una sucursal" />
               </SelectTrigger>
               {renderSelectContent(branchOptions, "sucursales", "/branches")}
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="status" className="text-sm font-medium text-foreground">
+              Estado de cita
+            </Label>
+            <Select
+              value={filter.status || "todos"}
+              onValueChange={(value) => handleFilterChange("status", value)}
+            >
+              <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
+                <SelectValue placeholder="Seleccione un estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos los estados</SelectItem>
+                <SelectItem value="PENDING">Pendiente</SelectItem>
+                <SelectItem value="CONFIRMED">Confirmada</SelectItem>
+                <SelectItem value="COMPLETED">Completada</SelectItem>
+                <SelectItem value="CANCELLED">Cancelada</SelectItem>
+                <SelectItem value="NO_SHOW">No asistió</SelectItem>
+                <SelectItem value="RESCHEDULED">Reprogramada</SelectItem>
+              </SelectContent>
             </Select>
           </div>
         </div>

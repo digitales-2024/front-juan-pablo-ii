@@ -1,7 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { CreateProductInput } from "../_interfaces/products.interface";
+import { CreateProductInput, productUseOptions } from "../_interfaces/products.interface";
 import {
   Form,
   FormControl,
@@ -23,6 +23,7 @@ import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescript
 import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
 import { METADATA } from "../_statics/metadata";
 import { useMemo } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -319,26 +320,40 @@ export function CreateProductForm({
                   <CustomFormDescription required={FORMSTATICS.proveedor.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.usoProducto.name}
-              render={({ field }) => (
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="uso"
+                render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{FORMSTATICS.usoProducto.label}</FormLabel>
+                  <FormLabel>{FORMSTATICS.uso.label}</FormLabel>
+                  <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  >
                   <FormControl>
-                    <Input {...field} placeholder={FORMSTATICS.usoProducto.placeholder} />
+                    <SelectTrigger>
+                    <SelectValue placeholder={FORMSTATICS.uso.placeholder} />
+                    </SelectTrigger>
                   </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.usoProducto.required}></CustomFormDescription>
+                  <SelectContent>
+                    {Object.values(productUseOptions).map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                    ))}
+                  </SelectContent>
+                  </Select>
+                  <CustomFormDescription required={FORMSTATICS.uso.required}></CustomFormDescription>
                   <FormMessage />
                 </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.description.name}
-              render={({ field }) => (
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={FORMSTATICS.description.name}
+                render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>{FORMSTATICS.description.label}</FormLabel>
                   <FormControl>

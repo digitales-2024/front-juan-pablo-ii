@@ -18,8 +18,10 @@ import {
   Languages,
   ScrollText,
  IdCard,
+ Hospital,
 } from "lucide-react"
-import type { Patient } from "../_interfaces/types"
+import { Patient } from "../_interfaces/updateHistory.interface"
+
 
 interface PatientBasicInfoProps {
   paciente: Patient
@@ -36,7 +38,7 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
             <Card className="h-full flex flex-col border-t-4 border-t-primary">
               <CardContent className="p-6 text-center flex-grow flex flex-col justify-center">
                 <Avatar className="w-24 h-24 sm:w-32 sm:h-32 mx-auto">
-                  <AvatarImage src={paciente.patientPhoto} alt={`${paciente.name} ${paciente.lastName}`} />
+                  <AvatarImage src={paciente.patientPhoto} alt={`${paciente.name} ${paciente.lastName}`}  className="object-cover" />
                   <AvatarFallback>
                     <User className="w-16 h-16" />
                   </AvatarFallback>
@@ -137,10 +139,10 @@ export function PatientBasicInfo({ paciente }: PatientBasicInfoProps) {
                           </div>
                         </div>
                         <div className="space-y-1">
-                          <label className="text-sm font-medium text-muted-foreground">Idioma</label>
+                          <label className="text-sm font-medium text-muted-foreground">Sucursal de Registro del Paciente</label>
                           <div className="flex items-center space-x-2">
-                            <Languages className="w-5 h-5 text-primary" />
-                            <span className="font-medium">{paciente.language}</span>
+                            <Hospital className="w-5 h-5 text-primary" />
+                            <span className="font-medium">{paciente.sucursal}</span>
                           </div>
                         </div>
                         <div className="space-y-1">

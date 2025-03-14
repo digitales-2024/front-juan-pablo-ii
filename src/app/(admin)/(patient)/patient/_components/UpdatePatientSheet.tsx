@@ -76,31 +76,25 @@ export function UpdatePatientSheet({
   const form = useForm<UpdatePatientInput>({
     resolver: zodResolver(updatePatientSchema),
     defaultValues: {
-      name: patient.name ?? FORMSTATICS.name.defaultValue,
-      lastName: patient.lastName ?? FORMSTATICS.lastName.defaultValue,
-      dni: patient.dni ?? FORMSTATICS.dni.defaultValue,
-      birthDate: patient.birthDate ?? FORMSTATICS.birthDate.defaultValue,
-      gender: patient.gender ?? FORMSTATICS.gender.defaultValue,
-      address: patient.address ?? FORMSTATICS.address.defaultValue,
-      phone: patient.phone ?? FORMSTATICS.phone.defaultValue,
-      email: patient.email ?? FORMSTATICS.email.defaultValue,
-      emergencyContact:
-        patient.emergencyContact ?? FORMSTATICS.emergencyContact.defaultValue,
-      emergencyPhone:
-        patient.emergencyPhone ?? FORMSTATICS.emergencyPhone.defaultValue,
-      healthInsurance:
-        patient.healthInsurance ?? FORMSTATICS.healthInsurance.defaultValue,
-      maritalStatus:
-        patient.maritalStatus ?? FORMSTATICS.maritalStatus.defaultValue,
-      occupation: patient.occupation ?? FORMSTATICS.occupation.defaultValue,
-      workplace: patient.workplace ?? FORMSTATICS.workplace.defaultValue,
-      bloodType: patient.bloodType ?? FORMSTATICS.bloodType.defaultValue,
-      primaryDoctor:
-        patient.primaryDoctor ?? FORMSTATICS.primaryDoctor.defaultValue,
-      language: patient.language ?? FORMSTATICS.language.defaultValue,
-      notes: patient.notes ?? FORMSTATICS.notes.defaultValue,
-      patientPhoto:
-        patient.patientPhoto ?? FORMSTATICS.patientPhoto.defaultValue,
+      name: patient.name,
+      lastName: patient.lastName,
+      dni: patient.dni,
+      birthDate: patient.birthDate,
+      gender: patient.gender,
+      address: patient.address,
+      phone: patient.phone,
+      email: patient.email,
+      emergencyContact: patient.emergencyContact,
+      emergencyPhone: patient.emergencyPhone,
+      healthInsurance: patient.healthInsurance,
+      maritalStatus: patient.maritalStatus,
+      occupation: patient.occupation,
+      workplace: patient.workplace,
+      bloodType: patient.bloodType,
+      primaryDoctor: patient.primaryDoctor,
+      sucursal: patient.sucursal,
+      notes: patient.notes,
+      patientPhoto: patient.patientPhoto,
     },
   });
 
@@ -602,10 +596,10 @@ export function UpdatePatientSheet({
                 />
                 <FormField
                   control={form.control}
-                  name="language"
+                  name="sucursal"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>{FORMSTATICS.language.label}</FormLabel>
+                      <FormLabel>{FORMSTATICS.sucursal.label}</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
@@ -613,19 +607,18 @@ export function UpdatePatientSheet({
                         >
                           <SelectTrigger>
                             <SelectValue
-                              placeholder={FORMSTATICS.language.placeholder}
+                              placeholder={FORMSTATICS.sucursal.placeholder}
                             />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Español">Español</SelectItem>
-                            <SelectItem value="Inglés">Inglés</SelectItem>
-                            <SelectItem value="Quechua">Quechua</SelectItem>
+                            <SelectItem value="JLBYR">JLBYR</SelectItem>
+                            <SelectItem value="Yanahuara">Yanahuara</SelectItem>
                             <SelectItem value="Otro">Otro</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
                       <CustomFormDescription
-                        required={FORMSTATICS.language.required}
+                        required={FORMSTATICS.sucursal.required}
                       ></CustomFormDescription>
                       <FormMessage />
                     </FormItem>

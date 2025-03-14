@@ -9,11 +9,15 @@ import {
   getStorageById,
   getActiveStorages,
   getDetailedStorageById,
-  ListDetailedStorageResponse
+  ListDetailedStorageResponse,
+  getActiveStoragesByBranch,
 } from "../_actions/storages.actions";
 import { toast } from "sonner";
 import {
-  Storage, CreateStorageDto, DeleteStorageDto, UpdateStorageDto,
+  Storage,
+  CreateStorageDto,
+  DeleteStorageDto,
+  UpdateStorageDto,
   DetailedStorage,
 } from "../_interfaces/storage.interface";
 import { BaseApiResponse } from "@/types/api/types";
@@ -81,13 +85,37 @@ export const useStorages = () => {
       queryKey: ["storage", storageId],
       queryFn: async () => {
         try {
-          const response: ListDetailedStorageResponse = await getStorageById(storageId);
+          const response: ListDetailedStorageResponse = await getStorageById(
+            storageId
+          );
           if (!response || "error" in response) {
             throw new Error(response?.error || "No se recibió respuesta");
           }
           return response;
         } catch (error) {
-          const message = error instanceof Error ? error.message : "Error desconocido";
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
+          toast.error(message);
+          return [];
+        }
+      },
+      staleTime: 1000 * 60 * 5,
+    });
+  }
+
+  function useStorageByBranchQuery(branchId: string) {
+    return useQuery({
+      queryKey: ["storage-by-branch", branchId],
+      queryFn: async () => {
+        try {
+          const response: ListDetailedStorageResponse = await getActiveStoragesByBranch(branchId);
+          if (!response || "error" in response) {
+            throw new Error(response?.error || "No se recibió respuesta");
+          }
+          return response;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Error desconocido";
           toast.error(message);
           return [];
         }
@@ -97,7 +125,11 @@ export const useStorages = () => {
   }
 
   // Mutación para crear almacén
-  const createMutation = useMutation<BaseApiResponse<Storage>, Error, CreateStorageDto>({
+  const createMutation = useMutation<
+    BaseApiResponse<Storage>,
+    Error,
+    CreateStorageDto
+  >({
     mutationFn: async (data) => {
       const response = await createStorage(data);
       if ("error" in response) {
@@ -108,23 +140,29 @@ export const useStorages = () => {
     },
     onSuccess: async (res) => {
       const detailedStorage = await getDetailedStorageById(res.data.id);
-        if ("error" in detailedStorage) {
-          throw new Error(detailedStorage.error);
-        }
+      if ("error" in detailedStorage) {
+        throw new Error(detailedStorage.error);
+      }
       queryClient.setQueryData<DetailedStorage[] | undefined>(
-        ["detailed-storages"], (oldStorages) => {
+        ["detailed-storages"],
+        (oldStorages) => {
           if (!oldStorages) return detailedStorage;
           return [...oldStorages, ...detailedStorage];
-      });
+        }
+      );
       toast.success(res.message);
     },
     onError: (error) => {
       toast.error(error.message);
-    }
+    },
   });
 
   // Mutación para actualizar almacén
-  const updateMutation = useMutation<BaseApiResponse<Storage>, Error, UpdateStorageVariables>({
+  const updateMutation = useMutation<
+    BaseApiResponse<Storage>,
+    Error,
+    UpdateStorageVariables
+  >({
     mutationFn: async ({ id, data }) => {
       const response = await updateStorage(id, data);
       if ("error" in response) {
@@ -132,22 +170,30 @@ export const useStorages = () => {
       }
       return response;
     },
-    onSuccess: async(res) => {
+    onSuccess: async (res) => {
       //Actualiza los datos con las relaciones que tenga
       const detailedStorage = await getDetailedStorageById(res.data.id);
-        if ("error" in detailedStorage) {
-          throw new Error(detailedStorage.error);
+      if ("error" in detailedStorage) {
+        throw new Error(detailedStorage.error);
+      }
+      queryClient.setQueryData<DetailedStorage[] | undefined>(
+        ["detailed-storages"],
+        (oldStorages) => {
+          if (!oldStorages) return undefined;
+          return oldStorages.map((storage) =>
+            storage.id === res.data.id
+              ? { ...storage, ...detailedStorage[0] }
+              : storage
+          );
         }
-      queryClient.setQueryData<DetailedStorage[] | undefined>(["detailed-storages"], (oldStorages) => {
-        if (!oldStorages) return undefined;
-        return oldStorages.map((storage) =>
-          storage.id === res.data.id ? {...storage, ...detailedStorage[0]} : storage
-        );
-      });
+      );
       toast.success("Almacén actualizado exitosamente");
     },
     onError: (error) => {
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+      if (
+        error.message.includes("No autorizado") ||
+        error.message.includes("Unauthorized")
+      ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
         toast.error(error.message || "Error al actualizar el almacén");
@@ -156,7 +202,11 @@ export const useStorages = () => {
   });
 
   // Mutación para eliminar almacenes
-  const deleteMutation = useMutation<BaseApiResponse<Storage>, Error, DeleteStorageDto>({
+  const deleteMutation = useMutation<
+    BaseApiResponse<Storage>,
+    Error,
+    DeleteStorageDto
+  >({
     mutationFn: async (data) => {
       const response = await deleteStorage(data);
       if ("error" in response) {
@@ -165,18 +215,21 @@ export const useStorages = () => {
       return response;
     },
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<DetailedStorage[]>(["detailed-storages"], (oldStorages) => {
-        if (!oldStorages) {
-          return [];
-        }
-        const updatedStorages = oldStorages.map((storage) => {
-          if (variables.ids.includes(storage.id)) {
-            return { ...storage, isActive: false };
+      queryClient.setQueryData<DetailedStorage[]>(
+        ["detailed-storages"],
+        (oldStorages) => {
+          if (!oldStorages) {
+            return [];
           }
-          return storage;
-        });
-        return updatedStorages;
-      });
+          const updatedStorages = oldStorages.map((storage) => {
+            if (variables.ids.includes(storage.id)) {
+              return { ...storage, isActive: false };
+            }
+            return storage;
+          });
+          return updatedStorages;
+        }
+      );
 
       toast.success(
         variables.ids.length === 1
@@ -185,7 +238,10 @@ export const useStorages = () => {
       );
     },
     onError: (error) => {
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+      if (
+        error.message.includes("No autorizado") ||
+        error.message.includes("Unauthorized")
+      ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
         toast.error(error.message || "Error al desactivar el/los almacén(es)");
@@ -194,7 +250,11 @@ export const useStorages = () => {
   });
 
   // Mutación para reactivar almacenes
-  const reactivateMutation = useMutation<BaseApiResponse<Storage>, Error, DeleteStorageDto>({
+  const reactivateMutation = useMutation<
+    BaseApiResponse<Storage>,
+    Error,
+    DeleteStorageDto
+  >({
     mutationFn: async (data) => {
       const response = await reactivateStorage(data);
       if ("error" in response) {
@@ -203,18 +263,21 @@ export const useStorages = () => {
       return response;
     },
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<DetailedStorage[]>(["detailed-storages"], (oldStorages) => {
-        if (!oldStorages) {
-          return [];
-        }
-        const updatedStorages = oldStorages.map((storage) => {
-          if (variables.ids.includes(storage.id)) {
-            return { ...storage, isActive: true };
+      queryClient.setQueryData<DetailedStorage[]>(
+        ["detailed-storages"],
+        (oldStorages) => {
+          if (!oldStorages) {
+            return [];
           }
-          return storage;
-        });
-        return updatedStorages;
-      });
+          const updatedStorages = oldStorages.map((storage) => {
+            if (variables.ids.includes(storage.id)) {
+              return { ...storage, isActive: true };
+            }
+            return storage;
+          });
+          return updatedStorages;
+        }
+      );
 
       toast.success(
         variables.ids.length === 1
@@ -223,7 +286,10 @@ export const useStorages = () => {
       );
     },
     onError: (error) => {
-      if (error.message.includes("No autorizado") || error.message.includes("Unauthorized")) {
+      if (
+        error.message.includes("No autorizado") ||
+        error.message.includes("Unauthorized")
+      ) {
         toast.error("No tienes permisos para realizar esta acción");
       } else {
         toast.error(error.message || "Error al reactivar el/los almacén(es)");
@@ -237,6 +303,7 @@ export const useStorages = () => {
     detailedStoragesQuery,
     storages: storagesQuery.data,
     useOneStorageQuery,
+    useStorageByBranchQuery,
     createMutation,
     updateMutation,
     deleteMutation,

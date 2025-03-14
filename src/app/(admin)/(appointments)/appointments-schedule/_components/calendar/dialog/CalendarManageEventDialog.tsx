@@ -185,7 +185,7 @@ export default function CalendarManageEventDialog() {
                   </>
                 ) : (
                   <>
-                    <Button
+                    {/* <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setIsEditing(true)}
@@ -193,7 +193,7 @@ export default function CalendarManageEventDialog() {
                     >
                       <Pencil className="h-4 w-4 mr-2" />
                       Editar
-                    </Button>
+                    </Button> */}
                     <Button
                       variant="destructive"
                       size="sm"

@@ -81,13 +81,14 @@ export const useIncoming = () => {
       return response;
     },
     onSuccess: async (res) => {
-      queryClient.setQueryData<DetailedIncoming[] | undefined>(
-        ["detailed-incomings"],
-        (oldIncomings) => {
-          if (!oldIncomings) return [res.data];
-          return [...oldIncomings, res.data];
-        }
-      );
+      // queryClient.setQueryData<DetailedIncoming[] | undefined>(
+      //   ["detailed-incomings"],
+      //   (oldIncomings) => {
+      //     if (!oldIncomings) return [res.data];
+      //     return [...oldIncomings, res.data];
+      //   }
+      // );
+      await queryClient.refetchQueries({ queryKey: ["detailed-incomings"] });
       await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
       await queryClient.refetchQueries({ queryKey: ["stock"] });
       toast.success(res.message);
@@ -120,9 +121,14 @@ export const useIncoming = () => {
           );
         }
       );
-      await queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] });
-      await queryClient.invalidateQueries({ queryKey: ["stock-storages"] });
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ["product-stock-by-storage"] }),
+        queryClient.refetchQueries({ queryKey: ["stock-storages"] }),
+        queryClient.refetchQueries({ queryKey: ["stock"] }),
+        res.data.isTransference ? queryClient.refetchQueries({ queryKey: ["detailed-outcomes"] }) : null,
+      ]);
       toast.success("Ingreso actualizado exitosamente");
+      void (res.data.isTransference && toast.success("Ingreso actualizado exitosamente"));
     },
     onError: (error) => {
       if (
@@ -158,7 +164,14 @@ export const useIncoming = () => {
           );
         }
       );
-      await queryClient.refetchQueries({ queryKey: ["stock-storages"] });
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ["stock-storages"] }),
+        queryClient.refetchQueries({
+          queryKey: ["product-stock-by-storage"],
+        }),
+        queryClient.refetchQueries({ queryKey: ["stock"] }),
+      ]);
+      
       toast.success("Ingreso actualizado exitosamente");
     },
     onError: (error) => {
