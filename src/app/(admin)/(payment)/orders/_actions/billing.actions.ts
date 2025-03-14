@@ -8,6 +8,8 @@ import {
   SubmitDraftOrderDto,
   CreateProductSaleBillingDto,
   CreateMedicalAppointmentBillingDto,
+  CreatePrescriptionBillingLocalDto,
+  CreatePrescriptionBillingDto,
 } from "../_interfaces/order.interface";
 import { BaseApiResponse } from "@/types/api/types";
 
