@@ -93,6 +93,7 @@ export function CreatePrescriptionBillingProcessDialog({
     defaultValues: async () => {
       setIsLoading(true);
       const result = await getActiveStoragesByBranch(prescription.branchId);
+      console.log("Result", result, "Prescription", prescription);
       if ("error" in result) {
         setIsFetchingError(true);
         return {
@@ -110,9 +111,9 @@ export function CreatePrescriptionBillingProcessDialog({
           services:
             prescription.prescriptionServices.length > 0
               ? prescription.prescriptionServices.map((service) => ({
-                  serviceId: service.id!,
-                  quantity: service.quantity ?? 1,
-                }))
+                serviceId: service.id!,
+                quantity: service.quantity ?? 1,
+              }))
               : [],
         };
       }
@@ -132,18 +133,18 @@ export function CreatePrescriptionBillingProcessDialog({
         services:
           prescription.prescriptionServices.length > 0
             ? prescription.prescriptionServices.map((service) => ({
-                serviceId: service.id!,
-                quantity: service.quantity ?? 1,
-              }))
+              serviceId: service.id!,
+              quantity: service.quantity ?? 1,
+            }))
             : [],
         // products:
         products:
           prescription.prescriptionMedicaments.length > 0
             ? prescription.prescriptionMedicaments.map((product) => ({
-                productId: product.id!,
-                quantity: product.quantity ?? 1,
-                storageId: result[0].id ?? undefined,
-              }))
+              productId: product.id!,
+              quantity: product.quantity ?? 1,
+              storageId: result[0].id ?? undefined,
+            }))
             : [],
       };
     },
