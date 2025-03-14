@@ -1,5 +1,28 @@
 import { components } from "@/types/api";
-import { Archive, ArrowDownToDot, ArrowUpFromDot, Banknote, CircleX, Divide, DollarSign, Gift, Hourglass, LucideIcon, NotebookPen, PartyPopper, Pill, RefreshCcwDot, RotateCcw, Sliders, Smartphone, StepForward, Stethoscope, TriangleAlert, Undo2, Wallet } from "lucide-react";
+import {
+  Archive,
+  ArrowDownToDot,
+  ArrowUpFromDot,
+  Banknote,
+  CircleX,
+  Divide,
+  DollarSign,
+  Gift,
+  Hourglass,
+  LucideIcon,
+  NotebookPen,
+  PartyPopper,
+  Pill,
+  RefreshCcwDot,
+  RotateCcw,
+  Sliders,
+  Smartphone,
+  StepForward,
+  Stethoscope,
+  TriangleAlert,
+  Undo2,
+  Wallet,
+} from "lucide-react";
 import { z } from "zod";
 
 // Tipos base de la API
@@ -21,10 +44,10 @@ import { z } from "zod";
 //   metadata?: Record<string, never>;
 // };
 
-export type Order = components['schemas']['Order'];
-export type DetailedOrderPrototype = components['schemas']['DetailedOrder'];
-export type OrderType = components['schemas']['OrderType'];
-export type OrderStatus = components['schemas']['OrderStatus'];
+export type Order = components["schemas"]["Order"];
+export type DetailedOrderPrototype = components["schemas"]["DetailedOrder"];
+export type OrderType = components["schemas"]["OrderType"];
+export type OrderStatus = components["schemas"]["OrderStatus"];
 
 export type EnumConfig = {
   name: string;
@@ -37,12 +60,12 @@ export type EnumConfig = {
   importantTextColor?: string;
   importantHoverTextColor?: string;
   icon: LucideIcon;
-}
+};
 
 export type EnumOptions<T> = {
-  label: string
-  value: T
-}
+  label: string;
+  value: T;
+};
 
 export const orderTypeConfig: Record<OrderType, EnumConfig> = {
   MEDICAL_PRESCRIPTION_ORDER: {
@@ -73,15 +96,15 @@ export const orderTypeConfig: Record<OrderType, EnumConfig> = {
     textColor: "text-[#1976D2]",
     icon: ArrowDownToDot,
   },
-}
+};
 export const orderTypeEnumOptions: EnumOptions<OrderType>[] = [
   {
     label: "Receta médica",
-    value: "MEDICAL_PRESCRIPTION_ORDER"
+    value: "MEDICAL_PRESCRIPTION_ORDER",
   },
   {
     label: "Cita médica",
-    value: "MEDICAL_APPOINTMENT_ORDER"
+    value: "MEDICAL_APPOINTMENT_ORDER",
   },
   {
     label: "Venta de productos",
@@ -89,9 +112,9 @@ export const orderTypeEnumOptions: EnumOptions<OrderType>[] = [
   },
   {
     label: "Compra de productos",
-    value: "PRODUCT_PURCHASE_ORDER"
-  }
-]
+    value: "PRODUCT_PURCHASE_ORDER",
+  },
+];
 
 export const orderStatusConfig: Record<OrderStatus, EnumConfig> = {
   DRAFT: {
@@ -143,43 +166,43 @@ export const orderStatusConfig: Record<OrderStatus, EnumConfig> = {
     textColor: "text-[#F57C00]",
     icon: TriangleAlert,
   },
-}
+};
 
 export const orderStatusEnumOptions: EnumOptions<OrderStatus>[] = [
   {
     label: "Borrador",
-    value: "DRAFT"
+    value: "DRAFT",
   },
   {
     label: "No completado",
-    value: "PENDING"
+    value: "PENDING",
   },
   {
     label: "En proceso",
-    value: "PROCESSING"
+    value: "PROCESSING",
   },
   {
     label: "Completado",
-    value: "COMPLETED"
+    value: "COMPLETED",
   },
   {
     label: "Cancelado",
-    value: "CANCELLED"
+    value: "CANCELLED",
   },
   {
     label: "Reembolsado",
-    value: "REFUNDED"
+    value: "REFUNDED",
   },
   {
     label: "Requiere atención",
-    value: "REQUIRES_ATTENTION"
-  }
+    value: "REQUIRES_ATTENTION",
+  },
 ];
 
-export type CreateOrderDto = components['schemas']['CreateOrderDto'];
-export type UpdateOrderDto = components['schemas']['UpdateOrderDto'];
-export type DeleteOrdersDto = components['schemas']['DeleteOrdersDto'];
-export type SubmitDraftOrderDto = components['schemas']['SubmitDraftOrderDto'];
+export type CreateOrderDto = components["schemas"]["CreateOrderDto"];
+export type UpdateOrderDto = components["schemas"]["UpdateOrderDto"];
+export type DeleteOrdersDto = components["schemas"]["DeleteOrdersDto"];
+export type SubmitDraftOrderDto = components["schemas"]["SubmitDraftOrderDto"];
 // Podemos usar el mismo DTO que delete ya que la estructura es idéntica
 export type ReactivateOrderDto = DeleteOrdersDto;
 
@@ -206,12 +229,25 @@ export interface StorageTableItem extends Order {
 // Schema de validación para crear/actualizar
 export const createOrderSchema = z.object({
   code: z.string().optional(),
-  type: z.enum(["MEDICAL_PRESCRIPTION_ORDER", "MEDICAL_APPOINTMENT_ORDER", "PRODUCT_SALE_ORDER", "PRODUCT_PURCHASE_ORDER"]),
+  type: z.enum([
+    "MEDICAL_PRESCRIPTION_ORDER",
+    "MEDICAL_APPOINTMENT_ORDER",
+    "PRODUCT_SALE_ORDER",
+    "PRODUCT_PURCHASE_ORDER",
+  ]),
   movementTypeId: z.string(),
   referenceId: z.string(),
   sourceId: z.string().optional(), //Es la referencia al storage
   targetId: z.string().optional(),
-  status: z.enum(["DRAFT", "PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED", "REQUIRES_ATTENTION"]),
+  status: z.enum([
+    "DRAFT",
+    "PENDING",
+    "PROCESSING",
+    "COMPLETED",
+    "CANCELLED",
+    "REFUNDED",
+    "REQUIRES_ATTENTION",
+  ]),
   currency: z.string(),
   subtotal: z.number(),
   tax: z.number(),
@@ -237,12 +273,29 @@ export const createOrderSchema = z.object({
 // };
 export const updateOrderSchema = z.object({
   code: z.string().optional(),
-  type: z.enum(["MEDICAL_PRESCRIPTION_ORDER", "MEDICAL_APPOINTMENT_ORDER", "PRODUCT_SALE_ORDER", "PRODUCT_PURCHASE_ORDER"]).optional(),
+  type: z
+    .enum([
+      "MEDICAL_PRESCRIPTION_ORDER",
+      "MEDICAL_APPOINTMENT_ORDER",
+      "PRODUCT_SALE_ORDER",
+      "PRODUCT_PURCHASE_ORDER",
+    ])
+    .optional(),
   movementTypeId: z.string().optional(),
   referenceId: z.string().optional(),
   sourceId: z.string().optional(),
   targetId: z.string().optional(),
-  status: z.enum(["DRAFT", "PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED", "REQUIRES_ATTENTION"]).optional(),
+  status: z
+    .enum([
+      "DRAFT",
+      "PENDING",
+      "PROCESSING",
+      "COMPLETED",
+      "CANCELLED",
+      "REFUNDED",
+      "REQUIRES_ATTENTION",
+    ])
+    .optional(),
   currency: z.string().optional(),
   subtotal: z.number().optional(),
   tax: z.number().optional(),
@@ -293,10 +346,20 @@ export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
 //   voucherNumber?: string;
 //   originalPaymentId?: string;
 // };
-export type PaymentStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED";
-export type PaymentType = "REGULAR" | "REFUND" | "PARTIAL" | "ADJUSTMENT" | "COMPENSATION";
+export type PaymentStatus =
+  | "PENDING"
+  | "PROCESSING"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "REFUNDED";
+export type PaymentType =
+  | "REGULAR"
+  | "REFUND"
+  | "PARTIAL"
+  | "ADJUSTMENT"
+  | "COMPENSATION";
 export type PaymentMethod = "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
-export type PaymentPrototype = components['schemas']['Payment'];
+export type PaymentPrototype = components["schemas"]["Payment"];
 export type Payment = {
   id: string;
   orderId: string;
@@ -322,7 +385,7 @@ export type DetailedOrder = {
   referenceId: string;
   sourceId?: string;
   targetId?: string;
-  status: OrderStatus
+  status: OrderStatus;
   currency: string;
   subtotal: number;
   tax: number;
@@ -330,10 +393,9 @@ export type DetailedOrder = {
   date: string;
   notes?: string;
   isActive: boolean;
-  metadata?: Record<string, never>;
+  metadata?: string; //is JSON stringified
   payments: Payment[];
-}
-
+};
 
 export const paymentStatusConfig: Record<PaymentStatus, EnumConfig> = {
   PENDING: {
@@ -370,7 +432,7 @@ export const paymentStatusConfig: Record<PaymentStatus, EnumConfig> = {
     hoverBgColor: "hover:bg-[#CE93D8]",
     textColor: "text-[#8E24AA]",
     icon: Undo2,
-  }
+  },
 };
 export const PaymentTypeConfig: Record<PaymentType, EnumConfig> = {
   REGULAR: {
@@ -434,7 +496,14 @@ export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
   },
 };
 
-export type PaymentOptions = 'CANCEL' | 'PROCESS' | 'VERIFY' | 'REJECT' | 'REFUND' | 'CLOSE' | 'RESTORE';
+export type PaymentOptions =
+  | "CANCEL"
+  | "PROCESS"
+  | "VERIFY"
+  | "REJECT"
+  | "REFUND"
+  | "CLOSE"
+  | "RESTORE";
 export const paymentOptionButtons: Record<PaymentOptions, EnumConfig> = {
   CANCEL: {
     name: "Cancelar",
@@ -484,16 +553,16 @@ export const paymentOptionButtons: Record<PaymentOptions, EnumConfig> = {
     hoverBgColor: "hover:bg-[#FFECB3]",
     textColor: "text-[#FFA000]",
     icon: NotebookPen,
-  }
-}
+  },
+};
 
-export type CreatePaymentDto = components['schemas']['CreatePaymentDto'];
-export type UpdatePaymentDto = components['schemas']['UpdatePaymentDto'];
-export type DeletePaymentsDto = components['schemas']['DeletePaymentsDto'];
+export type CreatePaymentDto = components["schemas"]["CreatePaymentDto"];
+export type UpdatePaymentDto = components["schemas"]["UpdatePaymentDto"];
+export type DeletePaymentsDto = components["schemas"]["DeletePaymentsDto"];
 // CancelPaymentDto : {
 //   cancellationReason: string;
 // }
-export type CancelPaymentDto = components['schemas']['CancelPaymentDto'];
+export type CancelPaymentDto = components["schemas"]["CancelPaymentDto"];
 // ProcessPaymentDto: {
 //   paymentMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
 //   amount: number;
@@ -501,29 +570,31 @@ export type CancelPaymentDto = components['schemas']['CancelPaymentDto'];
 //   date: string;
 //   description?: string;
 // }
-export type ProcessPaymentDto = components['schemas']['ProcessPaymentDto'];
+export type ProcessPaymentDto = components["schemas"]["ProcessPaymentDto"];
 // VerifyPaymentDto: {
 //   verificationNotes?: string;
 //   verifiedAt?: string;
 // }
-export type VerifyPaymentDto = components['schemas']['VerifyPaymentDto'];
+export type VerifyPaymentDto = components["schemas"]["VerifyPaymentDto"];
 // RejectPaymentDto: {
 //   rejectionReason: string;
 // }
-export type RejectPaymentDto = components['schemas']['RejectPaymentDto'];
+export type RejectPaymentDto = components["schemas"]["RejectPaymentDto"];
 // RefundPaymentDto: {
 //   amount: number;
 //   reason: string;
 //   refundMethod: "CASH" | "BANK_TRANSFER" | "YAPE";
 //   notes?: string;
 // }
-export type RefundPaymentDto = components['schemas']['RefundPaymentDto'];
+export type RefundPaymentDto = components["schemas"]["RefundPaymentDto"];
 export type ReactivatePaymentsDto = DeletePaymentsDto;
 
 export const createPaymentSchema = z.object({
   orderId: z.string(),
   date: z.string().optional(),
-  status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"]).optional(),
+  status: z
+    .enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"])
+    .optional(),
   type: z.enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"]),
   amount: z.coerce.number(),
   description: z.string().optional(),
@@ -535,8 +606,12 @@ export const createPaymentSchema = z.object({
 export const updatePaymentSchema = z.object({
   orderId: z.string().optional(),
   date: z.string().optional(),
-  status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"]).optional(),
-  type: z.enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"]).optional(),
+  status: z
+    .enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"])
+    .optional(),
+  type: z
+    .enum(["REGULAR", "REFUND", "PARTIAL", "ADJUSTMENT", "COMPENSATION"])
+    .optional(),
   amount: z.coerce.number().optional(),
   description: z.string().optional(),
   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]).optional(),
@@ -552,9 +627,12 @@ export const processPaymentSchema = z.object({
   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
   amount: z.coerce.number(),
   voucherNumber: z.string().optional(),
-  date: z.string().min(1, "La fecha es requerida").refine((val) => !isNaN(Date.parse(val)), {
-    message: "La fecha debe ser una cadena de fecha válida ISO 8601",
-  }),
+  date: z
+    .string()
+    .min(1, "La fecha es requerida")
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "La fecha debe ser una cadena de fecha válida ISO 8601",
+    }),
   description: z.string().optional(),
 }) satisfies z.ZodType<ProcessPaymentDto>;
 
@@ -582,13 +660,15 @@ export type VerifyPaymentInput = z.infer<typeof verifyPaymentSchema>;
 export type RejectPaymentInput = z.infer<typeof rejectPaymentSchema>;
 export type RefundPaymentInput = z.infer<typeof refundPaymentSchema>;
 
-export type ProductSaleItemDtoPrototype = components['schemas']['ProductSaleItemDto'];
+export type ProductSaleItemDtoPrototype =
+  components["schemas"]["ProductSaleItemDto"];
 export type ProductSaleItemDto = {
   productId: string;
   quantity: number;
   storageId: string;
 };
-export type CreateProductSaleBillingDtoPrototype = components['schemas']['CreateProductSaleBillingDto'];
+export type CreateProductSaleBillingDtoPrototype =
+  components["schemas"]["CreateProductSaleBillingDto"];
 export type CreateProductSaleBillingDto = {
   branchId: string;
   patientId: string;
@@ -620,7 +700,7 @@ export type CreateProductPurchaseBillingDto = {
   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
   notes?: string;
   metadata?: Record<string, never>;
-}
+};
 
 //Prototyping
 // export type ServiceSaleItemDtoPrototype = components['schemas']['ServiceSaleItemDto'];
@@ -649,12 +729,10 @@ export type CreateServiceSaleBillingDtoPrototype =
 //   appointmentIds: string[];
 //   metadata?: Record<string, never>;
 // };
+
 export type CreatePrescriptionBillingDto = {
   branchId: string;
   patientId: string;
-  storageLocation?: string;
-  batchNumber?: string;
-  referenceId?: string;
   recipeId: string;
   currency: string;
   paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
@@ -688,7 +766,7 @@ export const paymentMethodOptions: EnumOptions<PaymentMethod>[] = [
   {
     label: "Billetera Digital",
     value: "DIGITAL_WALLET",
-  }
+  },
 ];
 
 export const createProductSaleBillingSchema = z.object({
@@ -921,26 +999,3 @@ export type MedicalAppointmentMetadata = {
   patientDetails: PatientDetailsMetadata;
   orderDetails: MedicalAppointmentOrderDetails;
 };
-
-  export type CreateMedicalAppointmentBillingDtoPrototype = components['schemas']['CreateMedicalAppointmentBillingDto'];
-export type CreateMedicalAppointmentBillingDto = {
-  appointmentId: string;
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET";
-  amountPaid?: number;
-  currency: string;
-  voucherNumber?: string;
-  notes?: string;
-  metadata?: Record<string, never>;
-};	
-
-export const createMedicalAppointmentBillingSchema = z.object({
-    appointmentId: z.string({
-      required_error: "Debe proporcionar el ID de la cita",
-    }),
-    paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "DIGITAL_WALLET"]),
-    amountPaid: z.number().optional(),
-    currency: z.string(),
-    voucherNumber: z.string().optional(),
-    notes: z.string().optional(),
-    metadata: z.record(z.never()).optional(),
-  }) satisfies z.ZodType<CreateMedicalAppointmentBillingDto>;
