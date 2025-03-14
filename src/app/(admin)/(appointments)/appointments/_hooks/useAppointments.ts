@@ -14,6 +14,7 @@ import {
 import { BaseApiResponse } from "@/types/api/types";
 import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment } from "../_actions/appointments.action";
 import { useState } from "react";
+import { useSelectedServicesAppointmentsDispatch } from "@/app/(admin)/(payment)/prescriptions/_hooks/useCreateAppointmentForOrder";
 
 interface UpdateAppointmentVariables {
     id: string;
@@ -142,10 +143,12 @@ export const useAppointments = () => {
             });
 
             //Always remember to initilize useSelectedServicesAppointments wherever in the code
-            dispatch({ type: "append", payload: [{
-                appointmentId: res.data.id,
-                serviceId: res.data.serviceId
-            }] });
+            dispatch({
+                type: "append", payload: [{
+                    appointmentId: res.data.id,
+                    serviceId: res.data.serviceId
+                }]
+            });
 
             toast.success(res.message);
             toast.success("Cita guardada para la orden")
@@ -345,6 +348,7 @@ export const useAppointments = () => {
         paginatedAppointments: paginatedAppointmentsQuery.data,
         pagination,
         setPagination,
+        createMutationForOrder,
         createMutation,
         updateMutation,
         deleteMutation,

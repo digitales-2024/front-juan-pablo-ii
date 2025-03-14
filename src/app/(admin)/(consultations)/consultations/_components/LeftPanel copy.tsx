@@ -9,6 +9,7 @@ import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 import { useServices } from "@/app/(admin)/services/_hooks/useServices";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
+import { useForm } from "react-hook-form";
 import { UseFormReturn } from "react-hook-form";
 import { ConsultationSchema } from "../type";
 import { FormDescription } from "@/components/ui/form";
@@ -22,16 +23,12 @@ interface LeftPanelProps {
   onPatientChange: (patientId: string) => void;
   form?: UseFormReturn<ConsultationSchema>;
   notModifyDefaults?: boolean
+
 }
 
-export default function LeftPanel({ date, time, onStaffChange, onBranchChange, onServiceChange, onPatientChange, form, notModifyDefaults }: LeftPanelProps) {
-  const isPrescriptionOrderAppointment = form && notModifyDefaults
-  const [selectedMedico, setSelectedMedico] = useState<string | null>(
-    null
-  );
-  const [selectedServicio, setSelectedServicio] = useState<string | null>(
-    isPrescriptionOrderAppointment ? form.getValues('serviceId') : null
-  );
+export default function LeftPanel({ date, time, onStaffChange, onBranchChange, onServiceChange, onPatientChange }: LeftPanelProps) {
+  const [selectedMedico, setSelectedMedico] = useState<string | null>(null);
+  const [selectedServicio, setSelectedServicio] = useState<string | null>(null);
   const [selectedSucursal, setSelectedSucursal] = useState<string | null>(null);
   const [selectedPaciente, setSelectedPaciente] = useState<string | null>(
     isPrescriptionOrderAppointment ? form.getValues('patientId') : null
@@ -40,30 +37,30 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
   const { services } = useServices();
   const { branches } = useBranches();
   const { patients } = usePatients();
-  // const form = useForm();
+  const form = useForm();
 
   const ListMedico = staff?.filter(medico => medico.cmp)
     .map(medico => ({
       value: medico.id,
       label: medico.name,
-    })) ?? [];
+    })) || [];
 
   console.log("LeftPanel:", ListMedico);
 
   const ListServicio = services?.map(servicio => ({
     value: servicio.id,
     label: servicio.name,
-  })) ?? [];
+  })) || [];
 
   const ListSucursal = branches?.map(sucursal => ({
     value: sucursal.id,
     label: sucursal.name,
-  })) ?? [];
+  })) || [];
 
   const ListPaciente = patients?.map(paciente => ({
     value: paciente.id,
     label: paciente.name,
-  })) ?? [];
+  })) || [];
 
   const handleStaffSelect = (value: string | null) => {
     console.group('👨‍⚕️ Staff Selection');
@@ -104,7 +101,7 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
           </Label>
           <ComboboxSelect
             options={ListMedico}
-            value={selectedMedico ?? ""}
+            value={selectedMedico || ""}
             onChange={handleStaffSelect}
             description="Seleccione un medico que realizará la consulta"
             placeholder="Selecciona un medico"
@@ -118,9 +115,8 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
             Servicios
           </Label>
           <ComboboxSelect
-            value={selectedServicio ?? ""}
-            disabled={notModifyDefaults}
             options={ListServicio}
+            value={selectedServicio ?? ""}
             onChange={(value) => {
               setSelectedServicio(value);
               if (value) {
@@ -161,9 +157,8 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
             Paciente
           </Label>
           <ComboboxSelect
-            value={selectedPaciente ?? ""}
-            disabled={notModifyDefaults}
             options={ListPaciente}
+            value={selectedPaciente ?? ""}
             onChange={(value) => {
               console.log("Valor seleccionado paciente:", value);
               setSelectedPaciente(value);

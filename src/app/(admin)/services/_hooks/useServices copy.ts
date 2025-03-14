@@ -5,7 +5,6 @@ import {
   deleteServices,
   getServices,
   reactivateServices,
-  getServiceById,
 } from "../_actions/service.actions";
 import { toast } from "sonner";
 import {
@@ -31,7 +30,7 @@ export const useServices = () => {
       console.log("🔄 Iniciando servicesQuery");
       const response = await getServices({});
       /* console.log("📥 Respuesta raw de getServices:", response); */
-
+      
       if (!response) {
         console.error("❌ No hay respuesta de getServices");
         throw new Error("No se recibió respuesta del servidor");
@@ -42,34 +41,11 @@ export const useServices = () => {
         throw new Error(response.error ?? "Error desconocido");
       }
 
-      /*  console.log("✅ Datos procesados correctamente:", response.data); */
+     /*  console.log("✅ Datos procesados correctamente:", response.data); */
       return response.data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
-
-  function useOneServiceQuery(serviceId: string) {
-    return useQuery({
-      queryKey: ["service", serviceId],
-      queryFn: async () => {
-        try {
-          const response = await getServiceById(
-            serviceId
-          );
-          if (!response || "error" in response) {
-            throw new Error(response?.error || "No se recibió respuesta");
-          }
-          return response;
-        } catch (error) {
-          const message =
-            error instanceof Error ? error.message : "Error desconocido";
-          toast.error(message);
-          return undefined;
-        }
-      },
-      staleTime: 1000 * 60 * 5,
-    });
-  }
 
   // Mutación para crear servicio
   const createMutation = useMutation<BaseApiResponse<Service>, Error, CreateServiceDto>({
@@ -125,7 +101,7 @@ export const useServices = () => {
     mutationFn: async (data) => {
       const response = await deleteServices(data);
       console.log("📥 Respuesta de deleteServices:", response);
-
+      
       if ("error" in response) {
         console.error("❌ Error en deleteServices:", response.error);
         throw new Error(response.error);
@@ -164,7 +140,7 @@ export const useServices = () => {
     mutationFn: async (data) => {
       const response = await reactivateServices(data);
       console.log("📥 Respuesta de reactivateServices:", response);
-
+      
       if ("error" in response) {
         console.error("❌ Error en reactivateServices:", response.error);
         throw new Error(response.error);
@@ -200,7 +176,6 @@ export const useServices = () => {
 
   return {
     servicesQuery,
-    useOneServiceQuery,
     services: servicesQuery.data,
     createMutation,
     updateMutation,
