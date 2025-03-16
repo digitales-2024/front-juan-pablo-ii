@@ -181,7 +181,7 @@ export const columns: ColumnDef<Appointment>[] = [
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onSelect={() => window.location.href = '/orders'}
-                                disabled={!isActive}
+                                disabled={!isActive || isConfirmed}
                                 className="text-emerald-600"
                             >
                                 Pagar
