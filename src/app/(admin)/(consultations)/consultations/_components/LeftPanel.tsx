@@ -69,9 +69,11 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
     console.group('👨‍⚕️ Staff Selection');
     console.log('Value:', value);
     setSelectedMedico(value);
-    if (value) {
+    if (value && value.trim() !== '') {
       console.log('Updating staff ID');
       onStaffChange(value);
+    } else {
+      onStaffChange('');
     }
     console.groupEnd();
   };
@@ -123,9 +125,11 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
             options={ListServicio}
             onChange={(value) => {
               setSelectedServicio(value);
-              if (value) {
+              if (value && value.trim() !== '') {
                 console.log("Cambiando servicio a:", value);
                 onServiceChange(value);
+              } else {
+                onServiceChange('');
               }
             }}
             description={!isPrescriptionOrderAppointment ? "Seleccione un servicio para la consulta" : undefined}
@@ -145,8 +149,10 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
             value={selectedSucursal ?? ""}
             onChange={(value) => {
               setSelectedSucursal(value);
-              if (value) {
+              if (value && value.trim() !== '') {
                 onBranchChange(value);
+              } else {
+                onBranchChange('');
               }
             }}
             description="Seleccione una sucursal"
@@ -167,8 +173,10 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
             onChange={(value) => {
               console.log("Valor seleccionado paciente:", value);
               setSelectedPaciente(value);
-              if (value) {
+              if (value && value.trim() !== '') {
                 onPatientChange(value);
+              } else {
+                onPatientChange('');
               }
             }}
             description={!isPrescriptionOrderAppointment ? "Seleccione un paciente para la consulta" : undefined}
