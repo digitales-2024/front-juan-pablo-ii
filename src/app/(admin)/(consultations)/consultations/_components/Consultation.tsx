@@ -206,13 +206,39 @@ export default function Consultation() {
 	const handleSubmit = async (data: ConsultationSchema) => {
 		console.log('🔄 INICIO DE handleSubmit CON DATOS:', data);
 
-		// Validación explícita de campos requeridos
-		const requiredFields = ['staffId', 'serviceId', 'branchId', 'patientId', 'time', 'paymentMethod'];
-		const missingFields = requiredFields.filter(field => !data[field as keyof ConsultationSchema]);
+		// Validación mejorada de campos requeridos
+		const requiredFields = [
+			{ field: 'staffId', label: 'Médico' },
+			{ field: 'serviceId', label: 'Servicio' },
+			{ field: 'branchId', label: 'Sucursal' },
+			{ field: 'patientId', label: 'Paciente' },
+			{ field: 'time', label: 'Hora' },
+			{ field: 'paymentMethod', label: 'Método de pago' }
+		];
+
+		const missingFields = requiredFields.filter(({ field }) => {
+			const value = data[field as keyof ConsultationSchema];
+			return !value || (typeof value === 'string' && value.trim() === '');
+		});
 
 		if (missingFields.length > 0) {
 			console.error('❌ Faltan campos requeridos:', missingFields);
-			toast.error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
+			toast.error(`Por favor complete los siguientes campos: ${missingFields.map(f => f.label).join(', ')}`);
+			return;
+		}
+
+		// Validación adicional para asegurarse que los IDs son válidos
+		const invalidFields = requiredFields.filter(({ field }) => {
+			const value = data[field as keyof ConsultationSchema];
+			if (field.endsWith('Id')) {
+				return !value || value === '' || value === 'undefined' || value === 'null';
+			}
+			return false;
+		});
+
+		if (invalidFields.length > 0) {
+			console.error('❌ Campos con valores inválidos:', invalidFields);
+			toast.error(`Hay campos con valores inválidos. Por favor seleccione nuevamente: ${invalidFields.map(f => f.label).join(', ')}`);
 			return;
 		}
 
