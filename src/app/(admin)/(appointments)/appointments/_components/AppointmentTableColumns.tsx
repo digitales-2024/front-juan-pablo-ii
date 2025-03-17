@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -20,8 +20,10 @@ import { CalendarIcon, XIcon, RefreshCcw, CreditCard } from "lucide-react";
 import { CancelAppointmentDialog } from "./CancelAppointmentDialog";
 import { RefundAppointmentDialog } from "./RefundAppointmentDialog";
 import { RescheduleAppointmentDialog } from "./RescheduleAppointmentDialog";
-import { Appointment, appointmentStatusConfig, AppointmentStatus } from "../_interfaces/appointments.interface";
+import type { Appointment, AppointmentStatus } from "../_interfaces/appointments.interface";
+import { appointmentStatusConfig } from "../_interfaces/appointments.interface";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export const columns: ColumnDef<Appointment>[] = [
     {
@@ -138,6 +140,7 @@ export const columns: ColumnDef<Appointment>[] = [
             const isActive = appointment.isActive;
             const isPending = appointment.status === "PENDING";
             const isConfirmed = appointment.status === "CONFIRMED";
+            const router = useRouter();
 
             return (
                 <div>
@@ -180,8 +183,8 @@ export const columns: ColumnDef<Appointment>[] = [
                                 </DropdownMenuShortcut>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                                onSelect={() => window.location.href = '/orders'}
-                                disabled={!isActive}
+                                onSelect={() => router.push('/orders')}
+                                disabled={!isActive || isConfirmed}
                                 className="text-emerald-600"
                             >
                                 Pagar

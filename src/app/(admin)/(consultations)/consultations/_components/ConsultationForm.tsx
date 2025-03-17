@@ -7,7 +7,7 @@ import {
 	CardTitle,
 	CardFooter,
 } from "@/components/ui/card";
-import { UseFormReturn } from "react-hook-form";
+import type{ UseFormReturn } from "react-hook-form";
 import {
 	Form,
 	FormControl,
@@ -17,13 +17,14 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { ConsultationSchema } from "../type";
+import type { ConsultationSchema } from "../type";
 import ComboboxSelect from "@/components/ui/combobox-select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
+import { toast } from "sonner";
 
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
@@ -56,7 +57,21 @@ export default function ConsultationForm({
 	const handleFormSubmit = async (data: ConsultationSchema) => {
 		console.group('📝 DATOS DEL FORMULARIO AL ENVIAR');
 		console.log('Valores del formulario:', data);
-		console.groupEnd();
+
+		// Validación adicional antes de enviar
+		const formValues = form.getValues();
+		const requiredFields = ['staffId', 'serviceId', 'branchId', 'patientId', 'paymentMethod'];
+		const emptyFields = requiredFields.filter(field => {
+			const value = formValues[field as keyof ConsultationSchema];
+			return !value || (typeof value === 'string' && value.trim() === '');
+		});
+
+		if (emptyFields.length > 0) {
+			console.error('❌ Campos requeridos vacíos:', emptyFields);
+			toast.error('Por favor complete todos los campos requeridos');
+			console.groupEnd();
+			return;
+		}
 
 		try {
 			await onSubmit(data);
@@ -64,6 +79,7 @@ export default function ConsultationForm({
 		} catch (error) {
 			console.error('❌ Error al procesar el formulario:', error);
 		}
+		console.groupEnd();
 	};
 
 	// Obtener los valores actuales del formulario para mostrar en el resumen

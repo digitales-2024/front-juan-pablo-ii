@@ -1,5 +1,11 @@
 FROM node:23-alpine AS base
 
+# Configurar zona horaria para America/Lima
+ENV TZ=America/Lima
+RUN apk add --no-cache tzdata && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
 # Install dependencies only when needed
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
