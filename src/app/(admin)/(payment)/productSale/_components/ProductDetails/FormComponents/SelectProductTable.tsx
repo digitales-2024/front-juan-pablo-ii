@@ -1,9 +1,9 @@
 import React from 'react'
 import { DataTable } from '@/components/data-table/DataTable';
 import { columns } from './SelectProductTableColumns';
-import { OutgoingProducStockForm } from '@/app/(admin)/(inventory)/stock/_interfaces/stock.interface';
+import { OutgoingProductStock } from '@/app/(admin)/(inventory)/stock/_interfaces/stock.interface';
 interface SelectProductsTableProps {
-  data: OutgoingProducStockForm[];
+  data: OutgoingProductStock[];
 }
 
 export function SelectProductsTable({ data }: SelectProductsTableProps) {

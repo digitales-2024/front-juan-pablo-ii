@@ -19,7 +19,7 @@ import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHe
 import { Checkbox } from "@/components/ui/checkbox";
 import { Check, PackageOpen } from "lucide-react";
 import {
-  OutgoingProducStockForm,
+  OutgoingProductStock,
 } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -45,7 +45,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 //       ]
 //     }
 //   ]
-export const columns: ColumnDef<OutgoingProducStockForm>[] = [
+export const columns: ColumnDef<OutgoingProductStock>[] = [
   //   {
   //     accessorKey: "id",
   //     id: "Número de Movimiento",

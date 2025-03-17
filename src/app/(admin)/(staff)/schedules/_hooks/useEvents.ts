@@ -32,7 +32,7 @@ export interface EventFilterParams {
   staffId?: string;
   type: 'TURNO' | 'CITA' | 'OTRO';
   branchId?: string;
-  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
+  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW' | 'RESCHEDULED';
   staffScheduleId?: string;
   startDate?: string;
   endDate?: string;
@@ -82,24 +82,44 @@ export const useEvents = (filters?: EventFilterParams) => {
 
 
   // Filtros normalizados con type: 'CITA' forzado
-  const normalizedCitaFilters = useMemo(() => ({
-    ...filters,
-    type: 'CITA' as const,
-    status: 'CONFIRMED' as const,
-    startDate: filters?.startDate || format(startOfMonth(new Date()), 'yyyy-MM-dd'),
-    endDate: filters?.endDate || format(endOfMonth(new Date()), 'yyyy-MM-dd')
-  }), [filters]);
+  const normalizedCitaFilters = useMemo(() => {
+    // Crear un objeto base con los filtros
+    const baseFilters = {
+      ...filters,
+      // Solo forzar el tipo a 'CITA' si no viene especificado
+      type: filters?.type || 'CITA' as const,
+      startDate: filters?.startDate || format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+      endDate: filters?.endDate || format(endOfMonth(new Date()), 'yyyy-MM-dd')
+    };
+
+    // Si filters.status está definido, usarlo; de lo contrario, no incluir status en los filtros
+    if (filters?.status !== undefined) {
+      return {
+        ...baseFilters,
+        status: filters.status
+      };
+    }
+
+    // Si no hay status definido, devolver los filtros base sin status
+    return baseFilters;
+  }, [filters]);
 
   // Query principal
   const eventsCitaQuery = useQuery({
-    queryKey: EVENT_CITA_QUERY_KEY, // Usamos la clave única
+    // Incluir los filtros en la clave de consulta para evitar problemas de caché
+    queryKey: [EVENT_CITA_QUERY_KEY, normalizedCitaFilters],
     queryFn: async () => {
+      console.log('📅 [EventsCita] Fetching:', normalizedCitaFilters);
       const res = await getEventsByFilter(normalizedCitaFilters);
+      if (!res.data) {
+        console.warn('⚠️ [EventsCita] No se encontraron eventos.');
+      }
       return res.data || [];
     },
     staleTime: 1000 * 60 * 5, // 5 minutos
     gcTime: 1000 * 60 * 30, // 30 minutos
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true, // Cambiar a true para actualizar al enfocar la ventana
+    refetchOnMount: true, // Cambiar a true para actualizar al montar el componente
   });
   // Mutación para crear evento
   const createMutation = useMutation<

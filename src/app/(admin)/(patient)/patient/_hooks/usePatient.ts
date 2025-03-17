@@ -58,12 +58,18 @@ export const usePatients = () => {
       useQuery<Patient[], Error>({
         queryKey: ["patient-by-dni", dni],
         queryFn: async () => {
-          const response = await getPatientByDni(dni);
-          if ("error" in response) {
-            throw new Error(response.error);
+          try {
+            const response = await getPatientByDni(dni);
+            if ("error" in response) {
+              throw new Error(response.error);
+            }
+            return response
+          } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Error desconocido");
+            return [];
           }
-          return response
         },
+        staleTime: 1000 * 60 * 5, // 5 minutos
         enabled: !!dni,
       });
 

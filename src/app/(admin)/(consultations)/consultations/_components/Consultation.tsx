@@ -13,13 +13,19 @@ import { Button } from "@/components/ui/button";
 import { CalendarDays, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 import { useAppointments } from "@/app/(admin)/(appointments)/appointments/_hooks/useAppointments";
 import { format } from "date-fns";
-import { CreateAppointmentDto } from "@/app/(admin)/(appointments)/appointments/_interfaces/appointments.interface";
+import { useQueryClient } from "@tanstack/react-query";
+import { useBilling } from "@/app/(admin)/(payment)/orders/_hooks/useBilling";
+import { CreateMedicalAppointmentBillingDto } from "@/app/(admin)/(payment)/orders/_interfaces/order.interface";
 import { toast } from "sonner";
+import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
+import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
+import { getPatientById } from "@/app/(admin)/(patient)/patient/_actions/patient.actions";
+import { getStaffById } from "@/app/(admin)/(staff)/staff/_actions/staff.actions";
 
 interface ConsultationFormProps {
-    form: UseFormReturn<ConsultationSchema>;
-    children: React.ReactNode;
-    onSubmit: (data: ConsultationSchema) => Promise<void>;
+	form: UseFormReturn<ConsultationSchema>;
+	children: React.ReactNode;
+	onSubmit: (data: ConsultationSchema) => Promise<void>;
 }
 
 export default function Consultation() {
@@ -31,6 +37,12 @@ export default function Consultation() {
 	const [selectedBranchId, setSelectedBranchId] = useState("");
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const { createMutation } = useAppointments();
+	const queryClient = useQueryClient();
+	const { createMedicalAppointmentOrderMutation } = useBilling();
+
+	// Mover los hooks al nivel superior del componente
+	const { usePatientById } = usePatients();
+	const { oneStaffQuery } = useStaff();
 
 	const form = useForm<ConsultationSchema>({
 		resolver: zodResolver(consultationsSchema),
@@ -95,13 +107,13 @@ export default function Consultation() {
 
 	useEffect(() => {
 		const formValues = form.getValues();
-		
+
 		if (formValues.time && selectedDate) {
 			// Procesar fecha y hora
 			const [time, period] = formValues.time.split(/(?=[AaPp][Mm])/);
 			const [hours, minutes] = time.split(':');
 			let hour24 = parseInt(hours);
-			
+
 			if (period.toLowerCase() === 'pm' && hour24 < 12) {
 				hour24 += 12;
 			} else if (period.toLowerCase() === 'am' && hour24 === 12) {
@@ -114,7 +126,7 @@ export default function Consultation() {
 			startDate.setMinutes(parseInt(minutes));
 			startDate.setSeconds(0);
 			startDate.setMilliseconds(0);
-			
+
 			const endDate = new Date(startDate);
 			// Cambiar de 30 a 15 minutos
 			endDate.setMinutes(endDate.getMinutes() + 15);
@@ -146,92 +158,107 @@ export default function Consultation() {
 		}
 	}, [form.watch(), selectedDate]);
 
-	// const previewAppointmentData = () => {
-	// 	const formValues = form.getValues();
-		
-	// 	// Procesar fecha y hora
-	// 	const [time, period] = formValues.time.split(/(?=[AaPp][Mm])/);
-	// 	const [hours, minutes] = time.split(':');
-	// 	let hour24 = parseInt(hours);
-		
-	// 	if (period.toLowerCase() === 'pm' && hour24 < 12) {
-	// 		hour24 += 12;
-	// 	} else if (period.toLowerCase() === 'am' && hour24 === 12) {
-	// 		hour24 = 0;
-	// 	}
-
-	// 	// Crear fechas ISO
-	// 	const startDate = new Date(selectedDate);
-	// 	startDate.setHours(hour24);
-	// 	startDate.setMinutes(parseInt(minutes));
-	// 	startDate.setSeconds(0);
-	// 	startDate.setMilliseconds(0);
-		
-	// 	const endDate = new Date(startDate);
-	// 	// Cambiar de 30 a 15 minutos
-	// 	endDate.setMinutes(endDate.getMinutes() + 15);
-
-	// 	const appointmentToCreate = {
-	// 		staffId: formValues.staffId,
-	// 		serviceId: formValues.serviceId,
-	// 		branchId: formValues.branchId,
-	// 		patientId: formValues.patientId,
-	// 		start: startDate.toISOString(),
-	// 		end: endDate.toISOString(),
-	// 		type: "CONSULTA" as const,
-	// 		notes: formValues.notes || "",
-	// 		status: "PENDING" as const,
-	// 		paymentMethod: formValues.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET"
-	// 	};
-
-	// 	console.log('DATOS QUE SE ENVIARÁN AL CREAR APPOINTMENT:', appointmentToCreate);
-	// };
-
 	const handleSubmit = async (data: ConsultationSchema) => {
 		console.log('🔄 INICIO DE handleSubmit CON DATOS:', data);
-		
-		// Validación explícita de campos requeridos
-		const requiredFields = ['staffId', 'serviceId', 'branchId', 'patientId', 'time', 'paymentMethod'];
-		const missingFields = requiredFields.filter(field => !data[field as keyof ConsultationSchema]);
-		
+
+		// Validación mejorada de campos requeridos
+		const requiredFields = [
+			{ field: 'staffId', label: 'Médico' },
+			{ field: 'serviceId', label: 'Servicio' },
+			{ field: 'branchId', label: 'Sucursal' },
+			{ field: 'patientId', label: 'Paciente' },
+			{ field: 'time', label: 'Hora' },
+			{ field: 'paymentMethod', label: 'Método de pago' }
+		];
+
+		const missingFields = requiredFields.filter(({ field }) => {
+			const value = data[field as keyof ConsultationSchema];
+			return !value || (typeof value === 'string' && value.trim() === '');
+		});
+
 		if (missingFields.length > 0) {
 			console.error('❌ Faltan campos requeridos:', missingFields);
-			toast.error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
+			toast.error(`Por favor complete los siguientes campos: ${missingFields.map(f => f.label).join(', ')}`);
 			return;
 		}
-		
+
+		// Validación adicional para asegurarse que los IDs son válidos
+		const invalidFields = requiredFields.filter(({ field }) => {
+			const value = data[field as keyof ConsultationSchema];
+			if (field.endsWith('Id')) {
+				return !value || value === '' || value === 'undefined' || value === 'null';
+			}
+			return false;
+		});
+
+		if (invalidFields.length > 0) {
+			console.error('❌ Campos con valores inválidos:', invalidFields);
+			toast.error(`Hay campos con valores inválidos. Por favor seleccione nuevamente: ${invalidFields.map(f => f.label).join(', ')}`);
+			return;
+		}
+
 		try {
 			// Procesar fecha y hora
 			console.log('⏱️ Procesando fecha y hora...');
+			console.log('📆 Fecha seleccionada (string):', data.date);
+			console.log('🕒 Hora seleccionada (Lima):', data.time);
+
+			// Extraer componentes de la hora
 			const [time, period] = data.time.split(/(?=[AaPp][Mm])/);
 			const [hours, minutes] = time.split(':');
 			let hour24 = parseInt(hours);
-			
+
 			if (period.toLowerCase() === 'pm' && hour24 < 12) {
 				hour24 += 12;
 			} else if (period.toLowerCase() === 'am' && hour24 === 12) {
 				hour24 = 0;
 			}
-			
-			// Crear fechas ISO
-			const startDate = new Date(data.date); // Convertir de string a Date
-			startDate.setHours(hour24);
-			startDate.setMinutes(parseInt(minutes));
-			startDate.setSeconds(0);
-			startDate.setMilliseconds(0);
-			
+
+			console.log('🕒 Hora convertida a 24h (Lima):', hour24 + ':' + minutes);
+
+			// Parsear la fecha en formato yyyy-MM-dd
+			const [year, month, day] = data.date.split('-').map(Number);
+
+			// CORRECCIÓN: Crear la fecha en hora local de Lima y luego convertir a UTC
+			// Lima está en UTC-5, por lo que necesitamos sumar 5 horas para obtener UTC
+			const limaToUTCOffset = 5; // Diferencia horaria entre Lima y UTC
+
+			// Crear fecha en hora local (Lima)
+			const limaDate = new Date(year, month - 1, day, hour24, parseInt(minutes), 0, 0);
+			console.log('📅 Fecha en hora local (Lima):', limaDate.toString());
+
+			// Convertir a UTC sumando la diferencia horaria
+			const utcHour = hour24 + limaToUTCOffset;
+			console.log('🕒 Hora convertida a UTC:', utcHour + ':' + minutes);
+
+			// Crear fecha en UTC
+			const startDate = new Date(Date.UTC(year, month - 1, day, utcHour, parseInt(minutes), 0, 0));
+
+			console.log('📅 Fecha creada (UTC):', startDate.toISOString());
+			console.log('📅 Fecha creada (local):', startDate.toString());
+			console.log('📅 Día del mes (UTC):', startDate.getUTCDate());
+			console.log('📅 Hora (UTC):', startDate.getUTCHours() + ':' + startDate.getUTCMinutes());
+
+			// Verificar la conversión a hora de Lima
+			const limaHourFromUTC = startDate.getUTCHours() - limaToUTCOffset;
+			console.log('🕒 Hora en Lima calculada desde UTC:', limaHourFromUTC + ':' + startDate.getUTCMinutes());
+
+			// Crear fecha de fin (15 minutos después)
 			const endDate = new Date(startDate);
-			// Cambiar de 30 a 15 minutos
-			endDate.setMinutes(endDate.getMinutes() + 15);
+			endDate.setUTCMinutes(endDate.getUTCMinutes() + 15);
 
 			console.log('📅 Fechas procesadas:', {
-				startDate: startDate.toISOString(),
-				endDate: endDate.toISOString(),
-				duracionMinutos: 15 // Agregamos duración explícita para claridad
+				startDateUTC: startDate.toISOString(),
+				endDateUTC: endDate.toISOString(),
+				startHourUTC: startDate.getUTCHours() + ':' + startDate.getUTCMinutes(),
+				endHourUTC: endDate.getUTCHours() + ':' + endDate.getUTCMinutes(),
+				startHourLima: limaHourFromUTC + ':' + startDate.getUTCMinutes(),
+				endHourLima: (limaHourFromUTC) + ':' + endDate.getUTCMinutes(),
+				duracionMinutos: 15
 			});
 
 			// Crear objeto para createMutation
-			const appointmentToCreate: CreateAppointmentDto = {
+			const appointmentToCreate = {
 				staffId: data.staffId,
 				serviceId: data.serviceId,
 				branchId: data.branchId,
@@ -246,14 +273,50 @@ export default function Consultation() {
 
 			console.log('📦 OBJETO FINAL PARA CREAR APPOINTMENT:', appointmentToCreate);
 			console.log('⏳ Llamando a createMutation.mutateAsync...');
-			
+
 			const result = await createMutation.mutateAsync(appointmentToCreate);
 			console.log('✅ Mutation completada exitosamente con resultado:', result);
-			
+
+			// Invalidar la query después de crear la cita
+			queryClient.invalidateQueries({ queryKey: ['paginated-appointments'] });
+
 			console.log("🎉 Appointment creado exitosamente");
-			form.reset();
+
+			// Crear la orden de facturación para la cita médica
+			try {
+				console.log('💰 Creando orden de facturación para la cita médica...');
+
+				// Verificar que tenemos el ID del appointment
+				if (result.data && result.data.id) {
+					// Crear el objeto para la facturación
+					const billingData: CreateMedicalAppointmentBillingDto = {
+						appointmentId: result.data.id,
+						paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET",
+						currency: "PEN", // Moneda peruana (soles)
+						notes: data.notes || "",
+						metadata: {}
+					};
+
+					console.log('📦 Datos de facturación a crear:', billingData);
+
+					// Usar la mutación del hook useBilling para crear la orden
+					const billingResult = await createMedicalAppointmentOrderMutation.mutateAsync(billingData);
+					console.log('✅ Orden de facturación creada exitosamente:', billingResult);
+				} else {
+					console.error('❌ No se pudo obtener el ID del appointment para crear la facturación');
+					toast.success("Cita agendada exitosamente, pero no se pudo crear la facturación");
+				}
+			} catch (billingError) {
+				console.error('❌ Error al crear la orden de facturación:', billingError);
+				toast.success("Cita agendada exitosamente, pero hubo un error al crear la facturación");
+			}
+
+			// En lugar de resetear todo el formulario, solo limpiamos algunos campos
+			// pero mantenemos la fecha, hora, personal y sucursal seleccionados
+			form.setValue("notes", "");
+			form.setValue("paymentMethod", "" as any);
+			// Mantenemos: date, time, staffId, branchId
 			setShowForm(false);
-			toast.success("Cita agendada exitosamente");
 		} catch (error) {
 			// Manejo de error mejorado
 			console.error('❌ ERROR en handleSubmit:', error);
@@ -348,19 +411,19 @@ export default function Consultation() {
 							)}
 						</div>
 					) : (
-						<ConsultationForm 
-							form={form} 
+						<ConsultationForm
+							form={form}
 							onSubmit={handleSubmit}
 						>
 							<CardFooter className="w-full gap-10">
 								<div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
-									<Button 
-										type="submit" 
+									<Button
+										type="submit"
 										className="w-full"
 									>
 										Guardar
 									</Button>
-									
+
 									<Button
 										variant="ghost"
 										type="button"

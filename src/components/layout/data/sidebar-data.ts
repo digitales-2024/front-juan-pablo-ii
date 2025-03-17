@@ -7,12 +7,13 @@ import {
   Clock,
   DollarSign,
   FileHeart,
-  FileText,
+  HandCoins,
   Handshake,
   Home,
   Hospital,
   HousePlus,
   KeyRound,
+  ListTodo,
   Package,
   PackageMinus,
   PackageOpen,
@@ -50,15 +51,27 @@ export const sidebarData: SidebarData = {
           icon: Home,
         },
         {
-          title: "Calendario Citas",
-          url: "/appointments-schedule",
-          icon: CalendarPlus,
-        },
-        {
           title: "Consultas",
           url: "/consultations",
           icon: Handshake,
         },
+        {
+          title: "Gestión de Citas",
+          icon: CalendarPlus,
+          items: [
+            {
+              title: "Calendario",
+              url: "/appointments-schedule",
+              icon: CalendarRange,
+            },
+            {
+              title: "Lista de Citas",
+              url: "/appointments",
+              icon: CalendarPlus,
+            },
+          ],
+        }
+
       ],
     },
     {
@@ -70,12 +83,12 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: "Activos",
-              url: "/medical-records",
+              url: "/apoointment-medical",
               icon: ShieldCheck,
             },
             {
               title: "Finalizados",
-              url: "/prescriptions",
+              url: "/apoointment-medical-complete",
               icon: ShieldBan,
             },
           ],
@@ -137,20 +150,25 @@ export const sidebarData: SidebarData = {
           icon: DollarSign,
           items: [
             {
-              title: "Notas medicas",
+              title: "Recetas medicas",
               url: "/prescriptions",
               icon: FileHeart,
             },
             {
-              title: "Órdenes",
-              url: "/orders",
-              icon: FileText,
+              title: "Venta de productos",
+              url: "/productSale",
+              icon: HandCoins,
             },
             {
+              title: "Cotizaciones / Pagos",
+              url: "/orders",
+              icon: ListTodo,
+            },
+           /*  {
               title: "Pagos",
               url: "/invoices",
               icon: DollarSign,
-            },
+            }, */
           ],
         },
       ],
@@ -331,12 +349,12 @@ export function getFilteredSidebarData(profile: Profile | null): SidebarData {
   let filteredNavGroups = [...sidebarData.navGroups];
 
   // Filtrar según el rol
-  if (userRole === "ADMIN") {
+  if (userRole === "ADMINISTRATIVO") {
     // Administrativo: Todo excepto "Accesos y Usuarios"
     filteredNavGroups = filteredNavGroups.filter(
       (group) => group.title !== "Accesos y Usuarios"
     );
-  } else if (userRole === "DOCTOR") {
+  } else if (userRole === "MEDICO") {
     // Médico: Solo "Registros Operativos"
     filteredNavGroups = filteredNavGroups.filter(
       (group) => group.title === "Registros Operativos"

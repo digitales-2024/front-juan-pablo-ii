@@ -11,6 +11,7 @@ import { FilterX } from "lucide-react";
 import { useCallback } from "react";
 import { PrescriptionsTable } from "./_components/PrescriptionTable";
 import { useUnifiedPrescriptions } from "./_hooks/useUnifiedPrescriptions";
+import SearchPatientCombobox from "./_components/FilterComponents/SearchPatientCombobox";
 
 export default function PageOrders() {
   const {
@@ -19,13 +20,64 @@ export default function PageOrders() {
     setFilterByDni,
   } = useUnifiedPrescriptions();
 
+  const onSubmitPatient = useCallback(
+    (value: string) => {
+      setFilterByDni(value);
+      if (response.isError) {
+        toast.error("Error al filtrar stock");
+      }
+      // if (response.data) {
+      //   toast.success("Stock filtrado correctamente");
+      // }
+    },
+    [setFilterByDni]
+  );
+
+  const SelectFormItem = () => {
+    return (
+      <div className="flex flex-col space-y-2 mb-4">
+        <div className="w-full">
+          {/* <Label className="text-sm font-medium">Buscar por DNI de paciente</Label> */}
+          <div className="flex items-center space-x-2 mt-1">
+            <div className="flex-grow">
+              <SearchPatientCombobox
+                onValueChange={(val) => {
+                  onSubmitPatient(val);
+                }}
+              />
+            </div>
+          </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            Solo visualizará pacientes registrados
+          </div>
+        </div>
+      </div>
+    );
+  };
+  // <FormField
+  //   control={filterByStorageAndProductForm.control}
+  //   name="productId"
+  //   render={({ field }) => (
+  //     <FormItem className="w-full">
+  //       <FormLabel>Seleccionar producto</FormLabel>
+  //       <SearchProductCombobox
+  //         onValueChange={(val) => {
+  //           field.onChange(val);
+  //         }}
+  //       />
+  //       <FormMessage />
+  //       <FormDescription>Solo visualizará productos activos</FormDescription>
+  //     </FormItem>
+  //   )}
+  // ></FormField>;
+
   const onSubmitAllPrescriptions = useCallback(() => {
     setFilterAllPrescriptions();
     if (response.isError) {
-      toast.error("Error al filtrar stock");
+      toast.error("Error al filtrar recetas");
     }
     if (response.data) {
-      toast.success("Stock filtrado correctamente");
+      toast.success("Recetas filtrado correctamente");
     }
   }, [setFilterAllPrescriptions]);
 
@@ -34,7 +86,7 @@ export default function PageOrders() {
   }
 
   if (response.isError) {
-    toast.error("Ocurrió un error al cargar los almacenes");
+    toast.error("Ocurrió un error al cargar las recetas");
     throw response.error;
   }
 
@@ -49,6 +101,7 @@ export default function PageOrders() {
       </div>
       <div className="p-1 flex space-x-3">
         {/* <FilterOrderDialog></FilterOrderDialog> */}
+        <SelectFormItem />
         <Button
           onClick={onSubmitAllPrescriptions}
           variant="outline"

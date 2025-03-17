@@ -4,6 +4,7 @@ import { Appointment } from '../_interfaces/appointments.interface';
 // import { ReactivateAppointmentDialog } from './ReactivateAppointmentDialog';
 import { Button } from "@/components/ui/button";
 // import { CreateAppointmentDialog } from './CreateAppointmentDialog';
+import { RefundAppointmentDialog } from './RefundAppointmentDialog';
 
 export interface AppointmentTableToolbarActionsProps {
     table?: Table<Appointment>;
@@ -12,6 +13,11 @@ export interface AppointmentTableToolbarActionsProps {
 export function AppointmentTableToolbarActions({
     table,
 }: AppointmentTableToolbarActionsProps) {
+    // Verificar si hay citas seleccionadas en estado CONFIRMED
+    const hasConfirmedAppointments = table &&
+        table.getFilteredSelectedRowModel().rows.length > 0 &&
+        table.getFilteredSelectedRowModel().rows.some(row => row.original.status === 'CONFIRMED');
+
     return (
         <div className="flex flex-wrap items-center justify-end gap-2">
             {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
@@ -28,13 +34,21 @@ export function AppointmentTableToolbarActions({
                             .rows.map((row) => row.original)}
                         onSuccess={() => table.toggleAllRowsSelected(false)}
                     /> */}
+                    {hasConfirmedAppointments && (
+                        <RefundAppointmentDialog
+                            appointment={table
+                                .getFilteredSelectedRowModel()
+                                .rows.find(row => row.original.status === 'CONFIRMED')?.original as Appointment}
+                            onSuccess={() => table.toggleAllRowsSelected(false)}
+                        />
+                    )}
                 </>
             ) : null}
             <Button
                 onClick={() => window.location.href = '/consultations'}
                 className="default"
             >
-                Crear Cita
+                Agendar Cita
             </Button>
             {/* <CreateAppointmentDialog /> */}
         </div>

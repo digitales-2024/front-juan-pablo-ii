@@ -70,9 +70,11 @@ export const getStaffById = async (id: string) => {
     const [staff, error] = await http.get<GetOneStaffResponse>(`/staff/${id}`);
 
     if (error) {
-      return { error: typeof error === 'object' && error !== null && 'message' in error 
-        ? String(error.message) 
-        : 'Error al obtener el personal' };
+      return {
+        error: typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : 'Error al obtener el personal'
+      };
     }
 
     return staff;
@@ -113,7 +115,26 @@ export async function updateStaff(
   data: UpdateStaffDto
 ): Promise<UpdateStaffResponse> {
   try {
-    const [staff, error] = await http.patch<BaseApiResponse>(`/staff/${id}`, data);
+    // Asegurarse de que los campos vacíos se envíen como cadenas vacías
+    const cleanData = { ...data };
+
+    // Asegurarse de que userId, cmp y branchId se envíen como cadenas vacías si no tienen valor
+    if (cleanData.userId === undefined) {
+      cleanData.userId = "";
+    }
+
+    if (cleanData.cmp === undefined) {
+      cleanData.cmp = "";
+    }
+
+    if (cleanData.branchId === undefined) {
+      cleanData.branchId = "";
+    }
+
+    // Log para depuración
+    console.log("Datos enviados al backend:", cleanData);
+
+    const [staff, error] = await http.patch<BaseApiResponse>(`/staff/${id}`, cleanData);
 
     if (error) {
       return { error: error.message };

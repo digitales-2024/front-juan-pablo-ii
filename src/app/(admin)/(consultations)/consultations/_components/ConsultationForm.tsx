@@ -5,8 +5,9 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
+	CardFooter,
 } from "@/components/ui/card";
-import { UseFormReturn } from "react-hook-form";
+import type{ UseFormReturn } from "react-hook-form";
 import {
 	Form,
 	FormControl,
@@ -16,11 +17,14 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { ConsultationSchema } from "../type";
+import type { ConsultationSchema } from "../type";
 import ComboboxSelect from "@/components/ui/combobox-select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
+import { toast } from "sonner";
 
 interface ConsultationFormProps {
 	form: UseFormReturn<ConsultationSchema>;
@@ -53,7 +57,21 @@ export default function ConsultationForm({
 	const handleFormSubmit = async (data: ConsultationSchema) => {
 		console.group('📝 DATOS DEL FORMULARIO AL ENVIAR');
 		console.log('Valores del formulario:', data);
-		console.groupEnd();
+
+		// Validación adicional antes de enviar
+		const formValues = form.getValues();
+		const requiredFields = ['staffId', 'serviceId', 'branchId', 'patientId', 'paymentMethod'];
+		const emptyFields = requiredFields.filter(field => {
+			const value = formValues[field as keyof ConsultationSchema];
+			return !value || (typeof value === 'string' && value.trim() === '');
+		});
+
+		if (emptyFields.length > 0) {
+			console.error('❌ Campos requeridos vacíos:', emptyFields);
+			toast.error('Por favor complete todos los campos requeridos');
+			console.groupEnd();
+			return;
+		}
 
 		try {
 			await onSubmit(data);
@@ -61,7 +79,12 @@ export default function ConsultationForm({
 		} catch (error) {
 			console.error('❌ Error al procesar el formulario:', error);
 		}
+		console.groupEnd();
 	};
+
+	// Obtener los valores actuales del formulario para mostrar en el resumen
+	const paymentMethod = form.watch("paymentMethod");
+	const paymentMethodLabel = ListPaymentMethods.find(method => method.value === paymentMethod)?.label ?? "No seleccionado";
 
 	return (
 		<Card>
@@ -78,7 +101,7 @@ export default function ConsultationForm({
 						console.log('📤 Evento submit del formulario capturado');
 						const values = form.getValues();
 						console.log('📊 Valores del formulario:', values);
-						
+
 						// Llamar directamente a onSubmit con los valores actuales del formulario
 						try {
 							onSubmit(values);
@@ -99,8 +122,8 @@ export default function ConsultationForm({
 										<FormLabel>Fecha</FormLabel>
 										<FormControl>
 											<Input
-												value={typeof field.value === 'string' 
-													? field.value 
+												value={typeof field.value === 'string'
+													? field.value
 													: format(field.value, "yyyy-MM-dd")}
 												readOnly
 												className="cursor-not-allowed"
@@ -206,6 +229,22 @@ export default function ConsultationForm({
 								</FormItem>
 							)}
 						/>
+
+						{/* Resumen de facturación */}
+						<Alert className="bg-blue-50 border-blue-200">
+							<InfoIcon className="h-4 w-4 text-blue-500" />
+							<AlertTitle className="text-blue-700">Información de facturación</AlertTitle>
+							<AlertDescription className="text-blue-600">
+								<p>Al guardar esta cita, se generará automáticamente una orden de facturación con los siguientes detalles:</p>
+								<ul className="list-disc pl-5 mt-2 space-y-1">
+									<li>Tipo: Cita médica</li>
+									<li>Estado: Pendiente</li>
+									<li>Método de pago: {paymentMethodLabel}</li>
+									<li>Moneda: PEN (Soles)</li>
+									<li>Se asociará automáticamente con el ID de la cita creada</li>
+								</ul>
+							</AlertDescription>
+						</Alert>
 					</CardContent>
 					{children}
 				</form>

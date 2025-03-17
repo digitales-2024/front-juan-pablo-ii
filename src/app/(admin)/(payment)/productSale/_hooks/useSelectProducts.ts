@@ -1,15 +1,15 @@
 // StateManager/index.tsx
-import { OutgoingProducStockForm } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
+import { OutgoingProductStock } from "@/app/(admin)/(inventory)/stock/_interfaces/stock.interface";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-type State = OutgoingProducStockForm[];
+type State = OutgoingProductStock[];
 type Action =
-  | { type: "append"; payload: OutgoingProducStockForm[] }
-  | { type: "replace"; payload: OutgoingProducStockForm[] }
+  | { type: "append"; payload: OutgoingProductStock[] }
+  | { type: "replace"; payload: OutgoingProductStock[] }
   | { type: "remove"; payload: { productId: string }}
   | { type: "clear" };
 
-function reducer(state: State, action: Action): OutgoingProducStockForm[] {
+function reducer(state: State, action: Action): OutgoingProductStock[] {
   switch (action.type) {
     case "append": {
       const existingIds = new Set(
@@ -36,8 +36,8 @@ function reducer(state: State, action: Action): OutgoingProducStockForm[] {
 }
 
 const useSelectedProducts = () => {
-  const selectedProducts = useQuery<OutgoingProducStockForm[]>({
-    queryKey: ["prescription-order-selected-products"],
+  const selectedProducts = useQuery<OutgoingProductStock[]>({
+    queryKey: ["product-sale-order-selected-products"],
     initialData: [],
   });
 
@@ -47,7 +47,7 @@ const useSelectedProducts = () => {
 const useSelectProductDispatch = () => {
   const client = useQueryClient();
   const dispatch = (action: Action) => {
-    client.setQueryData<OutgoingProducStockForm[]>(["prescription-order-selected-products"], (oldState) => {
+    client.setQueryData<OutgoingProductStock[]>(["product-sale-order-selected-products"], (oldState) => {
       const newData = reducer(oldState ?? [], action);
       return newData;
     });
