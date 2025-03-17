@@ -206,15 +206,15 @@ export function CreatePrescriptionOrderForm({
         selected: false,
       }))
     );
+    
 
-    //Limpiar la data
     form.setValue("products", []);
     form.setValue("services", []);
 
     didInitializeRef.current = true;
     // Calcular totales iniciales
     setTimeout(() => calculateProductTotals(), 100);
-  }, [form]);
+  }, [form, openFromParent]);
 
   //Mapeo de datos de productos
   const orderProductsDataMap = useMemo(() => {
