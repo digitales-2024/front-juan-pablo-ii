@@ -7,7 +7,7 @@ import {
 	CardTitle,
 	CardFooter,
 } from "@/components/ui/card";
-import { UseFormReturn } from "react-hook-form";
+import type{ UseFormReturn } from "react-hook-form";
 import {
 	Form,
 	FormControl,
@@ -17,7 +17,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { ConsultationSchema } from "../type";
+import type { ConsultationSchema } from "../type";
 import ComboboxSelect from "@/components/ui/combobox-select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";

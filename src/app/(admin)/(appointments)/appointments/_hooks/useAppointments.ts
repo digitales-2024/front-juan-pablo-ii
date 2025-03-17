@@ -15,6 +15,10 @@ import { BaseApiResponse } from "@/types/api/types";
 import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment } from "../_actions/appointments.action";
 import { useState } from "react";
 import { useSelectedServicesAppointmentsDispatch } from "@/app/(admin)/(payment)/prescriptions/_hooks/useCreateAppointmentForOrder";
+import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
+import { EventType, EventStatus } from "@/app/(admin)/(staff)/schedules/_interfaces/event.interface";
+import { getPatientById } from "@/app/(admin)/(patient)/patient/_actions/patient.actions";
+import { getStaffById } from "@/app/(admin)/(staff)/staff/_actions/staff.actions";
 
 interface UpdateAppointmentVariables {
     id: string;
@@ -43,6 +47,7 @@ export const useAppointments = () => {
         limit: 10
     });
     const dispatch = useSelectedServicesAppointmentsDispatch();
+    const { createMutation: createEventMutation } = useEvents();
 
     // Query para obtener las citas
     const appointmentsQuery = useQuery({
@@ -109,7 +114,59 @@ export const useAppointments = () => {
     const createMutation = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
         mutationFn: async (data) => {
             console.log("Datos enviados para crear la cita:", data);
-            const response = await createAppointment(data);
+            
+            // 1. Obtener datos del paciente y staff
+            let patientName = 'Paciente';
+            let patientDni = '';
+            let staffName = 'Doctor';
+            
+            try {
+                const patientResponse = await getPatientById(data.patientId);
+                if (patientResponse && !('error' in patientResponse)) {
+                    const patient = patientResponse.data || patientResponse;
+                    patientName = `${patient.name} ${patient.lastName || ''}`.trim();
+                    patientDni = patient.dni || '';
+                }
+
+                const staffResponse = await getStaffById(data.staffId);
+                if (staffResponse && !('error' in staffResponse)) {
+                    const staff = staffResponse;
+                    staffName = `${staff.name} ${staff.lastName || ''}`.trim();
+                }
+            } catch (error) {
+                console.error('Error al obtener datos de paciente o staff:', error);
+            }
+
+            // 2. Crear el evento
+            let eventId = undefined;
+            try {
+                const eventData = {
+                    title: `Cita: ${patientName}${patientDni ? `-${patientDni}` : ''} Doctor: ${staffName}`,
+                    color: 'gray',
+                    type: EventType.CITA,
+                    status: EventStatus.PENDING,
+                    start: data.start,
+                    end: data.end,
+                    staffId: data.staffId,
+                    branchId: data.branchId
+                };
+
+                console.log('📦 Datos del evento a crear:', eventData);
+                const eventResult = await createEventMutation.mutateAsync(eventData);
+                console.log('✅ Evento creado exitosamente:', eventResult);
+                eventId = eventResult.data?.id;
+            } catch (eventError) {
+                console.error('❌ Error al crear el evento:', eventError);
+            }
+
+            // 3. Crear la cita con el eventId
+            const appointmentData = {
+                ...data,
+                eventId
+            };
+
+            console.log('📦 Datos finales de la cita a crear:', appointmentData);
+            const response = await createAppointment(appointmentData);
             if ("error" in response) {
                 throw new Error(response.error);
             }
@@ -130,7 +187,59 @@ export const useAppointments = () => {
     const createMutationForOrder = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
         mutationFn: async (data) => {
             console.log("Datos enviados para crear la cita:", data);
-            const response = await createAppointment(data);
+            
+            // 1. Obtener datos del paciente y staff
+            let patientName = 'Paciente';
+            let patientDni = '';
+            let staffName = 'Doctor';
+            
+            try {
+                const patientResponse = await getPatientById(data.patientId);
+                if (patientResponse && !('error' in patientResponse)) {
+                    const patient = patientResponse.data || patientResponse;
+                    patientName = `${patient.name} ${patient.lastName || ''}`.trim();
+                    patientDni = patient.dni || '';
+                }
+
+                const staffResponse = await getStaffById(data.staffId);
+                if (staffResponse && !('error' in staffResponse)) {
+                    const staff = staffResponse;
+                    staffName = `${staff.name} ${staff.lastName || ''}`.trim();
+                }
+            } catch (error) {
+                console.error('Error al obtener datos de paciente o staff:', error);
+            }
+
+            // 2. Crear el evento
+            let eventId = undefined;
+            try {
+                const eventData = {
+                    title: `Cita: ${patientName}${patientDni ? `-${patientDni}` : ''} Doctor: ${staffName}`,
+                    color: 'gray',
+                    type: EventType.CITA,
+                    status: EventStatus.PENDING,
+                    start: data.start,
+                    end: data.end,
+                    staffId: data.staffId,
+                    branchId: data.branchId
+                };
+
+                console.log('📦 Datos del evento a crear:', eventData);
+                const eventResult = await createEventMutation.mutateAsync(eventData);
+                console.log('✅ Evento creado exitosamente:', eventResult);
+                eventId = eventResult.data?.id;
+            } catch (eventError) {
+                console.error('❌ Error al crear el evento:', eventError);
+            }
+
+            // 3. Crear la cita con el eventId
+            const appointmentData = {
+                ...data,
+                eventId
+            };
+
+            console.log('📦 Datos finales de la cita a crear:', appointmentData);
+            const response = await createAppointment(appointmentData);
             if ("error" in response) {
                 throw new Error(response.error);
             }
@@ -142,7 +251,6 @@ export const useAppointments = () => {
                 return [...oldAppointments, res.data];
             });
 
-            //Always remember to initilize useSelectedServicesAppointments wherever in the code
             dispatch({
                 type: "append", payload: [{
                     appointmentId: res.data.id,
