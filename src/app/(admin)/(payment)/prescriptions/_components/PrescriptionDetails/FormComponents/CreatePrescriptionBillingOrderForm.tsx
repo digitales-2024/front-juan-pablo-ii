@@ -87,6 +87,7 @@ interface CreatePrescriptionOrderFormProps
   onDialogClose?: () => void;
   onProductsSaved: () => void;
   onServicesSaved: () => void;
+  openFromParent: boolean;
   // onSaveProductPending : () => void;
   // onSabeServicesPending : () => void;
 }
@@ -114,12 +115,14 @@ export function CreatePrescriptionOrderForm({
   serviceDataQuery,
   onProductsSaved,
   onServicesSaved,
+  openFromParent,
 }: CreatePrescriptionOrderFormProps) {
   const IGV = 0.18;
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
   // Flags de referencia para evitar bucles
   const didInitializeRef = useRef(false);
+  const prevOpenFromParent = useRef(openFromParent);
   const isCalculatingProductsRef = useRef(false);
   const isCalculatingServicesRef = useRef(false);
 
@@ -180,8 +183,20 @@ export function CreatePrescriptionOrderForm({
     useSelectedServicesAppointments();
   const dispatch = useSelectedServicesAppointmentsDispatch();
 
+  useEffect(() => {
+    // Solo ejecutar cuando openFromParent cambia de false a true
+    if (openFromParent && !prevOpenFromParent.current) {
+      didInitializeRef.current = false; // Forzar reinicialización
+    }
+
+    // Actualizar referencia del estado anterior
+    prevOpenFromParent.current = openFromParent;
+  }, [openFromParent]);
+
   // Inicializar datos locales desde el formulario
   useEffect(() => {
+    // Solo ejecutar cuando el diálogo está abierto
+    if (!openFromParent) return;
     // Solo cargar datos una vez
     if (didInitializeRef.current) return;
 
@@ -206,7 +221,6 @@ export function CreatePrescriptionOrderForm({
         selected: false,
       }))
     );
-    
 
     form.setValue("products", []);
     form.setValue("services", []);
@@ -215,6 +229,16 @@ export function CreatePrescriptionOrderForm({
     // Calcular totales iniciales
     setTimeout(() => calculateProductTotals(), 100);
   }, [form, openFromParent]);
+
+  // Efecto de limpieza al cerrar
+  useEffect(() => {
+    if (!openFromParent) {
+      // Resetear estados locales
+      setProductTableFormData([]);
+      setServicesTableFormData([]);
+      didInitializeRef.current = false;
+    }
+  }, [openFromParent]);
 
   //Mapeo de datos de productos
   const orderProductsDataMap = useMemo(() => {
