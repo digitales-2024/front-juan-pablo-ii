@@ -265,7 +265,7 @@ export function RefundPaymentForm({
             control={form.control}
             name={FORMSTATICS.reason.name}
             render={({ field }) => (
-              <FormItem >
+              <FormItem  className="sm:col-span-4">
                 <FormLabel>{FORMSTATICS.reason.label}</FormLabel>
                 <FormControl>
                   <Textarea
@@ -284,7 +284,7 @@ export function RefundPaymentForm({
             control={form.control}
             name={FORMSTATICS.notes.name}
             render={({ field }) => (
-              <FormItem >
+              <FormItem className="sm:col-span-4">
                 <FormLabel>{FORMSTATICS.notes.label}</FormLabel>
                 <FormControl>
                   <Textarea

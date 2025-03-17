@@ -80,7 +80,13 @@ export function ProcessPaymentDialog({
       paymentMethod: payment.paymentMethod,
       amount: payment.amount,
       voucherNumber: undefined,
-      date: undefined,
+      // Using current date in Peru timezone (UTC-5)
+      date: (() => {
+        const now = new Date();
+        // Peru is UTC-5, so adjust the date
+        const peruDate = new Date(now.getTime() - (5 * 60 * 60 * 1000));
+        return peruDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      })(),
       description: undefined,
     },
   });
