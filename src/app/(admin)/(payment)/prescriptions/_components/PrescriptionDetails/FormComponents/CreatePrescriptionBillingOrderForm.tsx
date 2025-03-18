@@ -566,8 +566,7 @@ CreatePrescriptionOrderFormProps) {
 
     // Recalcular totales después de cambiar cantidad
     setTimeout(() => calculateProductTotals(), 10);
-  }, 
-  []);
+  }, []);
 
   // Guardar solo los productos seleccionados al formulario
   const handleSaveProducts = useCallback(() => {
@@ -1247,7 +1246,7 @@ CreatePrescriptionOrderFormProps) {
                           ) ?? null;
 
                         if (!stockStorage) {
-                          handleUncheckOneProduct(index);
+                          // handleUncheckOneProduct(index);
                           return (
                             <TableRow
                               key={field.productId ?? index}
@@ -1262,6 +1261,15 @@ CreatePrescriptionOrderFormProps) {
                                   disabled={true}
                                   aria-label="Seleccionar producto"
                                 />
+                              </TableCell>
+                              <TableCell>
+                                <FormItem>
+                                  <div>
+                                    <span>
+                                      {safeData.name ?? "Desconocido"}
+                                    </span>
+                                  </div>
+                                </FormItem>
                               </TableCell>
                               <TableCell>
                                 <FormItem>
@@ -1291,9 +1299,26 @@ CreatePrescriptionOrderFormProps) {
                                   </Select>
                                 </FormItem>
                               </TableCell>
-                              <TableCell colSpan={7} className="text-center">
-                                No existe stock para este producto:{" "}
-                                {safeData.name} en este almacén
+                              <TableCell>
+                                <FormItem>
+                                  <Input
+                                    disabled={true}
+                                    type="number"
+                                    className={cn(
+                                      "text-center",
+                                      "text-muted-foreground"
+                                    )}
+                                    value={0}
+                                    placeholder="0"
+                                  />
+                                  <FormDescription>
+                                    Cambie de almacén
+                                  </FormDescription>
+                                </FormItem>
+                              </TableCell>
+                              <TableCell colSpan={5} className="text-center">
+                                No existe stock para este producto:{` "${safeData.name}" `}
+                                 en este almacén
                               </TableCell>
                             </TableRow>
                           );

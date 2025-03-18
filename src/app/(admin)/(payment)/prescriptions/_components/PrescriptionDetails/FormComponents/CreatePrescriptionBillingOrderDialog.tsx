@@ -148,7 +148,7 @@ export function CreatePrescriptionBillingProcessDialog({
             ? prescription.prescriptionMedicaments.map((product) => ({
               productId: product.id!,
               quantity: product.quantity ?? 1,
-              storageId: result[0].id ?? undefined,
+              storageId: result[0]?.id ?? undefined,
             }))
             : [],
       };
