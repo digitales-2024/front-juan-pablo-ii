@@ -33,6 +33,7 @@ import {
   UserRoundPen,
   Hospital,
 } from "lucide-react";
+import { BookOpen, Building, CreditCard } from "lucide-react"; // Importar íconos adicionales
 import {
   Select,
   SelectContent,
@@ -83,7 +84,7 @@ export function CreatePatientForm({
 }: CreatePatientFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
-
+  const [documentType, setDocumentType] = useState<string>("dni");
   // Función de cambio de archivo extraída del ciclo de render
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -95,6 +96,106 @@ export function CreatePatientForm({
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Añadir al inicio del archivo o en un archivo separado de constantes
+  const DOCUMENT_TYPES = [
+    {
+      id: "dni",
+      label: "DNI",
+      icon: <IdCard className="w-4 h-4" />,
+      length: 8,
+    },
+    {
+      id: "ce",
+      label: "CE",
+      icon: <CreditCard className="w-4 h-4" />,
+      length: 9,
+    },
+    {
+      id: "passport",
+      label: "PAS",
+      icon: <BookOpen className="w-4 h-4" />,
+      length: 12,
+    },
+    {
+      id: "ruc",
+      label: "RUC",
+      icon: <Building className="w-4 h-4" />,
+      length: 11,
+    },
+  ];
+
+  // Crear este componente en el mismo archivo o en uno separado
+
+  const InputWithDocumentSelector = ({
+    value,
+    onChange,
+    placeholder,
+    documentType,
+    setDocumentType,
+    ...props
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+    placeholder?: string;
+    documentType: string;
+    setDocumentType: (type: string) => void;
+  } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) => {
+    // Encontrar el tipo de documento seleccionado
+    const selectedType =
+      DOCUMENT_TYPES.find((type) => type.id === documentType) ??
+      DOCUMENT_TYPES[0];
+
+    // Manejar cambio en el input con validación de longitud
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;
+
+      // Permitir solo dígitos
+      if (!/^\d*$/.test(newValue)) return;
+
+      // Limitar a la longitud correspondiente al tipo de documento
+      if (newValue.length <= selectedType.length) {
+        onChange(newValue);
+      }
+    };
+
+    return (
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 z-10">
+          <Select
+            value={documentType}
+            onValueChange={setDocumentType}
+            defaultValue="dni"
+          >
+            <SelectTrigger className="w-[40px] h-[26px] p-0 border-none bg-transparent">
+              <SelectValue>{selectedType.icon}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {DOCUMENT_TYPES.map((type) => (
+                <SelectItem
+                  key={type.id}
+                  value={type.id}
+                  className="flex gap-2 items-center"
+                >
+                  {type.icon} <span>{type.label}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Input
+          value={value}
+          onChange={handleInputChange}
+          className="pl-12"
+          placeholder={
+            placeholder ??
+            `Ingrese ${selectedType.label} (${selectedType.length} dígitos)`
+          }
+          {...props}
+        />
+      </div>
+    );
   };
 
   return (
@@ -178,16 +279,23 @@ export function CreatePatientForm({
               <FormItem>
                 <FormLabel>{FORMSTATICS.dni.label}</FormLabel>
                 <FormControl>
-                  <InputWithIcon
-                    {...field}
+                  <InputWithDocumentSelector
+                    value={field.value || ""}
+                    onChange={(value) => field.onChange(value)}
+                    documentType={documentType}
+                    setDocumentType={setDocumentType}
                     placeholder={FORMSTATICS.dni.placeholder}
-                    type={FORMSTATICS.dni.type}
-                    icon={<IdCard className="w-4 h-4" />}
                   />
                 </FormControl>
-                <CustomFormDescription
-                  required={FORMSTATICS.dni.required}
-                ></CustomFormDescription>
+                <div className="flex justify-between items-center text-xs">
+                  <CustomFormDescription required={FORMSTATICS.dni.required} />
+                  <span className="text-muted-foreground">
+                    {field.value?.length || 0}/
+                    {DOCUMENT_TYPES.find((t) => t.id === documentType)
+                      ?.length ?? 8}{" "}
+                    dígitos
+                  </span>
+                </div>
                 <FormMessage />
               </FormItem>
             )}

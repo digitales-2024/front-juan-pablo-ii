@@ -92,7 +92,8 @@ export function UpdateMedicalHistoryPatient({
   const [showMedicalLeaveModal, setShowMedicalLeaveModal] = useState(false);
   const [selectedMedicalLeave, setSelectedMedicalLeave] =
     useState<UpdateHistoryResponseImage | null>(null);
-
+// Añade este estado para los mensajes de error
+const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // Simplificamos este manejador
   const handleAddNewHistory = async (formData: CreateUpdateHistoryFormData) => {
     try {
@@ -168,16 +169,40 @@ export function UpdateMedicalHistoryPatient({
       data: UpdateUpdateHistoryDto;
       image?: File[] | null;
     } */
-  const handleAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      setNewImages((prev) => [...prev, ...files]);
-
-      // Crear previsualizaciones
-      const newPreviews = files.map((file) => URL.createObjectURL(file));
-      setImagesPreviews((prev) => [...prev, ...newPreviews]);
-    }
-  };
+      const handleAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+          const files = Array.from(e.target.files);
+          
+          // Filtrar solo los archivos que son imágenes
+          const validFiles: File[] = [];
+          const invalidFiles: string[] = [];
+          
+          files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+              validFiles.push(file);
+            } else {
+              invalidFiles.push(file.name);
+            }
+          });
+          
+          // Mostrar mensaje de error si hay archivos inválidos
+          if (invalidFiles.length > 0) {
+            setErrorMessage(`Los siguientes archivos no son imágenes y fueron eliminados: ${invalidFiles.join(', ')}`);
+            
+            // Limpiar el mensaje después de 5 segundos
+            setTimeout(() => setErrorMessage(null), 5000);
+          }
+          
+          if (validFiles.length === 0) return; // No seguir si no hay archivos válidos
+          
+          // Solo agregar archivos válidos
+          setNewImages((prev) => [...prev, ...validFiles]);
+          
+          // Crear previsualizaciones solo para archivos válidos
+          const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+          setImagesPreviews((prev) => [...prev, ...newPreviews]);
+        }
+      };
 
   const handleRemoveNewImage = (index: number) => {
     setNewImages((prev) => prev.filter((_, i) => i !== index));
@@ -448,7 +473,13 @@ export function UpdateMedicalHistoryPatient({
             )}
           </DialogContent>
         </Dialog>
-
+ {/* Añadir mensaje de error aquí */}
+ {errorMessage && (
+      <div className="p-3 mb-4 bg-destructive/15 text-destructive border border-destructive/30 rounded-md flex items-center">
+        <X className="w-4 h-4 mr-2 flex-shrink-0" />
+        <span className="text-sm">{errorMessage}</span>
+      </div>
+    )}
         {/* Agregar el modal de imágenes */}
         <Dialog open={isImageModalOpen} onOpenChange={setIsImageModalOpen}>
           <DialogContent className="max-w-3xl">
@@ -497,18 +528,19 @@ export function UpdateMedicalHistoryPatient({
               )}
 
               <div className="flex justify-end gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsImageModalOpen(false);
-                    setNewImages([]);
-                    setImagesPreviews([]);
-                    setSelectedUpdateForImages(null);
-                  }}
-                >
-                  Cancelar
-                </Button>
+              <Button
+  type="button"
+  variant="outline"
+  onClick={() => {
+    setIsImageModalOpen(false);
+    setNewImages([]);
+    setImagesPreviews([]);
+    setSelectedUpdateForImages(null);
+    setErrorMessage(null); // Limpiar el mensaje de error
+  }}
+>
+  Cancelar
+</Button>
                 <Button
                   type="button"
                   onClick={handleSaveImages}

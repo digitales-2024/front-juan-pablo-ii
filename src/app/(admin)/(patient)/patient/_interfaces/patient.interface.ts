@@ -31,7 +31,7 @@ const fileSchema = z
 export const createPatientSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   lastName: z.string().min(1, "El apellido es requerido").optional(),
-  dni: z.string().min(8, "El DNI debe tener 8 caracteres"),
+  dni: z.string().min(8, "El documento debe tener caracteres correspodntintes"),
   birthDate: z.string().min(1, "La fecha de nacimiento es requerida"),
   gender: z.string().min(1, "El género es requerido"),
   address: z.string().optional(),
@@ -54,7 +54,7 @@ export const createPatientSchema = z.object({
 export const updatePatientSchema = z.object({
   name: z.string().min(1, "El nombre es requerido").optional(),
   lastName: z.string().min(1, "El apellido es requerido").optional(),
-  dni: z.string().min(8, "El DNI debe tener 8 caracteres").optional(),
+  dni: z.string().min(8, "El documento debe tener caracteres correspodntintes").optional(),
   birthDate: z.string().optional(),
   gender: z.string().optional(),
   address: z.string().optional(),
