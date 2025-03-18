@@ -35,7 +35,7 @@ import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import { useEffect } from "react";
 
-const TIME_ZONE = 'America/Lima';
+export const TIME_ZONE = 'America/Lima';
 
 export const DAYS_OF_WEEK = [
   { label: "Lunes", value: "MONDAY" },

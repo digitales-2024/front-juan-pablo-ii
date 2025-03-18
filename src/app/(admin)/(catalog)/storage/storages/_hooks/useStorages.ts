@@ -150,6 +150,12 @@ export const useStorages = () => {
           return [...oldStorages, ...detailedStorage];
         }
       );
+      await queryClient.invalidateQueries({
+        queryKey: ["active-storages"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["storages"],
+      });
       toast.success(res.message);
     },
     onError: (error) => {

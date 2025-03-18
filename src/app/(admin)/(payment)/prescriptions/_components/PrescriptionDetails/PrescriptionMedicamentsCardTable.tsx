@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PrescriptionItemResponse } from "../../_interfaces/prescription.interface";
-import { Pill } from "lucide-react";
+import { Syringe } from "lucide-react";
 
 interface PrescriptionMedicamentsTableProps extends React.HTMLAttributes<HTMLDivElement> {
   data: PrescriptionItemResponse[];
@@ -25,7 +25,7 @@ export function PrescriptionMedicamentsCardTable({ data, ...rest }: Prescription
     <Card className="w-full" {...rest}>
       <CardHeader>
         <CardTitle className="text-primary flex space-x-2 items-center">
-          <Pill></Pill>
+          <Syringe></Syringe>
           <span>Medicamentos recetados</span>
         </CardTitle>
         <CardDescription>Lista de medicamentos de la prescripción</CardDescription>

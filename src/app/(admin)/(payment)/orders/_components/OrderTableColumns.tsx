@@ -375,10 +375,11 @@ export const columns: ColumnDef<DetailedOrder>[] = [
       const isPaymentCancelled =
         regularPayment && regularPayment.status === "CANCELLED";
       const isPaymentRefunded =
-        refundPayment && refundPayment.status === "REFUNDED";
+        refundPayment && refundPayment.status === "COMPLETED"; //The first resgular payment has "REFUNDED" status, but the REFUND payment has "COMPLETED" status
 
       //GeneralValidations
       const shouldProcessPayment = isOrderPending && isPaymentPending;
+      const isAppointmentOrPrescription = order.type === "MEDICAL_APPOINTMENT_ORDER";
       const couldCancelOrder = isOrderPending && isPaymentPending;
       const shouldVerifyPayment = isOrderPending && isPaymentProcessed;
       const couldRejectPayment = isOrderPending && isPaymentProcessed;
@@ -389,7 +390,14 @@ export const columns: ColumnDef<DetailedOrder>[] = [
         isPaymentCancelled ??
         isPaymentRefunded;
 
-      const couldCloseAndStore = isOrderCompleted && isPaymentCompleted;
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      const couldCloseAndStore = (isOrderCompleted && isPaymentCompleted) || (isOrderCancelled && isPaymentCancelled) || (isOrderRefunded && isPaymentRefunded);
+
+      console.log('couldCloseAndStore', couldCloseAndStore);
+      console.log('refunded-refunded', isOrderRefunded, isPaymentRefunded);
+      console.log('payment status', regularPayment?.status, refundPayment?.status);
+      console.log('payment types', regularPayment?.type, refundPayment?.type);
+      console.log('refund payment', refundPayment);
 
       return (
         <div>
@@ -541,7 +549,7 @@ export const columns: ColumnDef<DetailedOrder>[] = [
 
               {couldRefundPayment && (
                 <DropdownMenuItem
-                  onSelect={() => setShowRejectPaymentDialog(true)}
+                  onSelect={() => setShowRefundPaymentDialog(true)}
                   disabled={!isActive}
                   className={cn(
                     paymentOptionButtons.REFUND.backgroundColor,

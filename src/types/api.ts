@@ -4643,6 +4643,8 @@ export interface components {
             branch?: Record<string, never>;
             patient?: Record<string, never>;
             event?: Record<string, never>;
+            /** @description ID de la orden asociada a la cita, especialmente útil para órdenes de prescripción médica */
+            orderId?: string;
         };
         UpdateAppointmentDto: {
             /**
@@ -4718,6 +4720,8 @@ export interface components {
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
             eventId?: string;
+            /** @description ID de la orden asociada a la cita */
+            orderId?: string;
         };
         DeleteAppointmentsDto: {
             ids: string[];
