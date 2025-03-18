@@ -1,6 +1,6 @@
 import { components } from "@/types/api";
 import { z } from "zod";
-import { LucideIcon, Clock, CheckCircle, XCircle, AlertTriangle, CalendarCheck, CalendarX, RefreshCcw } from "lucide-react";
+import { LucideIcon, Clock, CheckCircle, XCircle, AlertTriangle, CalendarCheck, CalendarX, RefreshCcw, List } from "lucide-react";
 
 // Tipos base de la API
 export type Appointment = components['schemas']['Appointment'] & {
@@ -29,7 +29,7 @@ export interface PaginatedAppointmentsResponse {
 export type AppointmentTableItem = Appointment & { selected?: boolean };
 
 // Configuración para los estados de citas
-export type AppointmentStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED";
+export type AppointmentStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED" | "all";
 
 export type EnumConfig = {
     name: string;
@@ -91,10 +91,21 @@ export const appointmentStatusConfig: Record<AppointmentStatus, EnumConfig> = {
         hoverBgColor: "hover:bg-[#CE93D8]",
         textColor: "text-[#8E24AA]",
         icon: RefreshCcw,
+    },
+    all: {
+        name: "Todas",
+        backgroundColor: "bg-[#F5F5F5]",
+        hoverBgColor: "hover:bg-[#E0E0E0]",
+        textColor: "text-[#616161]",
+        icon: List,
     }
 }
 
 export const appointmentStatusEnumOptions: EnumOptions<AppointmentStatus>[] = [
+    {
+        label: "Todas",
+        value: "all"
+    },
     {
         label: "Pendiente",
         value: "PENDING"

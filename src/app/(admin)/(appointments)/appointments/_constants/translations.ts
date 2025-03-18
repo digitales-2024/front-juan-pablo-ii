@@ -6,7 +6,8 @@ export const APPOINTMENT_STATUS_TRANSLATIONS: Record<AppointmentStatus, string> 
     "CANCELLED": "Cancelada",
     "COMPLETED": "Completada",
     "NO_SHOW": "No asistió",
-    "RESCHEDULED": "Reprogramada"
+    "RESCHEDULED": "Reprogramada",
+    "all": "Todas"
 };
 
 export const getStatusTranslation = (status: AppointmentStatus): string => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import { AppointmentsFilterType } from "../../_interfaces/filter.interface";
@@ -17,6 +17,15 @@ export function FilterAppointmentsTabCardContent({
     description,
     children,
 }: FilterAppointmentsTabCardContentProps) {
+    console.log("🔍 Renderizando FilterAppointmentsTabCardContent:", {
+        value,
+        title
+    });
+
+    useEffect(() => {
+        console.log("🔍 [TabCardContent useEffect] Tab value:", value);
+    }, [value]);
+
     return (
         <TabsContent value={value} className="mt-4">
             <Card>

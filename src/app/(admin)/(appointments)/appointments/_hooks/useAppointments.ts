@@ -14,7 +14,7 @@ import {
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment, getAppointmentById, getAppointmentsByStatus } from "../_actions/appointments.action";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelectedServicesAppointmentsDispatch } from "@/app/(admin)/(payment)/prescriptions/_hooks/useCreateAppointmentForOrder";
 import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
 import { EventType, EventStatus } from "@/app/(admin)/(staff)/schedules/_interfaces/event.interface";
@@ -42,14 +42,26 @@ interface RescheduleAppointmentVariables {
 }
 
 export const useAppointments = () => {
+    console.log("🏥 Inicializando useAppointments");
+
     const queryClient = useQueryClient();
     const [pagination, setPagination] = useState({
         page: 1,
         limit: 10
     });
 
-    // Añadir estado para el filtro por estado
-    const [statusFilter, setStatusFilter] = useState<AppointmentStatus | null>(null);
+    // Añadir estado para el filtro por estado - inicializar con "all" para mostrar todas las citas por defecto
+    const [statusFilter, setStatusFilter] = useState<AppointmentStatus>("all");
+
+    // Log cuando cambia el filtro de estado
+    useEffect(() => {
+        console.log("🏥 [useAppointments] statusFilter cambió a:", statusFilter);
+    }, [statusFilter]);
+
+    // Log cuando cambia la paginación
+    useEffect(() => {
+        console.log("🏥 [useAppointments] pagination cambió a:", pagination);
+    }, [pagination]);
 
     const dispatch = useSelectedServicesAppointmentsDispatch();
     const { createMutation: createEventMutation } = useEvents();
@@ -93,29 +105,6 @@ export const useAppointments = () => {
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
 
-    // Query para obtener las citas paginadas
-    const paginatedAppointmentsQuery = useQuery({
-        queryKey: ["paginated-appointments", pagination.page, pagination.limit],
-        queryFn: async () => {
-            const response = await getAllAppointments({
-                page: pagination.page,
-                limit: pagination.limit
-            });
-
-            if (!response) {
-                throw new Error("No se recibió respuesta del servidor");
-            }
-
-            if (response.error || !response.data) {
-                throw new Error(response.error ?? "Error desconocido");
-            }
-
-            console.log("Respuesta paginada recibida:", response.data);
-            return response.data;
-        },
-        staleTime: 1000 * 60 * 5, // 5 minutos
-    });
-
     // Query para obtener una cita por ID
     const appointmentByIdQuery = useQuery({
         queryKey: ["appointment", selectedAppointmentId],
@@ -144,10 +133,13 @@ export const useAppointments = () => {
     const appointmentsByStatusQuery = useQuery({
         queryKey: ["appointments-by-status", statusFilter, pagination.page, pagination.limit],
         queryFn: async () => {
-            if (!statusFilter) {
-                return null;
-            }
+            console.log("🏥 Ejecutando query appointments-by-status con:", {
+                statusFilter,
+                page: pagination.page,
+                limit: pagination.limit
+            });
 
+            // Siempre ejecutar la consulta, ya que "all" es un valor válido
             const response = await getAppointmentsByStatus({
                 status: statusFilter,
                 page: pagination.page,
@@ -155,19 +147,38 @@ export const useAppointments = () => {
             });
 
             if (!response) {
+                console.error("🏥 No se recibió respuesta del servidor");
                 throw new Error("No se recibió respuesta del servidor");
             }
 
             if (response.error || !response.data) {
+                console.error("🏥 Error en la respuesta:", response.error);
                 throw new Error(response.error ?? "Error desconocido");
             }
 
-            console.log(`Respuesta de citas filtradas por estado ${statusFilter}:`, response.data);
+            console.log(`🏥 Respuesta exitosa de citas filtradas por estado ${statusFilter}:`, {
+                total: response.data.total,
+                appointments: response.data.appointments?.length || 0,
+                firstAppointment: response.data.appointments?.[0]?.id || "N/A"
+            });
+
             return response.data;
         },
-        enabled: !!statusFilter, // Solo se ejecuta cuando hay un estado seleccionado
+        // Siempre habilitado, ya que "all" es un valor válido
+        enabled: true,
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
+
+    // Log del estado actual de la query principal
+    useEffect(() => {
+        if (appointmentsByStatusQuery.data) {
+            console.log("🏥 [useEffect] Datos recibidos en appointmentsByStatusQuery:", {
+                statusFilter,
+                total: appointmentsByStatusQuery.data.total,
+                appointments: appointmentsByStatusQuery.data.appointments?.length || 0
+            });
+        }
+    }, [appointmentsByStatusQuery.data, statusFilter]);
 
     // Mutación para crear una cita
     const createMutation = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
@@ -439,7 +450,6 @@ export const useAppointments = () => {
             // Actualizar las citas en la caché
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
 
             toast.success("Cita cancelada exitosamente");
         },
@@ -466,7 +476,6 @@ export const useAppointments = () => {
             // Actualizar las citas en la caché
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
 
             toast.success("Cita reembolsada exitosamente");
         },
@@ -493,7 +502,6 @@ export const useAppointments = () => {
             // Actualizar las citas en la caché
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
 
             toast.success("Cita reprogramada exitosamente");
         },
@@ -510,14 +518,11 @@ export const useAppointments = () => {
     return {
         appointmentsQuery,
         activeAppointmentsQuery,
-        paginatedAppointmentsQuery,
         appointmentByIdQuery,
         appointmentsByStatusQuery,
         statusFilter,
         setStatusFilter,
         appointments: appointmentsQuery.data,
-        paginatedAppointments: paginatedAppointmentsQuery.data,
-        filteredAppointments: appointmentsByStatusQuery.data,
         selectedAppointmentId,
         setSelectedAppointmentId,
         pagination,

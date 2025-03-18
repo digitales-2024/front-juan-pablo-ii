@@ -15,8 +15,8 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 
 interface AppointmentStatusFilterProps {
-    value: AppointmentStatus | null;
-    onChange: (value: AppointmentStatus | null) => void;
+    value: AppointmentStatus;
+    onChange: (value: AppointmentStatus) => void;
     isLoading?: boolean;
 }
 
@@ -31,9 +31,9 @@ export const AppointmentStatusFilter: React.FC<AppointmentStatusFilterProps> = (
         onChange(status as AppointmentStatus);
     };
 
-    // Manejador para limpiar el filtro
+    // Manejador para limpiar el filtro (ahora establece "all" en lugar de null)
     const handleClearFilter = () => {
-        onChange(null);
+        onChange("all");
     };
 
     return (
@@ -41,7 +41,7 @@ export const AppointmentStatusFilter: React.FC<AppointmentStatusFilterProps> = (
             <div className="flex-grow">
                 <Select
                     disabled={isLoading}
-                    value={value || ""}
+                    value={value}
                     onValueChange={handleStatusChange}
                 >
                     <SelectTrigger className="w-full">
@@ -69,13 +69,13 @@ export const AppointmentStatusFilter: React.FC<AppointmentStatusFilterProps> = (
                 </Select>
             </div>
 
-            {value && (
+            {value !== "all" && (
                 <Button
                     variant="ghost"
                     size="icon"
                     onClick={handleClearFilter}
                     disabled={isLoading}
-                    title="Limpiar filtro"
+                    title="Mostrar todas las citas"
                 >
                     <X className="h-4 w-4" />
                 </Button>
@@ -88,7 +88,7 @@ export const AppointmentStatusFilter: React.FC<AppointmentStatusFilterProps> = (
                 </div>
             )}
 
-            {value && !isLoading && (
+            {value !== "all" && !isLoading && (
                 <Badge
                     className={`${appointmentStatusConfig[value].backgroundColor} ${appointmentStatusConfig[value].textColor}`}
                 >

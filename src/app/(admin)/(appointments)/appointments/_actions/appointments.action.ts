@@ -40,7 +40,7 @@ const GetAppointmentByIdSchema = z.object({
 
 // Definir un nuevo esquema para obtener citas por estado
 const GetAppointmentsByStatusSchema = z.object({
-    status: z.enum(['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'RESCHEDULED']),
+    status: z.enum(['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'RESCHEDULED', 'all']),
     page: z.number().optional(),
     limit: z.number().optional(),
 });
@@ -123,10 +123,12 @@ const getAppointmentsByStatusHandler = async (data: { status: AppointmentStatus;
     const { status, page = 1, limit = 10 } = data; // Desestructurar y establecer valores predeterminados
     try {
         const url = `/appointments/status/${status}/paginated?page=${page}&limit=${limit}`;
+        console.log(`🔍 [getAppointmentsByStatusHandler] Haciendo petición a: ${url}`);
 
         const [response, error] = await http.get<PaginatedAppointmentsResponse>(url);
 
         if (error) {
+            console.error(`🔍 [getAppointmentsByStatusHandler] Error en la petición:`, error);
             return {
                 error: typeof error === 'object' && error !== null && 'message' in error
                     ? String(error.message)
@@ -134,9 +136,21 @@ const getAppointmentsByStatusHandler = async (data: { status: AppointmentStatus;
             };
         }
 
-        if (!response || !response.appointments || !Array.isArray(response.appointments)) {
+        if (!response) {
+            console.error(`🔍 [getAppointmentsByStatusHandler] Respuesta vacía para estado ${status}`);
+            return { error: 'Respuesta vacía del servidor' };
+        }
+
+        if (!response.appointments || !Array.isArray(response.appointments)) {
+            console.error(`🔍 [getAppointmentsByStatusHandler] Respuesta inválida:`, response);
             return { error: 'Respuesta inválida del servidor' };
         }
+
+        console.log(`✅ [getAppointmentsByStatusHandler] Respuesta exitosa para estado ${status}:`, {
+            total: response.total,
+            appointments: response.appointments.length,
+            firstAppointment: response.appointments[0]?.id || "N/A"
+        });
 
         return { data: response };
     } catch (error) {

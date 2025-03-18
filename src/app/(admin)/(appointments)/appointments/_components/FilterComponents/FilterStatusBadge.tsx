@@ -12,11 +12,11 @@ export const FilterStatusBadge = () => {
     const {
         filterType,
         statusFilter,
-        setFilterAllAppointments
+        setFilterByStatus
     } = useFilterAppointments();
 
-    // Si no hay filtro activo, no mostramos nada
-    if (filterType === AppointmentsFilterType.ALL || !statusFilter) {
+    // Si no hay filtro activo o el filtro es "all", no mostramos nada
+    if (filterType === AppointmentsFilterType.ALL || !statusFilter || statusFilter === "all") {
         return null;
     }
 
@@ -40,7 +40,7 @@ export const FilterStatusBadge = () => {
                         variant="ghost"
                         size="icon"
                         className="h-5 w-5 ml-1 hover:bg-opacity-20 rounded-full"
-                        onClick={() => setFilterAllAppointments()}
+                        onClick={() => setFilterByStatus("all")}
                         title="Quitar filtro"
                     >
                         <X className="h-3 w-3" />

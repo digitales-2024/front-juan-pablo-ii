@@ -13,6 +13,7 @@ export enum AppointmentsFilterType {
 // Schema para filtrar por estado
 export const FilterByStatusSchema = z.object({
     appointmentStatus: z.enum([
+        "all",
         "PENDING",
         "CONFIRMED",
         "COMPLETED",

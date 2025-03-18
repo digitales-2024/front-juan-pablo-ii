@@ -57,6 +57,8 @@ import { cn } from "@/lib/utils";
 import { FilterAppointmentsTabCardContent } from "./FilterAppointmentsTabCardContent";
 
 export function FilterAppointmentsDialog() {
+    console.log("🔍 Renderizando FilterAppointmentsDialog");
+
     const FILTER_DIALOG_MESSAGES = {
         button: "Opciones de filtrado",
         title: "Filtrar Citas Médicas",
@@ -87,13 +89,22 @@ export function FilterAppointmentsDialog() {
     const {
         isLoading,
         query: appointmentsQuery,
+        statusFilter,
         setFilterAllAppointments,
         setFilterByStatus,
     } = useFilterAppointments();
 
+    console.log("🔍 Estado actual en FilterAppointmentsDialog:", {
+        activeTab,
+        statusFilter,
+        isLoading,
+        queryData: appointmentsQuery.data
+    });
+
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
     const handleClose = useCallback(() => {
+        console.log("🔍 Cerrando diálogo de filtros");
         setOpen(false);
     }, []);
 
@@ -102,21 +113,23 @@ export function FilterAppointmentsDialog() {
     }>({
         resolver: zodResolver(FilterByStatusSchema),
         defaultValues: {
-            appointmentStatus: "PENDING",
+            appointmentStatus: "all",
         },
     });
 
     const onSubmitAllAppointments = useCallback(() => {
-        setFilterAllAppointments();
+        console.log("🔍 Aplicando filtro: Todas las citas");
+        setFilterByStatus("all");
         if (appointmentsQuery.isError) {
             toast.error("Error al filtrar las citas");
         } else {
             toast.success("Filtro aplicado: Todas las citas");
             handleClose();
         }
-    }, [setFilterAllAppointments, appointmentsQuery.isError, handleClose]);
+    }, [setFilterByStatus, appointmentsQuery.isError, handleClose]);
 
     const onSubmitStatus = useCallback((input: FilterByStatus) => {
+        console.log("🔍 Aplicando filtro por estado:", input.appointmentStatus);
         setFilterByStatus(input.appointmentStatus);
         if (appointmentsQuery.isError) {
             toast.error("Error al filtrar las citas");
