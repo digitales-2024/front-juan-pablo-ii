@@ -32,6 +32,11 @@ const GetAllAppointmentsSchema = z.object({
     limit: z.number().optional(),
 });
 
+// Definir un nuevo esquema para obtener una cita por ID
+const GetAppointmentByIdSchema = z.object({
+    id: z.string()
+});
+
 const getAppointmentsHandler = async () => {
     try {
         const [appointments, error] = await http.get<Appointment[]>("/appointments");
@@ -108,6 +113,33 @@ const getAllAppointmentsHandler = async (data: { page?: number; limit?: number }
 export const getAppointments = await createSafeAction(GetAppointmentsSchema, getAppointmentsHandler);
 export const getActiveAppointments = await createSafeAction(GetAppointmentsSchema, getActiveAppointmentsHandler);
 export const getAllAppointments = await createSafeAction(GetAllAppointmentsSchema, getAllAppointmentsHandler);
+
+// Agregar una acción para obtener una cita por ID
+const getAppointmentByIdHandler = async (data: { id: string }) => {
+    try {
+        const { id } = data;
+        const [appointment, error] = await http.get<Appointment>(`/appointments/${id}`);
+
+        if (error) {
+            return {
+                error: typeof error === 'object' && error !== null && 'message' in error
+                    ? String(error.message)
+                    : 'Error al obtener la cita médica'
+            };
+        }
+
+        if (!appointment) {
+            return { error: 'Cita médica no encontrada' };
+        }
+
+        return { data: appointment };
+    } catch (error) {
+        console.error("💥 Error en getAppointmentByIdHandler:", error);
+        return { error: "Error al obtener la cita médica" };
+    }
+}
+
+export const getAppointmentById = await createSafeAction(GetAppointmentByIdSchema, getAppointmentByIdHandler);
 
 export async function createAppointment(
     data: CreateAppointmentDto

@@ -12,7 +12,7 @@ import {
     RescheduleAppointmentDto
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
-import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment } from "../_actions/appointments.action";
+import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment, getAppointmentById } from "../_actions/appointments.action";
 import { useState } from "react";
 import { useSelectedServicesAppointmentsDispatch } from "@/app/(admin)/(payment)/prescriptions/_hooks/useCreateAppointmentForOrder";
 import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
@@ -48,6 +48,7 @@ export const useAppointments = () => {
     });
     const dispatch = useSelectedServicesAppointmentsDispatch();
     const { createMutation: createEventMutation } = useEvents();
+    const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
     // Query para obtener las citas
     const appointmentsQuery = useQuery({
@@ -110,16 +111,40 @@ export const useAppointments = () => {
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
 
+    // Query para obtener una cita por ID
+    const appointmentByIdQuery = useQuery({
+        queryKey: ["appointment", selectedAppointmentId],
+        queryFn: async () => {
+            if (!selectedAppointmentId) {
+                return null;
+            }
+
+            const response = await getAppointmentById({ id: selectedAppointmentId });
+
+            if (!response) {
+                throw new Error("No se recibió respuesta del servidor");
+            }
+
+            if (response.error || !response.data) {
+                throw new Error(response.error ?? "Error desconocido");
+            }
+
+            return response.data;
+        },
+        enabled: !!selectedAppointmentId,
+        staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+
     // Mutación para crear una cita
     const createMutation = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
         mutationFn: async (data) => {
             console.log("Datos enviados para crear la cita:", data);
-            
+
             // 1. Obtener datos del paciente y staff
             let patientName = 'Paciente';
             let patientDni = '';
             let staffName = 'Doctor';
-            
+
             try {
                 const patientResponse = await getPatientById(data.patientId);
                 if (patientResponse && !('error' in patientResponse)) {
@@ -187,12 +212,12 @@ export const useAppointments = () => {
     const createMutationForOrder = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
         mutationFn: async (data) => {
             console.log("Datos enviados para crear la cita:", data);
-            
+
             // 1. Obtener datos del paciente y staff
             let patientName = 'Paciente';
             let patientDni = '';
             let staffName = 'Doctor';
-            
+
             try {
                 const patientResponse = await getPatientById(data.patientId);
                 if (patientResponse && !('error' in patientResponse)) {
@@ -452,8 +477,11 @@ export const useAppointments = () => {
         appointmentsQuery,
         activeAppointmentsQuery,
         paginatedAppointmentsQuery,
+        appointmentByIdQuery,
         appointments: appointmentsQuery.data,
         paginatedAppointments: paginatedAppointmentsQuery.data,
+        selectedAppointmentId,
+        setSelectedAppointmentId,
         pagination,
         setPagination,
         createMutationForOrder,
