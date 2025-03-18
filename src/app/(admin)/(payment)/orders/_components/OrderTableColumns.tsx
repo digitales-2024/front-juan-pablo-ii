@@ -379,6 +379,7 @@ export const columns: ColumnDef<DetailedOrder>[] = [
 
       //GeneralValidations
       const shouldProcessPayment = isOrderPending && isPaymentPending;
+      const isAppointmentOrPrescription = order.type === "MEDICAL_APPOINTMENT_ORDER";
       const couldCancelOrder = isOrderPending && isPaymentPending;
       const shouldVerifyPayment = isOrderPending && isPaymentProcessed;
       const couldRejectPayment = isOrderPending && isPaymentProcessed;
