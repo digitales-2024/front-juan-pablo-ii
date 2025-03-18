@@ -72,7 +72,7 @@ export const columns: ColumnDef<Patient>[] = [
   {
     accessorKey: "dni",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="DNI" />
+      <DataTableColumnHeader column={column} title="Número de documento" />
     ),
   },
   {
