@@ -156,7 +156,8 @@ export function AddHistoryModal({
   const [prescriptionResetKey, setPrescriptionResetKey] = useState(0);
   const [medicalLeaveResetKey, setMedicalLeaveResetKey] = useState(0); // Nuevo estado para descanso médico
   // Separamos la lógica de creación en funciones independientes
-
+  // Agregar nuevo estado para mensajes de error
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // Manejador principal del envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -258,13 +259,42 @@ export function AddHistoryModal({
   };
 
   // Manejador de imágenes
+  // Manejador de imágenes con validación
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      setSelectedImages((prev) => [...prev, ...files]);
 
-      // Crear previsualizaciones
-      const newPreviews = files.map((file) => URL.createObjectURL(file));
+      // Filtrar solo los archivos que son imágenes
+      const validFiles: File[] = [];
+      const invalidFiles: string[] = [];
+
+      files.forEach((file) => {
+        if (file.type.startsWith("image/")) {
+          validFiles.push(file);
+        } else {
+          invalidFiles.push(file.name);
+        }
+      });
+
+      // Mostrar mensaje de error si hay archivos inválidos
+      if (invalidFiles.length > 0) {
+        setErrorMessage(
+          `Los siguientes archivos no son fotos ni imágenes y fueron eliminados: ${invalidFiles.join(
+            ", "
+          )}`
+        );
+
+        // Limpiar el mensaje después de 5 segundos
+        setTimeout(() => setErrorMessage(null), 5000);
+      }
+
+      if (validFiles.length === 0) return; // No seguir si no hay archivos válidos
+
+      // Solo agregar archivos válidos
+      setSelectedImages((prev) => [...prev, ...validFiles]);
+
+      // Crear previsualizaciones solo para archivos válidos
+      const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
       setImagePreviews((prev) => [...prev, ...newPreviews]);
     }
   };
@@ -305,9 +335,10 @@ export function AddHistoryModal({
     });
     setShowMedicalLeaveModal(false);
     setShowPrescriptionModal(false);
+    setErrorMessage(null); // Limpiar mensaje de error
     setIsOpen(false);
-    setPrescriptionResetKey((prev) => prev + 1); // Incrementar para forzar reseteo
-    setMedicalLeaveResetKey((prev) => prev + 1); // Incrementar también el reset key del descanso médico
+    setPrescriptionResetKey((prev) => prev + 1);
+    setMedicalLeaveResetKey((prev) => prev + 1);
   };
 
   // Agregar función para limpiar receta médica
@@ -366,6 +397,7 @@ export function AddHistoryModal({
               </DialogClose>
             </div>
           </DialogHeader>
+
           <form onSubmit={handleSubmit} className="space-y-6 p-6">
             <Card>
               <CardContent className="p-6 space-y-4">
@@ -557,7 +589,13 @@ export function AddHistoryModal({
                 </div>
               </CardContent>
             </Card>
-
+            {/* Mensaje de error para imágenes inválidas */}
+            {errorMessage && (
+              <div className="p-3 mx-6 mb-2 bg-destructive/15 text-destructive border border-destructive/30 rounded-md flex items-center">
+                <X className="w-4 h-4 mr-2 flex-shrink-0" />
+                <span className="text-sm">{errorMessage}</span>
+              </div>
+            )}
             <Card>
               <CardContent className="p-6 space-y-4">
                 <Label className="flex items-center gap-2">

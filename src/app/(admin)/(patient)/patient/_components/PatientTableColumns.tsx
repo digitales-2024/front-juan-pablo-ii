@@ -72,7 +72,7 @@ export const columns: ColumnDef<Patient>[] = [
   {
     accessorKey: "dni",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="DNI" />
+      <DataTableColumnHeader column={column} title="Número de documento" />
     ),
   },
   {
@@ -279,7 +279,7 @@ export const columns: ColumnDef<Patient>[] = [
                 onSelect={() => setShowDeleteDialog(true)}
                 disabled={!row.original.isActive}
               >
-                Eliminar
+                Desactivar
                 <DropdownMenuShortcut>
                   <Trash className="size-4" aria-hidden="true" />
                 </DropdownMenuShortcut>
