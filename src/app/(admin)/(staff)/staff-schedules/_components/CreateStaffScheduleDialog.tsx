@@ -24,7 +24,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { CreateStaffScheduleForm } from "./CreateStaffScheduleForm";
-import { format } from "date-fns-tz";
+import { format, toDate } from "date-fns-tz";
 import { es } from 'date-fns/locale';
 import {
   Popover,
@@ -46,10 +46,12 @@ import {
 import { FormControl, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Form } from "@/components/ui/form";
-import { DAYS_OF_WEEK } from "../_components/CreateStaffScheduleForm";
+import { DAYS_OF_WEEK, FERIADOS_2025, TIME_ZONE } from "../_components/CreateStaffScheduleForm";
 import { useQueryClient } from "@tanstack/react-query";
 import { colorOptions } from "../../schedules/_components/calendar/calendarTailwindClasses";
 import { EventFilterParams } from "../../schedules/_hooks/useEvents";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 
 
 const CREATE_STAFF_SCHEDULE_MESSAGES = {
@@ -63,32 +65,32 @@ const CREATE_STAFF_SCHEDULE_MESSAGES = {
 
 const PREDEFINED_SCHEDULES = [
   {
-    label: "Turno Mañana",
+    label: "T-Mañana",
     value: "morning",
     weekdays: {
-      title: "Turno Mañana",
+      title: "T-Mañana",
       startTime: "09:00",
       endTime: "14:00",
       daysOfWeek: [1, 2, 3, 4, 5] // Lunes a Viernes
     },
     saturday: {
-      title: "Turno Mañana - SÁBADOS",
+      title: "T-Mañana - SÁBADOS",
       startTime: "09:00",
       endTime: "15:00",
       daysOfWeek: [6] // Sábado
     }
   },
   {
-    label: "Turno Tarde",
+    label: "T-Tarde",
     value: "afternoon",
     weekdays: {
-      title: "Turno Tarde",
+      title: "T-Tarde",
       startTime: "14:00",
       endTime: "18:00",
       daysOfWeek: [1, 2, 3, 4, 5] // Lunes a Viernes
     },
     saturday: {
-      title: "Turno Tarde - SÁBADOS",
+      title: "T-Tarde - SÁBADOS",
       startTime: "09:00",
       endTime: "15:00",
       daysOfWeek: [6] // Sábado
@@ -137,15 +139,18 @@ export function CreateStaffScheduleDialog() {
 
     if (!isTitleManuallyEdited) {
       if (staffMember && selected) {
-        const defaultTitle = `${selected.label}-${staffMember?.name} ${staffMember?.lastName}`;
+        const prefix = staffMember.cmp ? 'Dr.' : '';
+        const turnPrefix = selected.value === 'morning' ? 'T-Mañana' : 'T-Tarde';
+        const defaultTitle = `${turnPrefix}-${prefix} ${staffMember?.name} ${staffMember?.lastName}`.trim();
         form.setValue("title", defaultTitle);
       } else if (selected) {
-        form.setValue("title", selected.label);
+        const turnPrefix = selected.value === 'morning' ? 'T-Mañana' : 'T-Tarde';
+        form.setValue("title", turnPrefix);
       } else {
         form.setValue("title", "");
       }
     }
-  }, [selectedSchedule, staffId, branchId, staff, isTitleManuallyEdited]);
+  }, [selectedSchedule, staffId, branchId, staff, isTitleManuallyEdited, form]);
 
   function handleSubmit(input: CreateStaffScheduleDto) {
     if (createMutation.isPending || isCreatePending) return;
@@ -173,7 +178,9 @@ export function CreateStaffScheduleDialog() {
     const branchId = form.getValues("branchId");
     const color = form.getValues("color");
     const staffMember = staff?.find(s => s.id === staffId);
-    const defaultTitle = staffMember ? `${selected.label}-${staffMember?.name} ${staffMember?.lastName}` : selected.label;
+    const prefix = staffMember?.cmp ? 'Dr.' : '';
+    const turnPrefix = selected.value === 'morning' ? 'T-Mañana' : 'T-Tarde';
+    const defaultTitle = staffMember ? `${turnPrefix}-${prefix} ${staffMember?.name} ${staffMember?.lastName}`.trim() : turnPrefix;
 
     const baseSchedule = {
       ...form.getValues(),
@@ -181,9 +188,6 @@ export function CreateStaffScheduleDialog() {
       branchId,
       title: defaultTitle,
       color: color,
-      startTime: selected.weekdays.startTime,
-      endTime: selected.weekdays.endTime,
-      daysOfWeek: selected.weekdays.daysOfWeek.map(day => DAYS_OF_WEEK[day - 1].value),
       recurrence: {
         frequency: "WEEKLY",
         interval: 1,
@@ -192,23 +196,27 @@ export function CreateStaffScheduleDialog() {
       exceptions: [],
     };
 
-    const schedules = [
-      {
-        ...baseSchedule,
-        ...selected.weekdays,
-        daysOfWeek: selected.weekdays.daysOfWeek.map(day => DAYS_OF_WEEK[day - 1].value)
-      },
-      {
-        ...baseSchedule,
-        ...selected.saturday,
-        daysOfWeek: selected.saturday.daysOfWeek.map(day => DAYS_OF_WEEK[day - 1].value)
-      }
-    ];
+    // Crear horario para días de semana
+    const weekdaySchedule = {
+      ...baseSchedule,
+      startTime: selected.weekdays.startTime,
+      endTime: selected.weekdays.endTime,
+      daysOfWeek: selected.weekdays.daysOfWeek.map(day => DAYS_OF_WEEK[day - 1].value),
+    };
+
+    // Crear horario para sábados
+    const saturdaySchedule = {
+      ...baseSchedule,
+      title: `${defaultTitle} - SÁBADOS`,
+      startTime: selected.saturday.startTime,
+      endTime: selected.saturday.endTime,
+      daysOfWeek: selected.saturday.daysOfWeek.map(day => DAYS_OF_WEEK[day - 1].value),
+    };
 
     startCreateTransition(() => {
       Promise.all([
-        createMutation.mutateAsync(schedules[0] as CreateStaffScheduleDto),
-        createMutation.mutateAsync(schedules[1] as CreateStaffScheduleDto)
+        createMutation.mutateAsync(weekdaySchedule as CreateStaffScheduleDto),
+        createMutation.mutateAsync(saturdaySchedule as CreateStaffScheduleDto)
       ]).then(() => {
         // Obtener los filtros actuales
         const calendarFilters = queryClient.getQueryData<EventFilterParams>(['calendar-filters']);
@@ -269,6 +277,13 @@ export function CreateStaffScheduleDialog() {
   const ScheduleSelector = () => {
     const { staff } = useStaff();
     const { branches } = useBranches();
+    const [exceptions, setExceptions] = useState<string[]>([]);
+
+    const handleAddHolidays = () => {
+      const mergedDates = [...new Set([...exceptions, ...FERIADOS_2025])];
+      setExceptions(mergedDates);
+      form.setValue("exceptions", mergedDates);
+    };
 
     return (
       <Form {...form}>
@@ -283,6 +298,32 @@ export function CreateStaffScheduleDialog() {
                 {schedule.label}
               </Button>
             ))}
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-lg space-y-3">
+            <p className="text-sm font-medium text-blue-700">Detalles del horario seleccionado:</p>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                <span className="text-sm text-blue-600">
+                  Días de semana (L-V): {selectedSchedule === 'morning' ? '09:00 - 14:00' : '14:00 - 18:00'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                <span className="text-sm text-blue-600">
+                  Sábados: 09:00 - 15:00
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                <span className="text-sm text-blue-600">
+                  {selectedSchedule === 'morning' 
+                    ? 'Turno Mañana: Horario predefinido , si desea modificarlo consulte a soporte tecnico'
+                    : 'Turno Tarde: Horario predefinido , si desea modificarlo consulte a soporte tecnico'}
+                </span>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -350,7 +391,7 @@ export function CreateStaffScheduleDialog() {
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {endDate ? format(endDate, "PPP", { locale: es }) : <span>Selecciona una fecha</span>}
+                  {endDate ? format(endDate, "PPP", { locale: es }) : <span>Valido hasta</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -388,6 +429,77 @@ export function CreateStaffScheduleDialog() {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <FormLabel>Excepciones</FormLabel>
+            <div className="flex gap-2 mb-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddHolidays}
+              >
+                Agregar todos los feriados 2025
+              </Button>
+            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant="outline"
+                    className="w-full pl-3 text-left font-normal"
+                    type="button"
+                  >
+                    {(exceptions?.length ?? 0) > 0
+                      ? `${exceptions?.length ?? 0} fechas excluidas`
+                      : "Seleccione fechas a excluir"}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="multiple"
+                  selected={exceptions?.map(dateString =>
+                    toDate(dateString, { timeZone: TIME_ZONE })
+                  )}
+                  onSelect={(dates) => {
+                    const formattedDates = dates?.map(d =>
+                      format(d, 'yyyy-MM-dd', { timeZone: TIME_ZONE })
+                    ) || [];
+                    setExceptions(formattedDates);
+                    form.setValue("exceptions", formattedDates);
+                  }}
+                  disabled={(date) => {
+                    const now = new Date();
+                    const limaDate = toDate(now, { timeZone: TIME_ZONE });
+                    return date < limaDate;
+                  }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {exceptions?.map((dateString, index) => {
+                const date = new Date(dateString);
+                return (
+                  <Badge
+                    key={index}
+                    variant="outline"
+                    className="cursor-pointer hover:bg-gray-100"
+                    onClick={() => {
+                      const newExceptions = exceptions.filter((_, i) => i !== index);
+                      setExceptions(newExceptions);
+                      form.setValue("exceptions", newExceptions);
+                    }}
+                  >
+                    {format(toDate(dateString, { timeZone: TIME_ZONE }), "dd/MM/yyyy", { timeZone: TIME_ZONE })}
+                    <X className="h-3 w-3 ml-1" />
+                  </Badge>
+                );
+              })}
+            </div>
           </div>
 
           <Button
