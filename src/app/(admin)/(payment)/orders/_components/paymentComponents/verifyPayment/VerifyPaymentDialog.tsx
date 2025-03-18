@@ -72,8 +72,13 @@ export function VerifyPaymentDialog({
   const form = useForm<VerifyPaymentInput>({
     resolver: zodResolver(verifyPaymentSchema),
     defaultValues: {
-      verificationNotes: undefined,
-      verifiedAt: undefined,
+      verificationNotes: "Pago conforme",
+      verifiedAt: (() => {
+        const now = new Date();
+        // Peru is UTC-5, so adjust the date
+        const peruDate = new Date(now.getTime() - (5 * 60 * 60 * 1000));
+        return peruDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      })(),
     },
   });
 
