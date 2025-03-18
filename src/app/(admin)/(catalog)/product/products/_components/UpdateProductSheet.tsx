@@ -287,7 +287,40 @@ export function UpdateProductSheet({
                     </FormItem>
                   )}
                 />
+
                 <FormField
+                  control={form.control}
+                  name="uso"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{FORMSTATICS.uso.label}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={FORMSTATICS.uso.placeholder}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.values(productUseOptions).map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <CustomFormDescription
+                        required={FORMSTATICS.uso.required}
+                      ></CustomFormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* <FormField
                   control={form.control}
                   name={FORMSTATICS.descuento.name}
                   render={({ field }) => (
@@ -309,7 +342,7 @@ export function UpdateProductSheet({
                       ></CustomFormDescription>
                     </FormItem>
                   )}
-                />
+                /> */}
                 {/* Campo de categoría */}
                 <FormField
                   control={form.control}
@@ -413,38 +446,7 @@ export function UpdateProductSheet({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="uso"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FORMSTATICS.uso.label}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={FORMSTATICS.uso.placeholder}
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(productUseOptions).map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <CustomFormDescription
-                        required={FORMSTATICS.uso.required}
-                      ></CustomFormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name={FORMSTATICS.description.name}

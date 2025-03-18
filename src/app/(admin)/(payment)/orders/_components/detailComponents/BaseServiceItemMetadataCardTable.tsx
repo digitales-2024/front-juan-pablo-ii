@@ -101,7 +101,7 @@ export function BaseServiceItemMetadataCardTable({
                       <TableCell className="text-center">
                         {item.servicePrice ?? "---"}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-end">
                         {total.toLocaleString("es-PE", {
                           style: "currency",
                           currency: "PEN",
@@ -125,7 +125,7 @@ export function BaseServiceItemMetadataCardTable({
                     )}
                   </TableCell>
                   <TableCell></TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-end">
                     {data
                       .reduce(
                         (total, item) =>

@@ -87,6 +87,7 @@ interface CreatePrescriptionOrderFormProps
   onDialogClose?: () => void;
   onProductsSaved: () => void;
   onServicesSaved: () => void;
+  // openFromParent: boolean;
   // onSaveProductPending : () => void;
   // onSabeServicesPending : () => void;
 }
@@ -114,12 +115,14 @@ export function CreatePrescriptionOrderForm({
   serviceDataQuery,
   onProductsSaved,
   onServicesSaved,
-}: CreatePrescriptionOrderFormProps) {
+}: // openFromParent,
+CreatePrescriptionOrderFormProps) {
   const IGV = 0.18;
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
   // Flags de referencia para evitar bucles
   const didInitializeRef = useRef(false);
+  // const prevOpenFromParent = useRef(openFromParent);
   const isCalculatingProductsRef = useRef(false);
   const isCalculatingServicesRef = useRef(false);
 
@@ -180,8 +183,20 @@ export function CreatePrescriptionOrderForm({
     useSelectedServicesAppointments();
   const dispatch = useSelectedServicesAppointmentsDispatch();
 
+  // useEffect(() => {
+  //   // Solo ejecutar cuando openFromParent cambia de false a true
+  //   if (openFromParent && !prevOpenFromParent.current) {
+  //     didInitializeRef.current = false; // Forzar reinicialización
+  //   }
+
+  //   // Actualizar referencia del estado anterior
+  //   prevOpenFromParent.current = openFromParent;
+  // }, [openFromParent]);
+
   // Inicializar datos locales desde el formulario
   useEffect(() => {
+    // Solo ejecutar cuando el diálogo está abierto
+    // if (!openFromParent) return;
     // Solo cargar datos una vez
     if (didInitializeRef.current) return;
 
@@ -207,7 +222,6 @@ export function CreatePrescriptionOrderForm({
       }))
     );
 
-    //Limpiar la data
     form.setValue("products", []);
     form.setValue("services", []);
 
@@ -215,6 +229,16 @@ export function CreatePrescriptionOrderForm({
     // Calcular totales iniciales
     setTimeout(() => calculateProductTotals(), 100);
   }, [form]);
+
+  // // Efecto de limpieza al cerrar
+  // useEffect(() => {
+  //   if (!openFromParent) {
+  //     // Resetear estados locales
+  //     setProductTableFormData([]);
+  //     setServicesTableFormData([]);
+  //     didInitializeRef.current = false;
+  //   }
+  // }, [openFromParent]);
 
   //Mapeo de datos de productos
   const orderProductsDataMap = useMemo(() => {
@@ -529,6 +553,22 @@ export function CreatePrescriptionOrderForm({
     []
   );
 
+  const handleUncheckOneProduct = useCallback((index: number) => {
+    setProductTableFormData((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        selected: false,
+        hasChanges: true,
+      };
+      return updated;
+    });
+
+    // Recalcular totales después de cambiar cantidad
+    setTimeout(() => calculateProductTotals(), 10);
+  }, 
+  []);
+
   // Guardar solo los productos seleccionados al formulario
   const handleSaveProducts = useCallback(() => {
     // Filtrar solo los productos seleccionados
@@ -811,7 +851,7 @@ export function CreatePrescriptionOrderForm({
       variant={"outline"}
       onClick={handleSaveProducts}
       disabled={!productTableFormData.some((p) => p.hasChanges)}
-      className="ml-auto bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary"
+      className="ml-auto mt-2 bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary"
     >
       <Save className="mr-2 h-4 w-4" />
       Guardar cambios
@@ -1201,9 +1241,63 @@ export function CreatePrescriptionOrderForm({
                             (p) => p.id === field.productId
                           ) ?? {};
                         const price = safeData.precio ?? 0;
-                        const stockStorage = safeData.Stock?.find(
-                          (stock) => stock.Storage.id === field.storageId
-                        );
+                        const stockStorage =
+                          safeData.Stock?.find(
+                            (stock) => stock.Storage?.id === field.storageId
+                          ) ?? null;
+
+                        if (!stockStorage) {
+                          handleUncheckOneProduct(index);
+                          return (
+                            <TableRow
+                              key={field.productId ?? index}
+                              className="animate-fade-down"
+                            >
+                              <TableCell>
+                                <Checkbox
+                                  checked={field.selected}
+                                  onCheckedChange={() =>
+                                    handleToggleProductSelection(index)
+                                  }
+                                  disabled={true}
+                                  aria-label="Seleccionar producto"
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <FormItem>
+                                  <Select
+                                    value={field.storageId}
+                                    onValueChange={(value) =>
+                                      handleEditProduct(index, {
+                                        storageId: value,
+                                      })
+                                    }
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Seleccionar almacén" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      {storageOptions.map((storage) => (
+                                        <SelectItem
+                                          key={storage.value}
+                                          value={storage.value}
+                                        >
+                                          {storage.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </FormItem>
+                              </TableCell>
+                              <TableCell colSpan={7} className="text-center">
+                                No existe stock para este producto:{" "}
+                                {safeData.name} en este almacén
+                              </TableCell>
+                            </TableRow>
+                          );
+                        }
 
                         const dynamicStock = isNaN(
                           (stockStorage?.stock ?? 0) - (field.quantity ?? 0)
@@ -1250,6 +1344,19 @@ export function CreatePrescriptionOrderForm({
                         // console.log("product", safeData);
                         // console.log("productId", field.productId);
 
+                        const allStoragesStock = safeData.Stock?.reduce(
+                          (acc, stock) => {
+                            return acc + stock.stock;
+                          },
+                          0
+                        );
+                        const safeAllStoragesStock = !allStoragesStock
+                          ? 0
+                          : allStoragesStock;
+                        const hasNoStockAnywhere = safeAllStoragesStock <= 0;
+
+                        const currentStockStorage = stockStorage?.stock ?? 0;
+
                         return (
                           <TableRow
                             key={field.productId ?? index}
@@ -1258,25 +1365,15 @@ export function CreatePrescriptionOrderForm({
                               !field.selected ? "opacity-60 bg-muted/40" : ""
                             )}
                           >
-                            {/* <TableCell className="flex justify-center items-center">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                className="hover:bg-destructive hover:text-white"
-                                size="sm"
-                                onClick={() => handleRemoveProduct(index)}
-                              >
-                                <Trash2 className="mr-1 size-4" />
-                                Eliminar
-                              </Button>
-                            </TableCell> */}
                             <TableCell>
                               <Checkbox
                                 checked={field.selected}
                                 onCheckedChange={() =>
                                   handleToggleProductSelection(index)
                                 }
-                                disabled={wereProductsSaved}
+                                disabled={
+                                  wereProductsSaved || hasNoStockAnywhere
+                                }
                                 aria-label="Seleccionar producto"
                               />
                             </TableCell>
@@ -1285,45 +1382,9 @@ export function CreatePrescriptionOrderForm({
                                 <div>
                                   <span>{safeData.name ?? "Desconocido"}</span>
                                 </div>
-                                {/* <Input
-                                  disabled
-                                  {...register(
-                                    `products.${index}.productId` as const
-                                  )}
-                                  type="hidden"
-                                /> */}
                               </FormItem>
                             </TableCell>
                             <TableCell>
-                              {/* <FormItem>
-                                <FormField
-                                  control={form.control}
-                                  name={`products.${index}.storageId`}
-                                  render={({ field }) => (
-                                    <Select
-                                      onValueChange={field.onChange}
-                                      value={field.value}
-                                    >
-                                      <FormControl>
-                                        <SelectTrigger className="w-full">
-                                          <SelectValue placeholder="Seleccionar almacén" />
-                                        </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                        {storageOptions.map((storage) => (
-                                          <SelectItem
-                                            key={storage.value}
-                                            value={storage.value}
-                                          >
-                                            {storage.label}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  )}
-                                />
-                                <FormMessage />
-                              </FormItem> */}
                               <FormItem>
                                 <Select
                                   value={field.storageId}
@@ -1353,32 +1414,6 @@ export function CreatePrescriptionOrderForm({
                               </FormItem>
                             </TableCell>
                             <TableCell>
-                              {/* <FormItem>
-                                <Input
-                                  disabled={
-                                    stockStorage
-                                      ? stockStorage.stock <= 0
-                                      : false
-                                  }
-                                  type="number"
-                                  {...register(`products.${index}.quantity`, {
-                                    valueAsNumber: true,
-                                  })}
-                                  className={cn(
-                                    "text-center",
-                                    quantity === 0 && "text-muted-foreground"
-                                  )}
-                                  placeholder="0"
-                                />
-                                <FormMessage />
-                                {stockStorage && (
-                                  <FormDescription>
-                                    {stockStorage.stock > 0
-                                      ? `Stock disponible: ${dynamicStock}`
-                                      : `No hay stock disponible`}
-                                  </FormDescription>
-                                )}
-                              </FormItem> */}
                               <FormItem>
                                 <Input
                                   disabled={
@@ -1391,7 +1426,11 @@ export function CreatePrescriptionOrderForm({
                                     "text-center",
                                     quantity === 0 && "text-muted-foreground"
                                   )}
-                                  value={field.quantity}
+                                  value={
+                                    currentStockStorage === 0
+                                      ? 0
+                                      : field.quantity
+                                  }
                                   onChange={(e) => {
                                     const val = e.target.value;
                                     if (val === "") {
@@ -1418,12 +1457,14 @@ export function CreatePrescriptionOrderForm({
                                   min={1}
                                   placeholder="0"
                                 />
-                                {stockStorage && (
+                                {stockStorage ? (
                                   <FormDescription>
                                     {stockStorage.stock > 0
                                       ? `Stock: ${dynamicStock}`
                                       : `No hay stock disponible`}
                                   </FormDescription>
+                                ) : (
+                                  <FormDescription>Stock: 0</FormDescription>
                                 )}
                               </FormItem>
                             </TableCell>
@@ -1498,15 +1539,21 @@ export function CreatePrescriptionOrderForm({
 
                 <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
                   {/* <SelectProductDialog form={form} /> */}
-                  <SaveProductTableButton />
                   <CustomFormDescription
                     required={FORMSTATICS.products.required}
                   />
+                  {
+                    <FormDescription>
+                      No puede seleccionar productos que no tengan stock en
+                      ninguno de los almacenes
+                    </FormDescription>
+                  }
                   {form.formState.errors.products && (
                     <FormMessage className="text-destructive">
                       {form.formState.errors.products.message}
                     </FormMessage>
                   )}
+                  <SaveProductTableButton />
                 </div>
               </div>
             </>

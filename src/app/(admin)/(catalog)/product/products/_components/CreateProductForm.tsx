@@ -1,7 +1,10 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { CreateProductInput, productUseOptions } from "../_interfaces/products.interface";
+import {
+  CreateProductInput,
+  productUseOptions,
+} from "../_interfaces/products.interface";
 import {
   Form,
   FormControl,
@@ -23,7 +26,13 @@ import { CustomFormDescription } from "@/components/ui/custom/CustomFormDescript
 import DataDependencyErrorMessage from "./errorComponents/DataDependencyErrorMessage";
 import { METADATA } from "../_statics/metadata";
 import { useMemo } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CreateProductFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -211,6 +220,36 @@ export function CreateProductForm({
           />
           <FormField
             control={form.control}
+            name="uso"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{FORMSTATICS.uso.label}</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={FORMSTATICS.uso.placeholder} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.values(productUseOptions).map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <CustomFormDescription
+                  required={FORMSTATICS.uso.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* <FormField
+            control={form.control}
             name={FORMSTATICS.descuento.name}
             render={({ field }) => (
               <FormItem>
@@ -231,181 +270,175 @@ export function CreateProductForm({
                 ></CustomFormDescription>
               </FormItem>
             )}
-          />
+          /> */}
           {/* Campo de categoría */}
           <FormField
-              control={form.control}
-              name={FORMSTATICS.categoriaId.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel htmlFor={FORMSTATICS.categoriaId.name}>{FORMSTATICS.categoriaId.label}</FormLabel>
-                  <FormControl>
-                    <AutoComplete
-                      options={categoryOptions}
-                      placeholder={FORMSTATICS.categoriaId.placeholder}
-                      emptyMessage={FORMSTATICS.categoriaId.emptyMessage!}
-                      value={
-                        categoryOptions.find(
-                          (option) => option.value === field.value
-                        ) ?? undefined
-                      }
-                      onValueChange={(option) => {
-                        field.onChange(option?.value || "");
-                      }}
-                    />
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.categoriaId.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Campo de tipo de producto */}
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.tipoProductoId.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>
-                    {FORMSTATICS.tipoProductoId.label}
-                  </FormLabel>
-                  <FormControl>
-                    <AutoComplete
-                      options={typeProductOptions}
-                      placeholder={FORMSTATICS.tipoProductoId.placeholder}
-                      emptyMessage={FORMSTATICS.tipoProductoId.emptyMessage!}
-                      value={
-                        typeProductOptions.find(
-                          (option) => option.value === field.value
-                        ) ?? undefined
-                      }
-                      onValueChange={(option) => {
-                        field.onChange(option?.value || "");
-                      }}
-                    />
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.tipoProductoId.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.unidadMedida.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{FORMSTATICS.unidadMedida.label}</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={FORMSTATICS.unidadMedida.placeholder}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.unidadMedida.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            control={form.control}
+            name={FORMSTATICS.categoriaId.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel htmlFor={FORMSTATICS.categoriaId.name}>
+                  {FORMSTATICS.categoriaId.label}
+                </FormLabel>
+                <FormControl>
+                  <AutoComplete
+                    options={categoryOptions}
+                    placeholder={FORMSTATICS.categoriaId.placeholder}
+                    emptyMessage={FORMSTATICS.categoriaId.emptyMessage!}
+                    value={
+                      categoryOptions.find(
+                        (option) => option.value === field.value
+                      ) ?? undefined
+                    }
+                    onValueChange={(option) => {
+                      field.onChange(option?.value || "");
+                    }}
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.categoriaId.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Campo de tipo de producto */}
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.tipoProductoId.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>{FORMSTATICS.tipoProductoId.label}</FormLabel>
+                <FormControl>
+                  <AutoComplete
+                    options={typeProductOptions}
+                    placeholder={FORMSTATICS.tipoProductoId.placeholder}
+                    emptyMessage={FORMSTATICS.tipoProductoId.emptyMessage!}
+                    value={
+                      typeProductOptions.find(
+                        (option) => option.value === field.value
+                      ) ?? undefined
+                    }
+                    onValueChange={(option) => {
+                      field.onChange(option?.value || "");
+                    }}
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.tipoProductoId.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.unidadMedida.name}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{FORMSTATICS.unidadMedida.label}</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={FORMSTATICS.unidadMedida.placeholder}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+                <CustomFormDescription
+                  required={FORMSTATICS.unidadMedida.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.proveedor.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{FORMSTATICS.proveedor.label}</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder={FORMSTATICS.proveedor.placeholder}/>
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.proveedor.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="uso"
-                render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{FORMSTATICS.uso.label}</FormLabel>
-                  <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  >
-                  <FormControl>
-                    <SelectTrigger>
-                    <SelectValue placeholder={FORMSTATICS.uso.placeholder} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.values(productUseOptions).map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                    ))}
-                  </SelectContent>
-                  </Select>
-                  <CustomFormDescription required={FORMSTATICS.uso.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={FORMSTATICS.description.name}
-                render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>{FORMSTATICS.description.label}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder={FORMSTATICS.description.placeholder}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.description.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.proveedor.name}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{FORMSTATICS.proveedor.label}</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder={FORMSTATICS.proveedor.placeholder}
+                  />
+                </FormControl>
+                <FormMessage />
+                <CustomFormDescription
+                  required={FORMSTATICS.proveedor.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.observaciones.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>{FORMSTATICS.observaciones.label}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder={FORMSTATICS.observaciones.placeholder}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <CustomFormDescription required={FORMSTATICS.observaciones.required}></CustomFormDescription>
-                  <FormMessage />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.description.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>{FORMSTATICS.description.label}</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder={FORMSTATICS.description.placeholder}
+                  />
+                </FormControl>
+                <FormMessage />
+                <CustomFormDescription
+                  required={FORMSTATICS.description.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name={FORMSTATICS.condicionesAlmacenamiento.name}
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>{FORMSTATICS.condicionesAlmacenamiento.label}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder={FORMSTATICS.condicionesAlmacenamiento.placeholder}
-                    />
-                  </FormControl>
-                  <CustomFormDescription required={FORMSTATICS.condicionesAlmacenamiento.required}></CustomFormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.observaciones.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>{FORMSTATICS.observaciones.label}</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder={FORMSTATICS.observaciones.placeholder}
+                  />
+                </FormControl>
+                <FormMessage />
+                <CustomFormDescription
+                  required={FORMSTATICS.observaciones.required}
+                ></CustomFormDescription>
+                <FormMessage />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name={FORMSTATICS.condicionesAlmacenamiento.name}
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>
+                  {FORMSTATICS.condicionesAlmacenamiento.label}
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder={
+                      FORMSTATICS.condicionesAlmacenamiento.placeholder
+                    }
+                  />
+                </FormControl>
+                <CustomFormDescription
+                  required={FORMSTATICS.condicionesAlmacenamiento.required}
+                ></CustomFormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         {children}
       </form>
