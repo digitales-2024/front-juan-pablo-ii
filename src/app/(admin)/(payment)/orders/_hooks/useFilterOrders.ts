@@ -46,9 +46,6 @@ export function useUnifiedOrders() {
   // Referencia para bloquear la invalidación de caché en el primer render
   const firstRenderRef = useRef(true);
 
-  // const handleNotifications = () => {
-  //     toast.success("Stock filtrado y actualizado correctamente");
-  // }
   // useQuery principal
   const unifiedQuery = useQuery({
     // El queryKey varía según el tipo y parámetros

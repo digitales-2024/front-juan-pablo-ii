@@ -102,15 +102,6 @@ export function ShowPrescriptionMetadataDetailsDialog({
     );
   }
 
-  // if (!staffData.data) {
-  //   return (
-  //     <Button type="button" disabled variant={'outline'} className="w-full flex items-center gap-2">
-  //       <Skeleton className="h-4 w-4 rounded-full" />
-  //       <Skeleton className="h-4 w-24" />
-  //     </Button>
-  //   );
-  // }
-
   if (!branchQuery.data) {
     return (
       <Button

@@ -46,23 +46,6 @@ interface CreateProductFormProps
   onDialogClose?: () => void;
 }
 
-// export const createIncomeSchema = z.object({
-//   name: z.string().min(1, "El nombre es requerido"), //En el back es opcional, pero considero que debe ser requerido
-//   description: z.string().optional(),
-//   storageId: z.string().min(1, "El tipo de almacenamiento es requerido"),
-//   date: z.string().date("La fecha es requerida"),
-//   state: z.boolean(),
-//   referenceId: z.string().optional(),
-//   movement: z.array(
-//     z.object({
-//       productId: z.string().min(1, "El producto es requerido"),
-//       quantity: z.number().min(1, "La cantidad debe ser mayor a 0"),
-//       date: z.string().optional(),
-//       state: z.boolean().optional(),
-//     })
-//   ),
-// }) satisfies z.ZodType<CreateIncomingDto>;
-
 export function CreateIncomingForm({
   children,
   form,
@@ -70,13 +53,6 @@ export function CreateIncomingForm({
   controlledFieldArray
 }: CreateProductFormProps) {
   const { register, control, watch } = form;
-  // const { fields, append, remove } = useFieldArray({
-  //   control,
-  //   name: "movement",
-  //   rules: {
-  //     minLength: 1
-  //   }
-  // });
   const { fields, append, remove } = controlledFieldArray;
   const watchFieldArray = watch("movement");
   const controlledFields = fields.map((field, index) => {
@@ -109,18 +85,6 @@ export function CreateIncomingForm({
   }, [syncProducts]);
 
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
-  // const STATEPROP_OPTIONS = useMemo(() => {
-  //   return [
-  //     {
-  //       label: "En Proceso",
-  //       value: false,
-  //     },
-  //     {
-  //       label: "Concretado",
-  //       value: true,
-  //     },
-  //   ];
-  // }, []);
 
   if (responseStorage.isLoading && reponseProducts.isLoading) {
     return <LoadingDialogForm />;
@@ -242,20 +206,6 @@ export function CreateIncomingForm({
 
           {/* Fecha */}
           <div className="col-span-1">
-            {/* <FormItem>
-              <FormLabel>{FORMSTATICS.date.label}</FormLabel>
-              <Input
-                {...register(FORMSTATICS.date.name)}
-                type="date"
-                placeholder={FORMSTATICS.date.placeholder}
-              />
-              <CustomFormDescription required={FORMSTATICS.date.required} />
-              {form.formState.errors.date && (
-              <FormMessage className="text-destructive">
-                {form.formState.errors.date.message}
-              </FormMessage>
-              )}
-            </FormItem> */}
             <FormField
               control={form.control}
               name={FORMSTATICS.date.name}
@@ -374,15 +324,6 @@ export function CreateIncomingForm({
                     <FormMessage />
                   </FormItem>
                 </TableCell>
-                {/* <TableCell>
-                  <div>
-                    <span className="block text-center">{price.toLocaleString("es-PE",
-                      {
-                        style: "currency",
-                        currency: "PEN"
-                      })}</span>
-                    </div>
-                </TableCell> */}
                 <TableCell>
                     <FormItem>
                       {/* <FormLabel>Cantidad</FormLabel> */}
@@ -460,15 +401,6 @@ export function CreateIncomingForm({
               </TableRow>
               })}
             </TableBody>
-            {/* <Button
-              type="button"
-              onClick={() => append({ 
-                productId: '', 
-                quantity: 0 
-              })}
-            >
-              Agregar Movimiento
-            </Button> */}
             </Table>
             <div className="col-span-4 w-full flex flex-col gap-2 justify-center items-center py-4">
               <SelectProductDialog data={reponseProducts.data}>
@@ -483,38 +415,7 @@ export function CreateIncomingForm({
               )}
             </div>
           </div>
-          {/* Estado */}
-          {/* <FormField
-            control={form.control}
-            name={FORMSTATICS.state.name}
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel className="overflow-hidden text-ellipsis">{FORMSTATICS.state.label}</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={(val) => field.onChange(val === "true")}
-                    value={field.value ? "true" : "false"}
-                    //defaultValue={field.value}
-                    className="flex flex-col space-y-1"
-                  >
-                    {STATEPROP_OPTIONS.map(({label, value}, idx) => (
-                      <FormItem
-                        key={idx}
-                        className="flex items-center space-x-3 space-y-0"
-                      >
-                        <FormControl>
-                          <RadioGroupItem value={value.toString()} />
-                        </FormControl>
-                        <FormLabel className="font-normal">{label}</FormLabel>
-                      </FormItem>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          ></FormField> */}
-
+          
           {/* Descripción */}
           <div className="col-span-4">
             <FormItem>

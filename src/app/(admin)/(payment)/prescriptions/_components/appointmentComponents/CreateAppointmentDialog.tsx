@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -103,13 +104,6 @@ export function CreateAppointmentDialog({
       paymentMethod: undefined,
     },
   });
-
-  //   const handleSave = (selectedRows: ActiveProduct[]) => {
-  //     // console.log('oldStateTanstack', selectedProductsTanstack);
-  //     // console.log('handleSave', selectedRows);
-  //     dispatch({ type: "append", payload: selectedRows });
-  //     setOpen(false);
-  //   };
 
   const handleClose = () => {
     //form.reset();

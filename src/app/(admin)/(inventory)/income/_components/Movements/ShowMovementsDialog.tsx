@@ -32,7 +32,6 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
         cancel: "Cerrar",
     } as const;
   const [open, setOpen] = useState(false);
-  //   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const handleClose = () => {
@@ -84,10 +83,6 @@ export function ShowMovementsDialog({data, incomingName}: {data: IncomingMovemen
           <DialogFooter>
               <DialogFooterContent />
         </DialogFooter>
-          {/* <CreateProductForm form={form} onSubmit={handleSubmit}>
-            <DevelopmentZodError form={form} />
-            
-          </CreateProductForm> */}
         </DialogContent>
       </Dialog>
     );

@@ -66,14 +66,6 @@ export function ProcessPaymentDialog({
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { processPaymentMutation } = usePayments();
 
-  // export const processPaymentSchema = z.object({
-  //   paymentMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
-  //   amount: z.number(),
-  //   voucherNumber: z.string().optional(),
-  //   date: z.string(),
-  //   description: z.string().optional(),
-  // }) satisfies z.ZodType<ProcessPaymentDto>;
-
   const form = useForm<ProcessPaymentInput>({
     resolver: zodResolver(processPaymentSchema),
     defaultValues: {
@@ -82,10 +74,9 @@ export function ProcessPaymentDialog({
       voucherNumber: undefined,
       // Using current date in Peru timezone (UTC-5)
       date: (() => {
-        const now = new Date();
-        // Peru is UTC-5, so adjust the date
-        const peruDate = new Date(now.getTime() - (5 * 60 * 60 * 1000));
-        return peruDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+        return new Date().toLocaleDateString("en-CA", {
+          timeZone: "America/Lima",
+        });
       })(),
       description: undefined,
     },

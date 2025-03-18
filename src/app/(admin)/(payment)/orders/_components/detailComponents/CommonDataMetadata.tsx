@@ -15,19 +15,6 @@ function CommonDataMetadata({
 }: CommonDataMetadataPropsDesktop) {
   return (
     <>
-      {/* <div>
-        <div className="flex rounded-sm bg-primary/10 p-4 w-fit space-x-4 items-center">
-          <div className="flex space-x-2">
-            <Building2 className="text-primary"></Building2>
-            <div className="flex flex-col gap-1 justify-center items-start">
-              <Label className="text-sm font-medium">Sucursal creación</Label>
-              <span className="text-sm text-muted-foreground">
-                {branchData?.name ?? "Sin nombre"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div> */}
       <div className="flex rounded-sm bg-primary/10 p-4 w-fit space-x-4 items-start !mt-0">
         <div className="flex space-x-2">
           <div className="flex flex-col gap-1 justify-center items-start">

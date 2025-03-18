@@ -85,22 +85,6 @@ export interface IncomingTableItem extends DetailedIncoming {
   selected?: boolean;
 }
 
-// Schema de validación para crear/actualizar producto
-// CreateIncomingDto: {
-//   name?: string;
-//   description?: string;
-//   storageId: string;
-//   date: string;
-//   state: boolean;
-//   referenceId?: string;
-// }
-
-// OutgoingIncomingMovementDto: {
-  // productId: string;
-  // quantity: number;
-  // date?: string;
-  // state?: boolean;
-// }
 export const createIncomeSchemaPrototype = z.object({
   name: z.string().min(1, "El nombre es requerido"), //En el back es opcional, pero considero que debe ser requerido
   description: z.string().optional(),

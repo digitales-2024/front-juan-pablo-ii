@@ -32,22 +32,6 @@ interface UpdateOrderVariables {
 export const useOrders = () => {
   const queryClient = useQueryClient();
 
-  // const ordersQuery = useQuery({
-  //   queryKey: ["orders"],
-  //   queryFn: async () => {
-  //     const response = await getOrders();
-  //     if (!response || "error" in response) {
-  //       throw new Error(response?.error || "No se recibió respuesta");
-  //     }
-  //     return response;
-  //     // if (response.error || !response.data) {
-  //     //   throw new Error(response.error ?? "Error desconocido");
-  //     // }
-  //     //return response.data;
-  //   },
-  //   staleTime: 1000 * 60 * 5, // 5 minutos
-  // });
-
   const activeOrdersQuery = useQuery({
     queryKey: ["active-orders"],
     queryFn: async () => {
@@ -63,22 +47,6 @@ export const useOrders = () => {
     },
     staleTime: 1000 * 60 * 5,
   });
-
-  // const detailedOrdersQuery = useQuery({
-  //   queryKey: ["detailed-orders"],
-  //   queryFn: async () => {
-  //     const response = await getDetailedOrders({});
-  //     if (!response) {
-  //       throw new Error("No se recibió respuesta del servidor");
-  //     }
-
-  //     if (response.error || !response.data) {
-  //       throw new Error(response.error ?? "Error desconocido");
-  //     }
-  //     return response.data;
-  //   },
-  //   staleTime: 1000 * 60 * 5,
-  // });
 
   function useOneOrderQuery(orderId: string) {
     return useQuery({
@@ -176,16 +144,6 @@ export const useOrders = () => {
       return response;
     },
     onSuccess: async(res) => {
-      // const detailedOrder = await getDetailedOrderById(res.data.id);
-      // if ("error" in detailedOrder) {
-      //   throw new Error(detailedOrder.error);
-      // }
-      // queryClient.setQueryData<DetailedOrder[] | undefined>(["detailed-orders"], (oldOrders) => {
-      //   if (!oldOrders) return undefined;
-      //   return oldOrders.map((order) =>
-      //     order.id === res.data.id ? {...order, ...detailedOrder[0]} : order
-      //   );
-      // });
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
       toast.success("Orden actualizada exitosamente :" + res.message);
     },
@@ -207,12 +165,6 @@ export const useOrders = () => {
       return response;
     },
     onSuccess: async (res, variables) => {
-      // queryClient.setQueryData<DetailedOrder[]>(["detailed-orders"], (oldOrders) => {
-      //   if (!oldOrders) return [];
-      //   return oldOrders.map((order) => 
-      //     variables.ids.includes(order.id) ? { ...order, status: OrderStatus.CANCELLED } : order
-      //   );
-      // });
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
       toast.success(
         variables.ids.length === 1
@@ -238,12 +190,6 @@ export const useOrders = () => {
       return response;
     },
     onSuccess: async (res, variables) => {
-      // queryClient.setQueryData<DetailedOrder[]>(["detailed-orders"], (oldOrders) => {
-      //   if (!oldOrders) return [];
-      //   return oldOrders.map((order) => 
-      //     variables.ids.includes(order.id) ? { ...order, status: OrderStatus.PENDING } : order
-      //   );
-      // });
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
       toast.success(
         variables.ids.length === 1

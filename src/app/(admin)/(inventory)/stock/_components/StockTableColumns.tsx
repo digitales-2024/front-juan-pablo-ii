@@ -3,45 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { type StockByStorage as Stock } from "../_interfaces/stock.interface";
-// import { format } from "date-fns";
-// import { es } from "date-fns/locale";
-// import { Badge } from "@/components/ui/badge";
-// import { UpdateProductSheet } from "./UpdateProductSheet";
-import { Button } from "@/components/ui/button";
-import { Ellipsis} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  // DropdownMenuItem,
-  // DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-// import { useEffect, useState } from "react";
-// import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-// import { ReactivateProductDialog } from "./ReactivateProductDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-// import { DeactivateProductDialog } from "./DeactivateProductDialog";
 import { ShowProductStockDialog } from "./ProductStock/ShowProductStockDialog";
-// import Image from "next/image";
 
-// {
-//   "idStorage": "61de3a1b-9538-48a0-8cdc-62edafcef760",
-//   "name": "Almacen medicamentos",
-//   "location": "JLBR",
-//   "address": "Urb La rivera E-18, JLBR",
-//   "staff": "Juan",
-//   "description": "",
-//   "stock": [
-//     {
-//       "idProduct": "397d68a1-cb47-4402-9546-0ab7b57ec93f",
-//       "name": "escitalopram",
-//       "unit": "blister",
-//       "price": 150,
-//       "stock": 7,
-//       "totalPrice": 1050
-//     }
-//   ]
-// }
 
 export const columns: ColumnDef<Stock>[] = [
   {
