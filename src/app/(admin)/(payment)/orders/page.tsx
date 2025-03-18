@@ -18,7 +18,7 @@ export default function PageOrders() {
   const {
     query: response,
     setFilterAllOrders,
-    setFilterByOrderId,
+    setFilterByOrdeCode,
   } = useUnifiedOrders();
 
   const onSubmitAllStorages = useCallback(() => {
@@ -34,13 +34,13 @@ export default function PageOrders() {
   const onSubmitOrderId = useCallback(
     (value: string, order?: DetailedOrder) => {
       if (order) {
-        setFilterByOrderId({
-          orderId: value,
+        setFilterByOrdeCode({
+          orderCode: value,
           order: order,
         });
       } else {
-        setFilterByOrderId({
-          orderId: value,
+        setFilterByOrdeCode({
+          orderCode: value,
         });
       }
       if (response.isError) {
@@ -50,7 +50,7 @@ export default function PageOrders() {
       //   toast.success("Stock filtrado correctamente");
       // }
     },
-    [setFilterByOrderId]
+    [setFilterByOrdeCode]
   );
 
   if (response.isLoading) {

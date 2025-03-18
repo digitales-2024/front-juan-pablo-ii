@@ -25,28 +25,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ReactElement, useState } from "react";
-// import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-// import { UpdateStorageSheet } from "./UpdateStorageSheet";
-// import { ReactivateStorageDialog } from "./ReactivateProductDialog";
-// import { DeactivateStorageDialog } from "./DeactivateStorageDialog";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-// import { ReactivateStorageDialog } from "@/app/(admin)/(catalog)/storage/storages/_components/ReactivateProductDialog";
-// import { UpdateStorageSheet } from "@/app/(admin)/(catalog)/storage/storages/_components/UpdateStorageSheet";
 import { ProcessPaymentDialog } from "./paymentComponents/processPayment/ProcessPaymentDialog";
 import { DeactivateStorageDialog } from "./DeactivateOrderDialog";
 import { ReactivateOrderDialog } from "./ReactivateOrderDialog";
 import { VerifyPaymentDialog } from "./paymentComponents/verifyPayment/VerifyPaymentDialog";
-import { RefundPaymentDialog } from "./paymentComponents/refundPayment/RefundPaymentDialog";
+// import { RefundPaymentDialog } from "./paymentComponents/refundPayment/RefundPaymentDialog";
 import { CancelPaymentDialog } from "./paymentComponents/cancelPayment/CancelPaymentDialog";
 import { RejectPaymentDialog } from "./paymentComponents/rejectPayment/RejectPaymentDialog";
 import { ShowProductSaleMetadataDetailsDialog } from "./detailComponents/ShowProductSaleMetadataDialog";
 import { toast } from "sonner";
 import { ShowPrescriptionMetadataDetailsDialog } from "./detailComponents/ShowOrderPrescriptionMetadataDialog";
 import { ShowAppointmentMetadataDialog } from "./detailComponents/ShowAppointmentMetadataDialog";
-// import Image from "next/image";
 
 export const columns: ColumnDef<DetailedOrder>[] = [
   {
@@ -96,14 +89,9 @@ export const columns: ColumnDef<DetailedOrder>[] = [
       <DataTableColumnHeader column={column} title="Tipo de órden" />
     ),
     cell: ({ row }) => {
-      // orderTypeConfig
-      // orderStatusConfig
       const config = orderTypeConfig[row.original.type];
       const Icon = config.icon;
       return (
-        // <span>
-        //   {row.original.status || "Sin tipo de almacén"}
-        // </span>
         <Badge
           className={cn(
             config.backgroundColor,
@@ -125,14 +113,9 @@ export const columns: ColumnDef<DetailedOrder>[] = [
       <DataTableColumnHeader column={column} title="Estado de Órden" />
     ),
     cell: ({ row }) => {
-      // orderTypeConfig
-      // orderStatusConfig
       const config = orderStatusConfig[row.original.status];
       const Icon = config.icon;
       return (
-        // <span>
-        //   {row.original.status || "Sin tipo de almacén"}
-        // </span>
         <Badge
           className={cn(
             config.backgroundColor,
@@ -166,9 +149,6 @@ export const columns: ColumnDef<DetailedOrder>[] = [
       const config = paymentStatusConfig[regularPayment?.status ?? refundPayment?.status ?? "PENDING"];
       const Icon = config.icon;
       return (
-        // <span>
-        //   {row.original.status || "Sin tipo de almacén"}
-        // </span>
         <Badge
           className={cn(
             config.backgroundColor,
@@ -345,8 +325,8 @@ export const columns: ColumnDef<DetailedOrder>[] = [
         useState(false);
       const [showRejectPaymentDialog, setShowRejectPaymentDialog] =
         useState(false);
-      const [showRefundPaymentDialog, setShowRefundPaymentDialog] =
-        useState(false);
+      // const [showRefundPaymentDialog, setShowRefundPaymentDialog] =
+      //   useState(false);
       const order = row.original;
       const { isActive } = order;
       // const isSuperAdmin = true;
@@ -379,11 +359,11 @@ export const columns: ColumnDef<DetailedOrder>[] = [
 
       //GeneralValidations
       const shouldProcessPayment = isOrderPending && isPaymentPending;
-      const isAppointmentOrPrescription = order.type === "MEDICAL_APPOINTMENT_ORDER";
+      // const isAppointmentOrPrescription = order.type === "MEDICAL_APPOINTMENT_ORDER";
       const couldCancelOrder = isOrderPending && isPaymentPending;
       const shouldVerifyPayment = isOrderPending && isPaymentProcessed;
       const couldRejectPayment = isOrderPending && isPaymentProcessed;
-      const couldRefundPayment = isOrderCompleted && isPaymentCompleted;
+      // const couldRefundPayment = isOrderCompleted && isPaymentCompleted;
       const cannotProcessPayment =
         isOrderCancelled ??
         isOrderRefunded ??
@@ -459,14 +439,14 @@ export const columns: ColumnDef<DetailedOrder>[] = [
               ></RejectPaymentDialog>
             )}
 
-            {couldRefundPayment && showRefundPaymentDialog && (
+            {/* {couldRefundPayment && showRefundPaymentDialog && (
               <RefundPaymentDialog
                 open={showRefundPaymentDialog}
                 onOpenChange={setShowRefundPaymentDialog}
                 order={order}
                 payment={regularPayment}
               ></RefundPaymentDialog>
-            )}
+            )} */}
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -547,7 +527,7 @@ export const columns: ColumnDef<DetailedOrder>[] = [
                 </DropdownMenuItem>
               )}
 
-              {couldRefundPayment && (
+              {/* {couldRefundPayment && (
                 <DropdownMenuItem
                   onSelect={() => setShowRefundPaymentDialog(true)}
                   disabled={!isActive}
@@ -562,7 +542,7 @@ export const columns: ColumnDef<DetailedOrder>[] = [
                   }
                   Reembolsar
                 </DropdownMenuItem>
-              )}
+              )} */}
 
               {cannotProcessPayment && <DropdownMenuSeparator />}
 

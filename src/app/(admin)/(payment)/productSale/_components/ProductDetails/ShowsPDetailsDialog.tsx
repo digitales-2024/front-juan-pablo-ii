@@ -82,7 +82,7 @@ export function ShowPrescriptionDetailsDialog({
         <DialogTrigger asChild>
           <TriggerButton />
         </DialogTrigger>
-        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)]">
+        <DialogContent className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)] overflow-auto">
           <DialogHeader className="sm:flex-row justify-between">
             <div className="space-y-2">
               <DialogTitle className="w-full">{SHOW_PRESCRIPTION_DETAILS_MESSAGES.title}</DialogTitle>
@@ -143,7 +143,7 @@ export function ShowPrescriptionDetailsDialog({
       <DrawerTrigger asChild>
         <TriggerButton />
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="overflow-auto">
       <DialogHeader className="sm:flex-row justify-between">
             <div className="space-y-2">
               <DialogTitle className="w-full">{SHOW_PRESCRIPTION_DETAILS_MESSAGES.title}</DialogTitle>

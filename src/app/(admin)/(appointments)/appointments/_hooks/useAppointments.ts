@@ -6,7 +6,6 @@ import {
     CreateAppointmentDto,
     UpdateAppointmentDto,
     DeleteAppointmentsDto,
-    PaginatedAppointmentsResponse,
     CancelAppointmentDto,
     RefundAppointmentDto,
     RescheduleAppointmentDto
@@ -184,88 +183,93 @@ export const useAppointments = () => {
         }
     });
 
-    const createMutationForOrder = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
-        mutationFn: async (data) => {
-            console.log("Datos enviados para crear la cita:", data);
-            
-            // 1. Obtener datos del paciente y staff
-            let patientName = 'Paciente';
-            let patientDni = '';
-            let staffName = 'Doctor';
-            
-            try {
-                const patientResponse = await getPatientById(data.patientId);
-                if (patientResponse && !('error' in patientResponse)) {
-                    const patient = patientResponse.data || patientResponse;
-                    patientName = `${patient.name} ${patient.lastName || ''}`.trim();
-                    patientDni = patient.dni || '';
+    const createMutationForOrder = (uniqueIdentifier: string) => {
+        const mutationQuery = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
+            mutationFn: async (data) => {
+                console.log("Datos enviados para crear la cita:", data);
+                
+                // 1. Obtener datos del paciente y staff
+                let patientName = 'Paciente';
+                let patientDni = '';
+                let staffName = 'Doctor';
+                
+                try {
+                    const patientResponse = await getPatientById(data.patientId);
+                    if (patientResponse && !('error' in patientResponse)) {
+                        const patient = patientResponse.data || patientResponse;
+                        patientName = `${patient.name} ${patient.lastName || ''}`.trim();
+                        patientDni = patient.dni || '';
+                    }
+    
+                    const staffResponse = await getStaffById(data.staffId);
+                    if (staffResponse && !('error' in staffResponse)) {
+                        const staff = staffResponse;
+                        staffName = `${staff.name} ${staff.lastName || ''}`.trim();
+                    }
+                } catch (error) {
+                    console.error('Error al obtener datos de paciente o staff:', error);
                 }
-
-                const staffResponse = await getStaffById(data.staffId);
-                if (staffResponse && !('error' in staffResponse)) {
-                    const staff = staffResponse;
-                    staffName = `${staff.name} ${staff.lastName || ''}`.trim();
+    
+                // 2. Crear el evento
+                let eventId = undefined;
+                try {
+                    const eventData = {
+                        title: `Cita: ${patientName}${patientDni ? `-${patientDni}` : ''} Doctor: ${staffName}`,
+                        color: 'gray',
+                        type: EventType.CITA,
+                        status: EventStatus.PENDING,
+                        start: data.start,
+                        end: data.end,
+                        staffId: data.staffId,
+                        branchId: data.branchId
+                    };
+    
+                    console.log('📦 Datos del evento a crear:', eventData);
+                    const eventResult = await createEventMutation.mutateAsync(eventData);
+                    console.log('✅ Evento creado exitosamente:', eventResult);
+                    eventId = eventResult.data?.id;
+                } catch (eventError) {
+                    console.error('❌ Error al crear el evento:', eventError);
                 }
-            } catch (error) {
-                console.error('Error al obtener datos de paciente o staff:', error);
-            }
-
-            // 2. Crear el evento
-            let eventId = undefined;
-            try {
-                const eventData = {
-                    title: `Cita: ${patientName}${patientDni ? `-${patientDni}` : ''} Doctor: ${staffName}`,
-                    color: 'gray',
-                    type: EventType.CITA,
-                    status: EventStatus.PENDING,
-                    start: data.start,
-                    end: data.end,
-                    staffId: data.staffId,
-                    branchId: data.branchId
+    
+                // 3. Crear la cita con el eventId
+                const appointmentData = {
+                    ...data,
+                    eventId
                 };
-
-                console.log('📦 Datos del evento a crear:', eventData);
-                const eventResult = await createEventMutation.mutateAsync(eventData);
-                console.log('✅ Evento creado exitosamente:', eventResult);
-                eventId = eventResult.data?.id;
-            } catch (eventError) {
-                console.error('❌ Error al crear el evento:', eventError);
+    
+                console.log('📦 Datos finales de la cita a crear:', appointmentData);
+                const response = await createAppointment(appointmentData);
+                if ("error" in response) {
+                    throw new Error(response.error);
+                }
+                return response;
+            },
+            onSuccess: (res) => {
+                queryClient.setQueryData<Appointment[]>(["appointments"], (oldAppointments) => {
+                    if (!oldAppointments) return [res.data];
+                    return [...oldAppointments, res.data];
+                });
+    
+                dispatch({
+                    type: "append", payload: [{
+                        appointmentId: res.data.id,
+                        serviceId: res.data.serviceId,
+                        uniqueIdentifier: uniqueIdentifier,
+                    }]
+                });
+    
+                toast.success(res.message);
+                toast.success("Cita guardada para la orden")
+            },
+            onError: (error) => {
+                dispatch({ type: "clear" });
+                toast.error(error.message);
             }
+        });
 
-            // 3. Crear la cita con el eventId
-            const appointmentData = {
-                ...data,
-                eventId
-            };
-
-            console.log('📦 Datos finales de la cita a crear:', appointmentData);
-            const response = await createAppointment(appointmentData);
-            if ("error" in response) {
-                throw new Error(response.error);
-            }
-            return response;
-        },
-        onSuccess: (res) => {
-            queryClient.setQueryData<Appointment[]>(["appointments"], (oldAppointments) => {
-                if (!oldAppointments) return [res.data];
-                return [...oldAppointments, res.data];
-            });
-
-            dispatch({
-                type: "append", payload: [{
-                    appointmentId: res.data.id,
-                    serviceId: res.data.serviceId
-                }]
-            });
-
-            toast.success(res.message);
-            toast.success("Cita guardada para la orden")
-        },
-        onError: (error) => {
-            dispatch({ type: "clear" });
-            toast.error(error.message);
-        }
-    });
+        return mutationQuery;
+    }
 
     // Mutación para actualizar una cita
     const updateMutation = useMutation<BaseApiResponse<Appointment>, Error, UpdateAppointmentVariables>({
@@ -376,11 +380,11 @@ export const useAppointments = () => {
             }
             return response;
         },
-        onSuccess: (res, variables) => {
+        onSuccess: async (res, variables) => {
             // Actualizar las citas en la caché
-            queryClient.invalidateQueries({ queryKey: ["appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
 
             toast.success("Cita cancelada exitosamente");
         },
@@ -403,11 +407,11 @@ export const useAppointments = () => {
             }
             return response;
         },
-        onSuccess: (res, variables) => {
+        onSuccess: async (res, variables) => {
             // Actualizar las citas en la caché
-            queryClient.invalidateQueries({ queryKey: ["appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
 
             toast.success("Cita reembolsada exitosamente");
         },
@@ -430,11 +434,11 @@ export const useAppointments = () => {
             }
             return response;
         },
-        onSuccess: (res, variables) => {
+        onSuccess: async (res, variables) => {
             // Actualizar las citas en la caché
-            queryClient.invalidateQueries({ queryKey: ["appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["paginated-appointments"] });
 
             toast.success("Cita reprogramada exitosamente");
         },

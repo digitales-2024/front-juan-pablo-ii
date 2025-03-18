@@ -2,6 +2,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
+import { v4 as uuidv4 } from 'uuid';
 import {
   Form,
   FormControl,
@@ -102,6 +103,7 @@ type ServiceItem = ServiceSaleItemDto & {
   isEditing: boolean;
   hasChanges: boolean;
   selected: boolean;
+  uniqueIdentifier: string;
 };
 
 export function CreatePrescriptionOrderForm({
@@ -219,6 +221,7 @@ CreatePrescriptionOrderFormProps) {
         isEditing: false,
         hasChanges: false,
         selected: false,
+        uniqueIdentifier: uuidv4(),
       }))
     );
 
@@ -422,7 +425,7 @@ CreatePrescriptionOrderFormProps) {
     setServicesTableFormData((prev) => {
       const updated = prev.map((item) => {
         const appointmentReference = selectedServicesAppointmentsData.data.find(
-          (s) => s.serviceId === item.serviceId
+          (s) => (s.serviceId === item.serviceId) && (s.uniqueIdentifier === item.uniqueIdentifier)
         );
         const hasMadeAppointment = !!appointmentReference;
 
@@ -449,7 +452,8 @@ CreatePrescriptionOrderFormProps) {
     // no cada vez que cualquier propiedad interna cambie
     handleSomeAppointmentCreated();
   }, [
-    selectedServicesAppointmentsData.data.length,
+    selectedServicesAppointmentsData.data,
+    //selectedServicesAppointmentsData.data.length,
     handleSomeAppointmentCreated,
   ]);
 
@@ -597,132 +601,6 @@ CreatePrescriptionOrderFormProps) {
   useEffect(() => {
     console.log("form watch", form.getValues("products"));
   }, [form, didInitializeRef, showProductFields, handleSaveProducts]);
-
-  // Inicialización de productos (solo una vez)
-  // const syncProducts = useCallback(() => {
-  //   if(showProductFields && !isStockPending) {
-  //     const stockParams = fields.map((field) => ({
-  //       productId: field.productId,
-  //       storageId: ,
-  //     }));
-  //     productsStockRef.current = stockParams;
-  //     // getProductStockByStorage(stockParams).then((response) => {
-  //     //   setProductsStock(response);
-  //     // });
-  //     // Usar una referencia para evitar múltiples inicializaciones
-  //     if (didInitializeRef.current) return;
-  //     didInitializeRef.current = true;
-
-  //     // Limpiar fields existentes
-  //     handleCleanProducts();
-
-  //     // Añadir productos originales de la receta
-  //     originalProducts.forEach((product) => {
-  //       if (product.id) {
-  //         append({
-  //           productId: product.id,
-  //           quantity: product.quantity ?? 1,
-  //           storageId:
-  //         });
-  //       }
-  //     });
-
-  //     // // Agregar productos seleccionados que no están en la receta
-  //     // selectedProducts
-  //     //   .filter((product) => !orginalProductsIds.includes(product.id))
-  //     //   .forEach((product) => {
-  //     //     append({
-  //     //       productId: product.id,
-  //     //       quantity: 1,
-  //     //     });
-  //     //   });
-
-  //     // Calcular totales iniciales después de una pequeña espera
-  //     setTimeout(() => calculateTotalsWithDebounce(), 500);
-  //   }
-  // }, [
-  //   append,
-  //   remove,
-  //   originalProducts,
-  //   // showProductFields,
-  //   // selectedProducts,
-  //   orginalProductsIds,
-  //   calculateTotalsWithDebounce,
-  // ]);
-
-  // useEffect(() => {
-  //   syncProducts();
-  // }, [syncProducts, showProductFields]);
-
-  // useEffect(()=>{
-  //   if (!showProductFields) {
-  //     handleCleanProducts();
-  //   }
-  // }, [showProductFields])
-
-  // const handleCleanProducts = useCallback(() => {
-  //   remove();
-  //   setProductTotals({
-  //     total: 0,
-  //     totalIGV: 0,
-  //     totalSubtotal: 0,
-  //     totalQuantity: 0,
-  //     totalProducts: 0,
-  //   });
-  //   setShowProductTotals(false);
-  // }, [remove]);
-
-  // Manejar eliminación de productos
-  // const handleRemoveProduct = useCallback(
-  //   (index: number) => {
-  //     // Limpiar estado global
-  //     // if (fields[index]) {
-  //     //   dispatch({
-  //     //     type: "remove",
-  //     //     payload: { productId: fields[index].productId },
-  //     //   });
-  //     // }
-
-  //     // Quitar del formulario
-  //     remove(index);
-
-  //     // Recalcular automáticamente los totales
-  //     calculateTotalsWithDebounce();
-  //   },
-  //   [fields, remove, calculateTotalsWithDebounce]
-  // );
-
-  // // Efecto para recalcular cuando cambian los productos o sus cantidades
-  // useEffect(() => {
-  //   // Solo calcular si ya se inicializó y no estamos editando activamente
-  //   if (didInitializeRef.current && editingIndex === null) {
-  //     calculateTotalsWithDebounce();
-  //   }
-  // }, [watchFieldArray, calculateTotalsWithDebounce, editingIndex]);
-
-  // // Efecto para recalcular cuando cambia el almacén
-  // useEffect(() => {
-  //   if (didInitializeRef.current && showProductFields) {
-  //     calculateTotalsWithDebounce();
-  //   }
-  // }, [storageSafeWatch, showProductFields, calculateTotalsWithDebounce]);
-
-  // // Efecto de limpieza
-  // useEffect(() => {
-  //   return () => {
-  //     if (updateTimeoutRef.current) {
-  //       clearTimeout(updateTimeoutRef.current);
-  //     }
-  //   };
-  // }, []);
-
-  // // Error handling - sin efectos secundarios
-  // useEffect(() => {
-  //   const hasError = productsQueries.some((q) => q.isError);
-  //   if (hasError) {
-  //     toast.error("Error al obtener los productos", { id: "product-error" });
-  //   }
-  // }, [productsQueries]);
 
   // Verificación de carga
   const isLoading =
@@ -1011,7 +889,7 @@ CreatePrescriptionOrderFormProps) {
 
                         return (
                           <TableRow
-                            key={field.serviceId ?? index}
+                            key={field?.serviceId ? field.serviceId+index : index}
                             className="animate-fade-down"
                           >
                             {/* <TableCell className="flex justify-center items-center">
@@ -1122,6 +1000,7 @@ CreatePrescriptionOrderFormProps) {
                               </Button> */}
 
                               <CreateAppointmentDialog
+                                uniqueIdentifier={field.uniqueIdentifier}
                                 className="bg-secondary-foreground/10 text-secondary-foreground hover:bg-secondary-foreground/20 hover:text-secondary-foreground"
                                 patientId={prescription.patientId}
                                 serviceId={field.serviceId}
@@ -1249,7 +1128,7 @@ CreatePrescriptionOrderFormProps) {
                           // handleUncheckOneProduct(index);
                           return (
                             <TableRow
-                              key={field.productId ?? index}
+                              key={field?.productId ? field.productId+index : index}
                               className="animate-fade-down"
                             >
                               <TableCell>
