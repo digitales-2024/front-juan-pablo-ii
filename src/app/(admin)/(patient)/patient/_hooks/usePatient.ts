@@ -102,8 +102,9 @@ export const usePatients = () => {
       return response;
     },
     onSuccess: (res) => {
+      // Modificar aquí: colocar el nuevo paciente al principio
       queryClient.setQueryData<Patient[]>(["patients"], (old) => {
-        return old ? [...old, res.data] : [res.data];
+        return old ? [res.data, ...old] : [res.data];
       });
 
       toast.success("Paciente creado exitosamente");
