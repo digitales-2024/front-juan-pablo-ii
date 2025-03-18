@@ -171,17 +171,17 @@ export async function updateIncomingStorage(
   data: UpdateIncomingStorageInput
 ): Promise<DetailedIncomingResponse> {
   try {
+    console.log('incoming update data', data)
     const isTransferenceQuery = data.isTransference ? "?isTransference=true" : "";
     const [responseData, error] = await http.patch<DetailedIncomingResponse>(
       
       `/incoming/update/incomingStorage/${id}${isTransferenceQuery}`,
       data
     );
-
     if (error) {
+      console.log('incoming update error', error)
       return { error: error.message };
     }
-
     return responseData;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };

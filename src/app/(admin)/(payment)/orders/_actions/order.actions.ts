@@ -275,9 +275,27 @@ export async function getDetailedOrderById(id: string): Promise<OneDetailedOrder
   }
 }
 
-export async function searchDetailedOrderById(id: string): Promise<ListDetailedOrderResponse> {
+export async function getDetailedOrderByCode(id: string): Promise<OneDetailedOrderGetResponse> {
   try {
-    const [order, error] = await http.get<ListDetailedOrderResponse>(`/order/search/detailed/${id}`);
+    const [order, error] = await http.get<OneDetailedOrderGetResponse>(`/order/detailed/code/${id}`);
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener la orden",
+      };
+    }
+    return order;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
+export async function searchDetailedOrderByCode(code: string): Promise<ListDetailedOrderResponse> {
+  try {
+    const [order, error] = await http.get<ListDetailedOrderResponse>(`/order/search/detailed/code/${code}`);
     if (error) {
       return {
         error:

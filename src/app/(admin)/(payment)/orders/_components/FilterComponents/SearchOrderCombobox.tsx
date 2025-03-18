@@ -1,6 +1,6 @@
 // import { fetchRegionNames } from "@/lib/api";
 // import { useQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { SearchCombobox } from "@/components/ui/custom/remoteSearchCombobox/RemoteSearchComobox";
 import { useOrders } from "../../_hooks/useOrders";
@@ -24,18 +24,33 @@ export default function SearchOrderCombobox({
 
     const { useSearchDetailedOrderQuery } = useOrders();
     const queryResponse = useSearchDetailedOrderQuery(search);
+    
     const { data } = queryResponse;
 
     const mapToComboboxItem = useCallback((order: DetailedOrder) => {
-      const date = new Date(order.date);
+      const date = order?.date ? new Date(order.date).toLocaleDateString(
+        'es-ES',
+        {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }
+      ) :'Sin fecha' ;
       return {
-        value: order.id,
-        label: `${order.id} - ${date.toLocaleDateString()}`,
+        value: order?.code ?? "None",
+        label: `${order?.code ?? 'Sin código'} - ${date}`,
         entity: order,
       }
     }, []);
 
-    const mapToComboboxItems = useCallback((orders: DetailedOrder[]) => orders.map(mapToComboboxItem), [mapToComboboxItem]);
+    const mapToComboboxItems = useCallback((orders: DetailedOrder[]) => orders.map((order)=>{
+      // if (!order) return undefined;
+      return mapToComboboxItem(order);
+    }), [mapToComboboxItem]);
+
+    useEffect(()=>{
+      console.log('searched data', data);
+    }, [queryResponse.data])
 
   return (
     <SearchCombobox<DetailedOrder>

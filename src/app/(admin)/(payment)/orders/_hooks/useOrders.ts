@@ -10,9 +10,9 @@ import {
   getOrderById,
   OneOrderGetResponse,
   OneDetailedOrderGetResponse,
-  getDetailedOrderById,
-  searchDetailedOrderById,
   ListDetailedOrderResponse,
+  getDetailedOrderById,
+  searchDetailedOrderByCode,
   // ListDetailedOrderResponse
 } from "../_actions/order.actions";
 import { toast } from "sonner";
@@ -100,12 +100,12 @@ export const useOrders = () => {
     });
   }
 
-  function useOneDetailedOrderQuery(orderId: string) {
+  function useOneDetailedOrderQuery(id: string) {
     return useQuery({
-      queryKey: ["detailed-order", orderId],
+      queryKey: ["detailed-order", id],
       queryFn: async () => {
         try {
-          const response: OneDetailedOrderGetResponse = await getDetailedOrderById(orderId);
+          const response: OneDetailedOrderGetResponse = await getDetailedOrderById(id);
           if (!response || "error" in response) {
             throw new Error(response?.error || "No se recibió respuesta");
           }
@@ -120,12 +120,12 @@ export const useOrders = () => {
     });
   }
 
-  function useSearchDetailedOrderQuery(orderId: string) {
+  function useSearchDetailedOrderQuery(orderCode: string) {
     return useQuery({
-      queryKey: ["searched-detailed-orders", orderId],
+      queryKey: ["searched-detailed-orders", orderCode],
       queryFn: async () => {
         try {
-          const response: ListDetailedOrderResponse = await searchDetailedOrderById(orderId);
+          const response: ListDetailedOrderResponse = await searchDetailedOrderByCode(orderCode);
           if (!response || "error" in response) {
             throw new Error(response?.error || "No se recibió respuesta");
           }
