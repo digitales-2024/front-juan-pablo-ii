@@ -46,9 +46,6 @@ export default function PageOrders() {
       if (response.isError) {
         toast.error("Error al filtrar stock");
       }
-      // if (response.data) {
-      //   toast.success("Stock filtrado correctamente");
-      // }
     },
     [setFilterByOrdeCode]
   );

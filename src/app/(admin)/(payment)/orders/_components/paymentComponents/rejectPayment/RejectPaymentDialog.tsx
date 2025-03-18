@@ -64,10 +64,6 @@ export function RejectPaymentDialog({
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { rejectPaymentMutation } = usePayments();
 
-// export const rejectPaymentSchema = z.object({
-//   rejectionReason: z.string(),
-// }) satisfies z.ZodType<RejectPaymentDto>;
-
   const form = useForm<RejectPaymentInput>({
     resolver: zodResolver(rejectPaymentSchema),
     defaultValues: {
@@ -111,25 +107,8 @@ export function RejectPaymentDialog({
     setOpen(false);
   };
 
-  //ACtivate only when form errors
-  // useEffect(() => {
-  //   if (form.formState.errors) {
-  //     console.log("Errores en el formulario", form.formState.errors);
-  //   }
-  // }, [form.formState.errors]);
-
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
-      {/* <Button
-        type="submit"
-        disabled={isCreatePending || rejectPaymentMutation.isPending}
-        className="w-full"
-      >
-        {(isCreatePending || rejectPaymentMutation.isPending) && (
-          <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
-        )}
-        {REJECT_PAYMENT_MESSAGES.submitButton}
-      </Button> */}
       <ConfirmOrderDialog
         onConfirm={async () => {
           await form.handleSubmit(handleSubmit)();

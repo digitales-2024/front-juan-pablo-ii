@@ -158,13 +158,6 @@ export function ShowAppointmentMetadataDialog({
               <DialogDescription className="w-full text-balance">
                 {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.description}
               </DialogDescription>
-              {/* <div className="flex flex-col space-y-1">
-                <div className="flex space-x-2">
-                  <Calendar className="text-primary"></Calendar>
-                  <Label>Fecha de la consulta</Label>
-                </div>
-                <span>{data.orderDetails.consultationDate ?? "Sin fecha"}</span>
-              </div> */}
               {staffData?.data && (
                 <div className="flex flex-col space-y-1 !mt-4">
                   <div className="flex space-x-2">
@@ -222,13 +215,6 @@ export function ShowAppointmentMetadataDialog({
             <DialogDescription className="w-full text-balance">
               {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.description}
             </DialogDescription>
-            {/* <div className="flex flex-col space-y-1">
-              <div className="flex space-x-2">
-                <Calendar className="text-primary"></Calendar>
-                <Label>Fecha de la receta</Label>
-              </div>
-              <span>{data.orderDetails.prescriptionDate ?? "Sin fecha"}</span>
-            </div> */}
             {staffData.data && (
               <div className="flex flex-col space-y-1">
                 <div className="flex space-x-2">

@@ -4,10 +4,6 @@ import { http } from "@/utils/serverFetch";
 
 import { PatientPrescriptions, PrescriptionWithPatient, toPrescriptionWithPatient } from "../_interfaces/prescription.interface";
 
-// export type OutgoingResponse = BaseApiResponse<Outgoing> | { error: string };
-// export type DetailedOutgoingResponse =
-//   | BaseApiResponse<DetailedOutgoing>
-//   | { error: string };
 export type ListPatientPrescriptionsResponse =
   | PatientPrescriptions[]
   | { error: string };
@@ -15,19 +11,6 @@ export type ListPrescriptionsWithPatientResponse =
   | PrescriptionWithPatient[]
   | { error: string };
 export type PatientPrescriptionResponse = PatientPrescriptions | { error: string };
-// export type ListDetailedOutgoingResponse =
-//   | DetailedOutgoing[]
-//   | { error: string };
-// export type ListUpdatedDetailedOutgoingResponse =
-//   | BaseApiResponse<DetailedOutgoing[]>
-//   | { error: string };
-
-// export type ProductResponse = BaseApiResponse<Product> | { error: string };
-// export type DetailedProductResponse = BaseApiResponse<DetailedProduct> | { error: string };
-// export type ListProductResponse = Product[] | { error: string };
-// export type ListDetailedProductResponse = DetailedProduct[] | { error: string };
-
-// const GetProductByIdSchema = z.string();
 
 /**
  * Obtiene todos los productos del catálogo.

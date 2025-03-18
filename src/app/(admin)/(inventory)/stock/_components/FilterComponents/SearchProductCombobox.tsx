@@ -18,16 +18,6 @@ export default function SearchProductCombobox({
   const [value, setValue] = useState(defaultValue);
   const [label, setLabel] = useState("Busque un producto");
   const [search, setSearch] = useState(DefaultSearchValue);
-//   const { data } = useQuery({
-//     queryKey: ["regions", search],
-//     queryFn: () =>
-//       fetchRegionNames(search).then((res) =>
-//         res.map((region) => ({
-//           value: region.id.toString(),
-//           label: region.name,
-//         })),
-//       ),
-//   });
 
     const { searchProductsByIndexedName } = useProducts();
     const queryResponse = searchProductsByIndexedName(search);

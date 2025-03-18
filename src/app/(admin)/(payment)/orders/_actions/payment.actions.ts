@@ -12,50 +12,6 @@ import {
 import { BaseApiResponse } from "@/types/api/types";
 
 export type PaymentResponse = BaseApiResponse<Payment> | { error: string };
-// export type OneOrderGetResponse = Order | { error: string };
-// export type DetailedOrderResponse = BaseApiResponse<DetailedStorage> | { error: string };
-// export type ListOrderResponse = Order[] | { error: string };
-// export type ListDetailedOrderResponse = DetailedStorage[] | { error: string };
-
-// const GetOrderByTypeSchema = z.object({
-//   type: z.enum([
-//     "MEDICAL_PRESCRIPTION_ORDER",
-//     "MEDICAL_CONSULTATION_ORDER",
-//     "PRODUCT_SALE_ORDER",
-//     "PRODUCT_PURCHASE_ORDER",
-//   ]),
-// });
-// // type OrderStatus = "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION"
-// const GetOrderByStatusSchema = z.object({
-//   status: z.enum([
-//     "DRAFT",
-//     "PENDING",
-//     "PROCESSING",
-//     "COMPLETED",
-//     "CANCELLED",
-//     "REFUNDED",
-//     "REQUIRES_ATTENTION",
-//   ]),
-// });
-
-// const GetOrderByStatusAndTypeSchema = z.object({
-//   status: z.enum([
-//     "DRAFT",
-//     "PENDING",
-//     "PROCESSING",
-//     "COMPLETED",
-//     "CANCELLED",
-//     "REFUNDED",
-//     "REQUIRES_ATTENTION",
-//   ]),
-//   type: z.enum([
-//     "MEDICAL_PRESCRIPTION_ORDER",
-//     "MEDICAL_CONSULTATION_ORDER",
-//     "PRODUCT_SALE_ORDER",
-//     "PRODUCT_PURCHASE_ORDER",
-//   ]),
-// })
-
 
 /**
  * Inicia el proceso de transacción monetaria para un pago.

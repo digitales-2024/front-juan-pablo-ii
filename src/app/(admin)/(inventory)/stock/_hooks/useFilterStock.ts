@@ -30,21 +30,11 @@ export type StockFilter =
   const STOCK_QUERY_KEY = ['stock'] as const;
 
 export function useUnifiedStock() {
-  // Filtro por defecto: "ALL" (todos los almacenes)
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<StockFilter>({ type: "ALL" });
-  // const [success, setSuccess] = useState(false);
+  const firstRenderRef = useRef(true);
 
-    // Referencia para bloquear la invalidación de caché en el primer render
-    const firstRenderRef = useRef(true);
-
-  // const handleNotifications = () => {
-  //     toast.success("Stock filtrado y actualizado correctamente");
-  // }
-  // useQuery principal
   const unifiedQuery = useQuery({
-    // El queryKey varía según el tipo y parámetros
-    //queryKey: ["stock", filter],
     queryKey: STOCK_QUERY_KEY,
     queryFn: async () => {
       try {

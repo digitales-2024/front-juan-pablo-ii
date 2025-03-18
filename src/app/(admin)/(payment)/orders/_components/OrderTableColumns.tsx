@@ -12,8 +12,6 @@ import {
   paymentStatusConfig,
   ProductSaleMetadata,
 } from "../_interfaces/order.interface";
-// import { format } from "date-fns";
-// import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Ellipsis } from "lucide-react";
@@ -163,28 +161,6 @@ export const columns: ColumnDef<DetailedOrder>[] = [
       );
     },
   },
-  // {
-  //   accessorKey: "",
-  //   meta: { title: "Estado de Órden" },
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Estado de Órden" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     // orderTypeConfig
-  //     // orderStatusConfig
-  //     const config = orderStatusConfig[row.original.status];
-  //     const Icon = config.icon;
-  //     return (
-  //       // <span>
-  //       //   {row.original.status || "Sin tipo de almacén"}
-  //       // </span>
-  //       <Badge className={cn(config.backgroundColor, config.textColor, config.hoverBgColor, "flex space-x-1 items-center justify-center text-sm")}>
-  //         <Icon className="size-4"></Icon>
-  //         <span>{config.name}</span>
-  //       </Badge>
-  //     );
-  //   },
-  // },
   {
     accessorKey: "tax",
     meta: { title: "Impuestos" },
@@ -298,15 +274,6 @@ export const columns: ColumnDef<DetailedOrder>[] = [
       </Badge>
     ),
   },
-  // {
-  //   accessorKey: "createdAt",
-  //   meta: { title: "Fecha de creación" },
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Fecha de creación" />
-  //   ),
-  //   cell: ({ row }) =>
-  //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
-  // },
   {
     accessorKey: "actions",
     size: 10,
@@ -372,12 +339,6 @@ export const columns: ColumnDef<DetailedOrder>[] = [
 
       // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       const couldCloseAndStore = (isOrderCompleted && isPaymentCompleted) || (isOrderCancelled && isPaymentCancelled) || (isOrderRefunded && isPaymentRefunded);
-
-      console.log('couldCloseAndStore', couldCloseAndStore);
-      console.log('refunded-refunded', isOrderRefunded, isPaymentRefunded);
-      console.log('payment status', regularPayment?.status, refundPayment?.status);
-      console.log('payment types', regularPayment?.type, refundPayment?.type);
-      console.log('refund payment', refundPayment);
 
       return (
         <div>

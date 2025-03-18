@@ -166,6 +166,17 @@ export async function updateIncoming(
   }
 }
 
+/**
+ * Actualiza el almacenamiento entrante con los datos proporcionados.
+ *
+ * @param id - El identificador único del almacenamiento entrante a actualizar.
+ * @param data - Los datos de entrada para actualizar el almacenamiento entrante.
+ *               Incluye información como si es una transferencia.
+ * @returns Una promesa que resuelve con la respuesta detallada del almacenamiento entrante
+ *          o un objeto con un mensaje de error en caso de fallo.
+ *
+ * @throws Error desconocido si ocurre un problema inesperado durante la actualización.
+ */
 export async function updateIncomingStorage(
   id: string,
   data: UpdateIncomingStorageInput
