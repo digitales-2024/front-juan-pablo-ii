@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 type ServiceIrderAppointmentItem = {
     serviceId: string;
     appointmentId: string;
+    uniqueIdentifier?: string;
 }
 type State = ServiceIrderAppointmentItem[];
 type Action =
