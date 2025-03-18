@@ -318,7 +318,7 @@ export function CreateStaffScheduleDialog() {
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-blue-500" />
                 <span className="text-sm text-blue-600">
-                  {selectedSchedule === 'morning' 
+                  {selectedSchedule === 'morning'
                     ? 'Turno Mañana: Horario predefinido , si desea modificarlo consulte a soporte tecnico'
                     : 'Turno Tarde: Horario predefinido , si desea modificarlo consulte a soporte tecnico'}
                 </span>
@@ -520,7 +520,7 @@ export function CreateStaffScheduleDialog() {
       <>
         <TriggerButton />
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="max-w-screen-md">
+          <DialogContent className="max-w-screen-md max-h-[90dvh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{CREATE_STAFF_SCHEDULE_MESSAGES.title}</DialogTitle>
               <DialogDescription>
@@ -570,32 +570,34 @@ export function CreateStaffScheduleDialog() {
     <>
       <TriggerButton />
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent>
+        <DrawerContent className="max-h-[90dvh] overflow-y-auto">
           <DrawerHeader>
             <DrawerTitle>{CREATE_STAFF_SCHEDULE_MESSAGES.title}</DrawerTitle>
             <DrawerDescription>
               {CREATE_STAFF_SCHEDULE_MESSAGES.description}
             </DrawerDescription>
           </DrawerHeader>
-          <div className="space-y-4">
-            {!showAdvanced && <ScheduleSelector />}
-            {showAdvanced && (
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full mb-4"
-                  onClick={() => setShowAdvanced(false)}
-                >
-                  ← Volver a opciones sencillas
-                </Button>
-                <CreateStaffScheduleForm form={form} onSubmit={handleSubmit}>
-                  <DrawerFooter>
-                    <DialogFooterContent />
-                  </DrawerFooter>
-                </CreateStaffScheduleForm>
-              </>
-            )}
+          <div className="px-4 overflow-y-auto pb-4">
+            <div className="space-y-4">
+              {!showAdvanced && <ScheduleSelector />}
+              {showAdvanced && (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full mb-4"
+                    onClick={() => setShowAdvanced(false)}
+                  >
+                    ← Volver a opciones sencillas
+                  </Button>
+                  <CreateStaffScheduleForm form={form} onSubmit={handleSubmit}>
+                    <DrawerFooter>
+                      <DialogFooterContent />
+                    </DrawerFooter>
+                  </CreateStaffScheduleForm>
+                </>
+              )}
+            </div>
           </div>
           {!showAdvanced && (
             <DrawerFooter>
