@@ -9,10 +9,11 @@ import {
     PaginatedAppointmentsResponse,
     CancelAppointmentDto,
     RefundAppointmentDto,
-    RescheduleAppointmentDto
+    RescheduleAppointmentDto,
+    AppointmentStatus
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
-import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment, getAppointmentById } from "../_actions/appointments.action";
+import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment, getAppointmentById, getAppointmentsByStatus } from "../_actions/appointments.action";
 import { useState } from "react";
 import { useSelectedServicesAppointmentsDispatch } from "@/app/(admin)/(payment)/prescriptions/_hooks/useCreateAppointmentForOrder";
 import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
@@ -46,6 +47,10 @@ export const useAppointments = () => {
         page: 1,
         limit: 10
     });
+
+    // Añadir estado para el filtro por estado
+    const [statusFilter, setStatusFilter] = useState<AppointmentStatus | null>(null);
+
     const dispatch = useSelectedServicesAppointmentsDispatch();
     const { createMutation: createEventMutation } = useEvents();
     const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
@@ -132,6 +137,35 @@ export const useAppointments = () => {
             return response.data;
         },
         enabled: !!selectedAppointmentId,
+        staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+
+    // Query para obtener las citas filtradas por estado
+    const appointmentsByStatusQuery = useQuery({
+        queryKey: ["appointments-by-status", statusFilter, pagination.page, pagination.limit],
+        queryFn: async () => {
+            if (!statusFilter) {
+                return null;
+            }
+
+            const response = await getAppointmentsByStatus({
+                status: statusFilter,
+                page: pagination.page,
+                limit: pagination.limit
+            });
+
+            if (!response) {
+                throw new Error("No se recibió respuesta del servidor");
+            }
+
+            if (response.error || !response.data) {
+                throw new Error(response.error ?? "Error desconocido");
+            }
+
+            console.log(`Respuesta de citas filtradas por estado ${statusFilter}:`, response.data);
+            return response.data;
+        },
+        enabled: !!statusFilter, // Solo se ejecuta cuando hay un estado seleccionado
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
 
@@ -478,8 +512,12 @@ export const useAppointments = () => {
         activeAppointmentsQuery,
         paginatedAppointmentsQuery,
         appointmentByIdQuery,
+        appointmentsByStatusQuery,
+        statusFilter,
+        setStatusFilter,
         appointments: appointmentsQuery.data,
         paginatedAppointments: paginatedAppointmentsQuery.data,
+        filteredAppointments: appointmentsByStatusQuery.data,
         selectedAppointmentId,
         setSelectedAppointmentId,
         pagination,

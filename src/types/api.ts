@@ -1158,6 +1158,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/appointments/status/{status}/paginated": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener citas médicas por estado de forma paginada */
+        get: operations["AppointmentController_findByStatusPaginated"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/appointments/{id}": {
         parameters: {
             query?: never;
@@ -1310,26 +1327,6 @@ export interface paths {
         head?: never;
         /** Reprogramar cita médica */
         patch: operations["AppointmentController_reschedule"];
-        trace?: never;
-    };
-    "/api/v1/appointments/status/{status}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Obtener citas médicas por estado
-         * @description Retorna todas las citas médicas con el estado especificado. Utiliza path parameter para máxima compatibilidad REST.
-         */
-        get: operations["AppointmentController_findByStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/api/v1/events/filter": {
@@ -11097,8 +11094,6 @@ export interface operations {
                 page?: number;
                 /** @description Número de registros por página */
                 limit?: number;
-                /** @description Estado(s) de las citas para filtrar (se pueden enviar múltiples valores) */
-                status?: ("PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED")[];
             };
             header?: never;
             path?: never;
@@ -11107,6 +11102,48 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Lista de citas médicas paginadas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Appointment"][];
+                };
+            };
+            /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AppointmentController_findByStatusPaginated: {
+        parameters: {
+            query?: {
+                /** @description Número de página para la paginación */
+                page?: number;
+                /** @description Número de registros por página */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Estado de las citas a filtrar */
+                status: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista de citas médicas paginadas por estado */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -11500,43 +11537,6 @@ export interface operations {
                 };
             };
             /** @description Datos de entrada inválidos o cita no encontrada */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized - No autorizado para realizar esta operación */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AppointmentController_findByStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Estado de las citas para filtrar */
-                status: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "RESCHEDULED";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Lista de citas médicas con el estado especificado */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Appointment"][];
-                };
-            };
-            /** @description El estado proporcionado no es válido */
             400: {
                 headers: {
                     [name: string]: unknown;
