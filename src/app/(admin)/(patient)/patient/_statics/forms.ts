@@ -25,7 +25,7 @@ export const FORMSTATICS: FormStatics<CreatePatientInput> = {
     required: true,
     label: "DNI",
     type: "number",
-    placeholder: "DNI del paciente",
+    placeholder: "_Selecione un tipo de Documento",
     name: "dni",
     defaultValue: "",
   },
@@ -189,7 +189,7 @@ export const UPDATEFORMSTATICS: FormStatics<UpdatePatientInput> = {
   },
   dni: {
     required: false,
-    label: "DNI",
+    label: "Nro. Documento",
     type: "text",
     placeholder: "DNI del paciente",
     name: "dni",
