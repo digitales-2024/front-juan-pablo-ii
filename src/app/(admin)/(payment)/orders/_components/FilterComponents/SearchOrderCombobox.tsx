@@ -1,6 +1,6 @@
 // import { fetchRegionNames } from "@/lib/api";
 // import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 // import { useProducts } from "@/app/(admin)/(catalog)/product/products/_hooks/useProduct";
 import { SearchCombobox } from "@/components/ui/custom/remoteSearchCombobox/RemoteSearchComobox";
 import { useOrders } from "../../_hooks/useOrders";
@@ -47,10 +47,6 @@ export default function SearchOrderCombobox({
       // if (!order) return undefined;
       return mapToComboboxItem(order);
     }), [mapToComboboxItem]);
-
-    useEffect(()=>{
-      console.log('searched data', data);
-    }, [queryResponse.data])
 
   return (
     <SearchCombobox<DetailedOrder>
