@@ -114,7 +114,7 @@ export function SelectProductDialog({
     // cleanProductStock();
     // setSelectedStorageId(null);
     console.log(selectedRows)
-    dispatch({ type: "replace", payload: selectedRows });
+    dispatch({ type: "append", payload: selectedRows });
     setOpen(false);
   };
 
