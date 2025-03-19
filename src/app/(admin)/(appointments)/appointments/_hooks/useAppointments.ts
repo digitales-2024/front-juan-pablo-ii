@@ -124,8 +124,8 @@ export const useAppointments = () => {
 
     // Query para obtener las citas filtradas por estado
     const appointmentsByStatusQuery = useQuery({
-        // Usar sólo la constante como clave base, sin incluir los parámetros variables
-        queryKey: [APPOINTMENTS_QUERY_KEY],
+        // Incluir los parámetros en la clave para mejor gestión de la caché
+        queryKey: [APPOINTMENTS_QUERY_KEY, statusFilter, pagination.page, pagination.limit],
         queryFn: async () => {
             console.log("🏥 Ejecutando query appointments-paginated con:", {
                 statusFilter,
@@ -161,23 +161,12 @@ export const useAppointments = () => {
         },
         // Siempre habilitado
         enabled: true,
-        // No refrescar automáticamente en enfoque de ventana, lo controlaremos manualmente
+        // Refrescar sólo si el usuario explícitamente hace la acción de refrescar
         refetchOnWindowFocus: false,
-        staleTime: 1000 * 60 * 5, // 5 minutos
+        // Aumentar el staleTime para evitar consultas innecesarias
+        staleTime: 1000 * 60 * 10, // 10 minutos
     });
     
-    // Log cuando cambia el filtro de estado o la paginación
-    // Este efecto debe estar DESPUÉS de la definición de la query
-    useEffect(() => {
-        // Solo invalidar la query cuando cambien los filtros o paginación,
-        // y no forzar un refetch - React Query se encargará de decidir cuándo refrescar
-        queryClient.invalidateQueries({
-            queryKey: [APPOINTMENTS_QUERY_KEY],
-            // No usar exact: true para permitir que se invaliden todas las queries
-            // que empiezan con este prefijo
-        });
-    }, [statusFilter, pagination.page, pagination.limit, queryClient]);
-
     // Mutación para crear una cita
     const createMutation = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
         mutationFn: async (data) => {

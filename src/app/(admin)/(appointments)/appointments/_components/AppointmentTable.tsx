@@ -4,7 +4,7 @@ import { DataTable } from "@/components/data-table/DataTable";
 import { columns } from "./AppointmentTableColumns";
 import { AppointmentTableToolbarActions } from "./AppointmentTableToolbarActions";
 import { Appointment, PaginatedAppointmentsResponse, appointmentStatusConfig } from "../_interfaces/appointments.interface";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { TableState } from "@tanstack/react-table";
 import { useAppointments } from "../_hooks/useAppointments";
 import { AppointmentDetailsDialog } from "./AppointmentDetailsDialog";
@@ -24,24 +24,14 @@ export function AppointmentTable({
     paginatedData,
     onPaginationChange
 }: AppointmentTableProps) {
-    console.log("🎯 Renderizando AppointmentTable con data:", data);
-    console.log("🎯 Datos paginados recibidos:", paginatedData);
-    console.log("🎯 Datos paginados - appointments:", paginatedData?.appointments);
-    console.log("🎯 Datos paginados - total:", paginatedData?.total);
+    console.log("🎯 Renderizando AppointmentTable");
 
     const { setSelectedAppointmentId, appointmentByIdQuery, statusFilter } = useAppointments();
     const { filterType, query: filterQuery } = useFilterAppointments();
     const [showDetailsDialog, setShowDetailsDialog] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
-    // Log cada vez que cambian los datos paginados
-    useEffect(() => {
-        console.log("⚡ [useEffect] paginatedData cambió:", paginatedData);
-        console.log("⚡ [useEffect] StatusFilter actual:", statusFilter);
-        console.log("⚡ [useEffect] FilterType actual:", filterType);
-    }, [paginatedData, statusFilter, filterType]);
-
-    const handleTableChange = (_table: any, newState: TableState) => {
+    const handleTableChange = useCallback((_table: any, newState: TableState) => {
         if (onPaginationChange && paginatedData) {
             const { pagination } = newState;
             console.log("🔄 Cambiando paginación en la tabla:", pagination);
@@ -50,67 +40,60 @@ export function AppointmentTable({
                 pagination.pageSize
             );
         }
-    };
+    }, [onPaginationChange, paginatedData]);
 
-    const handleRowClick = (appointment: Appointment) => {
+    const handleRowClick = useCallback((appointment: Appointment) => {
         setSelectedAppointmentId(appointment.id);
         setShowDetailsDialog(true);
-    };
+    }, [setSelectedAppointmentId]);
 
-    const handleCloseDetails = () => {
+    const handleCloseDetails = useCallback(() => {
         setShowDetailsDialog(false);
         setSelectedAppointmentId(null);
-    };
+    }, [setSelectedAppointmentId]);
 
-    // Filtrar datos por nombre del paciente
     const filteredData = useMemo(() => {
-        if (!searchQuery.trim()) return data;
+        if (paginatedData || !searchQuery.trim()) return data;
 
         return data.filter((appointment) => {
-            // Verificar si patient existe antes de acceder a sus propiedades
             if (!appointment.patient) return false;
 
             const patientName = `${appointment.patient.name || ''} ${appointment.patient.lastName || ''}`.toLowerCase();
             return patientName.includes(searchQuery.toLowerCase());
         });
-    }, [data, searchQuery]);
+    }, [data, searchQuery, paginatedData]);
 
-    // Determinar qué datos mostrar según el filtro activo
-    const tableData = paginatedData?.appointments || data;
-    console.log("📊 TableData a mostrar:", tableData);
-    const totalCount = paginatedData?.total || tableData.length;
+    const displayData = useMemo(() => {
+        if (paginatedData) {
+            return paginatedData.appointments || [];
+        }
+        return searchQuery.trim() ? filteredData : data;
+    }, [paginatedData, searchQuery, filteredData, data]);
 
-    // Verificar si está cargando datos filtrados
+    const totalCount = useMemo(() => 
+        paginatedData?.total || displayData.length
+    , [paginatedData, displayData]);
+
     const isLoading = filterQuery.isLoading;
-    console.log("⏳ IsLoading:", isLoading);
-    console.log("🔍 FilterQuery estado:", {
-        isLoading: filterQuery.isLoading,
-        isError: filterQuery.isError,
-        data: filterQuery.data
-    });
 
-    // Usar los datos filtrados o los originales
-    const displayData = searchQuery.trim() ? filteredData : tableData;
-    console.log("👁️ DisplayData final:", displayData);
-    console.log("👁️ Cantidad de registros a mostrar:", displayData?.length || 0);
-
-    // Mensaje que muestra el estado del filtro actual
-    const getFilterStatusMessage = () => {
+    const getFilterStatusMessage = useCallback(() => {
         if (isLoading) return "Cargando resultados...";
         if (statusFilter === "all") return "Mostrando todas las citas";
         return `Mostrando citas con estado: ${appointmentStatusConfig[statusFilter]?.name || statusFilter}`;
-    };
+    }, [isLoading, statusFilter]);
 
     return (
         <div className="w-full space-y-2">
             <div className="flex items-center justify-between">
                 <div className="flex space-x-4">
-                    <Input
-                        placeholder="Buscar por nombre..."
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        value={searchQuery}
-                        className="max-w-sm"
-                    />
+                    {!paginatedData && (
+                        <Input
+                            placeholder="Buscar por nombre..."
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={searchQuery}
+                            className="max-w-sm"
+                        />
+                    )}
                     <p className="text-sm text-muted-foreground my-auto">
                         {getFilterStatusMessage()}
                     </p>
@@ -148,7 +131,6 @@ export function AppointmentTable({
                         cancellationReason: false,
                         createdAt: false,
                         updatedAt: false,
-                        // La columna patientDni estará visible por defecto al no incluirla aquí
                     }}
                     onTableChange={handleTableChange}
                     totalCount={totalCount}
