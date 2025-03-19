@@ -14,7 +14,7 @@ import {
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { createAppointment, deleteAppointments, getActiveAppointments, getAppointments, reactivateAppointments, updateAppointment, getAllAppointments, cancelAppointment, refundAppointment, rescheduleAppointment, getAppointmentById, getAppointmentsByStatus } from "../_actions/appointments.action";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelectedServicesAppointmentsDispatch } from "@/app/(admin)/(payment)/prescriptions/_hooks/useCreateAppointmentForOrder";
 import { useEvents } from "@/app/(admin)/(staff)/schedules/_hooks/useEvents";
 import { EventType, EventStatus } from "@/app/(admin)/(staff)/schedules/_interfaces/event.interface";
@@ -41,8 +41,12 @@ interface RescheduleAppointmentVariables {
     data: RescheduleAppointmentDto;
 }
 
-// Definir una constante para la clave de consulta base
+// Definir una constante para la clave de consulta base y una función para construir la clave completa
 export const APPOINTMENTS_QUERY_KEY = "appointments-paginated";
+
+// Función auxiliar para construir la clave de consulta con los filtros
+export const buildAppointmentsQueryKey = (status: AppointmentStatus, page: number, limit: number) => 
+    [APPOINTMENTS_QUERY_KEY, status, page, limit];
 
 export const useAppointments = () => {
     console.log("🏥 Inicializando useAppointments");
@@ -55,6 +59,74 @@ export const useAppointments = () => {
 
     // Añadir estado para el filtro por estado - inicializar con "all" para mostrar todas las citas por defecto
     const [statusFilter, setStatusFilter] = useState<AppointmentStatus>("all");
+
+    // Construir la clave de consulta actual
+    const currentQueryKey = buildAppointmentsQueryKey(statusFilter, pagination.page, pagination.limit);
+
+    // Función para actualizar el filtro y pre-cargar los datos si es necesario
+    const updateStatusFilter = useCallback((newStatus: AppointmentStatus) => {
+        // Solo actualizar si el estado ha cambiado
+        if (newStatus !== statusFilter) {
+            console.log('🔃 useAppointments - Actualizando filtro a:', newStatus);
+            
+            // Guardar el filtro actual y el nuevo para debug
+            const oldFilter = statusFilter;
+            
+            // Construir la nueva clave de consulta
+            const newQueryKey = buildAppointmentsQueryKey(newStatus, 1, pagination.limit);
+            
+            // IMPORTANTE: Primero, verificar si hay datos en la caché y guardarlos temporalmente si existen
+            const existingData = queryClient.getQueryData(newQueryKey);
+            
+            // CRÍTICO: Actualizar el estado antes de invalidar las consultas
+            // Esto asegura que cuando se ejecute la consulta, use el nuevo filtro
+            setStatusFilter(newStatus);
+            
+            // IMPORTANTE: Invalidar todas las consultas relacionadas para forzar la recarga
+            console.log('🧹 useAppointments - Invalidando TODAS las consultas para:', newStatus);
+            queryClient.invalidateQueries({
+                queryKey: [APPOINTMENTS_QUERY_KEY],
+                exact: false,
+                // No ejecutamos refetch inmediatamente
+                refetchType: 'none',
+            });
+            
+            // Limpiar caché específica de la consulta actual
+            const oldQueryKey = buildAppointmentsQueryKey(oldFilter, 1, pagination.limit);
+            console.log('🧹 useAppointments - Limpiando caché anterior:', oldQueryKey);
+            
+            // Simular un delay corto para que React Query tenga tiempo de procesar los cambios
+            setTimeout(() => {
+                // PASO 1: Ejecutar refetch inmediato para la nueva clave de consulta
+                console.log('🔄 useAppointments - Forzando refetch para la nueva clave:', newQueryKey);
+                queryClient.refetchQueries({
+                    queryKey: newQueryKey,
+                    exact: true,
+                    refetchType: 'all'
+                });
+                
+                // PASO 2: Ejecutar una consulta directa usando getAppointmentsByStatus
+                // Esta es una capa adicional de seguridad
+                getAppointmentsByStatus({
+                    status: newStatus,
+                    page: 1,
+                    limit: pagination.limit
+                }).then(response => {
+                    if (response && !response.error && response.data) {
+                        console.log('✨ useAppointments - Obtenidos datos frescos para:', newStatus, 'con', 
+                            response.data.appointments?.length || 0, 'citas');
+                        
+                        // PASO 3: Actualizar manualmente la caché con los datos recién obtenidos
+                        queryClient.setQueryData(newQueryKey, response.data);
+                    }
+                });
+            }, 50);
+            
+            console.log('🔄 useAppointments - Proceso de cambio de filtro completado:', oldFilter, '➡️', newStatus);
+        } else {
+            console.log('⏭️ useAppointments - Filtro no cambió, omitiendo actualización');
+        }
+    }, [statusFilter, pagination.limit, queryClient]);
 
     const dispatch = useSelectedServicesAppointmentsDispatch();
     const { createMutation: createEventMutation } = useEvents();
@@ -124,13 +196,14 @@ export const useAppointments = () => {
 
     // Query para obtener las citas filtradas por estado
     const appointmentsByStatusQuery = useQuery({
-        // Incluir los parámetros en la clave para mejor gestión de la caché
-        queryKey: [APPOINTMENTS_QUERY_KEY, statusFilter, pagination.page, pagination.limit],
+        // Usar la clave de consulta construida
+        queryKey: currentQueryKey,
         queryFn: async () => {
             console.log("🏥 Ejecutando query appointments-paginated con:", {
                 statusFilter,
                 page: pagination.page,
-                limit: pagination.limit
+                limit: pagination.limit,
+                queryKey: currentQueryKey
             });
 
             // Siempre ejecutar la consulta con los parámetros actuales
@@ -154,7 +227,8 @@ export const useAppointments = () => {
                 total: response.data.total,
                 appointments: response.data.appointments?.length || 0,
                 firstAppointment: response.data.appointments?.[0]?.id || "N/A",
-                filtroAplicado: statusFilter
+                filtroAplicado: statusFilter,
+                queryKey: currentQueryKey
             });
 
             return response.data;
@@ -163,8 +237,8 @@ export const useAppointments = () => {
         enabled: true,
         // Refrescar sólo si el usuario explícitamente hace la acción de refrescar
         refetchOnWindowFocus: false,
-        // Aumentar el staleTime para evitar consultas innecesarias
-        staleTime: 1000 * 60 * 10, // 10 minutos
+        // Reducir el staleTime para asegurar que los datos se refresquen correctamente
+        staleTime: 1000 * 60 * 5, // 5 minutos
     });
     
     // Mutación para crear una cita
@@ -526,7 +600,7 @@ export const useAppointments = () => {
         appointmentByIdQuery,
         appointmentsByStatusQuery,
         statusFilter,
-        setStatusFilter,
+        setStatusFilter: updateStatusFilter,
         appointments: appointmentsQuery.data,
         selectedAppointmentId,
         setSelectedAppointmentId,

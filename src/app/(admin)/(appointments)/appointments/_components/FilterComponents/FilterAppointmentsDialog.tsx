@@ -116,6 +116,7 @@ export const FilterAppointmentsDialog = memo(() => {
     const onSubmitAllAppointments = useCallback(() => {
         // Solo aplicar el filtro si no estamos ya en "all"
         if (statusFilter !== "all") {
+            console.log('🔄 Aplicando filtro ALL desde DialogoFiltros');
             setFilterAllAppointments();
             
             if (appointmentsQuery.isError) {
@@ -133,6 +134,7 @@ export const FilterAppointmentsDialog = memo(() => {
     const onSubmitStatus = useCallback((input: FilterByStatus) => {
         // Solo aplicar el filtro si es diferente al actual
         if (statusFilter !== input.appointmentStatus) {
+            console.log('🔄 Aplicando filtro por ESTADO desde DialogoFiltros:', input.appointmentStatus);
             setFilterByStatus(input.appointmentStatus);
             
             if (appointmentsQuery.isError) {
