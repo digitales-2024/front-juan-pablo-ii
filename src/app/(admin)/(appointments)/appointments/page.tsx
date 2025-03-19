@@ -55,13 +55,17 @@ export default function PageAppointments() {
             queryKey: currentQueryKey
         });
         
+        // Si tenemos datos en la caché para la queryKey actual, usar esos
         if (cachedData) {
             console.log('✅ PageAppointments - Usando datos de caché para:', currentQueryKey);
             return cachedData;
         }
         
+        // Si tenemos datos en activeQuery y coincide con el filtro actual, usar esos datos
         if (activeQuery.data) {
             console.log('✅ PageAppointments - Usando datos de activeQuery para:', currentQueryKey);
+            // Actualizar manualmente la caché con estos datos para asegurar consistencia
+            queryClient.setQueryData(currentQueryKey, activeQuery.data);
             return activeQuery.data;
         }
         
@@ -169,6 +173,30 @@ export default function PageAppointments() {
             console.log('📊 PageAppointments - Mostrando datos para filtro:', statusFilter, 'con', latestData.appointments?.length || 0, 'registros');
         }
     }, [latestData, statusFilter]);
+
+    // Forzar una actualización cuando cambia el filtro
+    useEffect(() => {
+        // Si estamos en el primer render, no hacer nada
+        if (lastFilterRef.current === 'all' && statusFilter === 'all') {
+            return;
+        }
+        
+        // Detectar cambio de filtro
+        if (lastFilterRef.current !== statusFilter) {
+            console.log('🔄 PageAppointments - Filtro cambió de', lastFilterRef.current, 'a', statusFilter);
+            lastFilterRef.current = statusFilter;
+            
+            // Asegurarse de que tenemos los datos para el filtro actual
+            if (!latestData) {
+                console.log('🔄 PageAppointments - Forzando obtención de datos para filtro:', statusFilter);
+                queryClient.refetchQueries({
+                    queryKey: currentQueryKey,
+                    exact: true,
+                    refetchType: 'all'
+                });
+            }
+        }
+    }, [statusFilter, currentQueryKey, queryClient, latestData]);
 
     // 6. Lógica de renderizado condicional
     if (isLoading && !activeQuery.data) {

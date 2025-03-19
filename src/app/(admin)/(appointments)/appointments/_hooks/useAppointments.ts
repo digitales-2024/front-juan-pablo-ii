@@ -42,11 +42,10 @@ interface RescheduleAppointmentVariables {
 }
 
 // Definir una constante para la clave de consulta base y una función para construir la clave completa
-export const APPOINTMENTS_QUERY_KEY = "appointments-paginated";
 
 // Función auxiliar para construir la clave de consulta con los filtros
 export const buildAppointmentsQueryKey = (status: AppointmentStatus, page: number, limit: number) => 
-    [APPOINTMENTS_QUERY_KEY, status, page, limit];
+    ["appointments-paginated", status, page, limit];
 
 export const useAppointments = () => {
     console.log("🏥 Inicializando useAppointments");
@@ -74,53 +73,53 @@ export const useAppointments = () => {
             
             // Construir la nueva clave de consulta
             const newQueryKey = buildAppointmentsQueryKey(newStatus, 1, pagination.limit);
+            console.log('🔑 useAppointments - Nueva clave de consulta:', newQueryKey);
             
-            // IMPORTANTE: Primero, verificar si hay datos en la caché y guardarlos temporalmente si existen
-            const existingData = queryClient.getQueryData(newQueryKey);
-            
-            // CRÍTICO: Actualizar el estado antes de invalidar las consultas
-            // Esto asegura que cuando se ejecute la consulta, use el nuevo filtro
-            setStatusFilter(newStatus);
-            
-            // IMPORTANTE: Invalidar todas las consultas relacionadas para forzar la recarga
-            console.log('🧹 useAppointments - Invalidando TODAS las consultas para:', newStatus);
-            queryClient.invalidateQueries({
-                queryKey: [APPOINTMENTS_QUERY_KEY],
-                exact: false,
-                // No ejecutamos refetch inmediatamente
-                refetchType: 'none',
+            // PASO 1: Limpiar TODAS las cachés relacionadas con consultas paginadas
+            console.log('🧹 useAppointments - Limpiando TODAS las consultas paginadas');
+            queryClient.removeQueries({ 
+                queryKey: ["appointments-paginated"],
+                exact: false 
             });
             
-            // Limpiar caché específica de la consulta actual
-            const oldQueryKey = buildAppointmentsQueryKey(oldFilter, 1, pagination.limit);
-            console.log('🧹 useAppointments - Limpiando caché anterior:', oldQueryKey);
+            // PASO 2: Actualizar el estado para que cualquier consulta futura use el nuevo filtro
+            // CRÍTICO: Esto debe ocurrir antes de cualquier consulta
+            setStatusFilter(newStatus);
             
-            // Simular un delay corto para que React Query tenga tiempo de procesar los cambios
+            // PASO 3: Esperar un breve momento para que React actualice el estado
             setTimeout(() => {
-                // PASO 1: Ejecutar refetch inmediato para la nueva clave de consulta
-                console.log('🔄 useAppointments - Forzando refetch para la nueva clave:', newQueryKey);
-                queryClient.refetchQueries({
-                    queryKey: newQueryKey,
-                    exact: true,
-                    refetchType: 'all'
-                });
-                
-                // PASO 2: Ejecutar una consulta directa usando getAppointmentsByStatus
-                // Esta es una capa adicional de seguridad
+                console.log('⚡ useAppointments - Obteniendo datos para el nuevo filtro:', newStatus);
+                // Forzar una nueva consulta con el nuevo estado
                 getAppointmentsByStatus({
                     status: newStatus,
                     page: 1,
                     limit: pagination.limit
                 }).then(response => {
                     if (response && !response.error && response.data) {
-                        console.log('✨ useAppointments - Obtenidos datos frescos para:', newStatus, 'con', 
+                        console.log('✨ useAppointments - Datos obtenidos para el filtro', newStatus, ':', 
                             response.data.appointments?.length || 0, 'citas');
                         
-                        // PASO 3: Actualizar manualmente la caché con los datos recién obtenidos
+                        // Almacenar los datos en la caché usando la nueva clave
                         queryClient.setQueryData(newQueryKey, response.data);
+                        
+                        // Notificar a React Query que los datos han cambiado
+                        queryClient.invalidateQueries({
+                            queryKey: newQueryKey,
+                            exact: true,
+                            // No ejecutar refetch porque ya tenemos los datos
+                            refetchType: 'none'
+                        });
+                    } else {
+                        console.error('❌ useAppointments - Error al obtener datos para el filtro', newStatus);
+                        // Si hay un error, intentar refetch
+                        queryClient.refetchQueries({
+                            queryKey: newQueryKey,
+                            exact: true,
+                            refetchType: 'active'
+                        });
                     }
                 });
-            }, 50);
+            }, 100);
             
             console.log('🔄 useAppointments - Proceso de cambio de filtro completado:', oldFilter, '➡️', newStatus);
         } else {
@@ -309,7 +308,7 @@ export const useAppointments = () => {
                 return [...oldAppointments, res.data];
             });
             queryClient.invalidateQueries({
-                queryKey: [APPOINTMENTS_QUERY_KEY]
+                queryKey: ["appointments-paginated"]
             });
             toast.success(res.message);
         },
@@ -385,7 +384,7 @@ export const useAppointments = () => {
                 return [...oldAppointments, res.data];
             });
             queryClient.invalidateQueries({
-                queryKey: [APPOINTMENTS_QUERY_KEY]
+                queryKey: ["appointments-paginated"]
             });
             
             dispatch({
@@ -421,7 +420,7 @@ export const useAppointments = () => {
                 );
             });
             queryClient.invalidateQueries({
-                queryKey: [APPOINTMENTS_QUERY_KEY]
+                queryKey: ["appointments-paginated"]
             });
             toast.success("Cita actualizada exitosamente");
         },
@@ -521,7 +520,7 @@ export const useAppointments = () => {
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
             queryClient.invalidateQueries({
-                queryKey: [APPOINTMENTS_QUERY_KEY]
+                queryKey: ["appointments-paginated"]
             });
 
             toast.success("Cita cancelada exitosamente");
@@ -550,7 +549,7 @@ export const useAppointments = () => {
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
             queryClient.invalidateQueries({
-                queryKey: [APPOINTMENTS_QUERY_KEY]
+                queryKey: ["appointments-paginated"]
             });
 
             toast.success("Cita reembolsada exitosamente");
@@ -579,7 +578,7 @@ export const useAppointments = () => {
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
             queryClient.invalidateQueries({
-                queryKey: [APPOINTMENTS_QUERY_KEY]
+                queryKey: ["appointments-paginated"]
             });
 
             toast.success("Cita reprogramada exitosamente");

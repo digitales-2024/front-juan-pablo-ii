@@ -42,21 +42,46 @@ export function AppointmentTable({
     [filterQuery.isLoading, filterQuery.isFetching]);
 
     const displayData = useMemo(() => {
+        // Si estamos cargando, no mostrar datos aún
+        if (isLoading && !paginatedData?.appointments?.length && !filterQuery.data?.appointments?.length) {
+            console.log('⏳ AppointmentTable - Cargando datos, esperando...');
+            return [];
+        }
+        
+        // Estrategia 1: Si tenemos datos paginados, usarlos
         if (paginatedData?.appointments?.length) {
-            console.log('📊 AppointmentTable - Mostrando', paginatedData.appointments.length, 'citas con estado', statusFilter);
+            console.log('📊 AppointmentTable - Mostrando', paginatedData.appointments.length, 'citas desde paginatedData con estado', statusFilter);
             return paginatedData.appointments;
         }
         
+        // Estrategia 2: Si tenemos datos en filterQuery, priorizar esos datos
+        if (filterQuery.data?.appointments?.length) {
+            console.log('📊 AppointmentTable - Usando', filterQuery.data.appointments.length, 'citas desde filterQuery con estado', statusFilter);
+            return filterQuery.data.appointments;
+        }
+        
+        // Estrategia 3: Intentar obtener datos directamente de la caché usando currentQueryKey
+        const cachedData = queryClient.getQueryData<any>(currentQueryKey);
+        if (cachedData?.appointments?.length) {
+            console.log('📊 AppointmentTable - Usando', cachedData.appointments.length, 'citas desde caché para:', currentQueryKey);
+            return cachedData.appointments;
+        }
+        
+        // Estrategia 4: Para búsquedas locales (sin paginación)
         if (searchQuery.trim() && data.length) {
-            return data.filter((appointment) => {
+            const filteredData = data.filter((appointment) => {
                 if (!appointment.patient) return false;
                 const patientName = `${appointment.patient.name || ''} ${appointment.patient.lastName || ''}`.toLowerCase();
                 return patientName.includes(searchQuery.toLowerCase());
             });
+            console.log('🔍 AppointmentTable - Búsqueda local resultó en', filteredData.length, 'citas');
+            return filteredData;
         }
         
+        // Estrategia final: Usar los datos sin paginar si están disponibles
+        console.log('⚠️ AppointmentTable - Usando datos sin paginar:', data.length);
         return data;
-    }, [paginatedData, data, searchQuery, statusFilter]);
+    }, [paginatedData, filterQuery.data, data, searchQuery, statusFilter, currentQueryKey, queryClient, isLoading]);
 
     const totalCount = useMemo(() => 
         paginatedData?.total || displayData.length
@@ -97,16 +122,21 @@ export function AppointmentTable({
             console.log('🔄 AppointmentTable - Filtro cambió de', lastFilterRef.current, 'a', statusFilter);
             lastFilterRef.current = statusFilter;
             
-            if (paginatedData && renderedDataRef.current?.queryKey !== currentQueryKey) {
-                console.log('🔄 AppointmentTable - Forzando actualización para nuevo filtro');
-                const cachedData = queryClient.getQueryData<any>(currentQueryKey);
-                renderedDataRef.current = {
-                    data: cachedData || paginatedData,
-                    queryKey: currentQueryKey
-                };
-            }
+            // Forzar una actualización de los datos cuando cambia el filtro
+            console.log('🔄 AppointmentTable - Forzando actualización para el filtro:', statusFilter);
+            queryClient.refetchQueries({
+                queryKey: currentQueryKey,
+                exact: true,
+                refetchType: 'all'
+            });
+            
+            // Guardar la referencia al query key actual
+            renderedDataRef.current = {
+                queryKey: currentQueryKey,
+                filter: statusFilter
+            };
         }
-    }, [statusFilter, paginatedData, currentQueryKey, queryClient]);
+    }, [statusFilter, currentQueryKey, queryClient]);
 
     // Actualizar la referencia a los datos renderizados
     useEffect(() => {

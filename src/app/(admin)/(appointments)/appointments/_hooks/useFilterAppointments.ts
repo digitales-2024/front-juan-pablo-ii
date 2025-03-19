@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { useAppointments, APPOINTMENTS_QUERY_KEY, buildAppointmentsQueryKey } from './useAppointments';
+import { useAppointments, buildAppointmentsQueryKey } from './useAppointments';
 import { AppointmentsFilterType } from '../_interfaces/filter.interface';
 import { AppointmentStatus } from '../_interfaces/appointments.interface';
 import { useQueryClient } from '@tanstack/react-query';
@@ -10,6 +10,7 @@ export const useFilterAppointments = () => {
     const queryClient = useQueryClient();
     const lastForceUpdateRef = useRef<string>('');
     const appliedFilterRef = useRef<string>(null);
+    const firstRenderRef = useRef(true);
     
     // Obtener datos del hook de appointments - siempre después de los estados locales
     const {
@@ -45,6 +46,24 @@ export const useFilterAppointments = () => {
         });
     }, [setPagination, pagination.limit]);
 
+    // Efecto para invalidar la consulta cuando cambia el filtro o la paginación
+    useEffect(() => {
+        if (firstRenderRef.current) {
+            firstRenderRef.current = false;
+            return;
+        }
+        
+        // Invalidar la consulta para forzar una actualización
+        queryClient
+            .invalidateQueries({ 
+                queryKey: currentQueryKey,
+                exact: true
+            })
+            .catch(() => console.error("Error al invalidar las consultas"));
+            
+        console.log('🔄 useFilterAppointments - Invalidando consulta para:', currentQueryKey);
+    }, [statusFilter, pagination, currentQueryKey, queryClient]);
+
     // Función para filtrar por estado - usar useCallback para evitar recrear la función
     const setFilterByStatus = useCallback((status: AppointmentStatus) => {
         // Evitar trabajo innecesario si el estado no ha cambiado
@@ -66,6 +85,21 @@ export const useFilterAppointments = () => {
         // Resetear paginación al filtrar
         resetPagination();
         
+        // IMPORTANTE: Primero, eliminar TODAS las consultas relacionadas con citas paginadas
+        // Esto asegura que no queden datos obsoletos en caché
+        console.log('🧹 Eliminando todas las consultas de citas paginadas antes de cambiar filtro');
+        queryClient.removeQueries({ 
+            queryKey: ["appointments-paginated"],
+            exact: false
+        });
+        
+        // Eliminar explícitamente la consulta anterior
+        const oldQueryKey = buildAppointmentsQueryKey(statusFilter, pagination.page, pagination.limit);
+        queryClient.removeQueries({ 
+            queryKey: oldQueryKey,
+            exact: true
+        });
+        
         // Construimos la nueva clave de consulta que se generará
         const newQueryKey = buildAppointmentsQueryKey(status, 1, pagination.limit);
         console.log('🔑 Nueva QueryKey que se usará:', newQueryKey);
@@ -76,7 +110,18 @@ export const useFilterAppointments = () => {
         
         // Actualiza el filtro de estado usando la función optimizada en useAppointments
         setStatusFilter(status);
-    }, [statusFilter, setFilterType, resetPagination, setStatusFilter, pagination.limit]);
+        
+        // Forzar una revalidación después de un corto retraso para dar tiempo
+        // a que se actualice el filtro
+        setTimeout(() => {
+            console.log('⚡ Forzando obtención de datos para el nuevo filtro:', status);
+            queryClient.refetchQueries({
+                queryKey: newQueryKey,
+                exact: true,
+                refetchType: 'active'
+            });
+        }, 100);
+    }, [statusFilter, setFilterType, resetPagination, setStatusFilter, pagination.limit, queryClient]);
 
     // Función para mostrar todas las citas - usar useCallback para evitar recrear la función
     const setFilterAllAppointments = useCallback(() => {
@@ -94,6 +139,21 @@ export const useFilterAppointments = () => {
         // Resetear paginación al quitar filtro
         resetPagination();
         
+        // IMPORTANTE: Primero, eliminar TODAS las consultas relacionadas con citas paginadas
+        // Esto asegura que no queden datos obsoletos en caché
+        console.log('🧹 Eliminando todas las consultas de citas paginadas antes de cambiar filtro');
+        queryClient.removeQueries({ 
+            queryKey: ["appointments-paginated"],
+            exact: false
+        });
+        
+        // Eliminar explícitamente la consulta anterior
+        const oldQueryKey = buildAppointmentsQueryKey(statusFilter, pagination.page, pagination.limit);
+        queryClient.removeQueries({ 
+            queryKey: oldQueryKey,
+            exact: true
+        });
+        
         // Construimos la nueva clave de consulta que se generará
         const newQueryKey = buildAppointmentsQueryKey("all", 1, pagination.limit);
         console.log('🔑 Nueva QueryKey que se usará:', newQueryKey);
@@ -104,55 +164,18 @@ export const useFilterAppointments = () => {
         
         // Actualiza el filtro de estado a "all"
         setStatusFilter("all");
-    }, [statusFilter, setFilterType, resetPagination, setStatusFilter, pagination.limit]);
-
-    // Para debugging - monitorear cuando cambia la queryKey actual
-    useEffect(() => {
-        console.log('🔄 Query Key actual en useFilterAppointments:', currentQueryKey);
-        console.log('🔍 Filtro aplicado en useFilterAppointments:', statusFilter);
         
-        // Verificar si tenemos datos en caché para esta queryKey
-        const queryData = queryClient.getQueryData(currentQueryKey);
-        console.log('🔍 ¿Tenemos datos en caché?', queryData ? 'Sí' : 'No');
-        
-        // Solo forzar una actualización si:
-        // 1. No tenemos datos para esta query
-        // 2. Es diferente a la última query que forzamos actualizar
-        // 3. No estamos ya en proceso de carga
-        if (!queryData && lastForceUpdateRef.current !== currentQueryKeyString && !isLoading) {
-            console.log('🔄 Forzando actualización única para:', currentQueryKey);
-            // Guardar la queryKey actual para no forzar otra actualización para la misma query
-            lastForceUpdateRef.current = currentQueryKeyString;
-            
-            // Usar un timeout para evitar actualizaciones en el mismo ciclo de renderizado
-            const timer = setTimeout(() => {
-                // Refrescar la consulta actual
-                console.log('♻️ Ejecutando refetchQueries para:', currentQueryKey);
-                queryClient.refetchQueries({
-                    queryKey: currentQueryKey,
-                    exact: true,
-                    // Forzar refetch porque realmente necesitamos estos datos
-                    refetchType: 'active',
-                });
-            }, 150);
-            
-            return () => clearTimeout(timer);
-        }
-    }, [currentQueryKey, currentQueryKeyString, queryClient, isLoading, statusFilter]);
-
-    // Log adicional para ayudar a diagnosticar problemas
-    useEffect(() => {
-        if (activeQuery?.data) {
-            console.log('✅ Datos en activeQuery:', {
-                statusFilter,
-                appointments: activeQuery.data.appointments?.length || 0,
-                total: activeQuery.data.total || 0,
-                queryKey: currentQueryKey
+        // Forzar una revalidación después de un corto retraso para dar tiempo
+        // a que se actualice el filtro
+        setTimeout(() => {
+            console.log('⚡ Forzando obtención de datos para el filtro ALL');
+            queryClient.refetchQueries({
+                queryKey: newQueryKey,
+                exact: true,
+                refetchType: 'active'
             });
-        } else {
-            console.log('⚠️ No hay datos en activeQuery para el filtro:', statusFilter);
-        }
-    }, [activeQuery.data, statusFilter, currentQueryKey]);
+        }, 100);
+    }, [statusFilter, setFilterType, resetPagination, setStatusFilter, pagination.limit, queryClient]);
 
     // Función auxiliar para construir claves de consulta
     const buildQueryKey = useCallback((status: AppointmentStatus, page: number, limit: number) => 
