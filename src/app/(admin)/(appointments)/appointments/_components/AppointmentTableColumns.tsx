@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Eye } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -24,6 +24,8 @@ import type { Appointment, AppointmentStatus } from "../_interfaces/appointments
 import { appointmentStatusConfig } from "../_interfaces/appointments.interface";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useAppointments } from "../_hooks/useAppointments";
+import { AppointmentDetailsDialog } from "./AppointmentDetailsDialog";
 
 export const columns: ColumnDef<Appointment>[] = [
     {
@@ -136,11 +138,23 @@ export const columns: ColumnDef<Appointment>[] = [
             const [showCancelDialog, setShowCancelDialog] = useState(false);
             const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
             const [showRefundDialog, setShowRefundDialog] = useState(false);
+            const [showDetailsDialog, setShowDetailsDialog] = useState(false);
             const appointment = row.original;
             const isActive = appointment.isActive;
             const isPending = appointment.status === "PENDING";
             const isConfirmed = appointment.status === "CONFIRMED";
             const router = useRouter();
+            const { setSelectedAppointmentId, appointmentByIdQuery } = useAppointments();
+
+            const handleShowDetails = () => {
+                setSelectedAppointmentId(appointment.id);
+                setShowDetailsDialog(true);
+            };
+
+            const handleCloseDetails = () => {
+                setShowDetailsDialog(false);
+                setSelectedAppointmentId(null);
+            };
 
             return (
                 <div>
@@ -162,6 +176,13 @@ export const columns: ColumnDef<Appointment>[] = [
                         onOpenChange={setShowRescheduleDialog}
                         showTrigger={false}
                     />
+                    <AppointmentDetailsDialog
+                        appointment={appointmentByIdQuery.data || null}
+                        loading={appointmentByIdQuery.isLoading}
+                        open={showDetailsDialog}
+                        onOpenChange={setShowDetailsDialog}
+                        onClose={handleCloseDetails}
+                    />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
@@ -173,6 +194,13 @@ export const columns: ColumnDef<Appointment>[] = [
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem onSelect={handleShowDetails}>
+                                Ver detalles
+                                <DropdownMenuShortcut>
+                                    <Eye className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             <DropdownMenuItem
                                 onSelect={() => setShowRescheduleDialog(true)}
                                 disabled={!isActive || !isConfirmed}
