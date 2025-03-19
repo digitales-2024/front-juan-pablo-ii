@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -27,7 +28,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useSelectedServicesAppointmentsDispatch } from "../../_hooks/useCreateAppointmentForOrder";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
@@ -62,12 +62,14 @@ interface CreateAppointmentDialogProps
   serviceId: string;
   patientId: string;
   disabled?: boolean;
+  uniqueIdentifier: string
 }
 export function CreateAppointmentDialog({
   className,
   serviceId,
   patientId,
   disabled,
+  uniqueIdentifier,
   ...rest
 }: CreateAppointmentDialogProps) {
   const [open, setOpen] = useState(false);
@@ -87,6 +89,7 @@ export function CreateAppointmentDialog({
   //   const selectedServicesAppointmentsData = useSelectedServicesAppointments();
   //const dispatch = useSelectedServicesAppointmentsDispatch();
   const { createMutationForOrder } = useAppointments();
+  const createMutation = createMutationForOrder(uniqueIdentifier);
 
   const form = useForm<ConsultationSchema>({
     resolver: zodResolver(consultationsSchema),
@@ -101,13 +104,6 @@ export function CreateAppointmentDialog({
       paymentMethod: undefined,
     },
   });
-
-  //   const handleSave = (selectedRows: ActiveProduct[]) => {
-  //     // console.log('oldStateTanstack', selectedProductsTanstack);
-  //     // console.log('handleSave', selectedRows);
-  //     dispatch({ type: "append", payload: selectedRows });
-  //     setOpen(false);
-  //   };
 
   const handleClose = () => {
     //form.reset();
@@ -332,7 +328,7 @@ export function CreateAppointmentDialog({
         appointmentToCreate
       );
 
-      await createMutationForOrder.mutateAsync(appointmentToCreate);
+      await createMutation.mutateAsync(appointmentToCreate);
       //Enviar datos de retorno a la tabla de citas
       // En lugar de resetear todo el formulario, solo limpiamos algunos campos
       // pero mantenemos la fecha, hora, personal y sucursal seleccionados

@@ -2,15 +2,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 //import { MovementDto } from "../_interfaces/income.interface";
 import { ActiveProduct } from "@/app/(admin)/(catalog)/product/products/_interfaces/products.interface";
-// type MovementDto = {
-//     productId: string;
-//     quantity: number;
-//     date?: string;
-//     state?: boolean;
-// }
-// interface ProductSelected extends MovementDto {
-//   name: string;
-// }
 
 type State = ActiveProduct[];
 type Action =
@@ -54,7 +45,6 @@ const useSelectProductDispatch = () => {
   const dispatch = (action: Action) => {
     client.setQueryData<ActiveProduct[]>(["incoming-selected-products"], (oldState) => {
       const newData = reducer(oldState ?? [], action);
-      // console.log('updatedData', newData);
       return newData;
     });
   };

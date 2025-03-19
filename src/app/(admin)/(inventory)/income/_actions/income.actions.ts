@@ -166,22 +166,33 @@ export async function updateIncoming(
   }
 }
 
+/**
+ * Actualiza el almacenamiento entrante con los datos proporcionados.
+ *
+ * @param id - El identificador único del almacenamiento entrante a actualizar.
+ * @param data - Los datos de entrada para actualizar el almacenamiento entrante.
+ *               Incluye información como si es una transferencia.
+ * @returns Una promesa que resuelve con la respuesta detallada del almacenamiento entrante
+ *          o un objeto con un mensaje de error en caso de fallo.
+ *
+ * @throws Error desconocido si ocurre un problema inesperado durante la actualización.
+ */
 export async function updateIncomingStorage(
   id: string,
   data: UpdateIncomingStorageInput
 ): Promise<DetailedIncomingResponse> {
   try {
+    console.log('incoming update data', data)
     const isTransferenceQuery = data.isTransference ? "?isTransference=true" : "";
     const [responseData, error] = await http.patch<DetailedIncomingResponse>(
       
       `/incoming/update/incomingStorage/${id}${isTransferenceQuery}`,
       data
     );
-
     if (error) {
+      console.log('incoming update error', error)
       return { error: error.message };
     }
-
     return responseData;
   } catch (error) {
     if (error instanceof Error) return { error: error.message };

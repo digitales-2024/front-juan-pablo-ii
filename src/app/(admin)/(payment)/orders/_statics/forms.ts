@@ -1,22 +1,6 @@
 import { FormStatics } from "@/types/statics/forms";
 import { CancelPaymentInput, CreateOrderInput, ProcessPaymentInput, RefundPaymentInput, RejectPaymentInput, UpdateOrderInput, VerifyPaymentInput, } from "../_interfaces/order.interface";
 
-// export const createOrderSchema = z.object({
-//     code: z.string().optional(),
-//     type: z.enum(["MEDICAL_PRESCRIPTION_ORDER", "MEDICAL_CONSULTATION_ORDER", "PRODUCT_SALE_ORDER", "PRODUCT_PURCHASE_ORDER"]),
-//     movementTypeId: z.string(),
-//     referenceId: z.string(),
-//     sourceId: z.string().optional(), //Es la referencia al storage
-//     targetId: z.string().optional(),
-//     status: z.enum(["DRAFT", "PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED", "REQUIRES_ATTENTION"]),
-//     currency: z.string(),
-//     subtotal: z.number(),
-//     tax: z.number(),
-//     total: z.number(),
-//     notes: z.string().optional(),
-//     metadata: z.record(z.never()).optional(),
-//   }) satisfies z.ZodType<CreateOrderDto>;
-
 export const FORMSTATICS: FormStatics<CreateOrderInput> = {
     code: {
         required: false,

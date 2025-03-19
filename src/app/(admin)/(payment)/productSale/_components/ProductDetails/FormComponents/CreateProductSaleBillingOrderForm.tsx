@@ -118,10 +118,11 @@ export function CreateProductSaleBillingOrderForm({
 
     // Agregar nuevos productos
     selectedProducts.forEach((product) => {
+      const quantity = ((product.Stock[0]?.stock == 0)||(!product.Stock[0]?.stock)) ? 0 : 1;
       append({
         productId: product.id,
-        quantity: product.Stock[0].stock == 0 ? 0 : 1, //THis is the default value for quantity
-        storageId: product.Stock[0].Storage.id,
+        quantity: quantity, //THis is the default value for quantity
+        storageId: product.Stock[0]?.Storage.id,
       });
     });
   }, [selectedProducts, append, remove]);
@@ -478,7 +479,95 @@ export function CreateProductSaleBillingOrderForm({
 
                   const stockStorage = safeData.Stock?.find(
                     (stock) => stock.Storage.id === safeWatch.storageId
-                  );
+                  ) ?? null;
+
+                  if(!stockStorage){
+                    return (
+                      <TableRow key={field.id} className="animate-fade-down duration-500">
+                        <TableCell>
+                        <FormItem>
+                          {/* <FormLabel>Producto</FormLabel> */}
+                          <div>
+                            {/* <FormLabel>Nombre</FormLabel> */}
+                            <span>{safeData.name ?? "Desconocido"}</span>
+                          </div>
+                          <Input
+                            disabled
+                            {...register(
+                              `products.${index}.productId` as const
+                            )}
+                            type="hidden"
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      </TableCell>
+                      <TableCell colSpan={2}>
+                        <FormItem>
+                          <Select
+                            {...register(
+                              `products.${index}.storageId` as const
+                            )}
+                            defaultValue={field.storageId}
+                            onValueChange={(val) => {
+                              form.setValue(`products.${index}.storageId`, val);
+                              calculateProductTotals();
+                            }}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Seleccionar almacén" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {safeStorages.map((storage) => (
+                                <SelectItem
+                                  key={storage.value}
+                                  value={storage.value}
+                                >
+                                  {storage.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      </TableCell>
+                      <TableCell >
+                        <FormItem>
+                          <Input
+                            disabled
+                            className="font-bold"
+                            {...register(
+                              `products.${index}.quantity` as const,
+                            )}
+                            type="number"
+                            min={0}
+                            placeholder="0"
+                            value={0}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      </TableCell>
+                      <TableCell colSpan={3}>
+                        <span className="block text-center font-semibold">
+                          No existe Stock en el almacén seleccioando
+                        </span>
+                      </TableCell>
+                      <TableCell className="flex justify-center items-center">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="hover:bg-destructive hover:text-white"
+                          size="sm"
+                          onClick={() => handleRemoveProduct(index)}
+                        >
+                          <Trash2 />
+                          Eliminar
+                        </Button>
+                      </TableCell>
+                      </TableRow>
+                    )
+                  }
+
                   // const stockStorage = safeData.Stock?.find((stock) => stock.Storage.id === storageSafeWatch);
                   const totalStock =
                     safeData.Stock?.reduce(

@@ -1,16 +1,16 @@
-import { DetailedOrder } from './../_interfaces/order.interface';
+import { DetailedOrder } from "./../_interfaces/order.interface";
 // "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-    getOrders,
-    getAllOrdersByStatus,
-    getAllOrdersByStatusAndType,
-    getAllOrdersByType,
-    ListDetailedOrderResponse,
-    getDetailedOrderById,
+  getOrders,
+  getAllOrdersByStatus,
+  getAllOrdersByStatusAndType,
+  getAllOrdersByType,
+  ListDetailedOrderResponse,
+  getDetailedOrderByCode,
 } from "../_actions/order.actions";
 import { OrderStatus, OrderType } from "../_interfaces/order.interface";
 
@@ -18,21 +18,24 @@ export type OrdersFilter =
   | { type: "ALL" }
   | { type: "BY_STATUS"; orderStatus: OrderStatus }
   | { type: "BY_TYPE"; orderType: OrderType }
-  | { type: "BY_STATUS_AND_TYPE"; orderStatus: OrderStatus; orderType: OrderType }
-  | { type: "BY_ORDER_NUMBER"; orderId: string, order?: DetailedOrder };
+  | {
+      type: "BY_STATUS_AND_TYPE";
+      orderStatus: OrderStatus;
+      orderType: OrderType;
+    }
+  | { type: "BY_ORDER_NUMBER"; orderCode: string; order?: DetailedOrder };
 
-  
-  export const OrdersFilterType = {
-    ALL: "ALL",
-    BY_STATUS: "BY_STATUS",
-    BY_TYPE: "BY_TYPE",
-    BY_STATUS_AND_TYPE: "BY_STATUS_AND_TYPE",
-    BY_ORDER_NUMBER: "BY_ORDER_NUMBER",
-  }
+export const OrdersFilterType = {
+  ALL: "ALL",
+  BY_STATUS: "BY_STATUS",
+  BY_TYPE: "BY_TYPE",
+  BY_STATUS_AND_TYPE: "BY_STATUS_AND_TYPE",
+  BY_ORDER_NUMBER: "BY_ORDER_NUMBER",
+};
 
-  export type OrdersFilterType = keyof typeof OrdersFilterType;
-  
-  const STOCK_QUERY_KEY = ['orders'] as const;
+export type OrdersFilterType = keyof typeof OrdersFilterType;
+
+const STOCK_QUERY_KEY = ["orders"] as const;
 
 export function useUnifiedOrders() {
   // Filtro por defecto: "ALL" (todos los almacenes)
@@ -40,12 +43,9 @@ export function useUnifiedOrders() {
   const [filter, setFilter] = useState<OrdersFilter>({ type: "ALL" });
   // const [success, setSuccess] = useState(false);
 
-    // Referencia para bloquear la invalidación de caché en el primer render
-    const firstRenderRef = useRef(true);
+  // Referencia para bloquear la invalidación de caché en el primer render
+  const firstRenderRef = useRef(true);
 
-  // const handleNotifications = () => {
-  //     toast.success("Stock filtrado y actualizado correctamente");
-  // }
   // useQuery principal
   const unifiedQuery = useQuery({
     // El queryKey varía según el tipo y parámetros
@@ -64,7 +64,7 @@ export function useUnifiedOrders() {
           }
           case "BY_STATUS": {
             response = await getAllOrdersByStatus({
-                status: filter.orderStatus,
+              status: filter.orderStatus,
             });
             if ("error" in response) {
               toast.error(response.error);
@@ -91,21 +91,21 @@ export function useUnifiedOrders() {
           case "BY_ORDER_NUMBER": {
             if (filter.order) {
               response = [filter.order];
+            } else {
+              const localResponse = await getDetailedOrderByCode(
+                filter.orderCode
+              );
+              if ("error" in localResponse) {
+                response = { error: localResponse.error };
+                toast.error(localResponse.error);
+                break;
+              }
+              response = [localResponse];
             }
-            // response = await getStockByStorageId(filter.storageId);
-            // if ("error" in response) {
-            //   toast.error(response.error);
-            // }
-            const localResponse = await getDetailedOrderById(filter.orderId);
-            if ("error" in localResponse) {
-              response = { error: localResponse.error };
-              toast.error(localResponse.error);
-              break;
-            }
-            response = [localResponse];
+
             break;
           }
-          default:{
+          default: {
             response = await getOrders();
             if ("error" in response) {
               toast.error(response.error);
@@ -119,7 +119,8 @@ export function useUnifiedOrders() {
         // console.log('response', response);
         return response;
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Error desconocido";
+        const message =
+          error instanceof Error ? error.message : "Error desconocido";
         toast.error(message);
         return []; // Retornamos un array vacío si sucede un error
       }
@@ -136,7 +137,7 @@ export function useUnifiedOrders() {
     queryClient
       .invalidateQueries({ queryKey: STOCK_QUERY_KEY })
       .catch(() => toast.error("Error al actualizar"));
-    console.log('filter hook', filter);
+    console.log("filter hook", filter);
   }, [filter, queryClient]);
 
   // Helpers para actualizar el filtro
@@ -149,11 +150,23 @@ export function useUnifiedOrders() {
   function setFilterByType(orderType: OrderType) {
     setFilter({ type: "BY_TYPE", orderType });
   }
-  function setFilterByStatusAndType({orderStatus, orderType}:{orderStatus: OrderStatus, orderType: OrderType}) {
+  function setFilterByStatusAndType({
+    orderStatus,
+    orderType,
+  }: {
+    orderStatus: OrderStatus;
+    orderType: OrderType;
+  }) {
     setFilter({ type: "BY_STATUS_AND_TYPE", orderStatus, orderType });
   }
-  function setFilterByOrderId({orderId, order}:{orderId: string, order?: DetailedOrder}) {
-    setFilter({ type: "BY_ORDER_NUMBER", orderId, order });
+  function setFilterByOrdeCode({
+    orderCode,
+    order,
+  }: {
+    orderCode: string;
+    order?: DetailedOrder;
+  }) {
+    setFilter({ type: "BY_ORDER_NUMBER", orderCode, order });
   }
 
   return {
@@ -166,6 +179,6 @@ export function useUnifiedOrders() {
     setFilterByStatus,
     setFilterByType,
     setFilterByStatusAndType,
-    setFilterByOrderId
+    setFilterByOrdeCode,
   };
 }

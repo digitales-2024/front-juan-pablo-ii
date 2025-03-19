@@ -32,14 +32,6 @@ export function ProductMovementsMetadataTable({
   orderId,
   ...rest
 }: ProductMovementsMetadataTableProps) {
-  // const [selectedStorage, setSelectedStorage] = useState<string | undefined>(undefined);
-
-  // Lista simulada de almacenes - reemplazar con datos reales
-  // const storages = [
-  //   { id: "1", name: "Almacén Principal" },
-  //   { id: "2", name: "Farmacia" },
-  //   { id: "3", name: "Depósito" }
-  // ];
 
   console.log("received metadata: ", data);
   const productsIds = data.map((item) => item.id);
@@ -72,22 +64,6 @@ export function ProductMovementsMetadataTable({
         <CardDescription>Lista de productos facturados</CardDescription>
       </CardHeader>
       <CardContent>
-        {/* <div className="mb-4">
-          <Select onValueChange={setSelectedStorage} value={selectedStorage}>
-            <SelectTrigger className="w-[240px]">
-              <SelectValue placeholder="Seleccionar almacén" />
-            </SelectTrigger>
-            <SelectContent>
-              <ScrollArea className="h-48">
-                {storages.map((storage) => (
-                  <SelectItem key={storage.id} value={storage.id}>
-                    {storage.name}
-                  </SelectItem>
-                ))}
-              </ScrollArea>
-            </SelectContent>
-          </Select>
-        </div> */}
 
         <div className="overflow-x-auto">
           <Table>
@@ -138,11 +114,6 @@ export function ProductMovementsMetadataTable({
                       <TableCell className="text-center">
                         {item.quantity ?? "Cantidad no disponible"}
                       </TableCell>
-                      {/* <TableCell>
-                      {selectedStorage ? 
-                        storages.find(s => s.id === selectedStorage)?.name ?? 'No seleccionado' : 
-                        'No seleccionado'}
-                    </TableCell> */}
                       <TableCell className="text-end">
                         {total.toLocaleString("es-PE", {
                           style: "currency",

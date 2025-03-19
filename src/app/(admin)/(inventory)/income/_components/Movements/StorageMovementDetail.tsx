@@ -30,7 +30,6 @@ export function StorageMovementDetail({storageId, ...rest}: StorageMovementDetai
         return <Button variant={"outline"} disabled>Error</Button>;
     }
   return (
-    // Todo: Falta modificar la relacion con la sede 
     <Popover {...rest}>
       <PopoverTrigger className={cn(buttonVariants({
         variant: "ghost",
@@ -57,10 +56,6 @@ export function StorageMovementDetail({storageId, ...rest}: StorageMovementDetai
                             <TableCell className="font-semibold">Ubicación</TableCell>
                             <TableCell>{oneStorageQuery.data[0].location}</TableCell>
                         </TableRow>}
-                        {/* <TableRow>
-                            <TableCell className="font-medium">Sucursal</TableCell>
-                            <TableCell>{oneStorageQuery.data[0].Branch.name}</TableCell>
-                        </TableRow> */}
                     </TableBody>
                 </Table>
             </CardContent>

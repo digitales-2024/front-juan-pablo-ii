@@ -69,18 +69,6 @@ export function DeactivateIncomingDialog({
     try {
       await mutateAsync(
         { ids },
-        // {
-        //   onSuccess: async () => {
-            
-        //   },
-        //   onError: () => {
-        //     toast.error(
-        //       items.length === 1
-        //         ? `Error al desactivar ${METADATA.entityName}`
-        //         : `Error al desactivar ${METADATA.entityPluralName}`
-        //     );
-        //   },
-        // }
       );
       if (transferenceIds.length > 0) {
         await outgoingDeleteMutation.mutateAsync(

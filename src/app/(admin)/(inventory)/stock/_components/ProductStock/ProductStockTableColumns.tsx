@@ -2,24 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-// import { Badge } from "@/components/ui/badge";
-// import { es } from "date-fns/locale";
-// import { format } from "date-fns";
 import { ProductStock } from "../../_interfaces/stock.interface";
-// import Image from "next/image";
 
-// type ProductStock = {
-//   idProduct: string;
-//   name: string;
-//   unit: string;
-//   price: number;
-//   stock: number;
-//   totalPrice: number;
-// }
-// const STATE_OPTIONS = {
-//   true: "Concretado",
-//   false: "En proceso",
-// };
 export const columns: ColumnDef<ProductStock>[] = [
   {
     accessorKey: "name",
@@ -95,18 +79,4 @@ export const columns: ColumnDef<ProductStock>[] = [
         </span>
     ),
   },
-  // {
-  //   accessorKey: "date",
-  //   id: "Fecha de ingreso",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Fecha de ingreso" />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <span>
-  //       {row.original.date
-  //         ? format(new Date(row.original.date), "PPp", { locale: es })
-  //         : "Fecha no disponible"}
-  //     </span>
-  //   ),
-  // },
 ];

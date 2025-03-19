@@ -1,8 +1,4 @@
 import { CreateMedicalAppointmentBillingDto, CreatePrescriptionBillingLocalDto } from "./../_interfaces/order.interface";
-// interface UpdateOrderVariables {
-//     id: string;
-//     data: UpdateOrderDto;
-//   }
 
 import { BaseApiResponse } from "@/types/api/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -32,15 +28,6 @@ export const useBilling = () => {
       return response;
     },
     onSuccess: async (res) => {
-      // const detailedOrder = await getDetailedOrderById(res.data.id);
-      // if ("error" in detailedOrder) {
-      //   throw new Error(detailedOrder.error);
-      // }
-      // queryClient.setQueryData<DetailedOrder[] | undefined>(
-      //   ["detailed-orders"], (oldOrders) => {
-      //     if (!oldOrders) return detailedOrder;
-      //     return [...oldOrders, ...detailedOrder];
-      // });
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
       toast.success(res.message);
     },
@@ -62,15 +49,6 @@ export const useBilling = () => {
       return response;
     },
     onSuccess: async (res) => {
-      // const detailedOrder = await getDetailedOrderById(res.data.id);
-      // if ("error" in detailedOrder) {
-      //   throw new Error(detailedOrder.error);
-      // }
-      // queryClient.setQueryData<DetailedOrder[] | undefined>(
-      //   ["detailed-orders"], (oldOrders) => {
-      //     if (!oldOrders) return detailedOrder;
-      //     return [...oldOrders, ...detailedOrder];
-      // });
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
       toast.success(res.message);
     },

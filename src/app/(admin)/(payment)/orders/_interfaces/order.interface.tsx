@@ -2,25 +2,6 @@ import { components } from "@/types/api";
 import { Archive, ArrowDownToDot, ArrowUpFromDot, Banknote, CircleX, Divide, DollarSign, Gift, Hourglass, LucideIcon, NotebookPen, PartyPopper, Pill, RefreshCcwDot, RotateCcw, Sliders, Smartphone, StepForward, Stethoscope, TriangleAlert, Undo2, Wallet } from "lucide-react";
 import { z } from "zod";
 
-// Tipos base de la API
-// Order: {
-//   id: string;
-//   code?: string;
-//   type: "MEDICAL_PRESCRIPTION_ORDER" | "MEDICAL_CONSULTATION_ORDER" | "PRODUCT_SALE_ORDER" | "PRODUCT_PURCHASE_ORDER";
-//   movementTypeId: string;
-//   referenceId: string;
-//   sourceId?: string;
-//   targetId?: string;
-//   status: "DRAFT" | "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED" | "REFUNDED" | "REQUIRES_ATTENTION";
-//   currency: string;
-//   subtotal: number;
-//   tax: number;
-//   total: number;
-//   date: string;
-//   notes?: string;
-//   metadata?: Record<string, never>;
-// };
-
 export type Order = components['schemas']['Order'];
 export type DetailedOrderPrototype = components['schemas']['DetailedOrder'];
 export type OrderType = components['schemas']['OrderType'];

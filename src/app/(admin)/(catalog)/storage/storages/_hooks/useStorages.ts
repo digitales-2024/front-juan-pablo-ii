@@ -156,6 +156,8 @@ export const useStorages = () => {
       await queryClient.invalidateQueries({
         queryKey: ["storages"],
       });
+      await queryClient.invalidateQueries({ queryKey: ["products-stock-by-use"] });
+      await queryClient.invalidateQueries({ queryKey: ["products-stock"] });
       toast.success(res.message);
     },
     onError: (error) => {
@@ -193,6 +195,15 @@ export const useStorages = () => {
           );
         }
       );
+      await queryClient.invalidateQueries({
+        queryKey: ["active-storages"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["storages"],
+      });
+      await queryClient.invalidateQueries({ queryKey: ["products-stock-by-use"] });
+      await queryClient.invalidateQueries({ queryKey: ["products-stock"] });
+      toast.success(res.message);
       toast.success("Almacén actualizado exitosamente");
     },
     onError: (error) => {
