@@ -85,40 +85,36 @@ export const useAppointments = () => {
             // CRÍTICO: Esto debe ocurrir antes de cualquier consulta
             setStatusFilter(newStatus);
 
-            // PASO 3: Esperar un breve momento para que React actualice el estado
-            setTimeout(() => {
-                console.log('⚡ useAppointments - Obteniendo datos para el nuevo filtro:', newStatus);
-                // Forzar una nueva consulta con el nuevo estado
-                getAppointmentsByStatus({
-                    status: newStatus,
-                    page: 1,
-                    limit: pagination.limit
-                }).then(response => {
-                    if (response && !response.error && response.data) {
-                        console.log('✨ useAppointments - Datos obtenidos para el filtro', newStatus, ':',
-                            response.data.appointments?.length || 0, 'citas');
+            // PASO 3: Forzar la obtención de datos inmediatamente
+            getAppointmentsByStatus({
+                status: newStatus,
+                page: 1,
+                limit: pagination.limit
+            }).then(response => {
+                if (response && !response.error && response.data) {
+                    console.log('✨ useAppointments - Datos obtenidos para el filtro', newStatus, ':',
+                        response.data.appointments?.length || 0, 'citas');
 
-                        // Almacenar los datos en la caché usando la nueva clave
-                        queryClient.setQueryData(newQueryKey, response.data);
+                    // Almacenar los datos en la caché usando la nueva clave
+                    queryClient.setQueryData(newQueryKey, response.data);
 
-                        // Notificar a React Query que los datos han cambiado
-                        queryClient.invalidateQueries({
-                            queryKey: newQueryKey,
-                            exact: true,
-                            // No ejecutar refetch porque ya tenemos los datos
-                            refetchType: 'none'
-                        });
-                    } else {
-                        console.error('❌ useAppointments - Error al obtener datos para el filtro', newStatus);
-                        // Si hay un error, intentar refetch
-                        queryClient.refetchQueries({
-                            queryKey: newQueryKey,
-                            exact: true,
-                            refetchType: 'active'
-                        });
-                    }
-                });
-            }, 100);
+                    // Notificar a React Query que los datos han cambiado
+                    queryClient.invalidateQueries({
+                        queryKey: newQueryKey,
+                        exact: true,
+                        // Forzar refetch para asegurar que todos los componentes obtengan los datos actualizados
+                        refetchType: 'all'
+                    });
+                } else {
+                    console.error('❌ useAppointments - Error al obtener datos para el filtro', newStatus);
+                    // Si hay un error, intentar refetch
+                    queryClient.refetchQueries({
+                        queryKey: newQueryKey,
+                        exact: true,
+                        refetchType: 'all'
+                    });
+                }
+            });
 
             console.log('🔄 useAppointments - Proceso de cambio de filtro completado:', oldFilter, '➡️', newStatus);
         } else {
@@ -271,7 +267,7 @@ export const useAppointments = () => {
             try {
                 const eventData = {
                     title: `Cita: ${patientName}${patientDni ? `-${patientDni}` : ''} Doctor: ${staffName}`,
-                    color: 'gray',
+                    color: 'amber',
                     type: EventType.CITA,
                     status: EventStatus.PENDING,
                     start: data.start,
