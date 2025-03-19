@@ -57,7 +57,9 @@ export const useAppointments = () => {
     useEffect(() => {
         console.log("🏥 [useAppointments] statusFilter cambió a:", statusFilter);
         // Invalida la consulta cuando el statusFilter cambia
-        queryClient.invalidateQueries({ queryKey: ["appointments-paginated"] });
+        queryClient.invalidateQueries({
+            queryKey: ["appointments-paginated"]
+        });
     }, [statusFilter, queryClient]);
 
     // Log cuando cambia la paginación
@@ -133,7 +135,7 @@ export const useAppointments = () => {
 
     // Query para obtener las citas filtradas por estado
     const appointmentsByStatusQuery = useQuery({
-        queryKey: ["appointments-paginated", pagination.page, pagination.limit],
+        queryKey: ["appointments-paginated", pagination.page, pagination.limit, statusFilter],
         queryFn: async () => {
             console.log("🏥 Ejecutando query appointments-paginated con:", {
                 statusFilter,
@@ -170,7 +172,7 @@ export const useAppointments = () => {
         // Siempre habilitado, ya que "all" es un valor válido
         enabled: true,
         // Cuando statusFilter cambia, queremos que la consulta se ejecute nuevamente
-        refetchOnWindowFocus: false,
+        // refetchOnWindowFocus: false,
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
 

@@ -44,14 +44,14 @@ export const useFilterAppointments = () => {
             setFilterType(AppointmentsFilterType.BY_STATUS);
         }
 
-        // Actualiza el filtro de estado, lo que disparará una nueva consulta
+        // Actualiza el filtro de estado en useAppointments
         setStatusFilter(status);
-        resetPagination(); // Resetear paginación al filtrar
         
-        // Forzar una actualización de la consulta
-        queryClient.invalidateQueries({ 
-            queryKey: ["appointments-paginated"] 
-        });
+        // Resetear paginación al filtrar
+        resetPagination();
+        
+        // No es necesario invalidar la consulta aquí, ya que useAppointments 
+        // ya tiene un useEffect que hace esto cuando cambia statusFilter
     };
 
     // Función para mostrar todas las citas
@@ -61,10 +61,8 @@ export const useFilterAppointments = () => {
         setStatusFilter("all");
         resetPagination(); // Resetear paginación al quitar filtro
         
-        // Forzar una actualización de la consulta
-        queryClient.invalidateQueries({ 
-            queryKey: ["appointments-paginated"] 
-        });
+        // No es necesario invalidar la consulta aquí, ya que useAppointments 
+        // ya tiene un useEffect que hace esto cuando cambia statusFilter
     };
 
     // Usamos la query de appointments-paginated que siempre es la misma,

@@ -13,7 +13,6 @@ import { useEffect } from "react";
 export default function PageAppointments() {
     console.log("🏁 Iniciando PageAppointments");
     const {
-        appointmentsQuery: response,
         appointmentsByStatusQuery,
         statusFilter,
         pagination,
@@ -31,14 +30,7 @@ export default function PageAppointments() {
         console.log("🔄 [useEffect] Datos de appointmentsByStatusQuery:", appointmentsByStatusQuery.data);
     }, [statusFilter, appointmentsByStatusQuery.data]);
 
-    console.log("📊 Estado de la query principal:", {
-        data: response.data?.length,
-        isLoading: response.isLoading,
-        isError: response.isError,
-        error: response.error
-    });
-
-    console.log("�� Estado de la query paginada:", {
+    console.log("📊 Estado de la query paginada:", {
         statusFilter,
         dataLength: appointmentsByStatusQuery.data?.appointments?.length,
         isLoading: appointmentsByStatusQuery.isLoading,

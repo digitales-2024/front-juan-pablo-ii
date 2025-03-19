@@ -119,18 +119,20 @@ export function FilterAppointmentsDialog() {
 
     const onSubmitAllAppointments = useCallback(() => {
         console.log("🔍 Aplicando filtro: Todas las citas");
-        setFilterByStatus("all");
+        setFilterAllAppointments();
+        
         if (appointmentsQuery.isError) {
             toast.error("Error al filtrar las citas");
         } else {
             toast.success("Filtro aplicado: Todas las citas");
             handleClose();
         }
-    }, [setFilterByStatus, appointmentsQuery.isError, handleClose]);
+    }, [setFilterAllAppointments, appointmentsQuery.isError, handleClose]);
 
     const onSubmitStatus = useCallback((input: FilterByStatus) => {
         console.log("🔍 Aplicando filtro por estado:", input.appointmentStatus);
         setFilterByStatus(input.appointmentStatus);
+        
         if (appointmentsQuery.isError) {
             toast.error("Error al filtrar las citas");
         } else {
