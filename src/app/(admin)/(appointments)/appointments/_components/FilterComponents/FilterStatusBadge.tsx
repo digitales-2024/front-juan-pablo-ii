@@ -7,8 +7,10 @@ import { AppointmentStatus, appointmentStatusConfig } from "../../_interfaces/ap
 import { useFilterAppointments } from "../../_hooks/useFilterAppointments";
 import { AppointmentsFilterType } from "../../_interfaces/filter.interface";
 import { cn } from "@/lib/utils";
+import { memo } from "react";
 
-export const FilterStatusBadge = () => {
+// Memoizar el componente para evitar renders innecesarios
+export const FilterStatusBadge = memo(() => {
     const {
         filterType,
         statusFilter,
@@ -49,6 +51,8 @@ export const FilterStatusBadge = () => {
             </div>
         </div>
     );
-};
+});
+
+FilterStatusBadge.displayName = "FilterStatusBadge";
 
 export default FilterStatusBadge; 

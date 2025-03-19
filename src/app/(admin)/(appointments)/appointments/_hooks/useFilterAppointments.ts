@@ -1,14 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useAppointments } from './useAppointments';
+import { useState } from 'react';
+import { useAppointments, APPOINTMENTS_QUERY_KEY } from './useAppointments';
 import { AppointmentsFilterType } from '../_interfaces/filter.interface';
 import { AppointmentStatus } from '../_interfaces/appointments.interface';
-import { useQueryClient } from '@tanstack/react-query';
 
 export const useFilterAppointments = () => {
-    console.log("🔧 Inicializando useFilterAppointments");
-    const queryClient = useQueryClient();
-
     const [filterType, setFilterType] = useState<AppointmentsFilterType>(AppointmentsFilterType.ALL);
+    
     const {
         appointmentsByStatusQuery,
         statusFilter,
@@ -17,15 +14,8 @@ export const useFilterAppointments = () => {
         setPagination
     } = useAppointments();
 
-    // Log cuando cambian los valores importantes
-    useEffect(() => {
-        console.log("🔧 [useFilterAppointments] filterType cambió:", filterType);
-        console.log("🔧 [useFilterAppointments] statusFilter actual:", statusFilter);
-    }, [filterType, statusFilter]);
-
     // Función para resetear la paginación
     const resetPagination = () => {
-        console.log("🔧 Reseteando paginación a página 1");
         setPagination({
             page: 1,
             limit: pagination.limit
@@ -34,49 +24,34 @@ export const useFilterAppointments = () => {
 
     // Función para filtrar por estado
     const setFilterByStatus = (status: AppointmentStatus) => {
-        console.log("🔧 Estableciendo filtro por estado:", status);
-
         if (status === "all") {
-            console.log("🔧 Estado es 'all', estableciendo tipo de filtro a ALL");
             setFilterType(AppointmentsFilterType.ALL);
         } else {
-            console.log("🔧 Estado específico, estableciendo tipo de filtro a BY_STATUS");
             setFilterType(AppointmentsFilterType.BY_STATUS);
         }
 
-        // Actualiza el filtro de estado en useAppointments
-        setStatusFilter(status);
-        
-        // Resetear paginación al filtrar
+        // Resetear paginación al filtrar (antes de cambiar el filtro)
         resetPagination();
         
-        // No es necesario invalidar la consulta aquí, ya que useAppointments 
-        // ya tiene un useEffect que hace esto cuando cambia statusFilter
+        // Actualiza el filtro de estado en useAppointments
+        // Esto provocará que se invalide la query a través del efecto en useAppointments
+        setStatusFilter(status);
     };
 
     // Función para mostrar todas las citas
     const setFilterAllAppointments = () => {
-        console.log("🔧 Estableciendo filtro para mostrar todas las citas");
         setFilterType(AppointmentsFilterType.ALL);
-        setStatusFilter("all");
-        resetPagination(); // Resetear paginación al quitar filtro
         
-        // No es necesario invalidar la consulta aquí, ya que useAppointments 
-        // ya tiene un useEffect que hace esto cuando cambia statusFilter
+        // Resetear paginación al quitar filtro (antes de cambiar el filtro)
+        resetPagination();
+        
+        // Actualiza el filtro de estado en useAppointments
+        // Esto provocará que se invalide la query a través del efecto en useAppointments
+        setStatusFilter("all");
     };
 
-    // Usamos la query de appointments-paginated que siempre es la misma,
-    // solo varía el parámetro de status que se envía en cada consulta
+    // Usamos la query definida en useAppointments
     const activeQuery = appointmentsByStatusQuery;
-
-    // Log del estado actual del query
-    console.log("🔧 Estado actual de activeQuery en useFilterAppointments:", {
-        isLoading: activeQuery.isLoading,
-        isError: activeQuery.isError,
-        dataLength: activeQuery.data?.appointments?.length || 0,
-        filterType,
-        statusFilter
-    });
 
     return {
         filterType,

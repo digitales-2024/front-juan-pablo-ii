@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect, memo } from "react";
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Filter, Info, LoaderCircle } from "lucide-react";
@@ -56,16 +56,15 @@ import { useFilterAppointments } from "../../_hooks/useFilterAppointments";
 import { cn } from "@/lib/utils";
 import { FilterAppointmentsTabCardContent } from "./FilterAppointmentsTabCardContent";
 
-export function FilterAppointmentsDialog() {
-    console.log("🔍 Renderizando FilterAppointmentsDialog");
-
-    const FILTER_DIALOG_MESSAGES = {
+// Memoizar el componente principal
+export const FilterAppointmentsDialog = memo(() => {
+    const FILTER_DIALOG_MESSAGES = useMemo(() => ({
         button: "Opciones de filtrado",
         title: "Filtrar Citas Médicas",
         description: `Escoge una opción para filtrar las citas médicas.`,
         cancel: "Cerrar",
         submitButton: "Aplicar",
-    };
+    }), []);
 
     const TAB_OPTIONS = useMemo(
         () => ({
@@ -94,17 +93,9 @@ export function FilterAppointmentsDialog() {
         setFilterByStatus,
     } = useFilterAppointments();
 
-    console.log("🔍 Estado actual en FilterAppointmentsDialog:", {
-        activeTab,
-        statusFilter,
-        isLoading,
-        queryData: appointmentsQuery.data
-    });
-
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
     const handleClose = useCallback(() => {
-        console.log("🔍 Cerrando diálogo de filtros");
         setOpen(false);
     }, []);
 
@@ -113,39 +104,53 @@ export function FilterAppointmentsDialog() {
     }>({
         resolver: zodResolver(FilterByStatusSchema),
         defaultValues: {
-            appointmentStatus: "all",
+            appointmentStatus: statusFilter === "all" ? "all" : statusFilter,
         },
     });
 
+    // Actualizar el valor del formulario cuando cambia el statusFilter
+    useEffect(() => {
+        filterByStatusForm.setValue("appointmentStatus", statusFilter === "all" ? "all" : statusFilter);
+    }, [statusFilter, filterByStatusForm]);
+
     const onSubmitAllAppointments = useCallback(() => {
-        console.log("🔍 Aplicando filtro: Todas las citas");
-        setFilterAllAppointments();
-        
-        if (appointmentsQuery.isError) {
-            toast.error("Error al filtrar las citas");
+        // Solo aplicar el filtro si no estamos ya en "all"
+        if (statusFilter !== "all") {
+            setFilterAllAppointments();
+            
+            if (appointmentsQuery.isError) {
+                toast.error("Error al filtrar las citas");
+            } else {
+                toast.success("Filtro aplicado: Todas las citas");
+                handleClose();
+            }
         } else {
-            toast.success("Filtro aplicado: Todas las citas");
+            // Si ya estamos en "all", solo cerramos el diálogo
             handleClose();
         }
-    }, [setFilterAllAppointments, appointmentsQuery.isError, handleClose]);
+    }, [setFilterAllAppointments, appointmentsQuery.isError, handleClose, statusFilter]);
 
     const onSubmitStatus = useCallback((input: FilterByStatus) => {
-        console.log("🔍 Aplicando filtro por estado:", input.appointmentStatus);
-        setFilterByStatus(input.appointmentStatus);
-        
-        if (appointmentsQuery.isError) {
-            toast.error("Error al filtrar las citas");
+        // Solo aplicar el filtro si es diferente al actual
+        if (statusFilter !== input.appointmentStatus) {
+            setFilterByStatus(input.appointmentStatus);
+            
+            if (appointmentsQuery.isError) {
+                toast.error("Error al filtrar las citas");
+            } else {
+                // Obtener el nombre legible del estado para el mensaje
+                const statusName = appointmentStatusConfig[input.appointmentStatus]?.name || input.appointmentStatus;
+                toast.success(`Filtro aplicado: Citas en estado ${statusName}`);
+                handleClose();
+            }
         } else {
-            // Obtener el nombre legible del estado para el mensaje
-            const statusName = appointmentStatusConfig[input.appointmentStatus]?.name || input.appointmentStatus;
-            toast.success(`Filtro aplicado: Citas en estado ${statusName}`);
-            filterByStatusForm.reset();
+            // Si ya estamos en el mismo estado, solo cerramos el diálogo
             handleClose();
         }
-    }, [setFilterByStatus, appointmentsQuery.isError, handleClose, filterByStatusForm]);
+    }, [setFilterByStatus, appointmentsQuery.isError, handleClose, statusFilter]);
 
-    // Componentes de UI
-    const DialogFooterContent = () => (
+    // Componentes de UI memoizados
+    const DialogFooterContent = useCallback(() => (
         <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
             <Button
                 type="button"
@@ -156,9 +161,9 @@ export function FilterAppointmentsDialog() {
                 {FILTER_DIALOG_MESSAGES.cancel}
             </Button>
         </div>
-    );
+    ), [handleClose, FILTER_DIALOG_MESSAGES.cancel]);
 
-    const TriggerButton = () => (
+    const TriggerButton = useCallback(() => (
         <Button
             onClick={() => setOpen(true)}
             variant="default"
@@ -169,9 +174,9 @@ export function FilterAppointmentsDialog() {
             <Filter className="mr-2 h-4 w-4" />
             {FILTER_DIALOG_MESSAGES.button}
         </Button>
-    );
+    ), [FILTER_DIALOG_MESSAGES.button]);
 
-    const SubmitButton = ({
+    const SubmitButton = useCallback(({
         type = "submit",
         onClick,
         ...rest
@@ -192,9 +197,9 @@ export function FilterAppointmentsDialog() {
                 FILTER_DIALOG_MESSAGES.submitButton
             )}
         </Button>
-    );
+    ), [isLoading, FILTER_DIALOG_MESSAGES.submitButton]);
 
-    const FilteringTabs = () => (
+    const FilteringTabs = useCallback(() => (
         <div>
             <Tabs
                 defaultValue={TAB_OPTIONS.ALL.value}
@@ -293,7 +298,16 @@ export function FilterAppointmentsDialog() {
                 </FilterAppointmentsTabCardContent>
             </Tabs>
         </div>
-    );
+    ), [
+        TAB_OPTIONS, 
+        activeTab, 
+        setActiveTab, 
+        filterByStatusForm, 
+        onSubmitAllAppointments, 
+        onSubmitStatus, 
+        SubmitButton, 
+        FILTER_DIALOG_MESSAGES
+    ]);
 
     if (isDesktop) {
         return (
@@ -338,4 +352,6 @@ export function FilterAppointmentsDialog() {
             </DrawerContent>
         </Drawer>
     );
-} 
+});
+
+FilterAppointmentsDialog.displayName = "FilterAppointmentsDialog"; 

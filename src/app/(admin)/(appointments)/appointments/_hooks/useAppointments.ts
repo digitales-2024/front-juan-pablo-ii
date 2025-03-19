@@ -41,6 +41,9 @@ interface RescheduleAppointmentVariables {
     data: RescheduleAppointmentDto;
 }
 
+// Definir una constante para la clave de consulta base
+export const APPOINTMENTS_QUERY_KEY = "appointments-paginated";
+
 export const useAppointments = () => {
     console.log("🏥 Inicializando useAppointments");
 
@@ -52,20 +55,6 @@ export const useAppointments = () => {
 
     // Añadir estado para el filtro por estado - inicializar con "all" para mostrar todas las citas por defecto
     const [statusFilter, setStatusFilter] = useState<AppointmentStatus>("all");
-
-    // Log cuando cambia el filtro de estado
-    useEffect(() => {
-        console.log("🏥 [useAppointments] statusFilter cambió a:", statusFilter);
-        // Invalida la consulta cuando el statusFilter cambia
-        queryClient.invalidateQueries({
-            queryKey: ["appointments-paginated"]
-        });
-    }, [statusFilter, queryClient]);
-
-    // Log cuando cambia la paginación
-    useEffect(() => {
-        console.log("🏥 [useAppointments] pagination cambió a:", pagination);
-    }, [pagination]);
 
     const dispatch = useSelectedServicesAppointmentsDispatch();
     const { createMutation: createEventMutation } = useEvents();
@@ -135,7 +124,8 @@ export const useAppointments = () => {
 
     // Query para obtener las citas filtradas por estado
     const appointmentsByStatusQuery = useQuery({
-        queryKey: ["appointments-paginated", pagination.page, pagination.limit, statusFilter],
+        // Usar sólo la constante como clave base, sin incluir los parámetros variables
+        queryKey: [APPOINTMENTS_QUERY_KEY],
         queryFn: async () => {
             console.log("🏥 Ejecutando query appointments-paginated con:", {
                 statusFilter,
@@ -143,7 +133,7 @@ export const useAppointments = () => {
                 limit: pagination.limit
             });
 
-            // Siempre ejecutar la consulta, ya que "all" es un valor válido
+            // Siempre ejecutar la consulta con los parámetros actuales
             const response = await getAppointmentsByStatus({
                 status: statusFilter,
                 page: pagination.page,
@@ -169,23 +159,24 @@ export const useAppointments = () => {
 
             return response.data;
         },
-        // Siempre habilitado, ya que "all" es un valor válido
+        // Siempre habilitado
         enabled: true,
-        // Cuando statusFilter cambia, queremos que la consulta se ejecute nuevamente
-        // refetchOnWindowFocus: false,
+        // No refrescar automáticamente en enfoque de ventana, lo controlaremos manualmente
+        refetchOnWindowFocus: false,
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
-
-    // Log del estado actual de la query principal
+    
+    // Log cuando cambia el filtro de estado o la paginación
+    // Este efecto debe estar DESPUÉS de la definición de la query
     useEffect(() => {
-        if (appointmentsByStatusQuery.data) {
-            console.log("🏥 [useEffect] Datos recibidos en appointmentsByStatusQuery:", {
-                statusFilter,
-                total: appointmentsByStatusQuery.data.total,
-                appointments: appointmentsByStatusQuery.data.appointments?.length || 0
-            });
-        }
-    }, [appointmentsByStatusQuery.data, statusFilter]);
+        // Solo invalidar la query cuando cambien los filtros o paginación,
+        // y no forzar un refetch - React Query se encargará de decidir cuándo refrescar
+        queryClient.invalidateQueries({
+            queryKey: [APPOINTMENTS_QUERY_KEY],
+            // No usar exact: true para permitir que se invaliden todas las queries
+            // que empiezan con este prefijo
+        });
+    }, [statusFilter, pagination.page, pagination.limit, queryClient]);
 
     // Mutación para crear una cita
     const createMutation = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
@@ -253,6 +244,9 @@ export const useAppointments = () => {
             queryClient.setQueryData<Appointment[]>(["appointments"], (oldAppointments) => {
                 if (!oldAppointments) return [res.data];
                 return [...oldAppointments, res.data];
+            });
+            queryClient.invalidateQueries({
+                queryKey: [APPOINTMENTS_QUERY_KEY]
             });
             toast.success(res.message);
         },
@@ -327,7 +321,10 @@ export const useAppointments = () => {
                 if (!oldAppointments) return [res.data];
                 return [...oldAppointments, res.data];
             });
-
+            queryClient.invalidateQueries({
+                queryKey: [APPOINTMENTS_QUERY_KEY]
+            });
+            
             dispatch({
                 type: "append", payload: [{
                     appointmentId: res.data.id,
@@ -359,6 +356,9 @@ export const useAppointments = () => {
                 return oldAppointments.map((appointment) =>
                     appointment.id === res.data.id ? res.data : appointment
                 );
+            });
+            queryClient.invalidateQueries({
+                queryKey: [APPOINTMENTS_QUERY_KEY]
             });
             toast.success("Cita actualizada exitosamente");
         },
@@ -457,6 +457,9 @@ export const useAppointments = () => {
             // Actualizar las citas en la caché
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            queryClient.invalidateQueries({
+                queryKey: [APPOINTMENTS_QUERY_KEY]
+            });
 
             toast.success("Cita cancelada exitosamente");
         },
@@ -483,6 +486,9 @@ export const useAppointments = () => {
             // Actualizar las citas en la caché
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            queryClient.invalidateQueries({
+                queryKey: [APPOINTMENTS_QUERY_KEY]
+            });
 
             toast.success("Cita reembolsada exitosamente");
         },
@@ -509,6 +515,9 @@ export const useAppointments = () => {
             // Actualizar las citas en la caché
             queryClient.invalidateQueries({ queryKey: ["appointments"] });
             queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            queryClient.invalidateQueries({
+                queryKey: [APPOINTMENTS_QUERY_KEY]
+            });
 
             toast.success("Cita reprogramada exitosamente");
         },
