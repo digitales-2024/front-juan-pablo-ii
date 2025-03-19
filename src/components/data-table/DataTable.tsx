@@ -49,6 +49,7 @@ interface DataTableProps<TData, TValue> {
   onRowSelectionChange?: (table: TData[]) => void;
   totalCount?: number;
   manualPagination?: boolean;
+  onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -63,6 +64,7 @@ export function DataTable<TData, TValue>({
   onRowSelectionChange,
   totalCount,
   manualPagination,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -210,6 +212,8 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}
+                  onClick={onRowClick ? () => onRowClick(row.original) : undefined}
                 >
                   {row.getVisibleCells().map((cell) => {
                     const { column } = cell;

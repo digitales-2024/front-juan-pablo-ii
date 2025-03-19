@@ -2,7 +2,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { CalendarEvent, Mode } from '@/app/(admin)/(staff)/schedules/_types/CalendarTypes';
 import { CalendarContext } from './CalendarContext';
-import CalendarNewEventDialog from './dialog/CalendarNewEventDialog';
 import CalendarManageEventDialog from './dialog/CalendarManageEventDialog';
 import { useEvents } from '@/app/(admin)/(staff)/schedules/_hooks/useEvents';
 import { useQueryClient } from '@tanstack/react-query';
@@ -183,7 +182,6 @@ export default function CalendarProvider({
 
   return (
     <CalendarContext.Provider value={contextValue}>
-      <CalendarNewEventDialog />
       <CalendarManageEventDialog />
       {children}
     </CalendarContext.Provider>
