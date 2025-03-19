@@ -9,7 +9,8 @@ import {
     PaginatedAppointmentsResponse,
     CancelAppointmentDto,
     RefundAppointmentDto,
-    RescheduleAppointmentDto
+    RescheduleAppointmentDto,
+    AppointmentStatus
 } from "../_interfaces/appointments.interface";
 import { BaseApiResponse } from "@/types/api/types";
 import { createSafeAction } from '@/utils/createSafeAction';
@@ -28,6 +29,18 @@ const GetAppointmentsSchema = z.object({
 
 // Definir un nuevo esquema para obtener todas las citas
 const GetAllAppointmentsSchema = z.object({
+    page: z.number().optional(),
+    limit: z.number().optional(),
+});
+
+// Definir un nuevo esquema para obtener una cita por ID
+const GetAppointmentByIdSchema = z.object({
+    id: z.string()
+});
+
+// Definir un nuevo esquema para obtener citas por estado
+const GetAppointmentsByStatusSchema = z.object({
+    status: z.enum(['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'RESCHEDULED', 'all']),
     page: z.number().optional(),
     limit: z.number().optional(),
 });
@@ -105,9 +118,85 @@ const getAllAppointmentsHandler = async (data: { page?: number; limit?: number }
     }
 }
 
+// Añadir un nuevo manejador para obtener citas por estado
+const getAppointmentsByStatusHandler = async (data: { status: AppointmentStatus; page?: number; limit?: number }) => {
+    const { status, page = 1, limit = 10 } = data; // Desestructurar y establecer valores predeterminados
+    try {
+        // Construir la URL según el estado
+        let url = '';
+        if (status === 'all') {
+            url = `/appointments/status/all/paginated?page=${page}&limit=${limit}`;
+        } else {
+            url = `/appointments/status/${status}/paginated?page=${page}&limit=${limit}`;
+        }
+        
+        console.log(`🔍 [getAppointmentsByStatusHandler] Haciendo petición a: ${url}`);
+
+        const [response, error] = await http.get<PaginatedAppointmentsResponse>(url);
+
+        if (error) {
+            console.error(`🔍 [getAppointmentsByStatusHandler] Error en la petición:`, error);
+            return {
+                error: typeof error === 'object' && error !== null && 'message' in error
+                    ? String(error.message)
+                    : `Error al obtener citas con estado ${status}`
+            };
+        }
+
+        if (!response) {
+            console.error(`🔍 [getAppointmentsByStatusHandler] Respuesta vacía para estado ${status}`);
+            return { error: 'Respuesta vacía del servidor' };
+        }
+
+        if (!response.appointments || !Array.isArray(response.appointments)) {
+            console.error(`🔍 [getAppointmentsByStatusHandler] Respuesta inválida:`, response);
+            return { error: 'Respuesta inválida del servidor' };
+        }
+
+        console.log(`✅ [getAppointmentsByStatusHandler] Respuesta exitosa para estado ${status}:`, {
+            total: response.total,
+            appointments: response.appointments.length,
+            firstAppointment: response.appointments[0]?.id || "N/A"
+        });
+
+        return { data: response };
+    } catch (error) {
+        console.error(`💥 Error en getAppointmentsByStatusHandler para estado ${status}:`, error);
+        return { error: `Error al obtener citas con estado ${status}` };
+    }
+}
+
 export const getAppointments = await createSafeAction(GetAppointmentsSchema, getAppointmentsHandler);
 export const getActiveAppointments = await createSafeAction(GetAppointmentsSchema, getActiveAppointmentsHandler);
 export const getAllAppointments = await createSafeAction(GetAllAppointmentsSchema, getAllAppointmentsHandler);
+export const getAppointmentsByStatus = await createSafeAction(GetAppointmentsByStatusSchema, getAppointmentsByStatusHandler);
+
+// Agregar una acción para obtener una cita por ID
+const getAppointmentByIdHandler = async (data: { id: string }) => {
+    try {
+        const { id } = data;
+        const [appointment, error] = await http.get<Appointment>(`/appointments/${id}`);
+
+        if (error) {
+            return {
+                error: typeof error === 'object' && error !== null && 'message' in error
+                    ? String(error.message)
+                    : 'Error al obtener la cita médica'
+            };
+        }
+
+        if (!appointment) {
+            return { error: 'Cita médica no encontrada' };
+        }
+
+        return { data: appointment };
+    } catch (error) {
+        console.error("💥 Error en getAppointmentByIdHandler:", error);
+        return { error: "Error al obtener la cita médica" };
+    }
+}
+
+export const getAppointmentById = await createSafeAction(GetAppointmentByIdSchema, getAppointmentByIdHandler);
 
 export async function createAppointment(
     data: CreateAppointmentDto

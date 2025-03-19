@@ -19,11 +19,6 @@ export type ListOutgoingResponse = Outgoing[] | { error: string };
 export type ListDetailedOutgoingResponse = DetailedOutgoing[] | { error: string };
 export type ListUpdatedDetailedOutgoingResponse = BaseApiResponse<DetailedOutgoing[]> | { error: string };
 
-// export type ProductResponse = BaseApiResponse<Product> | { error: string };
-// export type DetailedProductResponse = BaseApiResponse<DetailedProduct> | { error: string };
-// export type ListProductResponse = Product[] | { error: string };
-// export type ListDetailedProductResponse = DetailedProduct[] | { error: string };
-
 const GetProductSchema = z.object({});
 
 // const GetProductByIdSchema = z.string();

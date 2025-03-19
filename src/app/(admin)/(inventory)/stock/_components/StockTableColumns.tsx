@@ -3,45 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { type StockByStorage as Stock } from "../_interfaces/stock.interface";
-// import { format } from "date-fns";
-// import { es } from "date-fns/locale";
-// import { Badge } from "@/components/ui/badge";
-// import { UpdateProductSheet } from "./UpdateProductSheet";
-import { Button } from "@/components/ui/button";
-import { Ellipsis} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  // DropdownMenuItem,
-  // DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-// import { useEffect, useState } from "react";
-// import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-// import { ReactivateProductDialog } from "./ReactivateProductDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-// import { DeactivateProductDialog } from "./DeactivateProductDialog";
 import { ShowProductStockDialog } from "./ProductStock/ShowProductStockDialog";
-// import Image from "next/image";
 
-// {
-//   "idStorage": "61de3a1b-9538-48a0-8cdc-62edafcef760",
-//   "name": "Almacen medicamentos",
-//   "location": "JLBR",
-//   "address": "Urb La rivera E-18, JLBR",
-//   "staff": "Juan",
-//   "description": "",
-//   "stock": [
-//     {
-//       "idProduct": "397d68a1-cb47-4402-9546-0ab7b57ec93f",
-//       "name": "escitalopram",
-//       "unit": "blister",
-//       "price": 150,
-//       "stock": 7,
-//       "totalPrice": 1050
-//     }
-//   ]
-// }
 
 export const columns: ColumnDef<Stock>[] = [
   {
@@ -198,88 +162,88 @@ export const columns: ColumnDef<Stock>[] = [
   //   cell: ({ row }) =>
   //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
   // },
-  {
-    accessorKey: "actions",
-    id: "Acciones",
-    size: 10,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Acciones" />
-    ),
-    cell: function Cell({ row }) {
-      // const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-      // const [showReactivateDialog, setShowReactivateDialog] = useState(false);
-      // const [showEditSheet, setShowEditSheet] = useState(false);
-      // const product = row.original;
-      // const { isActive } = product;
-      //const isSuperAdmin = true;
+  // {
+  //   accessorKey: "actions",
+  //   id: "Acciones",
+  //   size: 10,
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Acciones" />
+  //   ),
+  //   cell: function Cell({ row }) {
+  //     // const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  //     // const [showReactivateDialog, setShowReactivateDialog] = useState(false);
+  //     // const [showEditSheet, setShowEditSheet] = useState(false);
+  //     // const product = row.original;
+  //     // const { isActive } = product;
+  //     //const isSuperAdmin = true;
 
-      return (
-        <div>
-          {/* <div>
-            <UpdateProductSheet
-              product={product}
-              open={showEditSheet}
-              onOpenChange={setShowEditSheet}
-              showTrigger={false}
-            />
-            <DeactivateProductDialog
-              product={product}
-              open={showDeleteDialog}
-              onOpenChange={setShowDeleteDialog}
-              showTrigger={false}
-            />
-            <ReactivateProductDialog
-              product={product}
-              open={showReactivateDialog}
-              onOpenChange={setShowReactivateDialog}
-              showTrigger={false}
-            />
-          </div> */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="Open menu"
-                variant="ghost"
-                className="flex size-8 p-0 data-[state=open]:bg-muted"
-              >
-                <Ellipsis className="size-4" aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              {/* <DropdownMenuItem 
-                onSelect={() => setShowEditSheet(true)}
-                disabled={!isActive}
-              >
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {isSuperAdmin && (
-                <DropdownMenuItem
-                  onSelect={() => setShowReactivateDialog(true)}
-                  disabled={isActive}
-                >
-                  Reactivar
-                  <DropdownMenuShortcut>
-                    <RefreshCcwDot className="size-4" aria-hidden="true" />
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem
-                onSelect={() => setShowDeleteDialog(true)}
-                disabled={!isActive}
-              >
-                Eliminar
-                <DropdownMenuShortcut>
-                  <Trash className="size-4" aria-hidden="true" />
-                </DropdownMenuShortcut>
-              </DropdownMenuItem> */}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-    enablePinning: true,
-  },
+  //     return (
+  //       <div>
+  //         <div>
+  //           <UpdateProductSheet
+  //             product={product}
+  //             open={showEditSheet}
+  //             onOpenChange={setShowEditSheet}
+  //             showTrigger={false}
+  //           />
+  //           <DeactivateProductDialog
+  //             product={product}
+  //             open={showDeleteDialog}
+  //             onOpenChange={setShowDeleteDialog}
+  //             showTrigger={false}
+  //           />
+  //           <ReactivateProductDialog
+  //             product={product}
+  //             open={showReactivateDialog}
+  //             onOpenChange={setShowReactivateDialog}
+  //             showTrigger={false}
+  //           />
+  //         </div>
+  //         <DropdownMenu>
+  //           <DropdownMenuTrigger asChild>
+  //             <Button
+  //               aria-label="Open menu"
+  //               variant="ghost"
+  //               className="flex size-8 p-0 data-[state=open]:bg-muted"
+  //             >
+  //               <Ellipsis className="size-4" aria-hidden="true" />
+  //             </Button>
+  //           </DropdownMenuTrigger>
+  //           <DropdownMenuContent align="end" className="w-40">
+  //             {/* <DropdownMenuItem 
+  //               onSelect={() => setShowEditSheet(true)}
+  //               disabled={!isActive}
+  //             >
+  //               Editar
+  //             </DropdownMenuItem>
+  //             <DropdownMenuSeparator />
+  //             {isSuperAdmin && (
+  //               <DropdownMenuItem
+  //                 onSelect={() => setShowReactivateDialog(true)}
+  //                 disabled={isActive}
+  //               >
+  //                 Reactivar
+  //                 <DropdownMenuShortcut>
+  //                   <RefreshCcwDot className="size-4" aria-hidden="true" />
+  //                 </DropdownMenuShortcut>
+  //               </DropdownMenuItem>
+  //             )}
+  //             <DropdownMenuItem
+  //               onSelect={() => setShowDeleteDialog(true)}
+  //               disabled={!isActive}
+  //             >
+  //               Eliminar
+  //               <DropdownMenuShortcut>
+  //                 <Trash className="size-4" aria-hidden="true" />
+  //               </DropdownMenuShortcut>
+  //             </DropdownMenuItem> */}
+  //           </DropdownMenuContent>
+  //         </DropdownMenu>
+  //       </div>
+  //     );
+  //   },
+  //   enableSorting: false,
+  //   enableHiding: false,
+  //   enablePinning: true,
+  // },
 ];

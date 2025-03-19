@@ -6,12 +6,6 @@ import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHe
 // import { format } from "date-fns";
 // import { es } from "date-fns/locale";
 // import { UpdateOutgoingSheet } from "./UpdateOutgoingSheet";
-import { Button } from "@/components/ui/button";
-import { Ellipsis } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 // import { ReactivateOutgoingDialog } from "./ReactivateOutgoingDialog";
 // import { DeactivateOutgoingDialog } from "./DeactivateOutgoingDialog";
@@ -136,93 +130,4 @@ export const columns: ColumnDef<OutgoingProductStock>[] = [
   //     </div>
   //   ),
   // },
-  {
-    id: "Acciones",
-    accessorKey: "actions",
-    size: 10,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Acciones" />
-    ),
-    cell: function Cell({ row }) {
-      // const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-      // const [showReactivateDialog, setShowReactivateDialog] = useState(false);
-      // const [showEditSheet, setShowEditSheet] = useState(false);
-      // const {} = useProductStockById(row.original.Movement)
-      // const productExistent: OutgoingProducStockForm = 
-      // const outgoing = row.original;
-      // const { isActive } = outgoing;
-      return (
-        <div>
-          {/* <div>
-            {showEditSheet && (
-              <UpdateOutgoingSheet
-                outgoing={outgoing}
-                open={showEditSheet}
-                onOpenChange={setShowEditSheet}
-                showTrigger={false}
-              />
-            )}
-            {showDeleteDialog && (
-              <DeactivateOutgoingDialog
-                outgoing={outgoing}
-                open={showDeleteDialog}
-                onOpenChange={setShowDeleteDialog}
-                showTrigger={false}
-              />
-            )}
-            {showReactivateDialog && (
-              <ReactivateOutgoingDialog
-                outgoing={outgoing}
-                open={showReactivateDialog}
-                onOpenChange={setShowReactivateDialog}
-              />
-            )}
-          </div> */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="Open menu"
-                variant="ghost"
-                className="flex size-8 p-0 data-[state=open]:bg-muted"
-              >
-                <Ellipsis className="size-4" aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            {/* <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onSelect={() => setShowEditSheet(true)}
-                disabled={!isActive}
-              >
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {isSuperAdmin && (
-                <DropdownMenuItem
-                  onSelect={() => setShowReactivateDialog(true)}
-                  disabled={isActive}
-                >
-                  Reactivar
-                  <DropdownMenuShortcut>
-                    <RefreshCcwDot className="size-4" aria-hidden="true" />
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem
-                onSelect={() => setShowDeleteDialog(true)}
-                disabled={!isActive}
-              >
-                Eliminar
-                <DropdownMenuShortcut>
-                  <Trash className="size-4" aria-hidden="true" />
-                </DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </DropdownMenuContent> */}
-          </DropdownMenu>
-        </div>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-    enablePinning: true,
-  },
 ];

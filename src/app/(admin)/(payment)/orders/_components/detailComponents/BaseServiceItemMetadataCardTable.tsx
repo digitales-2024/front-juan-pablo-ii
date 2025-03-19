@@ -81,14 +81,6 @@ export function BaseServiceItemMetadataCardTable({
                 </TableRow>
               ) : (
                 data.map((item, index) => {
-                  // const serviceData = servicesQuery.data?.find(
-                  //   (service) => service.id === item.id
-                  // );
-                  // console.log('serviceData query', servicesQuery.data);
-                  // console.log('serviceData', serviceData);
-                  // console.log('service id', item.id);
-                  // console.log('service id comparison', serviceData?.id === item.id);
-                  // const servicePrice = serviceData?.price ?? 0;
                   const total = isNaN(item.servicePrice * (item.quantity ?? 0))
                     ? 0
                     : item.servicePrice * (item.quantity ?? 0);
@@ -101,7 +93,7 @@ export function BaseServiceItemMetadataCardTable({
                       <TableCell className="text-center">
                         {item.servicePrice ?? "---"}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-end">
                         {total.toLocaleString("es-PE", {
                           style: "currency",
                           currency: "PEN",
@@ -125,7 +117,7 @@ export function BaseServiceItemMetadataCardTable({
                     )}
                   </TableCell>
                   <TableCell></TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-end">
                     {data
                       .reduce(
                         (total, item) =>

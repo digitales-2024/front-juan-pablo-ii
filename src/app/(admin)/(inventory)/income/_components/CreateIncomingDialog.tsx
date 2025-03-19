@@ -95,28 +95,7 @@ export function CreateIncomingDialog() {
   }, [open, handleClearProductList]);
 
   function handleSubmit(input: CreateIncomeInput) {
-    // console.log('Input received', input);
-    // console.log('Ingresando a handdle submit',createMutation.isPending, isCreatePending);
     if (createMutation.isPending || isCreatePending) return;
-
-  //   {
-  //     "name": "INgreso regulacion",
-  //     "storageId": "61de3a1b-9538-48a0-8cdc-62edafcef760",
-  //     "date": "2025-02-11",
-  //     "state": true,
-  //     "description": "",
-  //     "referenceId": "",
-  //     "movement": [
-  //         {
-  //             "productId": "4d42f81a-2d5f-4bc5-8ad1-992c6a537934",
-  //             "quantity": 4
-  //         },
-  //         {
-  //             "productId": "397d68a1-cb47-4402-9546-0ab7b57ec93f",
-  //             "quantity": 2
-  //         }
-  //     ]
-  // }
 
     startCreateTransition(() => {
       createMutation.mutate(input, {
@@ -227,7 +206,6 @@ export function CreateIncomingDialog() {
 
 
 function DevelopmentZodError({ form }: { form: UseFormReturn<CreateIncomeInput> }) {
-  console.log('Ingresando a DevelopmentZodError', process.env.NEXT_PUBLIC_ENV);
   if (process.env.NEXT_PUBLIC_ENV !== "development") return null;
   const [errors, setErrors] = useState<FieldErrors<CreateIncomeInput>>({});
   useEffect(() => {

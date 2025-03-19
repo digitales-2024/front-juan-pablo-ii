@@ -89,7 +89,7 @@ export const columns: ColumnDef<MedicalHistory>[] = [
       title: "Dni",
     },
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Dni" />
+      <DataTableColumnHeader column={column} title="Nro. Documento" />
     ),
   },
   {

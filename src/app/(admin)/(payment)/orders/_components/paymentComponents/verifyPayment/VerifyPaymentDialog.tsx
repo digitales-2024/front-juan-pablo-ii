@@ -72,8 +72,12 @@ export function VerifyPaymentDialog({
   const form = useForm<VerifyPaymentInput>({
     resolver: zodResolver(verifyPaymentSchema),
     defaultValues: {
-      verificationNotes: undefined,
-      verifiedAt: undefined,
+      verificationNotes: "Pago conforme",
+      verifiedAt: (() => {
+        return new Date().toLocaleDateString("en-CA", {
+          timeZone: "America/Lima",
+        });
+      })(),
     },
   });
 

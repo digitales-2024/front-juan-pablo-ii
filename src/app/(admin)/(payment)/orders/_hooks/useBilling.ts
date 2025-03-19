@@ -1,8 +1,4 @@
 import { CreateMedicalAppointmentBillingDto, CreatePrescriptionBillingLocalDto } from "./../_interfaces/order.interface";
-// interface UpdateOrderVariables {
-//     id: string;
-//     data: UpdateOrderDto;
-//   }
 
 import { BaseApiResponse } from "@/types/api/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -16,8 +12,10 @@ import {
   createProductSaleOrder,
 } from "../_actions/billing.actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const useBilling = () => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const createSaleOrderMutation = useMutation<
     BaseApiResponse<Order>,
@@ -32,15 +30,6 @@ export const useBilling = () => {
       return response;
     },
     onSuccess: async (res) => {
-      // const detailedOrder = await getDetailedOrderById(res.data.id);
-      // if ("error" in detailedOrder) {
-      //   throw new Error(detailedOrder.error);
-      // }
-      // queryClient.setQueryData<DetailedOrder[] | undefined>(
-      //   ["detailed-orders"], (oldOrders) => {
-      //     if (!oldOrders) return detailedOrder;
-      //     return [...oldOrders, ...detailedOrder];
-      // });
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
       toast.success(res.message);
     },
@@ -62,17 +51,15 @@ export const useBilling = () => {
       return response;
     },
     onSuccess: async (res) => {
-      // const detailedOrder = await getDetailedOrderById(res.data.id);
-      // if ("error" in detailedOrder) {
-      //   throw new Error(detailedOrder.error);
-      // }
-      // queryClient.setQueryData<DetailedOrder[] | undefined>(
-      //   ["detailed-orders"], (oldOrders) => {
-      //     if (!oldOrders) return detailedOrder;
-      //     return [...oldOrders, ...detailedOrder];
-      // });
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
-      toast.success(res.message);
+      toast.success(res.message, {
+        action: {
+          label: "Ir a órdenes",
+          onClick: () => {
+            router.push("/orders");
+          },
+        }
+      });
     },
     onError: (error) => {
       toast.error(error.message);

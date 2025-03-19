@@ -2,6 +2,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
+import { v4 as uuidv4 } from 'uuid';
 import {
   Form,
   FormControl,
@@ -87,6 +88,7 @@ interface CreatePrescriptionOrderFormProps
   onDialogClose?: () => void;
   onProductsSaved: () => void;
   onServicesSaved: () => void;
+  // openFromParent: boolean;
   // onSaveProductPending : () => void;
   // onSabeServicesPending : () => void;
 }
@@ -101,6 +103,7 @@ type ServiceItem = ServiceSaleItemDto & {
   isEditing: boolean;
   hasChanges: boolean;
   selected: boolean;
+  uniqueIdentifier: string;
 };
 
 export function CreatePrescriptionOrderForm({
@@ -114,12 +117,14 @@ export function CreatePrescriptionOrderForm({
   serviceDataQuery,
   onProductsSaved,
   onServicesSaved,
-}: CreatePrescriptionOrderFormProps) {
+}: // openFromParent,
+CreatePrescriptionOrderFormProps) {
   const IGV = 0.18;
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
   // Flags de referencia para evitar bucles
   const didInitializeRef = useRef(false);
+  // const prevOpenFromParent = useRef(openFromParent);
   const isCalculatingProductsRef = useRef(false);
   const isCalculatingServicesRef = useRef(false);
 
@@ -180,8 +185,20 @@ export function CreatePrescriptionOrderForm({
     useSelectedServicesAppointments();
   const dispatch = useSelectedServicesAppointmentsDispatch();
 
+  // useEffect(() => {
+  //   // Solo ejecutar cuando openFromParent cambia de false a true
+  //   if (openFromParent && !prevOpenFromParent.current) {
+  //     didInitializeRef.current = false; // Forzar reinicialización
+  //   }
+
+  //   // Actualizar referencia del estado anterior
+  //   prevOpenFromParent.current = openFromParent;
+  // }, [openFromParent]);
+
   // Inicializar datos locales desde el formulario
   useEffect(() => {
+    // Solo ejecutar cuando el diálogo está abierto
+    // if (!openFromParent) return;
     // Solo cargar datos una vez
     if (didInitializeRef.current) return;
 
@@ -204,10 +221,10 @@ export function CreatePrescriptionOrderForm({
         isEditing: false,
         hasChanges: false,
         selected: false,
+        uniqueIdentifier: uuidv4(),
       }))
     );
 
-    //Limpiar la data
     form.setValue("products", []);
     form.setValue("services", []);
 
@@ -215,6 +232,16 @@ export function CreatePrescriptionOrderForm({
     // Calcular totales iniciales
     setTimeout(() => calculateProductTotals(), 100);
   }, [form]);
+
+  // // Efecto de limpieza al cerrar
+  // useEffect(() => {
+  //   if (!openFromParent) {
+  //     // Resetear estados locales
+  //     setProductTableFormData([]);
+  //     setServicesTableFormData([]);
+  //     didInitializeRef.current = false;
+  //   }
+  // }, [openFromParent]);
 
   //Mapeo de datos de productos
   const orderProductsDataMap = useMemo(() => {
@@ -398,7 +425,7 @@ export function CreatePrescriptionOrderForm({
     setServicesTableFormData((prev) => {
       const updated = prev.map((item) => {
         const appointmentReference = selectedServicesAppointmentsData.data.find(
-          (s) => s.serviceId === item.serviceId
+          (s) => (s.serviceId === item.serviceId) && (s.uniqueIdentifier === item.uniqueIdentifier)
         );
         const hasMadeAppointment = !!appointmentReference;
 
@@ -425,7 +452,8 @@ export function CreatePrescriptionOrderForm({
     // no cada vez que cualquier propiedad interna cambie
     handleSomeAppointmentCreated();
   }, [
-    selectedServicesAppointmentsData.data.length,
+    selectedServicesAppointmentsData.data,
+    //selectedServicesAppointmentsData.data.length,
     handleSomeAppointmentCreated,
   ]);
 
@@ -529,6 +557,21 @@ export function CreatePrescriptionOrderForm({
     []
   );
 
+  const handleUncheckOneProduct = useCallback((index: number) => {
+    setProductTableFormData((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        selected: false,
+        hasChanges: true,
+      };
+      return updated;
+    });
+
+    // Recalcular totales después de cambiar cantidad
+    setTimeout(() => calculateProductTotals(), 10);
+  }, []);
+
   // Guardar solo los productos seleccionados al formulario
   const handleSaveProducts = useCallback(() => {
     // Filtrar solo los productos seleccionados
@@ -558,132 +601,6 @@ export function CreatePrescriptionOrderForm({
   useEffect(() => {
     console.log("form watch", form.getValues("products"));
   }, [form, didInitializeRef, showProductFields, handleSaveProducts]);
-
-  // Inicialización de productos (solo una vez)
-  // const syncProducts = useCallback(() => {
-  //   if(showProductFields && !isStockPending) {
-  //     const stockParams = fields.map((field) => ({
-  //       productId: field.productId,
-  //       storageId: ,
-  //     }));
-  //     productsStockRef.current = stockParams;
-  //     // getProductStockByStorage(stockParams).then((response) => {
-  //     //   setProductsStock(response);
-  //     // });
-  //     // Usar una referencia para evitar múltiples inicializaciones
-  //     if (didInitializeRef.current) return;
-  //     didInitializeRef.current = true;
-
-  //     // Limpiar fields existentes
-  //     handleCleanProducts();
-
-  //     // Añadir productos originales de la receta
-  //     originalProducts.forEach((product) => {
-  //       if (product.id) {
-  //         append({
-  //           productId: product.id,
-  //           quantity: product.quantity ?? 1,
-  //           storageId:
-  //         });
-  //       }
-  //     });
-
-  //     // // Agregar productos seleccionados que no están en la receta
-  //     // selectedProducts
-  //     //   .filter((product) => !orginalProductsIds.includes(product.id))
-  //     //   .forEach((product) => {
-  //     //     append({
-  //     //       productId: product.id,
-  //     //       quantity: 1,
-  //     //     });
-  //     //   });
-
-  //     // Calcular totales iniciales después de una pequeña espera
-  //     setTimeout(() => calculateTotalsWithDebounce(), 500);
-  //   }
-  // }, [
-  //   append,
-  //   remove,
-  //   originalProducts,
-  //   // showProductFields,
-  //   // selectedProducts,
-  //   orginalProductsIds,
-  //   calculateTotalsWithDebounce,
-  // ]);
-
-  // useEffect(() => {
-  //   syncProducts();
-  // }, [syncProducts, showProductFields]);
-
-  // useEffect(()=>{
-  //   if (!showProductFields) {
-  //     handleCleanProducts();
-  //   }
-  // }, [showProductFields])
-
-  // const handleCleanProducts = useCallback(() => {
-  //   remove();
-  //   setProductTotals({
-  //     total: 0,
-  //     totalIGV: 0,
-  //     totalSubtotal: 0,
-  //     totalQuantity: 0,
-  //     totalProducts: 0,
-  //   });
-  //   setShowProductTotals(false);
-  // }, [remove]);
-
-  // Manejar eliminación de productos
-  // const handleRemoveProduct = useCallback(
-  //   (index: number) => {
-  //     // Limpiar estado global
-  //     // if (fields[index]) {
-  //     //   dispatch({
-  //     //     type: "remove",
-  //     //     payload: { productId: fields[index].productId },
-  //     //   });
-  //     // }
-
-  //     // Quitar del formulario
-  //     remove(index);
-
-  //     // Recalcular automáticamente los totales
-  //     calculateTotalsWithDebounce();
-  //   },
-  //   [fields, remove, calculateTotalsWithDebounce]
-  // );
-
-  // // Efecto para recalcular cuando cambian los productos o sus cantidades
-  // useEffect(() => {
-  //   // Solo calcular si ya se inicializó y no estamos editando activamente
-  //   if (didInitializeRef.current && editingIndex === null) {
-  //     calculateTotalsWithDebounce();
-  //   }
-  // }, [watchFieldArray, calculateTotalsWithDebounce, editingIndex]);
-
-  // // Efecto para recalcular cuando cambia el almacén
-  // useEffect(() => {
-  //   if (didInitializeRef.current && showProductFields) {
-  //     calculateTotalsWithDebounce();
-  //   }
-  // }, [storageSafeWatch, showProductFields, calculateTotalsWithDebounce]);
-
-  // // Efecto de limpieza
-  // useEffect(() => {
-  //   return () => {
-  //     if (updateTimeoutRef.current) {
-  //       clearTimeout(updateTimeoutRef.current);
-  //     }
-  //   };
-  // }, []);
-
-  // // Error handling - sin efectos secundarios
-  // useEffect(() => {
-  //   const hasError = productsQueries.some((q) => q.isError);
-  //   if (hasError) {
-  //     toast.error("Error al obtener los productos", { id: "product-error" });
-  //   }
-  // }, [productsQueries]);
 
   // Verificación de carga
   const isLoading =
@@ -811,7 +728,7 @@ export function CreatePrescriptionOrderForm({
       variant={"outline"}
       onClick={handleSaveProducts}
       disabled={!productTableFormData.some((p) => p.hasChanges)}
-      className="ml-auto bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary"
+      className="ml-auto mt-2 bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary"
     >
       <Save className="mr-2 h-4 w-4" />
       Guardar cambios
@@ -972,7 +889,7 @@ export function CreatePrescriptionOrderForm({
 
                         return (
                           <TableRow
-                            key={field.serviceId ?? index}
+                            key={field?.serviceId ? field.serviceId+index : index}
                             className="animate-fade-down"
                           >
                             {/* <TableCell className="flex justify-center items-center">
@@ -1083,6 +1000,7 @@ export function CreatePrescriptionOrderForm({
                               </Button> */}
 
                               <CreateAppointmentDialog
+                                uniqueIdentifier={field.uniqueIdentifier}
                                 className="bg-secondary-foreground/10 text-secondary-foreground hover:bg-secondary-foreground/20 hover:text-secondary-foreground"
                                 patientId={prescription.patientId}
                                 serviceId={field.serviceId}
@@ -1201,9 +1119,89 @@ export function CreatePrescriptionOrderForm({
                             (p) => p.id === field.productId
                           ) ?? {};
                         const price = safeData.precio ?? 0;
-                        const stockStorage = safeData.Stock?.find(
-                          (stock) => stock.Storage.id === field.storageId
-                        );
+                        const stockStorage =
+                          safeData.Stock?.find(
+                            (stock) => stock.Storage?.id === field.storageId
+                          ) ?? null;
+
+                        if (!stockStorage) {
+                          // handleUncheckOneProduct(index);
+                          return (
+                            <TableRow
+                              key={field?.productId ? field.productId+index : index}
+                              className="animate-fade-down"
+                            >
+                              <TableCell>
+                                <Checkbox
+                                  checked={field.selected}
+                                  onCheckedChange={() =>
+                                    handleToggleProductSelection(index)
+                                  }
+                                  disabled={true}
+                                  aria-label="Seleccionar producto"
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <FormItem>
+                                  <div>
+                                    <span>
+                                      {safeData.name ?? "Desconocido"}
+                                    </span>
+                                  </div>
+                                </FormItem>
+                              </TableCell>
+                              <TableCell>
+                                <FormItem>
+                                  <Select
+                                    value={field.storageId}
+                                    onValueChange={(value) =>
+                                      handleEditProduct(index, {
+                                        storageId: value,
+                                      })
+                                    }
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Seleccionar almacén" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      {storageOptions.map((storage) => (
+                                        <SelectItem
+                                          key={storage.value}
+                                          value={storage.value}
+                                        >
+                                          {storage.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </FormItem>
+                              </TableCell>
+                              <TableCell>
+                                <FormItem>
+                                  <Input
+                                    disabled={true}
+                                    type="number"
+                                    className={cn(
+                                      "text-center",
+                                      "text-muted-foreground"
+                                    )}
+                                    value={0}
+                                    placeholder="0"
+                                  />
+                                  <FormDescription>
+                                    Cambie de almacén
+                                  </FormDescription>
+                                </FormItem>
+                              </TableCell>
+                              <TableCell colSpan={5} className="text-center">
+                                No existe stock para este producto:{` "${safeData.name}" `}
+                                 en este almacén
+                              </TableCell>
+                            </TableRow>
+                          );
+                        }
 
                         const dynamicStock = isNaN(
                           (stockStorage?.stock ?? 0) - (field.quantity ?? 0)
@@ -1250,6 +1248,19 @@ export function CreatePrescriptionOrderForm({
                         // console.log("product", safeData);
                         // console.log("productId", field.productId);
 
+                        const allStoragesStock = safeData.Stock?.reduce(
+                          (acc, stock) => {
+                            return acc + stock.stock;
+                          },
+                          0
+                        );
+                        const safeAllStoragesStock = !allStoragesStock
+                          ? 0
+                          : allStoragesStock;
+                        const hasNoStockAnywhere = safeAllStoragesStock <= 0;
+
+                        const currentStockStorage = stockStorage?.stock ?? 0;
+
                         return (
                           <TableRow
                             key={field.productId ?? index}
@@ -1258,25 +1269,15 @@ export function CreatePrescriptionOrderForm({
                               !field.selected ? "opacity-60 bg-muted/40" : ""
                             )}
                           >
-                            {/* <TableCell className="flex justify-center items-center">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                className="hover:bg-destructive hover:text-white"
-                                size="sm"
-                                onClick={() => handleRemoveProduct(index)}
-                              >
-                                <Trash2 className="mr-1 size-4" />
-                                Eliminar
-                              </Button>
-                            </TableCell> */}
                             <TableCell>
                               <Checkbox
                                 checked={field.selected}
                                 onCheckedChange={() =>
                                   handleToggleProductSelection(index)
                                 }
-                                disabled={wereProductsSaved}
+                                disabled={
+                                  wereProductsSaved || hasNoStockAnywhere
+                                }
                                 aria-label="Seleccionar producto"
                               />
                             </TableCell>
@@ -1285,45 +1286,9 @@ export function CreatePrescriptionOrderForm({
                                 <div>
                                   <span>{safeData.name ?? "Desconocido"}</span>
                                 </div>
-                                {/* <Input
-                                  disabled
-                                  {...register(
-                                    `products.${index}.productId` as const
-                                  )}
-                                  type="hidden"
-                                /> */}
                               </FormItem>
                             </TableCell>
                             <TableCell>
-                              {/* <FormItem>
-                                <FormField
-                                  control={form.control}
-                                  name={`products.${index}.storageId`}
-                                  render={({ field }) => (
-                                    <Select
-                                      onValueChange={field.onChange}
-                                      value={field.value}
-                                    >
-                                      <FormControl>
-                                        <SelectTrigger className="w-full">
-                                          <SelectValue placeholder="Seleccionar almacén" />
-                                        </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                        {storageOptions.map((storage) => (
-                                          <SelectItem
-                                            key={storage.value}
-                                            value={storage.value}
-                                          >
-                                            {storage.label}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  )}
-                                />
-                                <FormMessage />
-                              </FormItem> */}
                               <FormItem>
                                 <Select
                                   value={field.storageId}
@@ -1353,32 +1318,6 @@ export function CreatePrescriptionOrderForm({
                               </FormItem>
                             </TableCell>
                             <TableCell>
-                              {/* <FormItem>
-                                <Input
-                                  disabled={
-                                    stockStorage
-                                      ? stockStorage.stock <= 0
-                                      : false
-                                  }
-                                  type="number"
-                                  {...register(`products.${index}.quantity`, {
-                                    valueAsNumber: true,
-                                  })}
-                                  className={cn(
-                                    "text-center",
-                                    quantity === 0 && "text-muted-foreground"
-                                  )}
-                                  placeholder="0"
-                                />
-                                <FormMessage />
-                                {stockStorage && (
-                                  <FormDescription>
-                                    {stockStorage.stock > 0
-                                      ? `Stock disponible: ${dynamicStock}`
-                                      : `No hay stock disponible`}
-                                  </FormDescription>
-                                )}
-                              </FormItem> */}
                               <FormItem>
                                 <Input
                                   disabled={
@@ -1391,7 +1330,11 @@ export function CreatePrescriptionOrderForm({
                                     "text-center",
                                     quantity === 0 && "text-muted-foreground"
                                   )}
-                                  value={field.quantity}
+                                  value={
+                                    currentStockStorage === 0
+                                      ? 0
+                                      : field.quantity
+                                  }
                                   onChange={(e) => {
                                     const val = e.target.value;
                                     if (val === "") {
@@ -1418,12 +1361,14 @@ export function CreatePrescriptionOrderForm({
                                   min={1}
                                   placeholder="0"
                                 />
-                                {stockStorage && (
+                                {stockStorage ? (
                                   <FormDescription>
                                     {stockStorage.stock > 0
                                       ? `Stock: ${dynamicStock}`
                                       : `No hay stock disponible`}
                                   </FormDescription>
+                                ) : (
+                                  <FormDescription>Stock: 0</FormDescription>
                                 )}
                               </FormItem>
                             </TableCell>
@@ -1498,15 +1443,21 @@ export function CreatePrescriptionOrderForm({
 
                 <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
                   {/* <SelectProductDialog form={form} /> */}
-                  <SaveProductTableButton />
                   <CustomFormDescription
                     required={FORMSTATICS.products.required}
                   />
+                  {
+                    <FormDescription>
+                      No puede seleccionar productos que no tengan stock en
+                      ninguno de los almacenes
+                    </FormDescription>
+                  }
                   {form.formState.errors.products && (
                     <FormMessage className="text-destructive">
                       {form.formState.errors.products.message}
                     </FormMessage>
                   )}
+                  <SaveProductTableButton />
                 </div>
               </div>
             </>

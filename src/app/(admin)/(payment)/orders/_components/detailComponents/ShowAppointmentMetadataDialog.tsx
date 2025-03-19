@@ -19,9 +19,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
-import {
-  MedicalAppointmentMetadata,
-} from "../../_interfaces/order.interface";
+import { MedicalAppointmentMetadata } from "../../_interfaces/order.interface";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionDetailsMetadataCardTable } from "./TransactionDetailMetadataCardTable";
 import { CommonDataMetadataMobile } from "./CommonDataMetadataMobile";
@@ -160,26 +158,21 @@ export function ShowAppointmentMetadataDialog({
               <DialogDescription className="w-full text-balance">
                 {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.description}
               </DialogDescription>
-              {/* <div className="flex flex-col space-y-1">
-                <div className="flex space-x-2">
-                  <Calendar className="text-primary"></Calendar>
-                  <Label>Fecha de la consulta</Label>
-                </div>
-                <span>{data.orderDetails.consultationDate ?? "Sin fecha"}</span>
-              </div> */}
               {staffData?.data && (
-                <div className="flex flex-col space-y-1">
+                <div className="flex flex-col space-y-1 !mt-4">
                   <div className="flex space-x-2">
                     <User className="text-primary"></User>
-                    <Label>Personal que generó la órden</Label>
-                  </div>
-                  <div className="space-y-1">
-                    <span className="capitalize block">{`${
-                      staffData.data.name ?? "NN"
-                    } ${staffData.data.lastName ?? "NN"}`}</span>
-                    <span className="capitalize block text-muted-foreground">
-                      {staffData.data.email ?? "No email"}
-                    </span>
+                    <div className="flex flex-col space-y-1">
+                      <Label>Personal que generó la órden</Label>
+                      <div className="space-y-1">
+                        <span className="capitalize block font-bold">{`${
+                          staffData.data.name ?? "NN"
+                        } ${staffData.data.lastName ?? "NN"}`}</span>
+                        <span className="capitalize block text-muted-foreground text-sm">
+                          {staffData.data.email ?? "No email"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -222,13 +215,6 @@ export function ShowAppointmentMetadataDialog({
             <DialogDescription className="w-full text-balance">
               {SHOW_PRESCRIPTION_METADATA_DETAILS_MESSAGES.description}
             </DialogDescription>
-            {/* <div className="flex flex-col space-y-1">
-              <div className="flex space-x-2">
-                <Calendar className="text-primary"></Calendar>
-                <Label>Fecha de la receta</Label>
-              </div>
-              <span>{data.orderDetails.prescriptionDate ?? "Sin fecha"}</span>
-            </div> */}
             {staffData.data && (
               <div className="flex flex-col space-y-1">
                 <div className="flex space-x-2">
@@ -254,10 +240,10 @@ export function ShowAppointmentMetadataDialog({
         <div className="overflow-auto max-h-[calc(100dvh-12rem)] space-y-3">
           {/* <MovementsTable data={data}></MovementsTable> */}
           {data.orderDetails && (
-              <MedicalAppointmentDetails
-                details={data.orderDetails}
-              ></MedicalAppointmentDetails>
-            )}
+            <MedicalAppointmentDetails
+              details={data.orderDetails}
+            ></MedicalAppointmentDetails>
+          )}
           <TransactionDetailsMetadataCardTable
             data={data.orderDetails.transactionDetails}
           ></TransactionDetailsMetadataCardTable>

@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 type ServiceIrderAppointmentItem = {
     serviceId: string;
     appointmentId: string;
+    uniqueIdentifier?: string;
 }
 type State = ServiceIrderAppointmentItem[];
 type Action =
@@ -14,15 +15,33 @@ type Action =
 function reducer(state: State, action: Action): ServiceIrderAppointmentItem[] {
   switch (action.type) {
     case "append": {
-      const existingServicesIds = new Set(
-        state.map((appointment) => appointment.serviceId)
-      );
+      // const existingServicesIds = new Set(
+      //   state.map((appointment) => appointment.serviceId)
+      // );
 
+      // const existingServicesIds = new Set(
+      //   state.map((appointment) =>
+      //     appointment.uniqueIdentifier
+      //       ? `${appointment.serviceId}-${appointment.uniqueIdentifier}`
+      //       : appointment.serviceId
+      //   )
+      // );
+
+      const existingKeys = new Set(
+        state.map((item) =>
+          item.uniqueIdentifier
+        ? `${item.serviceId}-${item.uniqueIdentifier}`
+        : item.serviceId
+        )
+      );
       return [
         ...state,
-        ...action.payload.filter(
-          (newAppointment) => !existingServicesIds.has(newAppointment.serviceId)
-        ),
+        ...action.payload.filter((newItem) => {
+          const key = newItem.uniqueIdentifier
+        ? `${newItem.serviceId}-${newItem.uniqueIdentifier}`
+        : newItem.serviceId;
+          return !existingKeys.has(key);
+        }),
       ];
     }
     case "replace":{

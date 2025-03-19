@@ -16,10 +16,6 @@ export interface ProductTableToolbarActionsProps {
 export function IncomingTableToolbarActions({
   table,
 }: ProductTableToolbarActionsProps) {
-  // const globalFilterFn:FilterFn<DetailedIncoming> = (row, columnId, filterValue:string) => {
-  //   const rowValue: string = row.getValue(columnId);
-  //   return rowValue.toString().toLowerCase().includes(filterValue.toLowerCase());
-  // };
   const { activeBranchesQuery:responseBranches } = useBranches();
   const { activeStoragesQuery:responseStorages } = useStorages();
   if (responseBranches.isLoading && responseStorages.isLoading) {
@@ -86,9 +82,6 @@ export function IncomingTableToolbarActions({
       ) : null}
       <Select onValueChange={
         (e)=>{
-          // return table?.setGlobalFilter((rows, columnId, filterValue) => {
-          //   return rows.filter(row => globalFilterFn(row, columnId, filterValue));
-          // });
           return table?.setGlobalFilter(e.toLowerCase());
         }
       }>
@@ -110,9 +103,6 @@ export function IncomingTableToolbarActions({
       </Select>
       <Select onValueChange={
         (e)=>{
-          // return table?.setGlobalFilter((rows, columnId, filterValue) => {
-          //   return rows.filter(row => globalFilterFn(row, columnId, filterValue));
-          // });
           return table?.setGlobalFilter(e.toLowerCase());
         }
       }>

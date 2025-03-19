@@ -64,10 +64,6 @@ export function CancelPaymentDialog({
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { cancelPaymentMutation } = usePayments();
 
-// export const cancelPaymentSchema = z.object({
-//   cancellationReason: z.string(),
-// }) satisfies z.ZodType<CancelPaymentDto>;
-
   const form = useForm<CancelPaymentInput>({
     resolver: zodResolver(cancelPaymentSchema),
     defaultValues: {
@@ -111,25 +107,8 @@ export function CancelPaymentDialog({
     setOpen(false);
   };
 
-  //ACtivate only when form errors
-  // useEffect(() => {
-  //   if (form.formState.errors) {
-  //     console.log("Errores en el formulario", form.formState.errors);
-  //   }
-  // }, [form.formState.errors]);
-
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
-      {/* <Button
-        type="submit"
-        disabled={isCreatePending || cancelPaymentMutation.isPending}
-        className="w-full"
-      >
-        {(isCreatePending || cancelPaymentMutation.isPending) && (
-          <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
-        )}
-        {CANCEL_PAYMENT_MESSAGES.submitButton}
-      </Button> */}
       <ConfirmOrderDialog
         onConfirm={async () => {
           await form.handleSubmit(handleSubmit)();
@@ -228,7 +207,6 @@ function DevelopmentZodError({
 }: {
   form: UseFormReturn<CancelPaymentInput>;
 }) {
-  console.log("Ingresando a DevelopmentZodError", process.env.NEXT_PUBLIC_ENV);
   if (process.env.NEXT_PUBLIC_ENV !== "development") return null;
   const [errors, setErrors] = useState<FieldErrors<CancelPaymentInput>>({});
   useEffect(() => {

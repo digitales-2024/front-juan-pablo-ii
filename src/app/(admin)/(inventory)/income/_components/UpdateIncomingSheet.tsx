@@ -250,7 +250,6 @@ export function UpdateIncomingSheet({
   }, [open, handleClearProductList]);
 
   const onSubmit = async (data: UpdateIncomingStorageDto) => {
-    //console.log('dto', data);
     if (updateIncomingStorageMutation.isPending) return;
 
     try {

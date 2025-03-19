@@ -46,23 +46,6 @@ export function OrderPatientDetailsMetadataCardTable({
                 <TableHead>Dirección</TableHead>
               </TableRow>
             </TableHeader>
-            {/* <TableBody>
-              {data.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center text-black/50 font-bold">
-                    No hay servicios recetados en la prescripción
-                  </TableCell>
-                </TableRow>
-              ) : (
-                data.map((item, index) => (
-                  <TableRow key={item.id ?? index}>
-                    <TableCell className="font-medium">{item.name ?? 'N/A'}</TableCell>
-                    <TableCell>{item.quantity ?? 0}</TableCell>
-                    <TableCell className="text-ellipsis">{item.description ?? 'Sin descripción'}</TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody> */}
             <TableBody>
               {!data ? (
                 <TableRow>

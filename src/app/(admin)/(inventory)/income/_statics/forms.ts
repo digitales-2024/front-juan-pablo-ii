@@ -1,21 +1,5 @@
 import { ComplexFormStatics } from "@/types/statics/forms";
 import { CreateIncomeInput, MovementDto, UpdateIncomingStorageInput, UpdateIncomingStorageMovementDto } from "../_interfaces/income.interface";
-// export const createProductSchema = z.object({
-//   name: z.string().min(1, "El nombre es requerido"), //En el back es opcional, pero considero que debe ser requerido
-//   description: z.string().optional(),
-//   storageId: z.string().min(1, "El tipo de almacenamiento es requerido"),
-//   date: z.string().date("La fecha es requerida"),
-//   state: z.boolean(),
-//   referenceId: z.string().optional(),
-//   movement: z.array(
-//     z.object({
-//       productId: z.string().min(1, "El producto es requerido"),
-//       quantity: z.number().min(1, "La cantidad debe ser mayor a 0"),
-//       date: z.string().optional(),
-//       state: z.boolean().optional(),
-//     })
-//   ),
-// }) satisfies z.ZodType<CreateIncomingDto>;
 
 export const FORMSTATICS: ComplexFormStatics<CreateIncomeInput, MovementDto> = {
     name: {

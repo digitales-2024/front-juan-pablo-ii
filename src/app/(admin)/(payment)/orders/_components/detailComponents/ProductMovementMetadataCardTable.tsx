@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Pill } from "lucide-react";
+import { Syringe } from "lucide-react";
 import { ProductMovement } from "../../_interfaces/order.interface";
 import { useManyProductsStock } from "@/app/(admin)/(inventory)/stock/_hooks/useProductStock";
 import TableSkeleton from "./TableSkeleton";
@@ -32,14 +32,6 @@ export function ProductMovementsMetadataTable({
   orderId,
   ...rest
 }: ProductMovementsMetadataTableProps) {
-  // const [selectedStorage, setSelectedStorage] = useState<string | undefined>(undefined);
-
-  // Lista simulada de almacenes - reemplazar con datos reales
-  // const storages = [
-  //   { id: "1", name: "Almacén Principal" },
-  //   { id: "2", name: "Farmacia" },
-  //   { id: "3", name: "Depósito" }
-  // ];
 
   console.log("received metadata: ", data);
   const productsIds = data.map((item) => item.id);
@@ -66,28 +58,12 @@ export function ProductMovementsMetadataTable({
     <Card className="w-full" {...rest}>
       <CardHeader>
         <CardTitle className="text-primary flex space-x-2 items-center">
-          <Pill></Pill>
+          <Syringe></Syringe>
           <span>Productos vendidos</span>
         </CardTitle>
         <CardDescription>Lista de productos facturados</CardDescription>
       </CardHeader>
       <CardContent>
-        {/* <div className="mb-4">
-          <Select onValueChange={setSelectedStorage} value={selectedStorage}>
-            <SelectTrigger className="w-[240px]">
-              <SelectValue placeholder="Seleccionar almacén" />
-            </SelectTrigger>
-            <SelectContent>
-              <ScrollArea className="h-48">
-                {storages.map((storage) => (
-                  <SelectItem key={storage.id} value={storage.id}>
-                    {storage.name}
-                  </SelectItem>
-                ))}
-              </ScrollArea>
-            </SelectContent>
-          </Select>
-        </div> */}
 
         <div className="overflow-x-auto">
           <Table>
@@ -95,9 +71,9 @@ export function ProductMovementsMetadataTable({
               <TableRow>
                 <TableHead>Codigo</TableHead>
                 <TableHead>Nombre</TableHead>
+                <TableHead>Almacén de salida</TableHead>
                 <TableHead className="text-center">Cantidad</TableHead>
                 <TableHead className="text-center">Total</TableHead>
-                <TableHead>Almacén de salida</TableHead>
                 {/* <TableHead>Sucursal</TableHead> */}
               </TableRow>
             </TableHeader>
@@ -132,15 +108,13 @@ export function ProductMovementsMetadataTable({
                       <TableCell className="font-medium">
                         {item.name ?? "N/A"}
                       </TableCell>
+                      <TableCell>
+                        {storageData?.name ?? "Almacén no disponible"}
+                      </TableCell>
                       <TableCell className="text-center">
                         {item.quantity ?? "Cantidad no disponible"}
                       </TableCell>
-                      {/* <TableCell>
-                      {selectedStorage ? 
-                        storages.find(s => s.id === selectedStorage)?.name ?? 'No seleccionado' : 
-                        'No seleccionado'}
-                    </TableCell> */}
-                      <TableCell className="text-center">
+                      <TableCell className="text-end">
                         {total.toLocaleString("es-PE", {
                           style: "currency",
                           currency: "PEN",
@@ -148,16 +122,14 @@ export function ProductMovementsMetadataTable({
                           maximumFractionDigits: 2,
                         }) ?? "Precio no disponible"}
                       </TableCell>
-                      <TableCell>
-                        {storageData?.name ?? "Almacén no disponible"}
-                      </TableCell>
+                      
                     </TableRow>
                   );
                 })
               )}
               {
                 <TableRow className="font-bold bg-muted/50">
-                  <TableCell colSpan={2} className="text-start">
+                  <TableCell colSpan={3} className="text-start">
                     Totales:
                   </TableCell>
                   <TableCell className="text-center">
@@ -166,7 +138,7 @@ export function ProductMovementsMetadataTable({
                       0
                     )}
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-end">
                     {data
                       .reduce(
                         (total, item) =>

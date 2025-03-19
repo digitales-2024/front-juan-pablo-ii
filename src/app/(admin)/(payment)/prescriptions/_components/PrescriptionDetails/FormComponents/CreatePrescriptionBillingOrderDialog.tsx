@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import {
   useForm,
   // FieldErrors,
@@ -56,10 +56,15 @@ const CREATE_OUTGOING_MESSAGES = {
 
 export function CreatePrescriptionBillingProcessDialog({
   prescription,
+  openFromParent,
+  onOpenChangeFromParent,
 }: {
   prescription: PrescriptionWithPatient;
+  openFromParent: boolean;
+  onOpenChangeFromParent: (newOpen: boolean) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const didInitializeFormRef = useRef(false);
+  const [open, setOpen] = useState(openFromParent);
   const [isCreatePending, startCreateTransition] = useTransition();
   const [isFetchingError, setIsFetchingError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -74,7 +79,7 @@ export function CreatePrescriptionBillingProcessDialog({
   const manyProductsStock = useManyProductsStock();
   const { productStockQuery } = manyProductsStock(
     existentMedicamentsIds,
-    prescription.id
+    prescription.id,
   );
   const { createPrescriptionOrderMutation } = useBilling();
   const { servicesQuery } = useServices();
@@ -143,7 +148,7 @@ export function CreatePrescriptionBillingProcessDialog({
             ? prescription.prescriptionMedicaments.map((product) => ({
               productId: product.id!,
               quantity: product.quantity ?? 1,
-              storageId: result[0].id ?? undefined,
+              storageId: result[0]?.id ?? undefined,
             }))
             : [],
       };
@@ -192,12 +197,22 @@ export function CreatePrescriptionBillingProcessDialog({
   // }, [productFieldArray]);
 
   const handleOpenChange = useCallback((newOpen: boolean) => {
-    setOpen((prev) => (prev === newOpen ? prev : newOpen));
-  }, []);
+    if (newOpen && !open) {
+      // Resetear el flag de inicialización en el formulario hijo
+      didInitializeFormRef.current = false;
+      
+      // Reinicializar estados locales
+      setWereProductsSaved(false);
+      setWereServicesSaved(false);
+    }
+    
+    onOpenChangeFromParent(newOpen);
+    setOpen(newOpen);
+  }, [form, open]);
 
   const handleClose = useCallback(() => {
     // handleClearProductList();
-    form.reset();
+    // form.reset();
     dispatch({ type: "clear" });
     setOpen(false);
   }, [form]);
@@ -209,6 +224,8 @@ export function CreatePrescriptionBillingProcessDialog({
           onSuccess: () => {
             form.reset();
             dispatch({ type: "clear" }); //Elimina las referencias a las citas creadas
+            setWereProductsSaved(false);
+            setWereServicesSaved(false);
             setOpen(false);
           },
           onError: (error) => {
@@ -334,7 +351,7 @@ export function CreatePrescriptionBillingProcessDialog({
           <TriggerButton />
         </DialogTrigger>
         <DialogContent
-          key={open ? "open" : "closed"}
+          // key={open ? "open" : "closed"}
           className="sm:min-w-[calc(640px-2rem)] md:min-w-[calc(768px-2rem)] lg:min-w-[calc(1024px-10rem)] max-h-[calc(100vh-4rem)] overflow-y-auto"
         >
           <DialogHeader>
@@ -368,7 +385,10 @@ export function CreatePrescriptionBillingProcessDialog({
       <DrawerTrigger asChild>
         <TriggerButton />
       </DrawerTrigger>
-      <DrawerContent key={open ? "open" : "closed"} className="overflow-y-auto">
+      <DrawerContent 
+        // key={open ? "open" : "closed"} 
+        className="overflow-y-auto"
+        >
         <DrawerHeader>
           <DrawerTitle>{CREATE_OUTGOING_MESSAGES.title}</DrawerTitle>
           <DrawerDescription className="text-balance">
@@ -385,6 +405,7 @@ export function CreatePrescriptionBillingProcessDialog({
           serviceDataQuery={servicesQuery}
           onProductsSaved={onSaveProducts}
           onServicesSaved={onSaveServices}
+          // openFromParent = {openFromParent}
         >
           <DrawerFooter>
             <DialogFooterContent />
