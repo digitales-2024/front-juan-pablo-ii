@@ -122,7 +122,14 @@ const getAllAppointmentsHandler = async (data: { page?: number; limit?: number }
 const getAppointmentsByStatusHandler = async (data: { status: AppointmentStatus; page?: number; limit?: number }) => {
     const { status, page = 1, limit = 10 } = data; // Desestructurar y establecer valores predeterminados
     try {
-        const url = `/appointments/status/${status}/paginated?page=${page}&limit=${limit}`;
+        // Construir la URL según el estado
+        let url = '';
+        if (status === 'all') {
+            url = `/appointments/status/all/paginated?page=${page}&limit=${limit}`;
+        } else {
+            url = `/appointments/status/${status}/paginated?page=${page}&limit=${limit}`;
+        }
+        
         console.log(`🔍 [getAppointmentsByStatusHandler] Haciendo petición a: ${url}`);
 
         const [response, error] = await http.get<PaginatedAppointmentsResponse>(url);

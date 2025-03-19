@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useAppointments } from './useAppointments';
 import { AppointmentsFilterType } from '../_interfaces/filter.interface';
 import { AppointmentStatus } from '../_interfaces/appointments.interface';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useFilterAppointments = () => {
     console.log("🔧 Inicializando useFilterAppointments");
+    const queryClient = useQueryClient();
 
     const [filterType, setFilterType] = useState<AppointmentsFilterType>(AppointmentsFilterType.ALL);
     const {
@@ -42,8 +44,14 @@ export const useFilterAppointments = () => {
             setFilterType(AppointmentsFilterType.BY_STATUS);
         }
 
+        // Actualiza el filtro de estado, lo que disparará una nueva consulta
         setStatusFilter(status);
         resetPagination(); // Resetear paginación al filtrar
+        
+        // Forzar una actualización de la consulta
+        queryClient.invalidateQueries({ 
+            queryKey: ["appointments-paginated"] 
+        });
     };
 
     // Función para mostrar todas las citas
@@ -52,9 +60,15 @@ export const useFilterAppointments = () => {
         setFilterType(AppointmentsFilterType.ALL);
         setStatusFilter("all");
         resetPagination(); // Resetear paginación al quitar filtro
+        
+        // Forzar una actualización de la consulta
+        queryClient.invalidateQueries({ 
+            queryKey: ["appointments-paginated"] 
+        });
     };
 
-    // Siempre usamos la query filtrada por estado, que incluye "all" para todas las citas
+    // Usamos la query de appointments-paginated que siempre es la misma,
+    // solo varía el parámetro de status que se envía en cada consulta
     const activeQuery = appointmentsByStatusQuery;
 
     // Log del estado actual del query

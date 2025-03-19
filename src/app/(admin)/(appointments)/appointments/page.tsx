@@ -38,7 +38,7 @@ export default function PageAppointments() {
         error: response.error
     });
 
-    console.log("📊 Estado de la query filtrada por estado:", {
+    console.log("�� Estado de la query paginada:", {
         statusFilter,
         dataLength: appointmentsByStatusQuery.data?.appointments?.length,
         isLoading: appointmentsByStatusQuery.isLoading,
@@ -56,13 +56,14 @@ export default function PageAppointments() {
         setPagination({ page, limit });
     };
 
-    // Usamos siempre la query filtrada por estado, que incluye "all" para todas las citas
+    // Usamos la query paginada que filtra según el estado seleccionado pero con una clave fija
     const activeQuery = appointmentsByStatusQuery;
     console.log("🔍 Query activa - estado:", {
         isLoading: activeQuery.isLoading,
         isSuccess: activeQuery.isSuccess,
         dataExists: !!activeQuery.data,
-        appointments: activeQuery.data?.appointments?.length || 0
+        appointments: activeQuery.data?.appointments?.length || 0,
+        filtroAplicado: statusFilter
     });
 
     // Verificamos si la query está cargando o tiene error
@@ -89,7 +90,8 @@ export default function PageAppointments() {
     console.log("✅ Renderizando página con datos filtrados por:", statusFilter);
     console.log("✅ Datos a pasar a la tabla:", {
         appointments: activeQuery.data?.appointments?.length || 0,
-        total: activeQuery.data?.total || 0
+        total: activeQuery.data?.total || 0,
+        estado: statusFilter
     });
 
     return (

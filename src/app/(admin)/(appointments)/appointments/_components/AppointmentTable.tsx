@@ -98,7 +98,7 @@ export function AppointmentTable({
     const getFilterStatusMessage = () => {
         if (isLoading) return "Cargando resultados...";
         if (statusFilter === "all") return "Mostrando todas las citas";
-        return `Mostrando citas con estado: ${statusFilter}`;
+        return `Mostrando citas con estado: ${appointmentStatusConfig[statusFilter]?.name || statusFilter}`;
     };
 
     return (
@@ -128,7 +128,7 @@ export function AppointmentTable({
             {isLoading ? (
                 <div className="flex items-center justify-center p-8 w-full">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <span className="ml-2 text-lg text-muted-foreground">Cargando resultados filtrados...</span>
+                    <span className="ml-2 text-lg text-muted-foreground">Cargando resultados...</span>
                 </div>
             ) : displayData && displayData.length > 0 ? (
                 <DataTable

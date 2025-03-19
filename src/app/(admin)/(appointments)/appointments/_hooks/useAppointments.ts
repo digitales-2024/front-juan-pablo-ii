@@ -56,7 +56,9 @@ export const useAppointments = () => {
     // Log cuando cambia el filtro de estado
     useEffect(() => {
         console.log("🏥 [useAppointments] statusFilter cambió a:", statusFilter);
-    }, [statusFilter]);
+        // Invalida la consulta cuando el statusFilter cambia
+        queryClient.invalidateQueries({ queryKey: ["appointments-paginated"] });
+    }, [statusFilter, queryClient]);
 
     // Log cuando cambia la paginación
     useEffect(() => {
@@ -131,9 +133,9 @@ export const useAppointments = () => {
 
     // Query para obtener las citas filtradas por estado
     const appointmentsByStatusQuery = useQuery({
-        queryKey: ["appointments-by-status", statusFilter, pagination.page, pagination.limit],
+        queryKey: ["appointments-paginated", pagination.page, pagination.limit],
         queryFn: async () => {
-            console.log("🏥 Ejecutando query appointments-by-status con:", {
+            console.log("🏥 Ejecutando query appointments-paginated con:", {
                 statusFilter,
                 page: pagination.page,
                 limit: pagination.limit
@@ -156,16 +158,19 @@ export const useAppointments = () => {
                 throw new Error(response.error ?? "Error desconocido");
             }
 
-            console.log(`🏥 Respuesta exitosa de citas filtradas por estado ${statusFilter}:`, {
+            console.log(`🏥 Respuesta exitosa de citas paginadas:`, {
                 total: response.data.total,
                 appointments: response.data.appointments?.length || 0,
-                firstAppointment: response.data.appointments?.[0]?.id || "N/A"
+                firstAppointment: response.data.appointments?.[0]?.id || "N/A",
+                filtroAplicado: statusFilter
             });
 
             return response.data;
         },
         // Siempre habilitado, ya que "all" es un valor válido
         enabled: true,
+        // Cuando statusFilter cambia, queremos que la consulta se ejecute nuevamente
+        refetchOnWindowFocus: false,
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
 
