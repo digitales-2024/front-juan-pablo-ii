@@ -94,8 +94,8 @@ export function useUnifiedProductsStock() {
   function setFilterAllForSaleProductsStock(limit = 10, offset = 0) {
     setFilter({ type: "ALL", productSale: "VENTA", limit, offset });
   }
-  function setFilterForSaleProductsStockByBranch(dni: string) {
-    setFilter({ type: "BY_BRANCH", productSale: "VENTA", branchId: dni });
+  function setFilterForSaleProductsStockByBranch(branchId: string) {
+    setFilter({ type: "BY_BRANCH", productSale: "VENTA", branchId: branchId });
   }
   // function setFilterByType(orderType: OrderType) {
   //   setFilter({ type: "BY_TYPE", orderType });

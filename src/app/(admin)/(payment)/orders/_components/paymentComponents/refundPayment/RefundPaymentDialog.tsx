@@ -64,13 +64,6 @@ export function RefundPaymentDialog({
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { refundPaymentMutation } = usePayments();
 
-// export const refundPaymentSchema = z.object({
-//   amount: z.coerce.number(),
-//   reason: z.string(),
-//   refundMethod: z.enum(["CASH", "BANK_TRANSFER", "YAPE"]),
-//   notes: z.string().optional(),
-// }) satisfies z.ZodType<RefundPaymentDto>;
-
   const form = useForm<RefundPaymentInput>({
     resolver: zodResolver(refundPaymentSchema),
     defaultValues: {
@@ -117,25 +110,8 @@ export function RefundPaymentDialog({
     setOpen(false);
   };
 
-  //ACtivate only when form errors
-  // useEffect(() => {
-  //   if (form.formState.errors) {
-  //     console.log("Errores en el formulario", form.formState.errors);
-  //   }
-  // }, [form.formState.errors]);
-
   const DialogFooterContent = () => (
     <div className="gap-2 sm:space-x-0 flex sm:flex-row-reverse flex-row-reverse w-full">
-      {/* <Button
-        type="submit"
-        disabled={isCreatePending || refundPaymentMutation.isPending}
-        className="w-full"
-      >
-        {(isCreatePending || refundPaymentMutation.isPending) && (
-          <RefreshCcw className="mr-2 size-4 animate-spin" aria-hidden="true" />
-        )}
-        {REFUND_PAYMENT_MESSAGES.submitButton}
-      </Button> */}
       <ConfirmOrderDialog
         onConfirm={async () => {
           await form.handleSubmit(handleSubmit)();

@@ -48,13 +48,10 @@ export function SelectProductDialog({
 }: SelectProductDialogProps) {
   const [open, setOpen] = useState(false);
   const [localSelectRows, setLocalSelectRows] = useState<ActiveProduct[]>([]);
-  // const selectedProductsTanstack = useSelectedProducts();
   const dispatch = useSelectProductDispatch();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const handleSave = (selectedRows: ActiveProduct[]) => {
-    // console.log('oldStateTanstack', selectedProductsTanstack);
-    // console.log('handleSave', selectedRows);
     dispatch({ type: "append", payload: selectedRows });
     setOpen(false);
   };
@@ -72,12 +69,6 @@ export function SelectProductDialog({
         onClick={() => handleSave(localSelectRows)}
         className="w-full"
       >
-        {/* {(isCreatePending || createMutation.isPending) && (
-                    <RefreshCcw
-                        className="mr-2 size-4 animate-spin"
-                        aria-hidden="true"
-                    />
-                )} */}
         {CREATE_PRODUCT_MESSAGES.submitButton}
       </Button>
       <Button

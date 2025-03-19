@@ -370,7 +370,6 @@ export function CreatePrescriptionBillingProcessDialog({
             serviceDataQuery={servicesQuery}
             onProductsSaved={onSaveProducts}
             onServicesSaved={onSaveServices}
-            openFromParent={openFromParent}
           >
             <DialogFooter>
               <DialogFooterContent />

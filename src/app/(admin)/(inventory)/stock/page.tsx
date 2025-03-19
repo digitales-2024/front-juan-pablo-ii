@@ -15,9 +15,6 @@ import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
 import { useCallback } from "react";
 import { toast } from "sonner";
-// import { useEffect, useState } from "react";
-// import { StockByStorage } from "./_interfaces/stock.interface";
-// import { UseQueryResult } from "@tanstack/react-query";
 
 export default function PageBranches() {
 
@@ -26,10 +23,6 @@ export default function PageBranches() {
     isLoading,
     query: dataQuery,
     setFilterAllStorages
-    // setFilterAllStorages,
-    // setFilterByProduct,
-    // setFilterByStorage,
-    // setFilterByStorageAndProduct,
   } = useUnifiedStock();
 
   const onSubmitAllStorages = useCallback(() => {
@@ -59,10 +52,6 @@ export default function PageBranches() {
   if (!data) {
     notFound();
   }
-
-  // if (data){
-  //   updateFIlteredStock(data);
-  // }
   
   return (
     <>

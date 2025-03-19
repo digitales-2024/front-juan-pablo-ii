@@ -6,7 +6,6 @@ import {
     CreateAppointmentDto,
     UpdateAppointmentDto,
     DeleteAppointmentsDto,
-    PaginatedAppointmentsResponse,
     CancelAppointmentDto,
     RefundAppointmentDto,
     RescheduleAppointmentDto,
@@ -44,7 +43,7 @@ interface RescheduleAppointmentVariables {
 // Definir una constante para la clave de consulta base y una función para construir la clave completa
 
 // Función auxiliar para construir la clave de consulta con los filtros
-export const buildAppointmentsQueryKey = (status: AppointmentStatus, page: number, limit: number) => 
+export const buildAppointmentsQueryKey = (status: AppointmentStatus, page: number, limit: number) =>
     ["appointments-paginated", status, page, limit];
 
 export const useAppointments = () => {
@@ -67,25 +66,25 @@ export const useAppointments = () => {
         // Solo actualizar si el estado ha cambiado
         if (newStatus !== statusFilter) {
             console.log('🔃 useAppointments - Actualizando filtro a:', newStatus);
-            
+
             // Guardar el filtro actual y el nuevo para debug
             const oldFilter = statusFilter;
-            
+
             // Construir la nueva clave de consulta
             const newQueryKey = buildAppointmentsQueryKey(newStatus, 1, pagination.limit);
             console.log('🔑 useAppointments - Nueva clave de consulta:', newQueryKey);
-            
+
             // PASO 1: Limpiar TODAS las cachés relacionadas con consultas paginadas
             console.log('🧹 useAppointments - Limpiando TODAS las consultas paginadas');
-            queryClient.removeQueries({ 
+            queryClient.removeQueries({
                 queryKey: ["appointments-paginated"],
-                exact: false 
+                exact: false
             });
-            
+
             // PASO 2: Actualizar el estado para que cualquier consulta futura use el nuevo filtro
             // CRÍTICO: Esto debe ocurrir antes de cualquier consulta
             setStatusFilter(newStatus);
-            
+
             // PASO 3: Esperar un breve momento para que React actualice el estado
             setTimeout(() => {
                 console.log('⚡ useAppointments - Obteniendo datos para el nuevo filtro:', newStatus);
@@ -96,12 +95,12 @@ export const useAppointments = () => {
                     limit: pagination.limit
                 }).then(response => {
                     if (response && !response.error && response.data) {
-                        console.log('✨ useAppointments - Datos obtenidos para el filtro', newStatus, ':', 
+                        console.log('✨ useAppointments - Datos obtenidos para el filtro', newStatus, ':',
                             response.data.appointments?.length || 0, 'citas');
-                        
+
                         // Almacenar los datos en la caché usando la nueva clave
                         queryClient.setQueryData(newQueryKey, response.data);
-                        
+
                         // Notificar a React Query que los datos han cambiado
                         queryClient.invalidateQueries({
                             queryKey: newQueryKey,
@@ -120,7 +119,7 @@ export const useAppointments = () => {
                     }
                 });
             }, 100);
-            
+
             console.log('🔄 useAppointments - Proceso de cambio de filtro completado:', oldFilter, '➡️', newStatus);
         } else {
             console.log('⏭️ useAppointments - Filtro no cambió, omitiendo actualización');
@@ -239,7 +238,7 @@ export const useAppointments = () => {
         // Reducir el staleTime para asegurar que los datos se refresquen correctamente
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
-    
+
     // Mutación para crear una cita
     const createMutation = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
         mutationFn: async (data) => {
@@ -317,91 +316,96 @@ export const useAppointments = () => {
         }
     });
 
-    const createMutationForOrder = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
-        mutationFn: async (data) => {
-            console.log("Datos enviados para crear la cita:", data);
+    const createMutationForOrder = (uniqueIdentifier: string) => {
+        const mutationQuery = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
+            mutationFn: async (data) => {
+                console.log("Datos enviados para crear la cita:", data);
 
-            // 1. Obtener datos del paciente y staff
-            let patientName = 'Paciente';
-            let patientDni = '';
-            let staffName = 'Doctor';
+                // 1. Obtener datos del paciente y staff
+                let patientName = 'Paciente';
+                let patientDni = '';
+                let staffName = 'Doctor';
 
-            try {
-                const patientResponse = await getPatientById(data.patientId);
-                if (patientResponse && !('error' in patientResponse)) {
-                    const patient = patientResponse.data || patientResponse;
-                    patientName = `${patient.name} ${patient.lastName || ''}`.trim();
-                    patientDni = patient.dni || '';
+                try {
+                    const patientResponse = await getPatientById(data.patientId);
+                    if (patientResponse && !('error' in patientResponse)) {
+                        const patient = patientResponse.data || patientResponse;
+                        patientName = `${patient.name} ${patient.lastName || ''}`.trim();
+                        patientDni = patient.dni || '';
+                    }
+
+                    const staffResponse = await getStaffById(data.staffId);
+                    if (staffResponse && !('error' in staffResponse)) {
+                        const staff = staffResponse;
+                        staffName = `${staff.name} ${staff.lastName || ''}`.trim();
+                    }
+                } catch (error) {
+                    console.error('Error al obtener datos de paciente o staff:', error);
                 }
 
-                const staffResponse = await getStaffById(data.staffId);
-                if (staffResponse && !('error' in staffResponse)) {
-                    const staff = staffResponse;
-                    staffName = `${staff.name} ${staff.lastName || ''}`.trim();
-                }
-            } catch (error) {
-                console.error('Error al obtener datos de paciente o staff:', error);
-            }
+                // 2. Crear el evento
+                let eventId = undefined;
+                try {
+                    const eventData = {
+                        title: `Cita: ${patientName}${patientDni ? `-${patientDni}` : ''} Doctor: ${staffName}`,
+                        color: 'gray',
+                        type: EventType.CITA,
+                        status: EventStatus.PENDING,
+                        start: data.start,
+                        end: data.end,
+                        staffId: data.staffId,
+                        branchId: data.branchId
+                    };
 
-            // 2. Crear el evento
-            let eventId = undefined;
-            try {
-                const eventData = {
-                    title: `Cita: ${patientName}${patientDni ? `-${patientDni}` : ''} Doctor: ${staffName}`,
-                    color: 'gray',
-                    type: EventType.CITA,
-                    status: EventStatus.PENDING,
-                    start: data.start,
-                    end: data.end,
-                    staffId: data.staffId,
-                    branchId: data.branchId
+                    console.log('📦 Datos del evento a crear:', eventData);
+                    const eventResult = await createEventMutation.mutateAsync(eventData);
+                    console.log('✅ Evento creado exitosamente:', eventResult);
+                    eventId = eventResult.data?.id;
+                } catch (eventError) {
+                    console.error('❌ Error al crear el evento:', eventError);
+                }
+
+                // 3. Crear la cita con el eventId
+                const appointmentData = {
+                    ...data,
+                    eventId
                 };
 
-                console.log('📦 Datos del evento a crear:', eventData);
-                const eventResult = await createEventMutation.mutateAsync(eventData);
-                console.log('✅ Evento creado exitosamente:', eventResult);
-                eventId = eventResult.data?.id;
-            } catch (eventError) {
-                console.error('❌ Error al crear el evento:', eventError);
+                console.log('📦 Datos finales de la cita a crear:', appointmentData);
+                const response = await createAppointment(appointmentData);
+                if ("error" in response) {
+                    throw new Error(response.error);
+                }
+                return response;
+            },
+            onSuccess: (res) => {
+                queryClient.setQueryData<Appointment[]>(["appointments"], (oldAppointments) => {
+                    if (!oldAppointments) return [res.data];
+                    return [...oldAppointments, res.data];
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["appointments-paginated"]
+                });
+
+                dispatch({
+                    type: "append", payload: [{
+                        appointmentId: res.data.id,
+                        serviceId: res.data.serviceId,
+                        uniqueIdentifier: uniqueIdentifier,
+                    }]
+                });
+
+                toast.success(res.message);
+                toast.success("Cita guardada para la orden")
+            },
+            onError: (error) => {
+                dispatch({ type: "clear" });
+                toast.error(error.message);
             }
+        });
 
-            // 3. Crear la cita con el eventId
-            const appointmentData = {
-                ...data,
-                eventId
-            };
-
-            console.log('📦 Datos finales de la cita a crear:', appointmentData);
-            const response = await createAppointment(appointmentData);
-            if ("error" in response) {
-                throw new Error(response.error);
-            }
-            return response;
-        },
-        onSuccess: (res) => {
-            queryClient.setQueryData<Appointment[]>(["appointments"], (oldAppointments) => {
-                if (!oldAppointments) return [res.data];
-                return [...oldAppointments, res.data];
-            });
-            queryClient.invalidateQueries({
-                queryKey: ["appointments-paginated"]
-            });
-            
-            dispatch({
-                type: "append", payload: [{
-                    appointmentId: res.data.id,
-                    serviceId: res.data.serviceId
-                }]
-            });
-
-            toast.success(res.message);
-            toast.success("Cita guardada para la orden")
-        },
-        onError: (error) => {
-            dispatch({ type: "clear" });
-            toast.error(error.message);
-        }
-    });
+        return mutationQuery;
+    }
 
     // Mutación para actualizar una cita
     const updateMutation = useMutation<BaseApiResponse<Appointment>, Error, UpdateAppointmentVariables>({
@@ -515,11 +519,11 @@ export const useAppointments = () => {
             }
             return response;
         },
-        onSuccess: (res, variables) => {
+        onSuccess: async (res, variables) => {
             // Actualizar las citas en la caché
-            queryClient.invalidateQueries({ queryKey: ["appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({
+            await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            await queryClient.invalidateQueries({
                 queryKey: ["appointments-paginated"]
             });
 
@@ -544,11 +548,11 @@ export const useAppointments = () => {
             }
             return response;
         },
-        onSuccess: (res, variables) => {
+        onSuccess: async (res, variables) => {
             // Actualizar las citas en la caché
-            queryClient.invalidateQueries({ queryKey: ["appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({
+            await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            await queryClient.invalidateQueries({
                 queryKey: ["appointments-paginated"]
             });
 
@@ -573,11 +577,11 @@ export const useAppointments = () => {
             }
             return response;
         },
-        onSuccess: (res, variables) => {
+        onSuccess: async (res, variables) => {
             // Actualizar las citas en la caché
-            queryClient.invalidateQueries({ queryKey: ["appointments"] });
-            queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
-            queryClient.invalidateQueries({
+            await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            await queryClient.invalidateQueries({ queryKey: ["active-appointments"] });
+            await queryClient.invalidateQueries({
                 queryKey: ["appointments-paginated"]
             });
 

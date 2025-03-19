@@ -28,8 +28,10 @@ export default function PageOrders() {
     (value: string) => {
       if (value === "ALL") {
         setFilterAllForSaleProductsStock();
+      } else {
+        setFilterForSaleProductsStockByBranch(value);
       }
-      setFilterForSaleProductsStockByBranch(value);
+      
       if (response.isError) {
         toast.error("Error al filtrar stock de productos");
       }

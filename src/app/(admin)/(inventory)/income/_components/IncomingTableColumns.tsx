@@ -3,8 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { DetailedIncoming } from "../_interfaces/income.interface";
-// import { format } from "date-fns";
-// import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { es } from "date-fns/locale";
 import { UpdateIncomingSheet } from "./UpdateIncomingSheet";
@@ -25,15 +23,7 @@ import { DeactivateIncomingDialog } from "./DeactivateIncomingDialog";
 import { format } from "date-fns";
 import { ShowMovementsDialog } from "./Movements/ShowMovementsDialog";
 import { StorageMovementDetail } from "./Movements/StorageMovementDetail";
-// import Image from "next/image";
 
-//   name        String?
-//   description String?
-//   Storage.name Storage  @relation(fields: [storageId], references: [id])
-//   date        DateTime @default(now()) @db.Timestamptz(6)
-//   state       Boolean  @default(false) // Estado que indica si el ingreso es concreto (true) o está en proceso (false)
-//   isActive    Boolean  @default(true) // Campo para controlar si está activo o no
-//   createdAt   DateTime @default(now()) @db.Timestamptz(6)
 const STATE_OPTIONS = {
   true: "Concretado",
   false: "En proceso",
@@ -134,20 +124,6 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
       </span>
     ),
   },
-  // {
-  //   accessorKey: "Storage.TypeStorage.name",
-  //   meta: {
-  //     title: "Tipo de almacén"
-  //   },
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Tipo de almacén" />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <span>
-  //       {(row.original.Storage.TypeStorage.name) ?? "Sin tipo de almacén"}
-  //     </span>
-  //   ),
-  // },
   {
     accessorKey: "Storage.TypeStorage.branch.name",
     meta: {
@@ -227,14 +203,6 @@ export const columns: ColumnDef<DetailedIncoming>[] = [
       </Badge>
     ),
   },
-  // {
-  //   accessorKey: "createdAt",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Fecha de creación" />
-  //   ),
-  //   cell: ({ row }) =>
-  //     format(new Date(row.original.createdAt), "PPp", { locale: es }),
-  // },
   {
     id: "Acciones",
     accessorKey: "actions",
