@@ -12,8 +12,10 @@ import {
   createProductSaleOrder,
 } from "../_actions/billing.actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const useBilling = () => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const createSaleOrderMutation = useMutation<
     BaseApiResponse<Order>,
@@ -50,7 +52,14 @@ export const useBilling = () => {
     },
     onSuccess: async (res) => {
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
-      toast.success(res.message);
+      toast.success(res.message, {
+        action: {
+          label: "Ir a órdenes",
+          onClick: () => {
+            router.push("/orders");
+          },
+        }
+      });
     },
     onError: (error) => {
       toast.error(error.message);
