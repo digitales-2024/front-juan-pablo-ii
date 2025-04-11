@@ -103,7 +103,7 @@ export function AppointmentDetailsDialog({
     const formatPaymentMethod = (method: string) => {
         const methods: Record<string, string> = {
             'CASH': 'Efectivo',
-            'BANK_TRANSFER': 'Transferencia bancaria',
+            'BANK_TRANSFER': 'Targeta / Transferencia',
             'DIGITAL_WALLET': 'Billetera digital'
         };
         return methods[method] || method;

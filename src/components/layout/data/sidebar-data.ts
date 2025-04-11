@@ -150,6 +150,11 @@ export const sidebarData: SidebarData = {
           icon: DollarSign,
           items: [
             {
+              title: "Cotizaciones / Pagos",
+              url: "/orders",
+              icon: ListTodo,
+            },
+            {
               title: "Recetas medicas",
               url: "/prescriptions",
               icon: FileHeart,
@@ -159,11 +164,7 @@ export const sidebarData: SidebarData = {
               url: "/productSale",
               icon: HandCoins,
             },
-            {
-              title: "Cotizaciones / Pagos",
-              url: "/orders",
-              icon: ListTodo,
-            },
+         
            /*  {
               title: "Pagos",
               url: "/invoices",

@@ -4,7 +4,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, UserPlus } from "lucide-react";
+import {
+  BriefcaseMedical,
+  Calendar,
+  Hospital,
+  IdCard,
+  Stethoscope,
+  UsersRound,
+} from "lucide-react";
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 import { useServices } from "@/app/(admin)/services/_hooks/useServices";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
@@ -21,20 +28,27 @@ interface LeftPanelProps {
   onServiceChange: (serviceId: string) => void;
   onPatientChange: (patientId: string) => void;
   form?: UseFormReturn<ConsultationSchema>;
-  notModifyDefaults?: boolean
+  notModifyDefaults?: boolean;
 }
 
-export default function LeftPanel({ date, time, onStaffChange, onBranchChange, onServiceChange, onPatientChange, form, notModifyDefaults }: LeftPanelProps) {
-  const isPrescriptionOrderAppointment = form && notModifyDefaults
-  const [selectedMedico, setSelectedMedico] = useState<string | null>(
-    null
-  );
+export default function LeftPanel({
+  date,
+  time,
+  onStaffChange,
+  onBranchChange,
+  onServiceChange,
+  onPatientChange,
+  form,
+  notModifyDefaults,
+}: LeftPanelProps) {
+  const isPrescriptionOrderAppointment = form && notModifyDefaults;
+  const [selectedMedico, setSelectedMedico] = useState<string | null>(null);
   const [selectedServicio, setSelectedServicio] = useState<string | null>(
-    isPrescriptionOrderAppointment ? form.getValues('serviceId') : null
+    isPrescriptionOrderAppointment ? form.getValues("serviceId") : null
   );
   const [selectedSucursal, setSelectedSucursal] = useState<string | null>(null);
   const [selectedPaciente, setSelectedPaciente] = useState<string | null>(
-    isPrescriptionOrderAppointment ? form.getValues('patientId') : null
+    isPrescriptionOrderAppointment ? form.getValues("patientId") : null
   );
   const { staff } = useStaff();
   const { services } = useServices();
@@ -42,48 +56,53 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
   const { patients } = usePatients();
   // const form = useForm();
 
-  const ListMedico = staff?.filter(medico => medico.cmp)
-    .map(medico => ({
-      value: medico.id,
-      label: medico.name,
-    })) ?? [];
+  const ListMedico =
+    staff
+      ?.filter((medico) => medico.cmp)
+      .map((medico) => ({
+        value: medico.id,
+        label: medico.name,
+      })) ?? [];
 
   console.log("LeftPanel:", ListMedico);
 
-  const ListServicio = services?.map(servicio => ({
-    value: servicio.id,
-    label: servicio.name,
-  })) ?? [];
+  const ListServicio =
+    services?.map((servicio) => ({
+      value: servicio.id,
+      label: servicio.name,
+    })) ?? [];
 
-  const ListSucursal = branches?.map(sucursal => ({
-    value: sucursal.id,
-    label: sucursal.name,
-  })) ?? [];
+  const ListSucursal =
+    branches?.map((sucursal) => ({
+      value: sucursal.id,
+      label: sucursal.name,
+    })) ?? [];
 
-  const ListPaciente = patients?.map(paciente => ({
-    value: paciente.id,
-    label: paciente.name,
-  })) ?? [];
+  const ListPaciente =
+    patients?.map((paciente) => ({
+      value: paciente.id,
+      label: paciente.dni,
+    })) ?? [];
 
   const handleStaffSelect = (value: string | null) => {
-    console.group('👨‍⚕️ Staff Selection');
-    console.log('Value:', value);
+    console.group("👨‍⚕️ Staff Selection");
+    console.log("Value:", value);
     setSelectedMedico(value);
-    if (value && value.trim() !== '') {
-      console.log('Updating staff ID');
+    if (value && value.trim() !== "") {
+      console.log("Updating staff ID");
       onStaffChange(value);
     } else {
-      onStaffChange('');
+      onStaffChange("");
     }
     console.groupEnd();
   };
 
   const DefaultValueOrderDescription = () => {
-    const message = "Valor obligatorio para la orden"
-    return <FormDescription className="text-primary/80">
-      {message}
-    </FormDescription>
-  }
+    const message = "Valor obligatorio para la orden";
+    return (
+      <FormDescription className="text-primary/80">{message}</FormDescription>
+    );
+  };
 
   return (
     <div className="flex gap-4">
@@ -98,10 +117,8 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
           </div>
         </div>
         <div className="mt-6">
-          <Label
-            htmlFor="medico"
-            className="flex flex-row items-center mb-4">
-            <UserPlus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+          <Label htmlFor="medico" className="flex flex-row items-center mb-4">
+            <BriefcaseMedical className="h-4 w-4 mr-2" strokeWidth={1.5} />
             Médico
           </Label>
           <ComboboxSelect
@@ -113,10 +130,8 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
           />
         </div>
         <div className="mt-6">
-          <Label
-            htmlFor="servicio"
-            className="flex flex-row items-center mb-4">
-            <UserPlus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+          <Label htmlFor="servicio" className="flex flex-row items-center mb-4">
+            <Stethoscope className="h-4 w-4 mr-2" strokeWidth={1.5} />
             Servicios
           </Label>
           <ComboboxSelect
@@ -125,23 +140,27 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
             options={ListServicio}
             onChange={(value) => {
               setSelectedServicio(value);
-              if (value && value.trim() !== '') {
+              if (value && value.trim() !== "") {
                 console.log("Cambiando servicio a:", value);
                 onServiceChange(value);
               } else {
-                onServiceChange('');
+                onServiceChange("");
               }
             }}
-            description={!isPrescriptionOrderAppointment ? "Seleccione un servicio para la consulta" : undefined}
+            description={
+              !isPrescriptionOrderAppointment
+                ? "Seleccione un servicio para la consulta"
+                : undefined
+            }
             placeholder="Selecciona un servicio"
           />
-          {isPrescriptionOrderAppointment && <DefaultValueOrderDescription></DefaultValueOrderDescription>}
+          {isPrescriptionOrderAppointment && (
+            <DefaultValueOrderDescription></DefaultValueOrderDescription>
+          )}
         </div>
         <div className="mt-6">
-          <Label
-            htmlFor="sucursal"
-            className="flex flex-row items-center mb-4">
-            <UserPlus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+          <Label htmlFor="sucursal" className="flex flex-row items-center mb-4">
+            <Hospital className="h-4 w-4 mr-2" strokeWidth={1.5} />
             Sucursal
           </Label>
           <ComboboxSelect
@@ -149,10 +168,10 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
             value={selectedSucursal ?? ""}
             onChange={(value) => {
               setSelectedSucursal(value);
-              if (value && value.trim() !== '') {
+              if (value && value.trim() !== "") {
                 onBranchChange(value);
               } else {
-                onBranchChange('');
+                onBranchChange("");
               }
             }}
             description="Seleccione una sucursal"
@@ -160,29 +179,44 @@ export default function LeftPanel({ date, time, onStaffChange, onBranchChange, o
           />
         </div>
         <div className="mt-6">
-          <Label
-            htmlFor="paciente"
-            className="flex flex-row items-center mb-4">
-            <UserPlus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-            Paciente
+          <Label htmlFor="paciente" className="flex flex-row items-center mb-4">
+            <UsersRound className="h-4 w-4 mr-2" strokeWidth={1.5} />
+            Nrº de Documento del Paciente
           </Label>
           <ComboboxSelect
             value={selectedPaciente ?? ""}
             disabled={notModifyDefaults}
-            options={ListPaciente}
+            options={ListPaciente.map((paciente) => ({
+              ...paciente,
+              // Mantenemos label como string para compatibilidad
+              label: paciente.label,
+              // Y agregamos labelWithIcon para la visualización con icono
+              labelWithIcon: (
+                <div className="flex items-center">
+                  <IdCard className="h-4 w-4 mr-2" />
+                  {paciente.label}
+                </div>
+              ),
+            }))}
             onChange={(value) => {
               console.log("Valor seleccionado paciente:", value);
               setSelectedPaciente(value);
-              if (value && value.trim() !== '') {
+              if (value && value.trim() !== "") {
                 onPatientChange(value);
               } else {
-                onPatientChange('');
+                onPatientChange("");
               }
             }}
-            description={!isPrescriptionOrderAppointment ? "Seleccione un paciente para la consulta" : undefined}
-            placeholder="Selecciona un paciente"
+            description={
+              !isPrescriptionOrderAppointment
+                ? "Seleccione un paciente para la consulta"
+                : undefined
+            }
+            placeholder="Nrº de Documento del paciente"
           />
-          {isPrescriptionOrderAppointment && <DefaultValueOrderDescription></DefaultValueOrderDescription>}
+          {isPrescriptionOrderAppointment && (
+            <DefaultValueOrderDescription></DefaultValueOrderDescription>
+          )}
         </div>
       </div>
       <Separator

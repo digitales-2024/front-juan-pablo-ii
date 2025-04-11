@@ -576,7 +576,7 @@ export function CreateStaffScheduleForm({
                             size="sm"
                             onClick={handleAddHolidays}
                           >
-                            Agregar todos los feriados 2025
+                            Agregar todos los feriados
                           </Button>
                         </div>
                         <Popover>

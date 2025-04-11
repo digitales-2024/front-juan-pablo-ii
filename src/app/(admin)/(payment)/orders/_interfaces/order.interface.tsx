@@ -400,7 +400,7 @@ export const paymentMethodConfig: Record<PaymentMethod, EnumConfig> = {
     icon: Wallet,
   },
   BANK_TRANSFER: {
-    name: "Transferencia bancaria",
+    name: "Tarjeta / Transferencia",
     backgroundColor: "bg-[#E3F2FD]",
     hoverBgColor: "hover:bg-[#BBDEFB]",
     textColor: "text-[#1976D2]",
@@ -663,7 +663,7 @@ export const paymentMethodOptions: EnumOptions<PaymentMethod>[] = [
     value: "CASH",
   },
   {
-    label: "Transferencia Bancaria",
+    label: "Targeta / Transferencia",
     value: "BANK_TRANSFER",
   },
   {

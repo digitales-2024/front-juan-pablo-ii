@@ -299,7 +299,7 @@ export function CreateStaffForm({
               <FormItem>
                 <FormLabel>Código CMP</FormLabel>
                 <FormControl>
-                  <Input placeholder="98676278" maxLength={10} {...field} />
+                  <Input placeholder="Exclusivo para medicos" maxLength={10} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -345,7 +345,7 @@ export function CreateStaffForm({
               <FormItem>
                 <FormLabel>Teléfono (opcional)</FormLabel>
                 <FormControl>
-                  <PhoneInput placeholder="999888777" {...field} />
+                  <PhoneInput defaultCountry="PE" placeholder="999888777" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

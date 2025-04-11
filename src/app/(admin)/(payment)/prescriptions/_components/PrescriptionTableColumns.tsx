@@ -104,9 +104,9 @@ export const columns: ColumnDef<PrescriptionWithPatient>[] = [
     accessorKey: "prescriptionServices",
     size: 10,
     meta: {
-      title: "Nota Médica",
+      title: "Receta Médica",
     },
-    header: () => <div>Nota Médica</div>,
+    header: () => <div>Receta Médica</div>,
     cell: ({ row }) => (
       <div>
         <ShowPrescriptionDetailsDialog
