@@ -24,7 +24,7 @@ export const createStaffSchema = z.object({
   lastName: z.string().min(1, "El apellido es requerido"),
   dni: z.string().min(8, "El DNI debe tener 8 dígitos").max(8, "El DNI debe tener 8 dígitos"),
   birth: z.string().min(1, "La fecha de nacimiento es requerida"),
-  email: z.string().email("El email no es válido"),
+  email: z.string().email("El email es requerido"),
   phone: z.string().optional(),
   cmp: z.string().optional(),
   userId: z.string().optional(),

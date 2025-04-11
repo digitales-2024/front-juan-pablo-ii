@@ -2,7 +2,10 @@
 import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateStaffScheduleDto, createStaffScheduleSchema } from "../_interfaces/staff-schedules.interface";
+import {
+  CreateStaffScheduleDto,
+  createStaffScheduleSchema,
+} from "../_interfaces/staff-schedules.interface";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,7 +28,7 @@ import {
 } from "@/components/ui/drawer";
 import { CreateStaffScheduleForm } from "./CreateStaffScheduleForm";
 import { format, toDate } from "date-fns-tz";
-import { es } from 'date-fns/locale';
+import { es } from "date-fns/locale";
 import {
   Popover,
   PopoverContent,
@@ -46,13 +49,19 @@ import {
 import { FormControl, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Form } from "@/components/ui/form";
-import { DAYS_OF_WEEK, FERIADOS_2025, TIME_ZONE } from "../_components/CreateStaffScheduleForm";
+import {
+  DAYS_OF_WEEK,
+  /* FERIADOS_2025, */ TIME_ZONE,
+} from "../_components/CreateStaffScheduleForm";
+import {
+  /* CURRENT_YEAR_HOLIDAYS, */ generateHolidays,
+} from "../_interfaces/holidayGenerator";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { colorOptions } from "../../schedules/_components/calendar/calendarTailwindClasses";
 import { EventFilterParams } from "../../schedules/_hooks/useEvents";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-
 
 const CREATE_STAFF_SCHEDULE_MESSAGES = {
   button: "Crear horario",
@@ -71,14 +80,14 @@ const PREDEFINED_SCHEDULES = [
       title: "T-Mañana",
       startTime: "09:00",
       endTime: "14:00",
-      daysOfWeek: [1, 2, 3, 4, 5] // Lunes a Viernes
+      daysOfWeek: [1, 2, 3, 4, 5], // Lunes a Viernes
     },
     saturday: {
       title: "T-Mañana - SÁBADOS",
       startTime: "09:00",
       endTime: "15:00",
-      daysOfWeek: [6] // Sábado
-    }
+      daysOfWeek: [6], // Sábado
+    },
   },
   {
     label: "T-Tarde",
@@ -87,15 +96,15 @@ const PREDEFINED_SCHEDULES = [
       title: "T-Tarde",
       startTime: "14:00",
       endTime: "18:00",
-      daysOfWeek: [1, 2, 3, 4, 5] // Lunes a Viernes
+      daysOfWeek: [1, 2, 3, 4, 5], // Lunes a Viernes
     },
     saturday: {
       title: "T-Tarde - SÁBADOS",
       startTime: "09:00",
       endTime: "15:00",
-      daysOfWeek: [6] // Sábado
-    }
-  }
+      daysOfWeek: [6], // Sábado
+    },
+  },
 ] as const;
 
 export function CreateStaffScheduleDialog() {
@@ -119,7 +128,7 @@ export function CreateStaffScheduleDialog() {
       daysOfWeek: [],
       recurrence: {
         frequency: "YEARLY",
-        interval: 1
+        interval: 1,
       },
       exceptions: [],
     },
@@ -134,17 +143,22 @@ export function CreateStaffScheduleDialog() {
   const branchId = form.watch("branchId");
 
   useEffect(() => {
-    const selected = PREDEFINED_SCHEDULES.find(s => s.value === selectedSchedule);
-    const staffMember = staff?.find(s => s.id === staffId);
+    const selected = PREDEFINED_SCHEDULES.find(
+      (s) => s.value === selectedSchedule
+    );
+    const staffMember = staff?.find((s) => s.id === staffId);
 
     if (!isTitleManuallyEdited) {
       if (staffMember && selected) {
-        const prefix = staffMember.cmp ? 'Dr.' : '';
-        const turnPrefix = selected.value === 'morning' ? 'T-Mañana' : 'T-Tarde';
-        const defaultTitle = `${turnPrefix}-${prefix} ${staffMember?.name} ${staffMember?.lastName}`.trim();
+        const prefix = staffMember.cmp ? "Dr." : "";
+        const turnPrefix =
+          selected.value === "morning" ? "T-Mañana" : "T-Tarde";
+        const defaultTitle =
+          `${turnPrefix}-${prefix} ${staffMember?.name} ${staffMember?.lastName}`.trim();
         form.setValue("title", defaultTitle);
       } else if (selected) {
-        const turnPrefix = selected.value === 'morning' ? 'T-Mañana' : 'T-Tarde';
+        const turnPrefix =
+          selected.value === "morning" ? "T-Mañana" : "T-Tarde";
         form.setValue("title", turnPrefix);
       } else {
         form.setValue("title", "");
@@ -171,16 +185,20 @@ export function CreateStaffScheduleDialog() {
   }
 
   const handlePredefinedSubmit = () => {
-    const selected = PREDEFINED_SCHEDULES.find(s => s.value === selectedSchedule);
+    const selected = PREDEFINED_SCHEDULES.find(
+      (s) => s.value === selectedSchedule
+    );
     if (!selected) return;
 
     const staffId = form.getValues("staffId");
     const branchId = form.getValues("branchId");
     const color = form.getValues("color");
-    const staffMember = staff?.find(s => s.id === staffId);
-    const prefix = staffMember?.cmp ? 'Dr.' : '';
-    const turnPrefix = selected.value === 'morning' ? 'T-Mañana' : 'T-Tarde';
-    const defaultTitle = staffMember ? `${turnPrefix}-${prefix} ${staffMember?.name} ${staffMember?.lastName}`.trim() : turnPrefix;
+    const staffMember = staff?.find((s) => s.id === staffId);
+    const prefix = staffMember?.cmp ? "Dr." : "";
+    const turnPrefix = selected.value === "morning" ? "T-Mañana" : "T-Tarde";
+    const defaultTitle = staffMember
+      ? `${turnPrefix}-${prefix} ${staffMember?.name} ${staffMember?.lastName}`.trim()
+      : turnPrefix;
 
     const baseSchedule = {
       ...form.getValues(),
@@ -191,7 +209,7 @@ export function CreateStaffScheduleDialog() {
       recurrence: {
         frequency: "WEEKLY",
         interval: 1,
-        until: endDate ? format(endDate, "yyyy-MM-dd") : ""
+        until: endDate ? format(endDate, "yyyy-MM-dd") : "",
       },
       exceptions: [],
     };
@@ -201,7 +219,9 @@ export function CreateStaffScheduleDialog() {
       ...baseSchedule,
       startTime: selected.weekdays.startTime,
       endTime: selected.weekdays.endTime,
-      daysOfWeek: selected.weekdays.daysOfWeek.map(day => DAYS_OF_WEEK[day - 1].value),
+      daysOfWeek: selected.weekdays.daysOfWeek.map(
+        (day) => DAYS_OF_WEEK[day - 1].value
+      ),
     };
 
     // Crear horario para sábados
@@ -210,32 +230,38 @@ export function CreateStaffScheduleDialog() {
       title: `${defaultTitle} - SÁBADOS`,
       startTime: selected.saturday.startTime,
       endTime: selected.saturday.endTime,
-      daysOfWeek: selected.saturday.daysOfWeek.map(day => DAYS_OF_WEEK[day - 1].value),
+      daysOfWeek: selected.saturday.daysOfWeek.map(
+        (day) => DAYS_OF_WEEK[day - 1].value
+      ),
     };
 
     startCreateTransition(() => {
       Promise.all([
         createMutation.mutateAsync(weekdaySchedule as CreateStaffScheduleDto),
-        createMutation.mutateAsync(saturdaySchedule as CreateStaffScheduleDto)
-      ]).then(() => {
-        // Obtener los filtros actuales
-        const calendarFilters = queryClient.getQueryData<EventFilterParams>(['calendar-filters']);
+        createMutation.mutateAsync(saturdaySchedule as CreateStaffScheduleDto),
+      ])
+        .then(() => {
+          // Obtener los filtros actuales
+          const calendarFilters = queryClient.getQueryData<EventFilterParams>([
+            "calendar-filters",
+          ]);
 
-        // Invalidar la query específica
-        queryClient.refetchQueries({
-          queryKey: ['calendar-turns', calendarFilters]
+          // Invalidar la query específica
+          queryClient.refetchQueries({
+            queryKey: ["calendar-turns", calendarFilters],
+          });
+
+          // Invalidar también todas las queries relacionadas
+          queryClient.refetchQueries({
+            queryKey: ["calendar-turns"],
+          });
+
+          setOpen(false);
+          form.reset();
+        })
+        .catch((error) => {
+          console.error("Error creating schedules:", error);
         });
-
-        // Invalidar también todas las queries relacionadas
-        queryClient.refetchQueries({
-          queryKey: ['calendar-turns'],
-        });
-
-        setOpen(false);
-        form.reset();
-      }).catch((error) => {
-        console.error('Error creating schedules:', error);
-      });
     });
   };
 
@@ -264,11 +290,7 @@ export function CreateStaffScheduleDialog() {
   );
 
   const TriggerButton = () => (
-    <Button
-      onClick={() => setOpen(true)}
-      variant="outline"
-      size="sm"
-    >
+    <Button onClick={() => setOpen(true)} variant="outline" size="sm">
       <Plus className="size-4 mr-2" aria-hidden="true" />
       {CREATE_STAFF_SCHEDULE_MESSAGES.button}
     </Button>
@@ -279,8 +301,19 @@ export function CreateStaffScheduleDialog() {
     const { branches } = useBranches();
     const [exceptions, setExceptions] = useState<string[]>([]);
 
-    const handleAddHolidays = () => {
+    /*   const handleAddHolidays = () => {
       const mergedDates = [...new Set([...exceptions, ...FERIADOS_2025])];
+      setExceptions(mergedDates);
+      form.setValue("exceptions", mergedDates);
+    }; */
+    const handleAddHolidays = () => {
+      // Usar el año actual o si se ha seleccionado un endDate, usar ese año
+      const targetYear = endDate
+        ? endDate.getFullYear()
+        : new Date().getFullYear();
+      const holidays = generateHolidays(targetYear);
+
+      const mergedDates = [...new Set([...exceptions, ...holidays])];
       setExceptions(mergedDates);
       form.setValue("exceptions", mergedDates);
     };
@@ -292,7 +325,9 @@ export function CreateStaffScheduleDialog() {
             {PREDEFINED_SCHEDULES.map((schedule) => (
               <Button
                 key={schedule.value}
-                variant={selectedSchedule === schedule.value ? "default" : "outline"}
+                variant={
+                  selectedSchedule === schedule.value ? "default" : "outline"
+                }
                 onClick={() => setSelectedSchedule(schedule.value)}
               >
                 {schedule.label}
@@ -301,12 +336,18 @@ export function CreateStaffScheduleDialog() {
           </div>
 
           <div className="bg-blue-50 p-4 rounded-lg space-y-3">
-            <p className="text-sm font-medium text-blue-700">Detalles del horario seleccionado:</p>
+            <p className="text-sm font-medium text-blue-700">
+              Este horario sera efectivo en el sistema un dia despues del su creacion hasta la fecha valida que se le agrege:
+              PARA CRAER UN NUEVO HORARIO A UN PERSONAL DEBE DE ELIMINAR EL ANTERIOR:
+            </p>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-blue-500" />
                 <span className="text-sm text-blue-600">
-                  Días de semana (L-V): {selectedSchedule === 'morning' ? '09:00 - 14:00' : '14:00 - 18:00'}
+                  Días de semana (L-V):{" "}
+                  {selectedSchedule === "morning"
+                    ? "09:00 - 14:00"
+                    : "14:00 - 18:00"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -318,9 +359,9 @@ export function CreateStaffScheduleDialog() {
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-blue-500" />
                 <span className="text-sm text-blue-600">
-                  {selectedSchedule === 'morning'
-                    ? 'Turno Mañana: Horario predefinido , si desea modificarlo consulte a soporte tecnico'
-                    : 'Turno Tarde: Horario predefinido , si desea modificarlo consulte a soporte tecnico'}
+                  {selectedSchedule === "morning"
+                    ? "Turno Mañana: Horario predefinido , si desea modificarlo consulte a soporte tecnico"
+                    : "Turno Tarde: Horario predefinido , si desea modificarlo consulte a soporte tecnico"}
                 </span>
               </div>
             </div>
@@ -391,7 +432,11 @@ export function CreateStaffScheduleDialog() {
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {endDate ? format(endDate, "PPP", { locale: es }) : <span>Valido hasta</span>}
+                  {endDate ? (
+                    format(endDate, "PPP", { locale: es })
+                  ) : (
+                    <span>Valido hasta</span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -412,7 +457,9 @@ export function CreateStaffScheduleDialog() {
                 <SelectTrigger>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`size-3 rounded-full bg-${form.watch("color")}-500`}
+                      className={`size-3 rounded-full bg-${form.watch(
+                        "color"
+                      )}-500`}
                     />
                     <SelectValue placeholder="Selecciona un color" />
                   </div>
@@ -422,7 +469,9 @@ export function CreateStaffScheduleDialog() {
                 {colorOptions.map((color) => (
                   <SelectItem key={color.value} value={color.value}>
                     <div className="flex items-center gap-2">
-                      <div className={`w-4 h-4 rounded-full bg-${color.value}-500`} />
+                      <div
+                        className={`w-4 h-4 rounded-full bg-${color.value}-500`}
+                      />
                       {color.label}
                     </div>
                   </SelectItem>
@@ -440,7 +489,7 @@ export function CreateStaffScheduleDialog() {
                 size="sm"
                 onClick={handleAddHolidays}
               >
-                Agregar todos los feriados 2025
+                Agregar todos los feriados {new Date().getFullYear()}
               </Button>
             </div>
             <Popover>
@@ -461,13 +510,14 @@ export function CreateStaffScheduleDialog() {
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="multiple"
-                  selected={exceptions?.map(dateString =>
+                  selected={exceptions?.map((dateString) =>
                     toDate(dateString, { timeZone: TIME_ZONE })
                   )}
                   onSelect={(dates) => {
-                    const formattedDates = dates?.map(d =>
-                      format(d, 'yyyy-MM-dd', { timeZone: TIME_ZONE })
-                    ) || [];
+                    const formattedDates =
+                      dates?.map((d) =>
+                        format(d, "yyyy-MM-dd", { timeZone: TIME_ZONE })
+                      ) || [];
                     setExceptions(formattedDates);
                     form.setValue("exceptions", formattedDates);
                   }}
@@ -489,12 +539,18 @@ export function CreateStaffScheduleDialog() {
                     variant="outline"
                     className="cursor-pointer hover:bg-gray-100"
                     onClick={() => {
-                      const newExceptions = exceptions.filter((_, i) => i !== index);
+                      const newExceptions = exceptions.filter(
+                        (_, i) => i !== index
+                      );
                       setExceptions(newExceptions);
                       form.setValue("exceptions", newExceptions);
                     }}
                   >
-                    {format(toDate(dateString, { timeZone: TIME_ZONE }), "dd/MM/yyyy", { timeZone: TIME_ZONE })}
+                    {format(
+                      toDate(dateString, { timeZone: TIME_ZONE }),
+                      "dd/MM/yyyy",
+                      { timeZone: TIME_ZONE }
+                    )}
                     <X className="h-3 w-3 ml-1" />
                   </Badge>
                 );
@@ -508,7 +564,9 @@ export function CreateStaffScheduleDialog() {
             className="w-full"
             onClick={() => setShowAdvanced(!showAdvanced)}
           >
-            {showAdvanced ? "Ocultar opciones avanzadas" : "Mostrar opciones avanzadas"}
+            {showAdvanced
+              ? "Ocultar opciones avanzadas"
+              : "Mostrar opciones avanzadas"}
           </Button>
         </div>
       </Form>
@@ -615,4 +673,4 @@ export function CreateStaffScheduleDialog() {
       </Drawer>
     </>
   );
-} 
+}

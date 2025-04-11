@@ -39,7 +39,7 @@ const ListPaymentMethods = [
 	},
 	{
 		value: "BANK_TRANSFER",
-		label: "Transferencia",
+		label: "Targeta / Transferencia",
 	},
 	{
 		value: "DIGITAL_WALLET",

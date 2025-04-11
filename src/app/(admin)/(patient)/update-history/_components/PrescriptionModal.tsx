@@ -264,7 +264,7 @@ export function PrescriptionModal({
       header.style.marginTop = "-8px"; // Moverlo más arriba
 
       const title = document.createElement("h2");
-      title.textContent = "NOTA MÉDICA";
+      title.textContent = "RECETA MÉDICA";
       title.style.fontSize = "15px"; // Más pequeño para A5
       title.style.fontWeight = "bold";
       title.style.color = corporateColor; // Usar el color corporativo
@@ -419,7 +419,7 @@ export function PrescriptionModal({
       }
 
       // Guardar PDF
-      pdf.save(`Nota_Medica_${patient?.name}_${patient?.lastName}.pdf`);
+      pdf.save(`Receta_Medica_${patient?.name}_${patient?.lastName}.pdf`);
     } catch (error) {
       console.error("Error al generar PDF:", error);
       alert(
@@ -453,7 +453,7 @@ export function PrescriptionModal({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden">
         <div className="max-h-[calc(100dvh-8rem)] overflow-y-auto p-2 sm:p-4">
           <DialogHeader>
-            <DialogTitle>Nota Médica</DialogTitle>
+            <DialogTitle>Receta Médica</DialogTitle>
           </DialogHeader>
           <div className="space-y-6" ref={prescriptionRef}>
             {/* Encabezado de la Receta */}
@@ -611,7 +611,7 @@ export function PrescriptionModal({
                     "Generando PDF..."
                   ) : (
                     <>
-                      <Printer className="w-4 h-4 mr-2" /> Imprimir Nota Medica
+                      <Printer className="w-4 h-4 mr-2" /> Imprimir Receta Medica
                     </>
                   )}
                 </Button>

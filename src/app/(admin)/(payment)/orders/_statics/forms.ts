@@ -265,10 +265,10 @@ export const PROCESS_PAYMENT_STATICS: FormStatics<ProcessPaymentInput> = {
     },
     voucherNumber: {
         required: false,
-        label: "Número de voucher",
+        label: "Número de Comprobante",
         defaultValue: undefined,
         type: "text",
-        placeholder: "Número de voucher",
+        placeholder: "Número de Comprobante",
         name: "voucherNumber",
     },
     description: {

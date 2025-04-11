@@ -36,10 +36,10 @@ export const FORMSTATICS: FormStatics<CreateStorageInput> = {
     },
     location: {
         required: false,
-        label: "Ubicación",
+        label: "Ubicación interna del almacén (Opcional)",
         defaultValue: "",
         type: "text",
-        placeholder: "Ubicación dentro de almacén",
+        placeholder: "Segundo piso, primer piso, etc.",
         name: "location",
     },
     typeStorageId: {

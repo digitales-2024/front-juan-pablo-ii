@@ -1,11 +1,11 @@
 
 import { components } from "@/types/api";
-import { Archive, LucideIcon, MoreHorizontal, ShoppingBag } from "lucide-react";
+import { Archive, LucideIcon, ShoppingBag } from "lucide-react";
 import { z } from "zod";
 
 // Tipos base de la API
 // export type ProductUsePrototype = components['schemas']['ProductUse'];
-export type ProductUse = "VENTA" | "INTERNO" | "OTRO";
+export type ProductUse = "VENTA" | "INTERNO";
 export type EnumConfig = {
   name: string;
   backgroundColor: string;
@@ -42,13 +42,10 @@ export const productUseOptions: Record<ProductUse, {
     value: "VENTA",
   },
   INTERNO: {
-    label: "Uso interno",
+    label: "Interno",
     value: "INTERNO",
   },
-  OTRO: {
-    label: "Otro",
-    value: "OTRO",
-  },
+
 }
 
 export const productUseEnumConfig: Record<ProductUse, EnumConfig> = {
@@ -66,13 +63,7 @@ export const productUseEnumConfig: Record<ProductUse, EnumConfig> = {
     hoverBgColor: "hover:bg-[#a5b4fc]",
     icon: Archive,
   },
-  OTRO: {
-    name: "Otro",
-    backgroundColor: "bg-[#cbd5e1]",
-    textColor: "text-[#334155]",
-    hoverBgColor: "hover:bg-[#94a3b8]",
-    icon: MoreHorizontal,
-  },
+
 }
 
 

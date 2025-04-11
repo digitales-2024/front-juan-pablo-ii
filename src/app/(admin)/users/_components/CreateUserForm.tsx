@@ -79,7 +79,7 @@ export default function CreateUserForm({
 								<FormControl>
 									<Input
 										id="email"
-										placeholder="usuario@dominio.com"
+										placeholder="usuario@juanpabloii.com"
 										{...field}
 									/>
 								</FormControl>
