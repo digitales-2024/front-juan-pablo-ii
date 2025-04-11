@@ -60,7 +60,7 @@ const {sendNewPassword, isLoadingSendNewPassword} = useUsers()
         <Card className="w-full border-none p-0">
           <CardHeader>
             <CardDescription>
-              Genera una nueva constraseña para el usuario y envíala por correo
+              Genera una nueva constraseña para el usuario
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -100,7 +100,7 @@ const {sendNewPassword, isLoadingSendNewPassword} = useUsers()
                 "Enviando..."
               ) : (
                 <span className="flex gap-2">
-                  Enviar <SendHorizonal />
+                  Actualizar Contraseña <SendHorizonal />
                 </span>
               )}
             </Button>

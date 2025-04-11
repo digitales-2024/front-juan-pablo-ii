@@ -102,7 +102,7 @@ export const useUsers = () => {
 			return response;
 		},
 		onSuccess: () => {
-			toast.success("Nueva contraseña enviada exitosamente");
+			toast.success("Nueva contraseña actualizada exitosamente");
 		},
 		onError: (error) => {
 			toast.error(error.message);
