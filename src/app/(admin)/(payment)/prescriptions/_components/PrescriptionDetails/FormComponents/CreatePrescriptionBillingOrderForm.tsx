@@ -2,7 +2,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import {
   Form,
   FormControl,
@@ -425,7 +425,9 @@ CreatePrescriptionOrderFormProps) {
     setServicesTableFormData((prev) => {
       const updated = prev.map((item) => {
         const appointmentReference = selectedServicesAppointmentsData.data.find(
-          (s) => (s.serviceId === item.serviceId) && (s.uniqueIdentifier === item.uniqueIdentifier)
+          (s) =>
+            s.serviceId === item.serviceId &&
+            s.uniqueIdentifier === item.uniqueIdentifier
         );
         const hasMadeAppointment = !!appointmentReference;
 
@@ -708,32 +710,49 @@ CreatePrescriptionOrderFormProps) {
   // ]);
 
   const SaveServiceTableButton = () => {
+    // Verificar si hay cambios para aplicar animación
+    const hasChanges = servicesTableFormData.some((s) => s.hasChanges);
+
     return (
       <Button
         type="button"
         variant={"outline"}
         onClick={handleSaveServices}
-        disabled={!servicesTableFormData.some((s) => s.hasChanges)}
-        className="ml-auto bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary"
+        disabled={!hasChanges}
+        className={cn(
+          "ml-auto bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary transition-all",
+          // Aplicar animación solo cuando hay cambios
+          hasChanges &&
+            "animate-[pulse_1.5s_ease-in-out_infinite] shadow-md shadow-primary/20"
+        )}
       >
-        <Save className="mr-2 h-4 w-4" />
+        <Save className={cn("mr-2 h-4 w-4", hasChanges && "animate-bounce")} />
         Guardar cambios
       </Button>
     );
   };
 
-  const SaveProductTableButton = () => (
-    <Button
-      type="button"
-      variant={"outline"}
-      onClick={handleSaveProducts}
-      disabled={!productTableFormData.some((p) => p.hasChanges)}
-      className="ml-auto mt-2 bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary"
-    >
-      <Save className="mr-2 h-4 w-4" />
-      Guardar cambios
-    </Button>
-  );
+  const SaveProductTableButton = () => {
+    // Verificar si hay cambios para aplicar animación
+    const hasChanges = productTableFormData.some((p) => p.hasChanges);
+    return (
+      <Button
+        type="button"
+        variant={"outline"}
+        onClick={handleSaveProducts}
+        disabled={!hasChanges}
+        className={cn(
+          "ml-auto mt-2 bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary transition-all",
+          // Aplicar animación solo cuando hay cambios
+          hasChanges &&
+            "animate-[pulse_1.5s_ease-in-out_infinite] shadow-md shadow-primary/20"
+        )}
+      >
+        <Save className={cn("mr-2 h-4 w-4", hasChanges && "animate-bounce")} />
+        Guardar cambios
+      </Button>
+    );
+  };
 
   return (
     <Form {...form}>
@@ -889,7 +908,9 @@ CreatePrescriptionOrderFormProps) {
 
                         return (
                           <TableRow
-                            key={field?.serviceId ? field.serviceId+index : index}
+                            key={
+                              field?.serviceId ? field.serviceId + index : index
+                            }
                             className="animate-fade-down"
                           >
                             {/* <TableCell className="flex justify-center items-center">
@@ -1128,7 +1149,11 @@ CreatePrescriptionOrderFormProps) {
                           // handleUncheckOneProduct(index);
                           return (
                             <TableRow
-                              key={field?.productId ? field.productId+index : index}
+                              key={
+                                field?.productId
+                                  ? field.productId + index
+                                  : index
+                              }
                               className="animate-fade-down"
                             >
                               <TableCell>
@@ -1196,8 +1221,9 @@ CreatePrescriptionOrderFormProps) {
                                 </FormItem>
                               </TableCell>
                               <TableCell colSpan={5} className="text-center">
-                                No existe stock para este producto:{` "${safeData.name}" `}
-                                 en este almacén
+                                No existe stock para este producto:
+                                {` "${safeData.name}" `}
+                                en este almacén
                               </TableCell>
                             </TableRow>
                           );
