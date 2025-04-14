@@ -66,7 +66,8 @@ export const columns: ColumnDef<StaffSchedule>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Personal" />
     ),
-    cell: ({ row }) => `${row.original.staff?.name} ${row.original.staff?.lastName}`,
+    cell: ({ row }) =>
+      `${row.original.staff?.name} ${row.original.staff?.lastName}`,
   },
   {
     accessorKey: "branch.name",
@@ -80,19 +81,21 @@ export const columns: ColumnDef<StaffSchedule>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Días" />
     ),
-    cell: ({ row }) => row.original.daysOfWeek
-      .map(day => {
-        const daysMap = {
-          MONDAY: "Lun",
-          TUESDAY: "Mar",
-          WEDNESDAY: "Mié",
-          THURSDAY: "Jue",
-          FRIDAY: "Vie",
-          SATURDAY: "Sáb",
-          SUNDAY: "Dom"
-        };
-        return daysMap[day] || day;
-      }).join(", "),
+    cell: ({ row }) =>
+      row.original.daysOfWeek
+        .map((day) => {
+          const daysMap = {
+            MONDAY: "Lun",
+            TUESDAY: "Mar",
+            WEDNESDAY: "Mié",
+            THURSDAY: "Jue",
+            FRIDAY: "Vie",
+            SATURDAY: "Sáb",
+            SUNDAY: "Dom",
+          };
+          return daysMap[day] || day;
+        })
+        .join(", "),
   },
   {
     accessorKey: "startTime",
@@ -117,19 +120,25 @@ export const columns: ColumnDef<StaffSchedule>[] = [
         DAILY: "Diaria",
         WEEKLY: "Semanal",
         MONTHLY: "Mensual",
-        YEARLY: "Sin Recurrencia"
+        YEARLY: "Sin Recurrencia",
       };
-      const frequency = recurrence.frequency as "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+      const frequency = recurrence.frequency as
+        | "DAILY"
+        | "WEEKLY"
+        | "MONTHLY"
+        | "YEARLY";
 
       if (frequency === "YEARLY") return frequencyMap.YEARLY;
 
       const intervalText = {
         DAILY: { singular: "día", plural: "días" },
         WEEKLY: { singular: "semana", plural: "semanas" },
-        MONTHLY: { singular: "mes", plural: "meses" }
+        MONTHLY: { singular: "mes", plural: "meses" },
       }[frequency];
 
-      return `${frequencyMap[frequency]} cada ${recurrence.interval} ${recurrence.interval === 1 ? intervalText.singular : intervalText.plural}`;
+      return `${frequencyMap[frequency]} cada ${recurrence.interval} ${
+        recurrence.interval === 1 ? intervalText.singular : intervalText.plural
+      }`;
     },
   },
   {
@@ -137,7 +146,8 @@ export const columns: ColumnDef<StaffSchedule>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Válido hasta" />
     ),
-    cell: ({ row }) => format(new Date(row.original.recurrence.until), "PP", { locale: es }),
+    cell: ({ row }) =>
+      format(new Date(row.original.recurrence.until), "PP", { locale: es }),
   },
   {
     accessorKey: "isActive",
@@ -155,16 +165,18 @@ export const columns: ColumnDef<StaffSchedule>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha de creación" />
     ),
-    cell: ({ row }) => format(new Date(row.original.createdAt), "PPp", { locale: es }),
+    cell: ({ row }) =>
+      format(new Date(row.original.createdAt), "PPp", { locale: es }),
   },
   {
     accessorKey: "exceptions",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Excepciones" />
     ),
-    cell: ({ row }) => row.original.exceptions
-      .map(date => format(new Date(date), "dd/MM/yyyy", { locale: es }))
-      .join(", ") || "Sin excepciones",
+    cell: ({ row }) =>
+      row.original.exceptions
+        .map((date) => format(new Date(date), "dd/MM/yyyy", { locale: es }))
+        .join(", ") || "Sin excepciones",
   },
   {
     id: "Acciones",

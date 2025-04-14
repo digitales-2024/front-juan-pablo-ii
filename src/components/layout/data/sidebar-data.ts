@@ -208,6 +208,16 @@ export const sidebarData: SidebarData = {
           icon: UserRoundSearch,
           items: [
             {
+              title: "Calendario Medico",
+              url: "/schedules",
+              icon: CalendarRange,
+            },
+            {
+              title: "Crear Turnos",
+              url: "/staff-schedules",
+              icon: Clock,
+            },
+            {
               title: "Personal",
               url: "/staff",
               icon: UserRoundSearch,
@@ -217,16 +227,8 @@ export const sidebarData: SidebarData = {
               url: "/staff/types",
               icon: UserPen,
             },
-            {
-              title: "Cronograma",
-              url: "/schedules",
-              icon: CalendarRange,
-            },
-            {
-              title: "Turnos",
-              url: "/staff-schedules",
-              icon: Clock,
-            },
+         
+           
 
 
           ],
