@@ -118,6 +118,7 @@ export function useSignIn() {
         isActive: true,
         mustChangePassword: false,
         lastLogin: new Date().toISOString(),
+        branchId: response.branchId, // Añadir esta línea
       };
 
       // Console log para ver los datos del usuario en el navegador

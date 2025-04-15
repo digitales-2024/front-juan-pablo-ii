@@ -52,6 +52,7 @@ import GeneralErrorMessage from "../../errorComponents/GeneralErrorMessage";
 import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
 import SearchPatientCombobox from "../../FilterComponents/SearchPatientCombobox";
 import { toast } from "sonner";
+import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
 
 interface CreateProductSaleFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -90,10 +91,9 @@ export function CreateProductSaleBillingOrderForm({
       ...(watchItem ?? {}),
     };
   });
-  // const storageSafeWatch = watch("storageId");
 
-  // const { activeStoragesQuery: responseStorage } = useStorages();
-  // const { activeProductsQuery: reponseProducts } = useProducts();
+  const { user } = useAuth();
+
   const { activeBranchesQuery: responseBranches } = useBranches();
   const { patientsQuery: responsePatients, usePatientByDNI } = usePatients();
   const forSaleProductStockQuery = useProductsStockByUse();
@@ -102,26 +102,44 @@ export function CreateProductSaleBillingOrderForm({
   const selectedProducts = useSelectedProducts();
   const dispatch = useSelectProductDispatch();
 
+  const filteredBranches = useMemo(() => {
+    if (!responseBranches.data) return [];
+
+    if (user?.isSuperAdmin) {
+      return responseBranches.data;
+    }
+
+    if (user?.branchId) {
+      return responseBranches.data.filter(
+        (branch) => branch.id === user.branchId
+      );
+    }
+
+    return responseBranches.data;
+  }, [responseBranches.data, user]);
+
+  useEffect(() => {
+    if (user?.branchId && !user?.isSuperAdmin && !form.getValues("branchId")) {
+      form.setValue("branchId", user.branchId);
+    }
+  }, [user, form]);
+
   const onSubmitPatient = useCallback(
     (value: string) => {
       form.setValue("patientId", value);
-      // if (response.data) {
-      //   toast.success("Stock filtrado correctamente");
-      // }
     },
     [usePatientByDNI]
   );
 
   const syncProducts = useCallback(() => {
-    // Limpiar fields existentes
-    remove(); //Without parameters it removes all fields
+    remove();
 
-    // Agregar nuevos productos
     selectedProducts.forEach((product) => {
-      const quantity = ((product.Stock[0]?.stock == 0)||(!product.Stock[0]?.stock)) ? 0 : 1;
+      const quantity =
+        product.Stock[0]?.stock == 0 || !product.Stock[0]?.stock ? 0 : 1;
       append({
         productId: product.id,
-        quantity: quantity, //THis is the default value for quantity
+        quantity: quantity,
         storageId: product.Stock[0]?.Storage.id,
       });
     });
@@ -130,107 +148,6 @@ export function CreateProductSaleBillingOrderForm({
   useEffect(() => {
     syncProducts();
   }, [syncProducts]);
-
-  // const removeAllProductStockStateDataState = useCallback((productId: string) => {
-  //   setProductStockState((prev) => prev.filter((item) => item.id !== productId));
-  // }, []);
-
-  // useEffect(() => {
-  //   if (didInitializeRef.current) return;
-  //   didInitializeRef.current = true;
-
-  //   remove();
-
-  //   selectedProducts.forEach((product) => {
-  //     append({
-  //       productId: product.id,
-  //       quantity: 1,
-  //       storageId: undefined,
-  //     });
-  //   });
-
-  //   setTimeout(() => calculateTotalsWithDebounce(), 500);
-  // }, [append, remove, selectedProducts, calculateTotalsWithDebounce]);
-
-  // const handleRemoveProduct = useCallback(
-  //   (index: number) => {
-  //     if (fields[index]) {
-  //       dispatch({
-  //         type: "remove",
-  //         payload: { productId: fields[index].productId },
-  //       });
-  //     }
-  //     remove(index);
-  //     calculateTotalsWithDebounce();
-  //   },
-  //   [fields, dispatch, remove, calculateTotalsWithDebounce]
-  // );
-
-  // const calculateTotalsWithDebounce = useCallback(() => {
-  //   if (updateTimeoutRef.current) {
-  //     clearTimeout(updateTimeoutRef.current);
-  //   }
-
-  //   updateTimeoutRef.current = setTimeout(() => {
-  //     if (isCalculatingRef.current) return;
-  //     isCalculatingRef.current = true;
-
-  //     try {
-  //       const products = form.getValues("products") || [];
-
-  //       if (products.length === 0) {
-  //         setProductTotals({
-  //           total: 0,
-  //           totalIGV: 0,
-  //           totalSubtotal: 0,
-  //           totalQuantity: 0,
-  //           totalProducts: 0,
-  //         });
-  //         setShowTotals(false);
-  //         return;
-  //       }
-
-  //       let total = 0;
-  //       let totalIGV = 0;
-  //       let totalSubtotal = 0;
-  //       let totalQuantity = 0;
-  //       let totalProducts = 0;
-  //       const IGV_RATE = 0.18;
-
-  //       products.forEach((field) => {
-  //         const productData = selectedProducts.find(
-  //           (p) => p.id === field.productId
-  //         );
-  //         if (!productData) return;
-
-  //         const price = productData.precio ?? 0;
-  //         const quantity = field.quantity ?? 0;
-  //         const subtotal = price * quantity;
-  //         const igvAmount = subtotal * IGV_RATE;
-
-  //         total += subtotal + igvAmount;
-  //         totalIGV += igvAmount;
-  //         totalSubtotal += subtotal;
-  //         totalQuantity += quantity;
-  //         totalProducts++;
-  //       });
-
-  //       setProductTotals({
-  //         total,
-  //         totalIGV,
-  //         totalSubtotal,
-  //         totalQuantity,
-  //         totalProducts,
-  //       });
-
-  //       setShowTotals(true);
-  //     } catch (error) {
-  //       console.error("Error calculando totales:", error);
-  //     } finally {
-  //       isCalculatingRef.current = false;
-  //     }
-  //   }, 200);
-  // }, [form, selectedProducts, calculateTotalsWithDebounce]);
 
   const calculateProductTotals = useCallback(() => {
     if (isCalculatingProductsRef.current) return;
@@ -263,11 +180,12 @@ export function CreateProductSaleBillingOrderForm({
         if (!productData) return;
 
         const price = product.precio ?? 0;
-        // Ensure quantity is a valid number
         const quantityValue = productData.quantity;
-        const quantity = typeof quantityValue === 'number' && !isNaN(quantityValue) ? quantityValue : 0;
-        
-        // Calculate values only if both price and quantity are valid
+        const quantity =
+          typeof quantityValue === "number" && !isNaN(quantityValue)
+            ? quantityValue
+            : 0;
+
         if (price > 0 && quantity > 0) {
           const totalWithIGV = price * quantity;
           const igv = totalWithIGV * (IGV_RATE / (1 + IGV_RATE));
@@ -281,7 +199,6 @@ export function CreateProductSaleBillingOrderForm({
         }
       });
 
-      // Ensure all calculated values are finite numbers
       setProductTotals({
         total: isFinite(total) ? total : 0,
         totalIGV: isFinite(totalIGV) ? totalIGV : 0,
@@ -349,18 +266,12 @@ export function CreateProductSaleBillingOrderForm({
     return <LoadingDialogForm />;
   }
 
-  // const patientOptions = responseStorage.data.map((storage) => ({
-  //   label: `${storage.name} - ${storage.branch.name}`,
-  //   value: storage.id,
-  // }));
-
-  const branchOptions = responseBranches.data.map((branch) => ({
+  const branchOptions = filteredBranches.map((branch) => ({
     label: branch.name,
     value: branch.id,
   }));
 
   const handleRemoveProduct = (index: number) => {
-    // this removes from the tanstack state management
     dispatch({
       type: "remove",
       payload: {
@@ -368,7 +279,6 @@ export function CreateProductSaleBillingOrderForm({
       },
     });
 
-    //THis removes from the react-hook-form arraylist
     remove(index);
   };
 
@@ -386,6 +296,7 @@ export function CreateProductSaleBillingOrderForm({
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    disabled={!!user?.branchId && !user?.isSuperAdmin}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -407,7 +318,9 @@ export function CreateProductSaleBillingOrderForm({
                     required={FORMSTATICS.branchId.required}
                   />
                   <FormDescription>
-                    Solo visualizará sucursales activas
+                    {user?.branchId && !user?.isSuperAdmin
+                      ? "Sucursal asignada a tu usuario"
+                      : "Solo visualizará sucursales activas"}
                   </FormDescription>
                 </FormItem>
               )}
@@ -440,7 +353,6 @@ export function CreateProductSaleBillingOrderForm({
           <div className="flex flex-col gap-4 col-span-4">
             <FormLabel>{FORMSTATICS.products.label}</FormLabel>
             <Table className="w-full">
-              {/* <TableCaption>Si escoges otro almacén se reiniciará la lista de productos seleccionados.</TableCaption> */}
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">Nombre</TableHead>
@@ -462,7 +374,6 @@ export function CreateProductSaleBillingOrderForm({
                   );
                   const safeData: Partial<OutgoingProducStockForm> = data ?? {};
                   const safeWatch = watchFieldArray?.[index] ?? {};
-                  //const price = safeData.precio ?? 0;
                   const safeStorages =
                     safeData.Stock?.map((stock) => ({
                       label: (
@@ -477,98 +388,102 @@ export function CreateProductSaleBillingOrderForm({
                       value: stock.Storage.id,
                     })) ?? [];
 
-                  const stockStorage = safeData.Stock?.find(
-                    (stock) => stock.Storage.id === safeWatch.storageId
-                  ) ?? null;
+                  const stockStorage =
+                    safeData.Stock?.find(
+                      (stock) => stock.Storage.id === safeWatch.storageId
+                    ) ?? null;
 
-                  if(!stockStorage){
+                  if (!stockStorage) {
                     return (
-                      <TableRow key={field.id} className="animate-fade-down duration-500">
+                      <TableRow
+                        key={field.id}
+                        className="animate-fade-down duration-500"
+                      >
                         <TableCell>
-                        <FormItem>
-                          {/* <FormLabel>Producto</FormLabel> */}
-                          <div>
-                            {/* <FormLabel>Nombre</FormLabel> */}
-                            <span>{safeData.name ?? "Desconocido"}</span>
-                          </div>
-                          <Input
-                            disabled
-                            {...register(
-                              `products.${index}.productId` as const
-                            )}
-                            type="hidden"
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      </TableCell>
-                      <TableCell colSpan={2}>
-                        <FormItem>
-                          <Select
-                            {...register(
-                              `products.${index}.storageId` as const
-                            )}
-                            defaultValue={field.storageId}
-                            onValueChange={(val) => {
-                              form.setValue(`products.${index}.storageId`, val);
-                              calculateProductTotals();
-                            }}
+                          <FormItem>
+                            <div>
+                              <span>{safeData.name ?? "Desconocido"}</span>
+                            </div>
+                            <Input
+                              disabled
+                              {...register(
+                                `products.${index}.productId` as const
+                              )}
+                              type="hidden"
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        </TableCell>
+                        <TableCell colSpan={2}>
+                          <FormItem>
+                            <Select
+                              {...register(
+                                `products.${index}.storageId` as const
+                              )}
+                              defaultValue={field.storageId}
+                              onValueChange={(val) => {
+                                form.setValue(
+                                  `products.${index}.storageId`,
+                                  val
+                                );
+                                calculateProductTotals();
+                              }}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Seleccionar almacén" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {safeStorages.map((storage) => (
+                                  <SelectItem
+                                    key={storage.value}
+                                    value={storage.value}
+                                  >
+                                    {storage.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </FormItem>
+                        </TableCell>
+                        <TableCell>
+                          <FormItem>
+                            <Input
+                              disabled
+                              className="font-bold"
+                              {...register(
+                                `products.${index}.quantity` as const
+                              )}
+                              type="number"
+                              min={0}
+                              placeholder="0"
+                              value={0}
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        </TableCell>
+                        <TableCell colSpan={3}>
+                          <span className="block text-center font-semibold">
+                            No existe Stock en el almacén seleccioando
+                          </span>
+                        </TableCell>
+                        <TableCell className="flex justify-center items-center">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="hover:bg-destructive hover:text-white"
+                            size="sm"
+                            onClick={() => handleRemoveProduct(index)}
                           >
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Seleccionar almacén" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {safeStorages.map((storage) => (
-                                <SelectItem
-                                  key={storage.value}
-                                  value={storage.value}
-                                >
-                                  {storage.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormItem>
-                      </TableCell>
-                      <TableCell >
-                        <FormItem>
-                          <Input
-                            disabled
-                            className="font-bold"
-                            {...register(
-                              `products.${index}.quantity` as const,
-                            )}
-                            type="number"
-                            min={0}
-                            placeholder="0"
-                            value={0}
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      </TableCell>
-                      <TableCell colSpan={3}>
-                        <span className="block text-center font-semibold">
-                          No existe Stock en el almacén seleccioando
-                        </span>
-                      </TableCell>
-                      <TableCell className="flex justify-center items-center">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="hover:bg-destructive hover:text-white"
-                          size="sm"
-                          onClick={() => handleRemoveProduct(index)}
-                        >
-                          <Trash2 />
-                          Eliminar
-                        </Button>
-                      </TableCell>
+                            <Trash2 />
+                            Eliminar
+                          </Button>
+                        </TableCell>
                       </TableRow>
-                    )
+                    );
                   }
 
-                  // const stockStorage = safeData.Stock?.find((stock) => stock.Storage.id === storageSafeWatch);
                   const totalStock =
                     safeData.Stock?.reduce(
                       (acc, stock) => acc + stock.stock,
@@ -584,10 +499,7 @@ export function CreateProductSaleBillingOrderForm({
                   const total = isNaN(price * (safeWatch.quantity ?? 0))
                     ? 0
                     : price * (safeWatch.quantity ?? 0);
-                  //const quantity = safeWatch.quantity ?? 0;
 
-                  // Manejar NaN o valores inexistentes
-                  //const total = isNaN(price * quantity) ? 0 : price * quantity;
                   return (
                     <TableRow
                       key={field.id}
@@ -595,9 +507,7 @@ export function CreateProductSaleBillingOrderForm({
                     >
                       <TableCell>
                         <FormItem>
-                          {/* <FormLabel>Producto</FormLabel> */}
                           <div>
-                            {/* <FormLabel>Nombre</FormLabel> */}
                             <span>{safeData.name ?? "Desconocido"}</span>
                           </div>
                           <Input
@@ -621,12 +531,6 @@ export function CreateProductSaleBillingOrderForm({
                               form.setValue(`products.${index}.storageId`, val);
                               calculateProductTotals();
                             }}
-                            // onValueChange={(value) =>
-                            //   handleEditProduct(index, {
-                            //     storageId: value,
-                            //   })
-                            // }
-                            // disabled={!field.selected}
                           >
                             <FormControl>
                               <SelectTrigger className="w-full">
@@ -657,7 +561,6 @@ export function CreateProductSaleBillingOrderForm({
                       </TableCell>
                       <TableCell>
                         <FormItem>
-                          {/* <FormLabel>Cantidad</FormLabel> */}
                           <Input
                             className="font-bold"
                             {...register(
@@ -695,28 +598,6 @@ export function CreateProductSaleBillingOrderForm({
                           <FormMessage />
                         </FormItem>
                       </TableCell>
-                      {/* <TableCell>
-                  <div>
-                    <span className="block text-center">{price.toLocaleString("es-PE",
-                      {
-                        style: "currency",
-                        currency: "PEN"
-                      })}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <span className="block text-center">
-                      {
-                        total.toLocaleString("es-PE",
-                          {
-                            style: "currency",
-                            currency: "PEN"
-                          })
-                      }
-                    </span>
-                  </div>
-                </TableCell> */}
                       <TableCell>
                         <span className="block text-center font-semibold">
                           {total.toLocaleString("es-PE", {
@@ -753,18 +634,6 @@ export function CreateProductSaleBillingOrderForm({
                     <TableCell colSpan={4} className="font-bold">
                       TOTALES ({productTotals.totalProducts} productos):
                     </TableCell>
-                    {/* <TableCell className="font-semibold">
-                      {productTotals.totalIGV.toLocaleString("es-PE", {
-                        style: "currency",
-                        currency: "PEN",
-                      })}
-                    </TableCell>
-                    <TableCell className="font-semibold">
-                      {productTotals.totalSubtotal.toLocaleString("es-PE", {
-                        style: "currency",
-                        currency: "PEN",
-                      })}
-                    </TableCell> */}
                     <TableCell
                       colSpan={1}
                       className="text-lg text-primary font-bold"
@@ -778,19 +647,8 @@ export function CreateProductSaleBillingOrderForm({
                   </TableRow>
                 )}
               </TableBody>
-              {/* <Button
-              type="button"
-              onClick={() => append({ 
-                productId: '', 
-                quantity: 0 
-              })}
-            >
-              Agregar Movimiento
-            </Button> */}
             </Table>
             <div className="col-span-2 w-full flex flex-col gap-2 justify-center items-center py-4">
-              {/* <SelectProductDialog data={reponseProducts.data}>
-              </SelectProductDialog> */}
               <SelectProductDialog form={form}></SelectProductDialog>
               <CustomFormDescription required={true}></CustomFormDescription>
               {form.formState.errors.products && (

@@ -32,7 +32,6 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
-  // CreatePrescriptionBillingInput,
   CreatePrescriptionBillingLocalInput,
   paymentMethodConfig,
   paymentMethodOptions,
@@ -64,6 +63,8 @@ import {
   useSelectedServicesAppointmentsDispatch,
 } from "../../../_hooks/useCreateAppointmentForOrder";
 import { CreateAppointmentDialog } from "../../appointmentComponents/CreateAppointmentDialog";
+import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth";
+
 type ServiceData = {
   id: string;
   name: string;
@@ -80,17 +81,11 @@ interface CreatePrescriptionOrderFormProps
   prescription: PrescriptionWithPatient;
   stockDataQuery: UseQueryResult<OutgoingProductStock[], Error>;
   serviceDataQuery: UseQueryResult<ServiceData[], Error>;
-  //originalStorageId: string;
   form: UseFormReturn<CreatePrescriptionBillingLocalInput>;
-  // controlledProductFieldArray: UseFieldArrayReturn<CreatePrescriptionBillingInput>;
-  // controlledServiceFieldArray: UseFieldArrayReturn<CreatePrescriptionBillingInput>;
   onSubmit: (data: CreatePrescriptionBillingLocalInput) => void;
   onDialogClose?: () => void;
   onProductsSaved: () => void;
   onServicesSaved: () => void;
-  // openFromParent: boolean;
-  // onSaveProductPending : () => void;
-  // onSabeServicesPending : () => void;
 }
 
 type ProductItem = ProductSaleItemDto & {
@@ -111,37 +106,22 @@ export function CreatePrescriptionOrderForm({
   prescription,
   form,
   onSubmit,
-  // controlledProductFieldArray,
-  // controlledServiceFieldArray,
   stockDataQuery,
   serviceDataQuery,
   onProductsSaved,
   onServicesSaved,
-}: // openFromParent,
-CreatePrescriptionOrderFormProps) {
+}: CreatePrescriptionOrderFormProps) {
   const IGV = 0.18;
   const FORMSTATICS = useMemo(() => STATIC_FORM, []);
 
   // Flags de referencia para evitar bucles
   const didInitializeRef = useRef(false);
-  // const prevOpenFromParent = useRef(openFromParent);
   const isCalculatingProductsRef = useRef(false);
   const isCalculatingServicesRef = useRef(false);
 
   // Estados básicos
   const [showProductFields, setShowProductFields] = useState(false);
   const [showServicesFields, setShowServicesFields] = useState(true);
-
-  // const originalProductSaleItems: ProductSaleItemDto[] = prescription.prescriptionMedicaments.map((product) => ({
-  //   productId: product.id,
-  //   quantity: product.quantity ?? 1,
-  //   storageId: undefined,
-  // }));
-
-  // const originalServiceSaleItems: ServiceSaleItemDto[] = prescription.prescriptionServices.map((service) => ({
-  //   serviceId: service.id,
-  //   quantity: service.quantity ?? 1,
-  // }));
 
   const [productTableFormData, setProductTableFormData] = useState<
     ProductItem[]
@@ -161,7 +141,6 @@ CreatePrescriptionOrderFormProps) {
     totalQuantity: 0,
     totalProducts: 0,
   });
-  // Service totals calculations and states
   const [showServiceTotals, setShowServiceTotals] = useState(false);
   const [serviceTotals, setServiceTotals] = useState({
     total: 0,
@@ -173,33 +152,44 @@ CreatePrescriptionOrderFormProps) {
 
   // Hook de formulario
   const { register } = form;
-  // const { fields, remove } = controlledProductFieldArray;
 
   // Consultas y estados
   const { activeStoragesQuery: responseStorage } = useStorages();
   const { productStockQuery: reponseProductsStock } = useProductsStock();
   const { activeProductsQuery: reponseProducts } = useProducts();
   const { activeBranchesQuery: responseBranches } = useBranches();
-  //INITIALIZATION OF STORAGE
   const { dataQuery: selectedServicesAppointmentsData } =
     useSelectedServicesAppointments();
   const dispatch = useSelectedServicesAppointmentsDispatch();
 
-  // useEffect(() => {
-  //   // Solo ejecutar cuando openFromParent cambia de false a true
-  //   if (openFromParent && !prevOpenFromParent.current) {
-  //     didInitializeRef.current = false; // Forzar reinicialización
-  //   }
+  // Obtener datos del usuario autenticado
+  const { user } = useAuth();
 
-  //   // Actualizar referencia del estado anterior
-  //   prevOpenFromParent.current = openFromParent;
-  // }, [openFromParent]);
+  // Filtrar sucursales según la sucursal del usuario
+  const filteredBranches = useMemo(() => {
+    if (!responseBranches.data) return [];
 
-  // Inicializar datos locales desde el formulario
+    if (user?.isSuperAdmin) {
+      return responseBranches.data;
+    }
+
+    if (user?.branchId) {
+      return responseBranches.data.filter(
+        (branch) => branch.id === user.branchId
+      );
+    }
+
+    return responseBranches.data;
+  }, [responseBranches.data, user]);
+
+  // Establecer automáticamente la sucursal del usuario
   useEffect(() => {
-    // Solo ejecutar cuando el diálogo está abierto
-    // if (!openFromParent) return;
-    // Solo cargar datos una vez
+    if (user?.branchId && !user?.isSuperAdmin && !form.getValues("branchId")) {
+      form.setValue("branchId", user.branchId);
+    }
+  }, [user, form]);
+
+  useEffect(() => {
     if (didInitializeRef.current) return;
 
     const formProducts = form.getValues("products") ?? [];
@@ -229,21 +219,9 @@ CreatePrescriptionOrderFormProps) {
     form.setValue("services", []);
 
     didInitializeRef.current = true;
-    // Calcular totales iniciales
     setTimeout(() => calculateProductTotals(), 100);
   }, [form]);
 
-  // // Efecto de limpieza al cerrar
-  // useEffect(() => {
-  //   if (!openFromParent) {
-  //     // Resetear estados locales
-  //     setProductTableFormData([]);
-  //     setServicesTableFormData([]);
-  //     didInitializeRef.current = false;
-  //   }
-  // }, [openFromParent]);
-
-  //Mapeo de datos de productos
   const orderProductsDataMap = useMemo(() => {
     const dataMap: Record<string, Omit<OutgoingProductStock, "Stock">> = {};
 
@@ -267,13 +245,11 @@ CreatePrescriptionOrderFormProps) {
     return dataMap;
   }, [prescription]);
 
-  // Calculate service totals (only selected services)
   const calculateServiceTotals = useCallback(() => {
     if (isCalculatingServicesRef.current) return;
     isCalculatingServicesRef.current = true;
 
     try {
-      // Filter only selected services
       const selectedServices = servicesTableFormData.filter((s) => s.selected);
 
       if (selectedServices.length === 0) {
@@ -296,7 +272,6 @@ CreatePrescriptionOrderFormProps) {
       const IGV_RATE = 0.18;
 
       selectedServices.forEach((service) => {
-        // This would need to be adapted based on your service data structure
         const serviceData = orderServicesDataMap[service.serviceId];
         if (!serviceData) return;
 
@@ -333,7 +308,6 @@ CreatePrescriptionOrderFormProps) {
     }
   }, [servicesTableFormData, prescription.prescriptionServices]);
 
-  // Handle toggle service selection
   const handleToggleServiceSelection = useCallback((index: number) => {
     setServicesTableFormData((prev) => {
       const updated = [...prev];
@@ -345,11 +319,9 @@ CreatePrescriptionOrderFormProps) {
       return updated;
     });
 
-    // Recalculate totals after changing selection
     setTimeout(() => calculateServiceTotals(), 10);
   }, []);
 
-  // Edit service
   const handleEditService = useCallback(
     (index: number, updatedService: Partial<ServiceItem>) => {
       setServicesTableFormData((prev) => {
@@ -362,20 +334,16 @@ CreatePrescriptionOrderFormProps) {
         return updated;
       });
 
-      // Recalculate totals after changing quantity
       setTimeout(() => calculateServiceTotals(), 10);
     },
     []
   );
 
-  // Save only selected services to form
   const handleSaveServices = useCallback(() => {
-    // Filter only selected services
     const selectedServices = servicesTableFormData
       .filter((service) => service.selected)
       .map(({ isEditing, hasChanges, selected, ...service }) => service);
 
-    //Appointmentnt creation validation
     if (
       selectedServices.length !== selectedServicesAppointmentsData.data.length
     ) {
@@ -395,23 +363,19 @@ CreatePrescriptionOrderFormProps) {
       }
     );
 
-    // Update main form with selected services
     form.setValue("services", selectedServicesWithAppointmentId);
 
-    // Mark that there are no pending changes
     setServicesTableFormData((prev) =>
       prev.map((item) => ({
         ...item,
         hasChanges: false,
-        // hasMadeAppointment: true,
       }))
     );
 
     calculateServiceTotals();
 
-    //Saving state
     setWereServicesSaved(true);
-    onServicesSaved(); //Communicate with parent
+    onServicesSaved();
 
     toast.success(
       `${selectedServices.length} servicios guardados correctamente`
@@ -421,7 +385,6 @@ CreatePrescriptionOrderFormProps) {
   const handleSomeAppointmentCreated = useCallback(() => {
     if (selectedServicesAppointmentsData.data.length === 0) return;
 
-    // Comparar y solo actualizar si hay cambios reales
     setServicesTableFormData((prev) => {
       const updated = prev.map((item) => {
         const appointmentReference = selectedServicesAppointmentsData.data.find(
@@ -431,14 +394,12 @@ CreatePrescriptionOrderFormProps) {
         );
         const hasMadeAppointment = !!appointmentReference;
 
-        // Solo actualizar si cambia el estado de la cita
         if (item.hasMadeAppointment !== hasMadeAppointment) {
           return { ...item, hasMadeAppointment };
         }
-        return item; // Sin cambios
+        return item;
       });
 
-      // Si no hay cambios reales, devolver el estado anterior
       const hasChanges = updated.some(
         (item, index) =>
           item.hasMadeAppointment !== prev[index].hasMadeAppointment
@@ -448,24 +409,15 @@ CreatePrescriptionOrderFormProps) {
     });
   }, [selectedServicesAppointmentsData.data]);
 
-  // 2. Actualizar solo cuando cambia selectedServicesAppointmentsData.data.length
   useEffect(() => {
-    // Este efecto solo debe ejecutarse cuando cambie la cantidad de citas
-    // no cada vez que cualquier propiedad interna cambie
     handleSomeAppointmentCreated();
-  }, [
-    selectedServicesAppointmentsData.data,
-    //selectedServicesAppointmentsData.data.length,
-    handleSomeAppointmentCreated,
-  ]);
+  }, [selectedServicesAppointmentsData.data, handleSomeAppointmentCreated]);
 
-  // Calcular totales (solo productos seleccionados)
   const calculateProductTotals = useCallback(() => {
     if (isCalculatingProductsRef.current) return;
     isCalculatingProductsRef.current = true;
 
     try {
-      // Filtrar solo productos seleccionados
       const selectedProducts = productTableFormData.filter((p) => p.selected);
 
       if (selectedProducts.length === 0) {
@@ -524,7 +476,6 @@ CreatePrescriptionOrderFormProps) {
     }
   }, [productTableFormData, orderProductsDataMap]);
 
-  // Manejar toggle de checkbox
   const handleToggleProductSelection = useCallback((index: number) => {
     setProductTableFormData((prev) => {
       const updated = [...prev];
@@ -536,11 +487,9 @@ CreatePrescriptionOrderFormProps) {
       return updated;
     });
 
-    // Recalcular totales después de cambiar selección
     setTimeout(() => calculateProductTotals(), 10);
   }, []);
 
-  // Editar producto
   const handleEditProduct = useCallback(
     (index: number, updatedProduct: Partial<ProductItem>) => {
       setProductTableFormData((prev) => {
@@ -553,7 +502,6 @@ CreatePrescriptionOrderFormProps) {
         return updated;
       });
 
-      // Recalcular totales después de cambiar cantidad
       setTimeout(() => calculateProductTotals(), 10);
     },
     []
@@ -570,41 +518,30 @@ CreatePrescriptionOrderFormProps) {
       return updated;
     });
 
-    // Recalcular totales después de cambiar cantidad
     setTimeout(() => calculateProductTotals(), 10);
   }, []);
 
-  // Guardar solo los productos seleccionados al formulario
   const handleSaveProducts = useCallback(() => {
-    // Filtrar solo los productos seleccionados
     const selectedProducts = productTableFormData
       .filter((product) => product.selected)
       .map(({ isEditing, hasChanges, selected, ...product }) => product);
 
-    // Actualizar formulario principal con los productos seleccionados
     form.setValue("products", selectedProducts);
 
-    // Marcar que no hay cambios pendientes
     setProductTableFormData((prev) =>
       prev.map((item) => ({ ...item, hasChanges: false }))
     );
 
     calculateProductTotals();
 
-    //Saving States
     setWereProductsSaved(true);
-    onProductsSaved(); //Communicate with parent
+    onProductsSaved();
 
     toast.success(
       `${selectedProducts.length} productos guardados correctamente`
     );
   }, [productTableFormData, form]);
 
-  useEffect(() => {
-    console.log("form watch", form.getValues("products"));
-  }, [form, didInitializeRef, showProductFields, handleSaveProducts]);
-
-  // Verificación de carga
   const isLoading =
     responseStorage.isLoading ||
     reponseProductsStock.isLoading ||
@@ -617,7 +554,6 @@ CreatePrescriptionOrderFormProps) {
     return <LoadingDialogForm />;
   }
 
-  // Verificación de errores
   if (responseStorage.isError) {
     return (
       <GeneralErrorMessage
@@ -685,32 +621,17 @@ CreatePrescriptionOrderFormProps) {
     return <LoadingDialogForm />;
   }
 
-  // Opciones para selectores
   const storageOptions = responseStorage.data.map((storage) => ({
     label: `${storage.name} - ${storage.branch.name}`,
     value: storage.id,
   }));
 
-  const branchOptions = responseBranches.data.map((branch) => ({
+  const branchOptions = filteredBranches.map((branch) => ({
     label: branch.name,
     value: branch.id,
   }));
 
-  // useEffect(() => {
-  //   if (didInitializeRef.current && showProductFields && !isLoading) {
-  //     // Recalcular totales cuando llegan los datos de producto/stock
-  //     calculateTotalsWithDebounce();
-  //   }
-  // }, [
-  //   reponseProductsStock.data,
-  //   reponseProducts.data,
-  //   showProductFields,
-  //   isLoading,
-  //   calculateTotalsWithDebounce,
-  // ]);
-
   const SaveServiceTableButton = () => {
-    // Verificar si hay cambios para aplicar animación
     const hasChanges = servicesTableFormData.some((s) => s.hasChanges);
 
     return (
@@ -721,7 +642,6 @@ CreatePrescriptionOrderFormProps) {
         disabled={!hasChanges}
         className={cn(
           "ml-auto bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary transition-all",
-          // Aplicar animación solo cuando hay cambios
           hasChanges &&
             "animate-[pulse_1.5s_ease-in-out_infinite] shadow-md shadow-primary/20"
         )}
@@ -733,7 +653,6 @@ CreatePrescriptionOrderFormProps) {
   };
 
   const SaveProductTableButton = () => {
-    // Verificar si hay cambios para aplicar animación
     const hasChanges = productTableFormData.some((p) => p.hasChanges);
     return (
       <Button
@@ -743,7 +662,6 @@ CreatePrescriptionOrderFormProps) {
         disabled={!hasChanges}
         className={cn(
           "ml-auto mt-2 bg-primary/10 text-primary border-none hover:bg-primary/20 hover:text-primary transition-all",
-          // Aplicar animación solo cuando hay cambios
           hasChanges &&
             "animate-[pulse_1.5s_ease-in-out_infinite] shadow-md shadow-primary/20"
         )}
@@ -758,7 +676,6 @@ CreatePrescriptionOrderFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="p-2 sm:p-1 w-full overflow-x-auto max-h-[calc(80dvh-4rem)] grid md:grid-cols-4 gap-4">
-          {/* Campo Sucursal */}
           <div className="col-span-4">
             <FormField
               control={form.control}
@@ -769,6 +686,7 @@ CreatePrescriptionOrderFormProps) {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    disabled={!!user?.branchId && !user?.isSuperAdmin}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -787,7 +705,9 @@ CreatePrescriptionOrderFormProps) {
                   </Select>
                   <FormMessage />
                   <FormDescription>
-                    Solo visualizará sucursales activas
+                    {user?.branchId && !user?.isSuperAdmin
+                      ? "Sucursal asignada a tu usuario"
+                      : "Solo visualizará sucursales activas"}
                   </FormDescription>
                   <CustomFormDescription
                     required={FORMSTATICS.paymentMethod.required}
@@ -797,7 +717,6 @@ CreatePrescriptionOrderFormProps) {
             />
           </div>
 
-          {/* Switches para opciones */}
           <FormItem className="flex flex-row items-end justify-between rounded-lg border p-3 shadow-sm col-span-4 sm:col-span-2">
             <div className="space-y-0.5">
               <FormLabel>Contrato de servicios</FormLabel>
@@ -829,7 +748,6 @@ CreatePrescriptionOrderFormProps) {
                 checked={showProductFields}
                 onCheckedChange={(value) => {
                   setShowProductFields(value);
-                  // Ocultar totales cuando cambia este switch
                   if (value === false) {
                     setShowProductTotals(value);
                   }
@@ -840,7 +758,6 @@ CreatePrescriptionOrderFormProps) {
 
           {showServicesFields && <Separator className="col-span-4" />}
 
-          {/* Sección de servicios */}
           {showServicesFields && (
             <>
               <div className="flex flex-col gap-4 col-span-4">
@@ -875,16 +792,6 @@ CreatePrescriptionOrderFormProps) {
                       </TableRow>
                     ) : (
                       servicesTableFormData.map((field, index) => {
-                        // const data = selectedProducts.find(
-                        //   (p) => p.id === field.productId
-                        // );
-                        // const existentProduct = originalProductsStock.find(
-                        //   (p) => p.id === field.productId
-                        // );
-                        // const safeData: Partial<OutgoingProducStockForm> =
-                        //   existentProduct ?? data ?? {};
-                        // const safeData: Partial<OutgoingProducStockForm> =
-                        // existentProduct ?? data ?? {};
                         const safeData: Partial<ServiceData> =
                           serviceDataQuery.data.find(
                             (p) => p.id === field.serviceId
@@ -893,7 +800,6 @@ CreatePrescriptionOrderFormProps) {
                         const price = safeData.price ?? 0;
 
                         const quantity = field.quantity ?? 0;
-                        //const priceWithIGV = price; // Since price already includes IGV
                         const totalPriceWithIGV = isNaN(price * quantity)
                           ? 0
                           : price * quantity;
@@ -913,18 +819,6 @@ CreatePrescriptionOrderFormProps) {
                             }
                             className="animate-fade-down"
                           >
-                            {/* <TableCell className="flex justify-center items-center">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                className="hover:bg-destructive hover:text-white"
-                                size="sm"
-                                onClick={() => handleRemoveProduct(index)}
-                              >
-                                <Trash2 className="mr-1 size-4" />
-                                Eliminar
-                              </Button>
-                            </TableCell> */}
                             <TableCell>
                               <Checkbox
                                 checked={field.selected}
@@ -942,21 +836,13 @@ CreatePrescriptionOrderFormProps) {
                                 <div>
                                   <span>{safeData.name ?? "Desconocido"}</span>
                                 </div>
-                                {/* <Input
-                                  disabled
-                                  {...register(
-                                    `products.${index}.productId` as const
-                                  )}
-                                  type="hidden"
-                                /> */}
                                 <FormMessage />
                               </FormItem>
                             </TableCell>
                             <TableCell>
                               <FormItem>
                                 <Input
-                                  //disabled={ !field.selected || field.hasMadeAppointment }
-                                  disabled //Always 1 service per prescription
+                                  disabled
                                   type="number"
                                   className={cn(
                                     "text-center",
@@ -1016,10 +902,6 @@ CreatePrescriptionOrderFormProps) {
                               </span>
                             </TableCell>
                             <TableCell>
-                              {/* <Button type="button" disabled={ !field.selected || field.hasMadeAppointment } variant={'ghost'} className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">
-                                <CalendarPlus></CalendarPlus>
-                              </Button> */}
-
                               <CreateAppointmentDialog
                                 uniqueIdentifier={field.uniqueIdentifier}
                                 className="bg-secondary-foreground/10 text-secondary-foreground hover:bg-secondary-foreground/20 hover:text-secondary-foreground"
@@ -1065,7 +947,6 @@ CreatePrescriptionOrderFormProps) {
                 </Table>
 
                 <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
-                  {/* <SelectProductDialog form={form} /> */}
                   <SaveServiceTableButton></SaveServiceTableButton>
                   <CustomFormDescription
                     required={FORMSTATICS.services.required}
@@ -1082,14 +963,11 @@ CreatePrescriptionOrderFormProps) {
 
           {showProductFields && <Separator className="col-span-4" />}
 
-          {/* Sección de productos */}
           {showProductFields && (
             <>
-              {/* Selector de almacén */}
               <div className="flex flex-col gap-4 col-span-4">
                 <FormLabel>{FORMSTATICS.products.label}</FormLabel>
 
-                {/* Ya no necesitamos el botón para calcular */}
                 {isCalculatingProductsRef.current && (
                   <div className="w-full p-2 text-center">
                     <p className="text-muted-foreground animate-pulse">
@@ -1098,7 +976,6 @@ CreatePrescriptionOrderFormProps) {
                   </div>
                 )}
 
-                {/* Tabla de productos */}
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
@@ -1113,7 +990,6 @@ CreatePrescriptionOrderFormProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {/* Filas de productos */}
                     {productTableFormData.length === 0 ? (
                       <TableRow>
                         <TableCell
@@ -1125,16 +1001,6 @@ CreatePrescriptionOrderFormProps) {
                       </TableRow>
                     ) : (
                       productTableFormData.map((field, index) => {
-                        // const data = selectedProducts.find(
-                        //   (p) => p.id === field.productId
-                        // );
-                        // const existentProduct = originalProductsStock.find(
-                        //   (p) => p.id === field.productId
-                        // );
-                        // const safeData: Partial<OutgoingProducStockForm> =
-                        //   existentProduct ?? data ?? {};
-                        // const safeData: Partial<OutgoingProducStockForm> =
-                        // existentProduct ?? data ?? {};
                         const safeData: Partial<OutgoingProducStockForm> =
                           stockDataQuery.data.find(
                             (p) => p.id === field.productId
@@ -1146,7 +1012,6 @@ CreatePrescriptionOrderFormProps) {
                           ) ?? null;
 
                         if (!stockStorage) {
-                          // handleUncheckOneProduct(index);
                           return (
                             <TableRow
                               key={
@@ -1236,18 +1101,7 @@ CreatePrescriptionOrderFormProps) {
                           : (stockStorage?.stock ?? 0) - (field.quantity ?? 0);
 
                         const quantity = field.quantity ?? 0;
-                        // const priceWithIGV = price * (1 + IGV);
-                        // const subtotal = isNaN(price * quantity)
-                        //   ? 0
-                        //   : price * quantity;
-                        // const totalPriceWithIGV = isNaN(priceWithIGV * quantity)
-                        //   ? 0
-                        //   : priceWithIGV * quantity;
-                        // const totalIGV = isNaN(price * quantity * IGV)
-                        //   ? 0
-                        //   : price * quantity * IGV;
 
-                        //const priceWithIGV = price; // Since price already includes IGV
                         const totalPriceWithIGV = isNaN(price * quantity)
                           ? 0
                           : price * quantity;
@@ -1259,20 +1113,6 @@ CreatePrescriptionOrderFormProps) {
                         const subtotal = isNaN(totalPriceWithIGV - totalIGV)
                           ? 0
                           : totalPriceWithIGV - totalIGV;
-
-                        // console.log(
-                        //   "productTableFormData",
-                        //   productTableFormData
-                        // );
-                        // console.log(
-                        //   "StockQueryData is success",
-                        //   stockDataQuery.isSuccess
-                        // );
-                        // console.log("StockQueryData", stockDataQuery.data);
-                        // console.log("productField", field);
-                        // console.log("stockStorage", stockStorage);
-                        // console.log("product", safeData);
-                        // console.log("productId", field.productId);
 
                         const allStoragesStock = safeData.Stock?.reduce(
                           (acc, stock) => {
@@ -1435,7 +1275,6 @@ CreatePrescriptionOrderFormProps) {
                       })
                     )}
 
-                    {/* Fila de totales (siempre visible si hay productos) */}
                     {showProductTotals && productTableFormData.length > 0 && (
                       <TableRow className="bg-muted/30 font-medium animate-fade-down">
                         <TableCell colSpan={5} className="font-bold">
@@ -1468,7 +1307,6 @@ CreatePrescriptionOrderFormProps) {
                 </Table>
 
                 <div className="w-full flex flex-col gap-2 justify-center items-center py-4">
-                  {/* <SelectProductDialog form={form} /> */}
                   <CustomFormDescription
                     required={FORMSTATICS.products.required}
                   />
@@ -1491,7 +1329,6 @@ CreatePrescriptionOrderFormProps) {
 
           <Separator className="col-span-4" />
 
-          {/* Campo método de pago */}
           <div className="col-span-2">
             <FormField
               control={form.control}
@@ -1550,7 +1387,6 @@ CreatePrescriptionOrderFormProps) {
             />
           </div>
 
-          {/* Campo de notas */}
           <div className="col-span-4">
             <FormItem>
               <FormLabel>{FORMSTATICS.notes.label}</FormLabel>
@@ -1569,7 +1405,6 @@ CreatePrescriptionOrderFormProps) {
 
           <Separator className="col-span-4" />
         </div>
-        {/* Contenido adicional (botones de acción) */}
         {children}
       </form>
     </Form>

@@ -16,6 +16,7 @@ export interface Profile {
   isActive: boolean;
   mustChangePassword: boolean;
   lastLogin?: string;
+  branchId?: string;
 }
 
 // Para la respuesta de la API
@@ -33,6 +34,7 @@ export interface UserResponse {
   config?: InternalAxiosRequestConfig;
   status?: number;
   statusText?: string;
+  branchId?: string;
 }
 
 export type AuthResponse = AxiosResponse<UserResponse>;
