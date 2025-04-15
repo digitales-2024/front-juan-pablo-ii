@@ -26,26 +26,47 @@ interface EventFiltersProps {
   currentDate: Date;
 }
 
-export function EventFilters({ appliedFilters, onFilterChange, currentDate }: EventFiltersProps) {
+export function EventFilters({
+  appliedFilters,
+  onFilterChange,
+  currentDate,
+}: EventFiltersProps) {
   const queryClient = useQueryClient();
   const { branches } = useBranches();
   const { staff } = useStaff();
 
-  const [filter, setFilter] = useState<Omit<EventFilterParams, 'type'>>({
+  const [filter, setFilter] = useState<Omit<EventFilterParams, "type">>({
     startDate: format(currentDate, "yyyy-MM-01"),
     endDate: format(endOfMonth(currentDate), "yyyy-MM-dd"),
     staffScheduleId: undefined,
-    status: appliedFilters.status
+    status: appliedFilters.status,
   });
 
-  const staffOptions = (staff || queryClient.getQueryData<Staff[]>(["staff"]) || []).filter(s => s.isActive);
-  const branchOptions = (branches || queryClient.getQueryData<Branch[]>(["branches"]) || []).filter(b => b.isActive);
+  // Filtrar para obtener solo personal con CMP
+  const staffOptions = useMemo(() => {
+    const allActiveStaff = (
+      staff ||
+      queryClient.getQueryData<Staff[]>(["staff"]) ||
+      []
+    ).filter((s) => s.isActive);
+
+    // Filtrar solo los que tienen valor en CMP
+    return allActiveStaff.filter(
+      (staff) => staff.cmp && staff.cmp.trim() !== ""
+    );
+  }, [staff, queryClient]);
+
+  const branchOptions = (
+    branches ||
+    queryClient.getQueryData<Branch[]>(["branches"]) ||
+    []
+  ).filter((b) => b.isActive);
 
   useEffect(() => {
     const handler = setTimeout(() => {
       onFilterChange({
         ...filter,
-        type: 'CITA' as const
+        type: "CITA" as const,
       } as EventFilterParams);
     }, 300);
 
@@ -53,14 +74,18 @@ export function EventFilters({ appliedFilters, onFilterChange, currentDate }: Ev
   }, [filter, onFilterChange]);
 
   const handleFilterChange = (key: keyof EventFilterParams, value: string) => {
-    setFilter(prev => ({
+    setFilter((prev) => ({
       ...prev,
-      [key]: value === 'todos' ? undefined : value
+      [key]: value === "todos" ? undefined : value,
     }));
   };
 
   // Patrón reusable para manejar opciones vacías
-  const renderSelectContent = (options: any[], resourceName: string, createPath: string) => {
+  const renderSelectContent = (
+    options: any[],
+    resourceName: string,
+    createPath: string
+  ) => {
     if (options.length === 0) {
       return (
         <SelectContent>
@@ -80,15 +105,19 @@ export function EventFilters({ appliedFilters, onFilterChange, currentDate }: Ev
         {options.map((option) => (
           <SelectItem key={option.id} value={option.id}>
             {/* Para personal: */}
-            {option.name && `${(option.name || '').toUpperCase()} - ${(option.lastName || '').toUpperCase()}`}
+            {option.name &&
+              `${(option.name || "").toUpperCase()} - ${(
+                option.lastName || ""
+              ).toUpperCase()}`}
 
             {/* Para sucursales: */}
-            {option.title && (option.title || '').toUpperCase()}
+            {option.title && (option.title || "").toUpperCase()}
 
             {/* Para horarios: */}
             {option.staffScheduleId &&
-              `${option.title} - ${option.staff?.name?.toUpperCase() || ''} ${option.staff?.lastName?.toUpperCase() || ''}`
-            }
+              `${option.title} - ${option.staff?.name?.toUpperCase() || ""} ${
+                option.staff?.lastName?.toUpperCase() || ""
+              }`}
           </SelectItem>
         ))}
       </SelectContent>
@@ -100,10 +129,16 @@ export function EventFilters({ appliedFilters, onFilterChange, currentDate }: Ev
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="staffId" className="text-sm font-medium text-foreground">
-              Personal
+            <Label
+              htmlFor="staffId"
+              className="text-sm font-medium text-foreground"
+            >
+              Citas asignadas a el personal medico
             </Label>
-            <Select value={filter.staffId || "todos"} onValueChange={(value) => handleFilterChange("staffId", value)}>
+            <Select
+              value={filter.staffId || "todos"}
+              onValueChange={(value) => handleFilterChange("staffId", value)}
+            >
               <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
                 <SelectValue placeholder="Seleccione un personal" />
               </SelectTrigger>
@@ -112,8 +147,11 @@ export function EventFilters({ appliedFilters, onFilterChange, currentDate }: Ev
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="branchId" className="text-sm font-medium text-foreground">
-              Sucursal
+            <Label
+              htmlFor="branchId"
+              className="text-sm font-medium text-foreground"
+            >
+              Citas registradas por Sucursal
             </Label>
             <Select
               value={filter.branchId || "todos"}
@@ -127,7 +165,10 @@ export function EventFilters({ appliedFilters, onFilterChange, currentDate }: Ev
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="status"
+              className="text-sm font-medium text-foreground"
+            >
               Estado de cita
             </Label>
             <Select

@@ -24,34 +24,57 @@ export interface EventFiltersProps {
   currentDate: Date;
 }
 
-export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps) {
+export function EventFilters({
+  onFilterChange,
+  currentDate,
+}: EventFiltersProps) {
   const queryClient = useQueryClient();
   const { branches } = useBranches();
   const { staff } = useStaff();
 
-  const [filter, setFilter] = useState<Omit<EventFilterParams, 'type' | 'status'>>({
+  const [filter, setFilter] = useState<
+    Omit<EventFilterParams, "type" | "status">
+  >({
     startDate: format(currentDate, "yyyy-MM-01"),
-    endDate: format(endOfMonth(currentDate), "yyyy-MM-dd")
+    endDate: format(endOfMonth(currentDate), "yyyy-MM-dd"),
   });
 
   // Obtener datos de forma más robusta
-  const {
-    filteredSchedulesQuery,
-    allStaffSchedulesQuery
-  } = useStaffSchedules({
+  const { filteredSchedulesQuery, allStaffSchedulesQuery } = useStaffSchedules({
     staffId: filter.staffId,
-    branchId: filter.branchId
+    branchId: filter.branchId,
   });
 
   // Combinar queries como en useEvents
   const staffScheduleOptions = useMemo(() => {
-    return (filter.staffId || filter.branchId)
+    return filter.staffId || filter.branchId
       ? filteredSchedulesQuery.data || []
       : allStaffSchedulesQuery.data || [];
-  }, [filteredSchedulesQuery.data, allStaffSchedulesQuery.data, filter.staffId, filter.branchId]);
+  }, [
+    filteredSchedulesQuery.data,
+    allStaffSchedulesQuery.data,
+    filter.staffId,
+    filter.branchId,
+  ]);
 
-  const staffOptions = (staff || queryClient.getQueryData<Staff[]>(["staff"]) || []).filter(s => s.isActive);
-  const branchOptions = (branches || queryClient.getQueryData<Branch[]>(["branches"]) || []).filter(b => b.isActive);
+  const allStaffOptions = (
+    staff ||
+    queryClient.getQueryData<Staff[]>(["staff"]) ||
+    []
+  ).filter((s) => s.isActive);
+
+  // Filtrar solo personal con CMP
+  const staffOptions = useMemo(() => {
+    return allStaffOptions.filter(
+      (staff) => staff.cmp && staff.cmp.trim() !== ""
+    );
+  }, [allStaffOptions]);
+
+  const branchOptions = (
+    branches ||
+    queryClient.getQueryData<Branch[]>(["branches"]) ||
+    []
+  ).filter((b) => b.isActive);
 
   // Manejar estado cuando no hay horarios
   // const hasStaffSchedules = staffScheduleOptions && staffScheduleOptions.length > 0;
@@ -59,13 +82,13 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
   useEffect(() => {
     const handler = setTimeout(() => {
       queryClient.invalidateQueries({
-        queryKey: ['calendar-turns'],
-        exact: false
+        queryKey: ["calendar-turns"],
+        exact: false,
       });
       onFilterChange({
         ...filter,
-        type: 'TURNO' as const,
-        status: 'CONFIRMED' as const
+        type: "TURNO" as const,
+        status: "CONFIRMED" as const,
       });
     }, 300);
 
@@ -73,17 +96,21 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
   }, [filter, queryClient]);
 
   const handleFilterChange = (key: keyof EventFilterParams, value: string) => {
-    console.log('🔎 [Filtros] Cambio detectado:', { key, value });
-    setFilter(prev => ({
+    console.log("🔎 [Filtros] Cambio detectado:", { key, value });
+    setFilter((prev) => ({
       ...prev,
-      [key]: value === 'todos' ? undefined : value
+      [key]: value === "todos" ? undefined : value,
     }));
   };
 
   // Eliminar el filtro de sucursales y usar todas las opciones
 
   // Patrón reusable para manejar opciones vacías
-  const renderSelectContent = (options: any[], resourceName: string, createPath: string) => {
+  const renderSelectContent = (
+    options: any[],
+    resourceName: string,
+    createPath: string
+  ) => {
     if (options.length === 0) {
       return (
         <SelectContent>
@@ -103,15 +130,19 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
         {options.map((option) => (
           <SelectItem key={option.id} value={option.id}>
             {/* Para personal: */}
-            {option.name && `${(option.name || '').toUpperCase()} - ${(option.lastName || '').toUpperCase()}`}
+            {option.name &&
+              `${(option.name || "").toUpperCase()} - ${(
+                option.lastName || ""
+              ).toUpperCase()}`}
 
             {/* Para sucursales: */}
-            {option.title && (option.title || '').toUpperCase()}
+            {option.title && (option.title || "").toUpperCase()}
 
             {/* Para horarios: */}
             {option.staffScheduleId &&
-              `${option.title} - ${option.staff?.name?.toUpperCase() || ''} ${option.staff?.lastName?.toUpperCase() || ''}`
-            }
+              `${option.title} - ${option.staff?.name?.toUpperCase() || ""} ${
+                option.staff?.lastName?.toUpperCase() || ""
+              }`}
           </SelectItem>
         ))}
       </SelectContent>
@@ -123,10 +154,16 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="staffId" className="text-sm font-medium text-foreground">
-              Personal
-            </Label>
-            <Select value={filter.staffId || "todos"} onValueChange={(value) => handleFilterChange("staffId", value)}>
+            <Label
+              htmlFor="staffId"
+              className="text-sm font-medium text-foreground"
+            >
+              Horario del personal Medico
+             </Label>
+            <Select
+              value={filter.staffId || "todos"}
+              onValueChange={(value) => handleFilterChange("staffId", value)}
+            >
               <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
                 <SelectValue placeholder="Seleccione un personal" />
               </SelectTrigger>
@@ -135,8 +172,11 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="branchId" className="text-sm font-medium text-foreground">
-              Sucursal
+            <Label
+              htmlFor="branchId"
+              className="text-sm font-medium text-foreground"
+            >
+              Horarios por Sucursales
             </Label>
             <Select
               value={filter.branchId || "todos"}
@@ -150,12 +190,17 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="staffScheduleId" className="text-sm font-medium text-foreground">
-              Horarios
+            <Label
+              htmlFor="staffScheduleId"
+              className="text-sm font-medium text-foreground"
+            >
+              Todos los horarios del personal
             </Label>
             <Select
               value={filter.staffScheduleId || "todos"}
-              onValueChange={(value) => handleFilterChange("staffScheduleId", value)}
+              onValueChange={(value) =>
+                handleFilterChange("staffScheduleId", value)
+              }
             >
               <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
                 <SelectValue placeholder="Seleccione horario" />
@@ -167,7 +212,7 @@ export function EventFilters({ onFilterChange, currentDate }: EventFiltersProps)
                   staff: schedule.staff,
                 })),
                 "horarios",
-                "/staff-schedules",
+                "/staff-schedules"
               )}
             </Select>
           </div>
