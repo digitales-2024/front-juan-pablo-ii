@@ -159,7 +159,7 @@ export function AddHistoryModal({
     if (user?.branchId && !user?.isSuperAdmin && isOpen) {
       setFormData((prev) => ({
         ...prev,
-        branchId: user.branchId,
+        branchId: user.branchId ?? "",
       }));
       // También limpiamos el error si existía
       setFormErrors((prev) => ({ ...prev, branchId: false }));
