@@ -280,15 +280,16 @@ export default function Home() {
               {/* Columna derecha - Gráficos secundarios (33%) */}
               <div className="lg:col-span-1 grid grid-cols-1 gap-4 h-full">
                 {/* Gráfico de barras customizadas - Servicios más demandados */}
-                <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 h-1/2">
+                <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 h-fit">
                   <KPIBarChartCustom />
                 </div>
 
                 {/* Gráfico de barras apiladas - Comparativa por área */}
-                <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 h-1/2">
+                <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 h-fit">
                   <KPIBarChartStacked />
                 </div>
               </div>
+
             </div>
 
             {/* Componente a ancho completo - Gráfico de área */}

@@ -40,7 +40,7 @@ export async function signIn(data: LoginAuthDto) {
     const setCookieHeaders = headers?.["set-cookie"] || [];
 
     // Log para ver las cookies recibidas
-   /*  console.log("Headers de cookies recibidos:", setCookieHeaders); */
+    /*  console.log("Headers de cookies recibidos:", setCookieHeaders); */
 
     // Primero eliminamos las cookies existentes
     cookieStore.delete("logged_in");
@@ -77,6 +77,7 @@ export async function signIn(data: LoginAuthDto) {
       isActive: true,
       mustChangePassword: false,
       lastLogin: new Date().toISOString(),
+      branchId: responseData.branchId,
     };
 
     // Log para ver el perfil del usuario

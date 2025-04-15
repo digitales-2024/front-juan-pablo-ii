@@ -489,6 +489,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/order/detailed/code/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener orden por código */
+        get: operations["OrderController_findOneDetailedByCode"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/order/detailed/{id}": {
         parameters: {
             query?: never;
@@ -506,14 +523,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/order/search/detailed/{id}": {
+    "/api/v1/order/search/detailed/code/{code}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Obtener orden por ID */
+        /** Obtener orden por código */
         get: operations["OrderController_searchOneDetailed"];
         put?: never;
         post?: never;
@@ -6527,7 +6544,7 @@ export interface components {
              * @default PEN
              */
             currency: string;
-            /** @description Número de voucher o referencia del pago */
+            /** @description Número de Comprobante o referencia del pago */
             voucherNumber?: string;
             /** @description Notas adicionales sobre la consulta */
             notes?: string;
@@ -6748,7 +6765,7 @@ export interface components {
              * @default PEN
              */
             currency: string;
-            /** @description Número de voucher o referencia del pago */
+            /** @description Número de Comprobante o referencia del pago */
             voucherNumber?: string;
             /** @description Notas adicionales sobre la receta */
             notes?: string;
@@ -9195,6 +9212,44 @@ export interface operations {
             };
         };
     };
+    OrderController_findOneDetailedByCode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+                /** @description Código de la orden */
+                id: unknown;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orden encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailedOrder"];
+                };
+            };
+            /** @description Code de orden inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized - No autorizado para realizar esta operación */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OrderController_findOneDetailed: {
         parameters: {
             query?: never;
@@ -9237,8 +9292,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description ID de la orden */
-                id: string;
+                /** @description Código de la orden */
+                code: string;
             };
             cookie?: never;
         };
@@ -9253,7 +9308,7 @@ export interface operations {
                     "application/json": components["schemas"]["DetailedOrder"][];
                 };
             };
-            /** @description ID de orden inválido */
+            /** @description Código de orden inválido */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -16839,7 +16894,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BaseApiResponse"];
+                    "application/json": components["schemas"]["Prescription"];
                 };
             };
             /** @description Bad Request - Error en la validación de datos o solicitud incorrecta */

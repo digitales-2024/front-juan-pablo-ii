@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react"; // Añadir useMemo
 import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth"; // Importar hook de autenticación
 import {
   Dialog,
@@ -89,6 +89,22 @@ export function AddHistoryModal({
   const { createUpdateHistory, createPrescriptionMutation } =
     useUpdateHistory();
 
+  // Filtrar sucursales según el usuario
+  const filteredBranches = useMemo(() => {
+    // Si es superAdmin, mostrar todas las sucursales
+    if (user?.isSuperAdmin) {
+      return branches;
+    }
+
+    // Si tiene branchId, filtrar por esa sucursal
+    if (user?.branchId) {
+      return branches.filter((branch) => branch.id === user.branchId);
+    }
+
+    // Por defecto, mostrar todas
+    return branches;
+  }, [branches, user]);
+
   // Determinar si el usuario es médico
   const isUserDoctor =
     user?.roles?.some((role) => role.name === "MEDICO") ?? false;
@@ -137,6 +153,18 @@ export function AddHistoryModal({
       }));
     }
   }, [isUserDoctor, loggedInDoctor, isOpen]);
+
+  // Efecto para establecer automáticamente la sucursal del usuario
+  useEffect(() => {
+    if (user?.branchId && !user?.isSuperAdmin && isOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        branchId: user.branchId,
+      }));
+      // También limpiamos el error si existía
+      setFormErrors((prev) => ({ ...prev, branchId: false }));
+    }
+  }, [user, isOpen]);
 
   // Estado para imágenes
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -537,16 +565,20 @@ export function AddHistoryModal({
                     <Select
                       value={formData.branchId}
                       onValueChange={(value) => clearBranchError(value)}
+                      disabled={!!user?.branchId && !user?.isSuperAdmin}
                     >
                       <SelectTrigger
-                        className={
-                          formErrors.branchId ? "border-destructive" : ""
-                        }
+                        className={cn(
+                          formErrors.branchId ? "border-destructive" : "",
+                          !!user?.branchId && !user?.isSuperAdmin
+                            ? "bg-blue-50 border-blue-200"
+                            : ""
+                        )}
                       >
                         <SelectValue placeholder="Seleccione una sucursal" />
                       </SelectTrigger>
                       <SelectContent>
-                        {branches.map((branch) => (
+                        {filteredBranches.map((branch) => (
                           <SelectItem key={branch.id} value={branch.id}>
                             {branch.name}
                           </SelectItem>
@@ -556,6 +588,11 @@ export function AddHistoryModal({
                     {formErrors.branchId && (
                       <p className="text-destructive text-xs mt-1">
                         Este campo es obligatorio
+                      </p>
+                    )}
+                    {!!user?.branchId && !user?.isSuperAdmin && (
+                      <p className="text-xs text-blue-600 mt-1">
+                        Sucursal asignada a tu usuario
                       </p>
                     )}
                   </div>
