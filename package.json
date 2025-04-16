@@ -7,7 +7,8 @@
 		"build": "next build --no-lint",
 		"start": "next start",
 		"lint": "next lint",
-		"generate-types": "pnpx tsx  ./src/types/generateTypes.ts"
+		"generate-types": "pnpx tsx  ./src/types/generateTypes.ts",
+		"dev:https": "ts-node server.ts"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.10.0",
