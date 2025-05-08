@@ -81,7 +81,10 @@ export const useStaff = () => {
           }
           return response;
         } catch (error) {
-          const message = error instanceof Error ? error.message : "Error desconocido al traer personal";
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Error desconocido al traer personal";
           toast.error(message);
           throw new Error(message);
         }
