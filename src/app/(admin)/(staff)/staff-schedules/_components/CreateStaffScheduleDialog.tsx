@@ -112,7 +112,7 @@ export function CreateStaffScheduleDialog() {
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const { createMutation } = useStaffSchedules();
-  const { staff } = useStaff();
+  const { staff, updateMutation } = useStaff();
   // const { branches } = useBranches();
   const queryClient = useQueryClient();
 
@@ -241,6 +241,14 @@ export function CreateStaffScheduleDialog() {
         createMutation.mutateAsync(saturdaySchedule as CreateStaffScheduleDto),
       ])
         .then(() => {
+          // Actualiza el branchId del staff seleccionado
+          if (staffId && branchId) {
+            updateMutation.mutate({
+              id: staffId,
+              data: { branchId },
+            });
+          }
+
           // Obtener los filtros actuales
           const calendarFilters = queryClient.getQueryData<EventFilterParams>([
             "calendar-filters",
@@ -337,8 +345,9 @@ export function CreateStaffScheduleDialog() {
 
           <div className="bg-blue-50 p-4 rounded-lg space-y-3">
             <p className="text-sm font-medium text-blue-700">
-              Este horario sera efectivo en el sistema un dia despues del su creacion hasta la fecha valida que se le agrege:
-              PARA CRAER UN NUEVO HORARIO A UN PERSONAL DEBE DE ELIMINAR EL ANTERIOR:
+              Este horario sera efectivo en el sistema un dia despues del su
+              creacion hasta la fecha valida que se le agrege: PARA CRAER UN
+              NUEVO HORARIO A UN PERSONAL DEBE DE ELIMINAR EL ANTERIOR:
             </p>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -379,11 +388,13 @@ export function CreateStaffScheduleDialog() {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {staff?.map((member) => (
-                  <SelectItem key={member.id} value={member.id}>
-                    {member.name} {member.lastName}
-                  </SelectItem>
-                ))}
+                {staff
+                  ?.filter((member) => member.isActive)
+                  .map((member) => (
+                    <SelectItem key={member.id} value={member.id}>
+                      {member.name} {member.lastName}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
@@ -400,11 +411,13 @@ export function CreateStaffScheduleDialog() {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {branches?.map((branch) => (
-                  <SelectItem key={branch.id} value={branch.id}>
-                    {branch.name}
-                  </SelectItem>
-                ))}
+                {branches
+                  ?.filter((branch) => branch.isActive)
+                  .map((branch) => (
+                    <SelectItem key={branch.id} value={branch.id}>
+                      {branch.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
