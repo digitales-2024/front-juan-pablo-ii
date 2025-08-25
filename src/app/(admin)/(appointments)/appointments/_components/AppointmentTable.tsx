@@ -254,10 +254,7 @@ export function AppointmentTable({
         }
     }, [onPaginationChange, paginatedData]);
 
-    const handleRowClick = useCallback((appointment: Appointment) => {
-        setSelectedAppointmentId(appointment.id);
-        setShowDetailsDialog(true);
-    }, [setSelectedAppointmentId]);
+    // Eliminar handleRowClick para evitar clicks automáticos en las filas
 
     const handleCloseDetails = useCallback(() => {
         setShowDetailsDialog(false);
@@ -487,7 +484,6 @@ export function AppointmentTable({
                     onTableChange={handleTableChange}
                     totalCount={totalCount}
                     manualPagination={!!paginatedData}
-                    onRowClick={handleRowClick}
                     key={`table-${statusFilter}`}
                 />
             ) : (
