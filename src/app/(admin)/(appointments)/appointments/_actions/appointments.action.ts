@@ -27,6 +27,14 @@ type RescheduleAppointmentResponse = BaseApiResponse | { error: string };
 const GetAppointmentsSchema = z.object({
 });
 
+// Schema para obtener citas por rango de fechas
+const GetAppointmentsByDateRangeSchema = z.object({
+    startDate: z.string().min(1, "La fecha de inicio es requerida"),
+    endDate: z.string().min(1, "La fecha de fin es requerida"),
+    page: z.number().positive().optional().default(1),
+    limit: z.number().positive().optional().default(10),
+});
+
 // Definir un nuevo esquema para obtener todas las citas
 const GetAllAppointmentsSchema = z.object({
     page: z.number().optional(),
@@ -196,6 +204,47 @@ const getAppointmentByIdHandler = async (data: { id: string }) => {
     }
 }
 
+// Handler para obtener citas por rango de fechas
+const getAppointmentsByDateRangeHandler = async (data: {
+    startDate: string;
+    endDate: string;
+    page?: number;
+    limit?: number;
+}) => {
+    try {
+        const { startDate, endDate, page = 1, limit = 10 } = data;
+        
+        const queryParams = new URLSearchParams({
+            startDate,
+            endDate,
+            page: page.toString(),
+            limit: limit.toString(),
+        });
+
+        const [response, error] = await http.get<PaginatedAppointmentsResponse>(
+            `/appointments/by-date-range?${queryParams.toString()}`
+        );
+
+        if (error) {
+            return {
+                error: typeof error === 'object' && error !== null && 'message' in error
+                    ? String(error.message)
+                    : 'Error al obtener las citas médicas por fecha'
+            };
+        }
+
+        if (!response?.appointments || !Array.isArray(response.appointments)) {
+            return { error: 'Respuesta inválida del servidor' };
+        }
+
+        console.log(`📅 Citas obtenidas por fecha (${startDate} - ${endDate}):`, response.appointments.length);
+        return { data: response };
+    } catch (error) {
+        console.error(`💥 Error en getAppointmentsByDateRangeHandler para fechas ${data.startDate} - ${data.endDate}:`, error);
+        return { error: `Error al obtener citas entre ${data.startDate} y ${data.endDate}` };
+    }
+}
+
 export const getAppointmentById = await createSafeAction(GetAppointmentByIdSchema, getAppointmentByIdHandler);
 
 export async function createAppointment(
@@ -333,4 +382,10 @@ export async function rescheduleAppointment(
         if (error instanceof Error) return { error: error.message };
         return { error: "Error desconocido al reprogramar la cita" };
     }
-} 
+}
+
+// Crear el safe action para el handler de obtener citas por rango de fechas
+export const getAppointmentsByDateRange = await createSafeAction(
+    GetAppointmentsByDateRangeSchema,
+    getAppointmentsByDateRangeHandler
+); 

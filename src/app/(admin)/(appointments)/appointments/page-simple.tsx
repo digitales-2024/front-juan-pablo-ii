@@ -5,19 +5,21 @@ import { PageHeader } from "@/components/PageHeader";
 import { notFound } from "next/navigation";
 import { useAppointmentsByDateRange } from "./_hooks/useAppointmentsByDateRange";
 import { DateRangeFilter } from "./_components/FilterComponents/DateRangeFilter";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PageAppointments() {
     // Hook para el filtro de fechas
     const {
         dateRange,
+        appointmentsByDateRangeQuery,
         setDateRangeFilter,
         clearDateRangeFilter,
         isLoading,
         isError,
         error,
         data: dateRangeData,
+        hasDateRange,
         pagination,
         setPage,
         setLimit,
@@ -93,13 +95,8 @@ export default function PageAppointments() {
                 {/* Tabla de citas */}
                 <AppointmentTable
                     data={[]} // No usamos data sin paginar
-                    paginatedData={dateRangeData ?? undefined}
+                    paginatedData={dateRangeData as any}
                     onPaginationChange={handlePaginationChange}
-                    dateFilter={{
-                        hasDateRange: !!(dateRange.startDate && dateRange.endDate),
-                        startDate: dateRange.startDate,
-                        endDate: dateRange.endDate,
-                    }}
                 />
             </div>
         </>
