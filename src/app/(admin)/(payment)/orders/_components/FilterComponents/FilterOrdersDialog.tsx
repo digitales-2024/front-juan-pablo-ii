@@ -38,6 +38,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   OrdersFilterType,
   useUnifiedOrders,
@@ -54,10 +55,10 @@ import {
 import { 
   FilterByStatusSchema,
   FilterByStatus,
-  FilterByStatusAndType,
-  FilterByStatusAndTypeSchema,
   FilterByType,
-  FilterByTypeSchema
+  FilterByTypeSchema,
+  FilterByDateRange,
+  FilterByDateRangeSchema
 } from "../../_interfaces/filter.interface";
 import { OrderStatus, orderStatusConfig, orderStatusEnumOptions, OrderType, orderTypeConfig, orderTypeEnumOptions } from "../../_interfaces/order.interface";
 import { cn } from "@/lib/utils";
@@ -83,11 +84,11 @@ export function FilterOrderDialog() {
         value: OrdersFilterType.BY_TYPE,
         description: "Selecciona un tipo de órden para el filtrado",
       },
-      BY_STATUS_AND_TYPE: {
-        label: "Por Estado y Tipo de Órden",
-        value: OrdersFilterType.BY_STATUS_AND_TYPE,
+      BY_DATE_RANGE: {
+        label: "Por Rango de Fechas",
+        value: OrdersFilterType.BY_DATE_RANGE,
         description:
-          "Selecciona un estado y tipo de órden",
+          "Selecciona un rango de fechas para filtrar las órdenes",
       },
       ALL: {
         label: "Ùltimas Órdenes",
@@ -112,8 +113,8 @@ export function FilterOrderDialog() {
     query: ordersQuery,
     setFilterAllOrders,
     setFilterByStatus,
-    setFilterByStatusAndType,
     setFilterByType,
+    setFilterByDateRange,
   } = useUnifiedOrders();
 
   // const { activeStoragesQuery } = useStorages();
@@ -142,14 +143,11 @@ export function FilterOrderDialog() {
     },
   });
 
-  const filterByStatusAndTypeForm = useForm<{
-    orderStatus: OrderStatus,
-    orderType: OrderType
-  }>({
-    resolver: zodResolver(FilterByStatusAndTypeSchema),
+  const filterByDateRangeForm = useForm<FilterByDateRange>({
+    resolver: zodResolver(FilterByDateRangeSchema),
     defaultValues: {
-      orderStatus: "DRAFT",
-      orderType: "PRODUCT_SALE_ORDER",
+      startDate: "",
+      endDate: "",
     },
   });
 
@@ -190,21 +188,21 @@ export function FilterOrderDialog() {
     }
   }, [setFilterByType]);
 
-  const onSubmitStatusAndType = useCallback((input: FilterByStatusAndType) => {
-    console.log("Ingresando a handdle submit", input);
-    setFilterByStatusAndType({
-      orderStatus: input.orderStatus,
-      orderType: input.orderType,
+  const onSubmitDateRange = useCallback((input: FilterByDateRange) => {
+    console.log("Filtrando por rango de fechas:", input);
+    setFilterByDateRange({
+      startDate: input.startDate,
+      endDate: input.endDate,
     });
     if (ordersQuery.isError) {
-      toast.error("Error al filtrar stock");
+      toast.error("Error al filtrar órdenes por fecha");
     }
     if (ordersQuery.data) {
-      filterByStatusAndTypeForm.reset();
-      toast.success("Stock filtrado correctamente");
+      filterByDateRangeForm.reset();
+      toast.success("Órdenes filtradas por fecha correctamente");
       handleClose();
     }
-  }, [setFilterByStatusAndType]);
+  }, [setFilterByDateRange, ordersQuery.isError, ordersQuery.data, filterByDateRangeForm, handleClose]);
 
   if (ordersQuery.isError) {
     toast.error("Error al filtrar stock");
@@ -305,7 +303,7 @@ export function FilterOrderDialog() {
         <TabsTrigger value={TAB_OPTIONS.BY_TYPE.value}>
           {TAB_OPTIONS.BY_TYPE.label}
         </TabsTrigger>
-        <TabsTrigger value={TAB_OPTIONS.BY_STATUS_AND_TYPE.value}>{TAB_OPTIONS.BY_STATUS_AND_TYPE.label}</TabsTrigger>
+        <TabsTrigger value={TAB_OPTIONS.BY_DATE_RANGE.value}>{TAB_OPTIONS.BY_DATE_RANGE.label}</TabsTrigger>
       </TabsList>
 
       <FilterOrdersTabCardContent
@@ -440,96 +438,48 @@ export function FilterOrderDialog() {
       </FilterOrdersTabCardContent>
 
       <FilterOrdersTabCardContent
-        value={TAB_OPTIONS.BY_STATUS_AND_TYPE.value}
-        title={TAB_OPTIONS.BY_STATUS_AND_TYPE.label}
-        description={TAB_OPTIONS.BY_STATUS_AND_TYPE.description}
+        value={TAB_OPTIONS.BY_DATE_RANGE.value}
+        title={TAB_OPTIONS.BY_DATE_RANGE.label}
+        description={TAB_OPTIONS.BY_DATE_RANGE.description}
       >
-        <Form {...filterByStatusAndTypeForm}>
+        <Form {...filterByDateRangeForm}>
           <form
-            onSubmit={filterByStatusAndTypeForm.handleSubmit(
-              onSubmitStatusAndType
-            )}
+            onSubmit={filterByDateRangeForm.handleSubmit(onSubmitDateRange)}
             className="space-y-4 flex flex-col items-center"
           >
             <FormField
-              control={filterByStatusAndTypeForm.control}
-              name="orderStatus"
+              control={filterByDateRangeForm.control}
+              name="startDate"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Seleccionar Estado de Órden</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un estado de Órden" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {
-                        orderStatusEnumOptions.map((orderStatus) => {
-                          const {backgroundColor, hoverBgColor, icon: Icon, textColor} = orderStatusConfig[orderStatus.value];
-                          return (
-                          <SelectItem key={orderStatus.value} value={orderStatus.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2 ")}>
-                            <div className="flex space-x-1 items-center justify-center">
-                              <Icon className="size-4"></Icon>
-                              <span>
-                                {orderStatus.label}
-                              </span>
-                            </div>
-                          </SelectItem>
-                        )})
-                      }
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Fecha de Inicio</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
-                  {/* <FormDescription>
-                    Solo visualizará almacenes activos
-                  </FormDescription> */}
                 </FormItem>
               )}
             />
             <FormField
-              control={filterByStatusAndTypeForm.control}
-              name="orderType"
+              control={filterByDateRangeForm.control}
+              name="endDate"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Seleccionar Tipo de Órden</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un tipo de órden" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {
-                        orderTypeEnumOptions.map((orderType) => {
-                          const {backgroundColor, hoverBgColor, icon: Icon, textColor} = orderTypeConfig[orderType.value];
-                          return (
-                          <SelectItem key={orderType.value} value={orderType.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2 ")}>
-                            <div className="flex space-x-1 items-center justify-center">
-                              <Icon className="size-4"></Icon>
-                              <span>
-                                {orderType.label}
-                              </span>
-                            </div>
-                          </SelectItem>
-                        )})
-                      }
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Fecha de Fin</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
-                  {/* <FormDescription>
-                    Solo visualizará productos activos
-                  </FormDescription> */}
                 </FormItem>
               )}
-            ></FormField>
-            <SubmitButton></SubmitButton>
+            />
+            <SubmitButton />
           </form>
         </Form>
       </FilterOrdersTabCardContent>
