@@ -70,7 +70,7 @@ export function AddPrescriptionModal({
   patientId,
   resetKey = 0,
 }: AddPrescriptionModalProps) {
-  // Estado para controlar si la receta está activa
+  // Estado para controlar si la prescripción está activa
   const [isPrescriptionActive, setIsPrescriptionActive] = useState(false);
 
   // Filtrar solo productos con 'VENTA' en usoProducto
@@ -172,7 +172,7 @@ export function AddPrescriptionModal({
     e.preventDefault();
     if (isPrescriptionActive) {
       onSave(formData);
-      // No limpiamos los datos aquí, se limpiarán cuando se guarde la historia médica
+      // No limpiamos los datos aquí, se limpiarán cuando se guarde la historia clínica
       setIsOpen(false);
     }
   };
@@ -185,7 +185,7 @@ export function AddPrescriptionModal({
           <DialogHeader>
             <div className="flex justify-between items-center">
               <DialogTitle className="text-2xl font-semibold">
-                Receta Médica
+                Prescripción Médica
               </DialogTitle>
             </div>
             {/* Switch control */}
@@ -198,7 +198,7 @@ export function AddPrescriptionModal({
                       : "text-muted-foreground"
                   }`}
                 />
-                <span className="font-medium">Receta Médica</span>
+                <span className="font-medium">Prescripción Médica</span>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
@@ -218,11 +218,11 @@ export function AddPrescriptionModal({
           <form onSubmit={handleSubmit} className="flex flex-col flex-1">
             {isPrescriptionActive ? (
               <div className="space-y-6 pr-4">
-                {/* Descripción general */}
+                {/* Observaciones generales */}
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Pencil className="h-4 w-4 text-primary" />
-                    Descripción General
+                    Observaciones Generales
                   </Label>
                   <Textarea
                     value={formData.description}
@@ -232,7 +232,7 @@ export function AddPrescriptionModal({
                         description: e.target.value,
                       }))
                     }
-                    placeholder="Indicaciones generales..."
+                    placeholder="Observaciones médicas generales..."
                     className="min-h-[100px]"
                   />
                 </div>
@@ -242,7 +242,7 @@ export function AddPrescriptionModal({
                     <h3 className="font-semibold">Agregar Servicios</h3>
                     <div className="grid grid-cols-1 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="service-selector">Recetar Servicio</Label>
+                        <Label htmlFor="service-selector">Prescribir Servicio</Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -320,12 +320,12 @@ export function AddPrescriptionModal({
                         </div>
                         <div className="space-y-2 sm:col-span-2">
                           <Label htmlFor="service-description">
-                            Descripción
+                            Indicaciones
                           </Label>
                           <div className="flex space-x-2">
                             <Input
                               id="service-description"
-                              placeholder="Descripción"
+                              placeholder="Indicaciones del servicio"
                               value={newService.description}
                               onChange={(e) =>
                                 setNewService((prev) => ({
@@ -473,12 +473,12 @@ export function AddPrescriptionModal({
                         </div>
                         <div className="space-y-2 sm:col-span-2">
                           <Label htmlFor="medicament-description">
-                            Descripción
+                            Posología
                           </Label>
                           <div className="flex space-x-2">
                             <Input
                               id="medicament-description"
-                              placeholder="Descripción"
+                              placeholder="Dosis y frecuencia"
                               value={newMedicament.description}
                               onChange={(e) =>
                                 setNewMedicament((prev) => ({
@@ -548,10 +548,10 @@ export function AddPrescriptionModal({
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <ClipboardPenLine className="h-16 w-16 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-medium mb-2">
-                  Receta Médica Desactivada
+                  Prescripción Médica Desactivada
                 </h3>
                 <p className="text-muted-foreground max-w-md">
-                  Active el interruptor arriba para crear una nueva receta médica
+                  Active el interruptor arriba para crear una nueva prescripción médica
                   con medicamentos y servicios.
                 </p>
               </div>
@@ -569,8 +569,8 @@ export function AddPrescriptionModal({
                 </Button>
                 <Button type="submit" disabled={!isPrescriptionActive}>
                   {isPrescriptionActive
-                    ? "Guardar Receta"
-                    : "Receta Desactivada"}
+                    ? "Guardar Prescripción"
+                    : "Prescripción Desactivada"}
                 </Button>
               </DialogFooter>
             </div>

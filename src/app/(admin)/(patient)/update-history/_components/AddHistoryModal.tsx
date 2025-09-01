@@ -177,7 +177,7 @@ export function AddHistoryModal({
   // Estado para manejar loading
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Estado separado para la receta médica
+  // Estado separado para la prescripción médica
   const [prescriptionData, setPrescriptionData] =
     useState<CreatePrescriptionDto | null>(null);
 
@@ -212,7 +212,7 @@ export function AddHistoryModal({
         image: selectedImages.length > 0 ? selectedImages : null,
       });
 
-      // 2. Si hay receta médica, crearla usando el ID de la historia
+      // 2. Si hay prescripción médica, crearla usando el ID de la historia
       if (
         formData.prescription &&
         prescriptionData &&
@@ -228,7 +228,7 @@ export function AddHistoryModal({
           });
 
         if (prescriptionResponse) {
-          // Actualizar el estado con el ID de la receta
+          // Actualizar el estado con el ID de la prescripción
           onSave({
             data: {
               ...formData,
@@ -258,7 +258,7 @@ export function AddHistoryModal({
     setPrescriptionData(data);
     setFormData((prev) => ({
       ...prev,
-      prescription: true, // Solo marcamos que existe una receta
+      prescription: true, // Solo marcamos que existe una prescripción
     }));
     setShowPrescriptionModal(false);
   };
@@ -355,7 +355,7 @@ export function AddHistoryModal({
       medicalLeaveDays: undefined,
       leaveDescription: undefined,
     });
-    setPrescriptionData(null); // Limpiar datos de receta
+    setPrescriptionData(null); // Limpiar datos de prescripción
     setSelectedImages([]);
     setImagePreviews((prev) => {
       prev.forEach((url) => URL.revokeObjectURL(url));
@@ -369,7 +369,7 @@ export function AddHistoryModal({
     setMedicalLeaveResetKey((prev) => prev + 1);
   };
 
-  // Agregar función para limpiar receta médica
+  // Agregar función para limpiar prescripción médica
   const handleRemovePrescription = () => {
     // Solo limpiamos los datos de prescripción
     setPrescriptionData(null);
@@ -416,7 +416,7 @@ export function AddHistoryModal({
           <DialogHeader>
             <div className="flex justify-between items-center">
               <DialogTitle className="text-2xl font-semibold">
-                Agregar Historia Médica
+                Agregar Consulta Médica
               </DialogTitle>
               <DialogClose asChild>
                 <Button variant="ghost" size="icon">
@@ -608,7 +608,7 @@ export function AddHistoryModal({
                     className="flex items-center gap-2"
                   >
                     <FileText className="h-4 w-4 text-primary" />
-                    Descripción
+                    Motivo de Consulta
                   </Label>
                   <Textarea
                     id="description"
@@ -621,7 +621,7 @@ export function AddHistoryModal({
                     }
                     required
                     className="min-h-[100px]"
-                    placeholder="Ingrese la descripción de la consulta o servicio..."
+                    placeholder="Ingrese el motivo de la consulta médica..."
                   />
                 </div>
               </CardContent>
@@ -689,7 +689,7 @@ export function AddHistoryModal({
                     className="w-full sm:w-auto flex items-center gap-2"
                   >
                     <ClipboardPlus className="w-4 h-4" />
-                    Agregar Receta Médica
+                    Agregar Prescripción Médica
                   </Button>
                   <Button
                     type="button"
@@ -721,7 +721,7 @@ export function AddHistoryModal({
                       variant="outline"
                       className="bg-green-50 text-green-700 hover:bg-green-100 transition-colors px-3 py-1"
                     >
-                      Receta Médica Agregada
+                      Prescripción Médica Agregada
                       <button
                         onClick={handleRemovePrescription}
                         className="ml-2 hover:text-red-600"

@@ -157,7 +157,7 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
     return staffMember ? `${staffMember.name} ${staffMember.lastName}` : "N/A";
   };
 
-  // Función para manejar la visualización de la receta
+  // Función para manejar la visualización de la prescripción
   const handleShowPrescription = (update: UpdateHistoryResponseImage) => {
     if (update.prescription && update.prescriptionId) {
       onPrescriptionView(update.id);
@@ -281,14 +281,14 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
           <div className="flex items-center gap-3">
             <Stethoscope className="w-8 h-8 md:w-6 md:h-6 text-primary flex-shrink-0" />
             <CardTitle className="text-xl md:text-2xl">
-              Historial Médico de Consultas, Servicios y Tratamientos
+              Historia Clínica de Consultas, Servicios y Tratamientos
             </CardTitle>
           </div>
           <Button
             className="w-full md:w-auto"
             onClick={() => setIsHistoryModalOpen(true)}
           >
-            <Plus className="w-4 h-4 mr-2" /> Agregar Historia
+            <Plus className="w-4 h-4 mr-2" /> Agregar Consulta
           </Button>
         </CardHeader>
 
@@ -372,7 +372,7 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
                             <FileText className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
                             <div className="flex-grow">
                               <strong className="text-base block mb-2">
-                                Descripción:
+                                Motivo de Consulta:
                               </strong>
                               <p className="p-4 bg-gray-50 border rounded-md">
                                 {update.description}
@@ -414,7 +414,7 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
                       </div>
                     )}
 
-                    {/* Botón para ver receta */}
+                    {/* Botón para ver prescripción */}
                     <div className="flex flex-wrap gap-2">
                       {update.prescription && (
                         <Button
@@ -422,7 +422,7 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
                           onClick={() => handleShowPrescription(update)}
                         >
                           <FileText className="w-4 h-4 mr-2" />
-                          Ver Receta
+                          Ver Prescripción
                         </Button>
                       )}
 

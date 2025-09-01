@@ -94,7 +94,7 @@ export interface UpdateUpdateHistoryFormData {
 export type DeleteUpdateHistoryDto =
   components["schemas"]["DeleteUpdateHistoryDto"];
 
-/* tipado para la receta medica */
+/* tipado para la prescripción médica */
 
 export type Prescription = components["schemas"]["Prescription"];
 

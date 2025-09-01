@@ -231,7 +231,7 @@ export function AddMedicalLeaveModal({
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-primary" />
-                    Descripción del Descanso Médico
+                    Justificación del Descanso Médico
                   </Label>
                   <Textarea
                     value={formData.leaveDescription ?? ""}
