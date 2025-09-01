@@ -45,6 +45,7 @@ import {
 import { AddHistoryModal } from "./AddHistoryModal";
 import { useUpdateHistory } from "../_hook/useUpdateHistory";
 import { v4 as uuidv4 } from "uuid";
+import { processImages, createSafeImagePreview, MOBILE_CONFIG } from "../utils/mobileFileUtils";
 
 /* import { PrescriptionModal } from "./PrescriptionModal"; */
 
@@ -169,38 +170,57 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
       data: UpdateUpdateHistoryDto;
       image?: File[] | null;
     } */
-      const handleAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-          const files = Array.from(e.target.files);
+      // Función para agregar imágenes con compresión automática (para móviles)
+      const handleAddImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+        
+        const files = Array.from(e.target.files);
+        
+        if (files.length === 0) {
+          if (e.target) e.target.value = '';
+          return;
+        }
+
+        try {
+          // Procesar imágenes con compresión automática
+          const result = await processImages(files);
           
-          // Filtrar solo los archivos que son imágenes
-          const validFiles: File[] = [];
-          const invalidFiles: string[] = [];
-          
-          files.forEach(file => {
-            if (file.type.startsWith('image/')) {
-              validFiles.push(file);
-            } else {
-              invalidFiles.push(file.name);
-            }
-          });
-          
-          // Mostrar mensaje de error si hay archivos inválidos
-          if (invalidFiles.length > 0) {
-            setErrorMessage(`Los siguientes archivos no son imágenes y fueron eliminados: ${invalidFiles.join(', ')}`);
-            
-            // Limpiar el mensaje después de 5 segundos
+          // Mostrar errores si los hay
+          if (result.errors.length > 0) {
+            setErrorMessage(`Errores encontrados: ${result.errors.join(', ')}`);
             setTimeout(() => setErrorMessage(null), 5000);
           }
           
-          if (validFiles.length === 0) return; // No seguir si no hay archivos válidos
+          // Mostrar mensaje de compresión si se aplicó
+          if (result.compressionApplied) {
+            setErrorMessage("Algunas imágenes fueron comprimidas automáticamente para optimizar el tamaño");
+            setTimeout(() => setErrorMessage(null), 4000);
+          }
           
-          // Solo agregar archivos válidos
-          setNewImages((prev) => [...prev, ...validFiles]);
+          if (result.processedFiles.length === 0) {
+            if (e.target) e.target.value = '';
+            return;
+          }
+
+          // Agregar archivos procesados
+          setNewImages((prev) => [...prev, ...result.processedFiles]);
+
+          // Crear previsualizaciones de forma segura
+          const newPreviews = await Promise.all(
+            result.processedFiles.map(file => createSafeImagePreview(file))
+          );
           
-          // Crear previsualizaciones solo para archivos válidos
-          const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
           setImagesPreviews((prev) => [...prev, ...newPreviews]);
+          
+        } catch (error) {
+          console.error("Error procesando imágenes:", error);
+          setErrorMessage("Error al procesar las imágenes seleccionadas");
+          setTimeout(() => setErrorMessage(null), 3000);
+        }
+        
+        // Limpiar el input para permitir seleccionar el mismo archivo
+        if (e.target) {
+          e.target.value = '';
         }
       };
 
@@ -493,7 +513,8 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
                   type="file"
                   id="newImages"
                   multiple
-                  accept="image/*"
+                  accept={MOBILE_CONFIG.INPUT_ATTRIBUTES.accept}
+                  capture={MOBILE_CONFIG.INPUT_ATTRIBUTES.capture}
                   onChange={handleAddImages}
                   className="hidden"
                 />
