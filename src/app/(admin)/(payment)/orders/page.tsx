@@ -8,6 +8,7 @@ import { METADATA } from "./_statics/metadata";
 import { toast } from "sonner";
 import { useUnifiedOrders } from "./_hooks/useFilterOrders";
 import { FilterOrderDialog } from "./_components/FilterComponents/FilterOrdersDialog";
+import { DateRangeFilter } from "./_components/FilterComponents/DateRangeFilter";
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
 import { useCallback } from "react";
@@ -68,6 +69,12 @@ export default function PageOrders() {
       <div className="mb-2 flex items-center justify-between space-y-2 flex-wrap gap-x-4">
         <PageHeader title={METADATA.title} description={METADATA.description} />
       </div>
+      
+      {/* Filtro de rango de fechas */}
+      <div className="mb-4">
+        <DateRangeFilter />
+      </div>
+      
       <div className="p-1 flex flex-col sm:flex-row space-x-3 space-y-1">
         <SearchOrderCombobox
           onValueChange={(val, entity) => {

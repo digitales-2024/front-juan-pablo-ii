@@ -38,7 +38,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   OrdersFilterType,
   useUnifiedOrders,
@@ -56,9 +55,7 @@ import {
   FilterByStatusSchema,
   FilterByStatus,
   FilterByType,
-  FilterByTypeSchema,
-  FilterByDateRange,
-  FilterByDateRangeSchema
+  FilterByTypeSchema
 } from "../../_interfaces/filter.interface";
 import { OrderStatus, orderStatusConfig, orderStatusEnumOptions, OrderType, orderTypeConfig, orderTypeEnumOptions } from "../../_interfaces/order.interface";
 import { cn } from "@/lib/utils";
@@ -84,12 +81,6 @@ export function FilterOrderDialog() {
         value: OrdersFilterType.BY_TYPE,
         description: "Selecciona un tipo de órden para el filtrado",
       },
-      BY_DATE_RANGE: {
-        label: "Por Rango de Fechas",
-        value: OrdersFilterType.BY_DATE_RANGE,
-        description:
-          "Selecciona un rango de fechas para filtrar las órdenes",
-      },
       ALL: {
         label: "Ùltimas Órdenes",
         value: OrdersFilterType.ALL,
@@ -114,7 +105,6 @@ export function FilterOrderDialog() {
     setFilterAllOrders,
     setFilterByStatus,
     setFilterByType,
-    setFilterByDateRange,
   } = useUnifiedOrders();
 
   // const { activeStoragesQuery } = useStorages();
@@ -140,14 +130,6 @@ export function FilterOrderDialog() {
     resolver: zodResolver(FilterByTypeSchema),
     defaultValues: {
       orderType: "PRODUCT_SALE_ORDER",
-    },
-  });
-
-  const filterByDateRangeForm = useForm<FilterByDateRange>({
-    resolver: zodResolver(FilterByDateRangeSchema),
-    defaultValues: {
-      startDate: "",
-      endDate: "",
     },
   });
 
@@ -187,22 +169,6 @@ export function FilterOrderDialog() {
       handleClose();
     }
   }, [setFilterByType]);
-
-  const onSubmitDateRange = useCallback((input: FilterByDateRange) => {
-    console.log("Filtrando por rango de fechas:", input);
-    setFilterByDateRange({
-      startDate: input.startDate,
-      endDate: input.endDate,
-    });
-    if (ordersQuery.isError) {
-      toast.error("Error al filtrar órdenes por fecha");
-    }
-    if (ordersQuery.data) {
-      filterByDateRangeForm.reset();
-      toast.success("Órdenes filtradas por fecha correctamente");
-      handleClose();
-    }
-  }, [setFilterByDateRange, ordersQuery.isError, ordersQuery.data, filterByDateRangeForm, handleClose]);
 
   if (ordersQuery.isError) {
     toast.error("Error al filtrar stock");
@@ -303,7 +269,6 @@ export function FilterOrderDialog() {
         <TabsTrigger value={TAB_OPTIONS.BY_TYPE.value}>
           {TAB_OPTIONS.BY_TYPE.label}
         </TabsTrigger>
-        <TabsTrigger value={TAB_OPTIONS.BY_DATE_RANGE.value}>{TAB_OPTIONS.BY_DATE_RANGE.label}</TabsTrigger>
       </TabsList>
 
       <FilterOrdersTabCardContent
@@ -433,53 +398,6 @@ export function FilterOrderDialog() {
               )}
             />
             <SubmitButton></SubmitButton>
-          </form>
-        </Form>
-      </FilterOrdersTabCardContent>
-
-      <FilterOrdersTabCardContent
-        value={TAB_OPTIONS.BY_DATE_RANGE.value}
-        title={TAB_OPTIONS.BY_DATE_RANGE.label}
-        description={TAB_OPTIONS.BY_DATE_RANGE.description}
-      >
-        <Form {...filterByDateRangeForm}>
-          <form
-            onSubmit={filterByDateRangeForm.handleSubmit(onSubmitDateRange)}
-            className="space-y-4 flex flex-col items-center"
-          >
-            <FormField
-              control={filterByDateRangeForm.control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Fecha de Inicio</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={filterByDateRangeForm.control}
-              name="endDate"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Fecha de Fin</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <SubmitButton />
           </form>
         </Form>
       </FilterOrdersTabCardContent>
