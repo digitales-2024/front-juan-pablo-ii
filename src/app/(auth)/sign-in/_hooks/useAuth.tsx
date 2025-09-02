@@ -121,12 +121,6 @@ export function useSignIn() {
         branchId: response.branchId, // Añadir esta línea
       };
 
-      // Console log para ver los datos del usuario en el navegador
-      console.log("🔐 Usuario autenticado en el cliente:", {
-        profileData,
-   
-      });
-
       setUser(profileData);
       await queryClient.invalidateQueries({ queryKey: ["user"] });
       toast.success("Inicio de sesión exitoso");

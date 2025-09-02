@@ -7,6 +7,7 @@ import {
   getPatients,
   getPatientById,
   getPatientByDni,
+  searchPatientsByPartialDni,
 } from "../_actions/patient.actions";
 import { toast } from "sonner";
 import {
@@ -246,5 +247,37 @@ export const usePatients = () => {
     isLoading: patientsQuery.isLoading,
     isError: patientsQuery.isError,
     error: patientsQuery.error,
+  };
+};
+
+/**
+ * Hook para búsqueda de pacientes por DNI parcial
+ * Optimizado para búsqueda en tiempo real
+ */
+export const usePatientSearch = () => {
+  // Query para búsqueda de pacientes por DNI parcial
+  const searchPatientsByDni = (dni: string) =>
+    useQuery({
+      queryKey: ["patients", "search", dni],
+      queryFn: async () => {
+        if (!dni || dni.length < 5) {
+          return [];
+        }
+        const response = await searchPatientsByPartialDni(dni);
+        if (!response) {
+          throw new Error("No se recibió respuesta del servidor");
+        }
+        if ("error" in response && response.error) {
+          throw new Error(response.error);
+        }
+        return response.data ?? [];
+      },
+      enabled: dni.length >= 5, // Solo ejecutar si tiene al menos 5 dígitos
+      staleTime: 1000 * 60 * 2, // 2 minutos
+      refetchOnWindowFocus: false, // No refetch al enfocar ventana
+    });
+
+  return {
+    searchPatientsByDni,
   };
 };

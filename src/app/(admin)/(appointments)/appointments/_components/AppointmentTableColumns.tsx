@@ -143,6 +143,9 @@ export const columns: ColumnDef<Appointment>[] = [
             const isActive = appointment.isActive;
             const isPending = appointment.status === "PENDING";
             const isConfirmed = appointment.status === "CONFIRMED";
+            const isRescheduled = appointment.status === "RESCHEDULED";
+            // Permitir reprogramar si la cita no está completada, cancelada o no show
+            const canReschedule = isActive && !['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(appointment.status);
             const router = useRouter();
             const { setSelectedAppointmentId, appointmentByIdQuery } = useAppointments();
 
@@ -203,7 +206,7 @@ export const columns: ColumnDef<Appointment>[] = [
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                                 onSelect={() => setShowRescheduleDialog(true)}
-                                disabled={!isActive || !isConfirmed}
+                                disabled={!canReschedule}
                             >
                                 Reprogramar
                                 <DropdownMenuShortcut>

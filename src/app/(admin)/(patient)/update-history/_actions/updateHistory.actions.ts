@@ -132,7 +132,7 @@ export async function getUpdateHistoryById(
     return { error: "Error desconocido" };
   }
 }
-//funcion para obtener la receta medica asignada ala actualizacion de historia medica
+//funcion para obtener la prescripción médica asignada a la actualización de historia clínica
 export async function getPrescriptionById(
   id: string
 ): Promise<PrescriptionResponseBase> {
@@ -155,7 +155,7 @@ export async function getPrescriptionById(
     return { error: "Error desconocido" };
   }
 }
-// crear receta medica
+// crear prescripción médica
 export async function createPrescription(
   data: CreatePrescriptionDataDto
 ): Promise<PrescriptionResponseBaseApiResponse> {

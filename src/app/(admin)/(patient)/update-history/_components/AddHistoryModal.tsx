@@ -60,6 +60,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { processImages, createSafeImagePreview, MOBILE_CONFIG } from "../utils/mobileFileUtils";
 
 interface AddHistoryModalProps {
   isOpen: boolean;
@@ -177,7 +178,7 @@ export function AddHistoryModal({
   // Estado para manejar loading
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Estado separado para la receta médica
+  // Estado separado para la prescripción médica
   const [prescriptionData, setPrescriptionData] =
     useState<CreatePrescriptionDto | null>(null);
 
@@ -204,15 +205,19 @@ export function AddHistoryModal({
 
     // Continuar con el envío si no hay errores
     setIsSubmitting(true);
+    setErrorMessage(null); // Limpiar errores previos
 
     try {
+      // Preparar imágenes de forma segura para móviles
+      const imagesToSend = selectedImages.length > 0 ? [...selectedImages] : null;
+      
       // 1. Primero crear la actualización de historia
       const updateHistoryResponse = await createUpdateHistory.mutateAsync({
-        data: formData, // Aquí solo va la data básica
-        image: selectedImages.length > 0 ? selectedImages : null,
+        data: formData,
+        image: imagesToSend,
       });
 
-      // 2. Si hay receta médica, crearla usando el ID de la historia
+      // 2. Si hay prescripción médica, crearla usando el ID de la historia
       if (
         formData.prescription &&
         prescriptionData &&
@@ -228,19 +233,19 @@ export function AddHistoryModal({
           });
 
         if (prescriptionResponse) {
-          // Actualizar el estado con el ID de la receta
+          // Actualizar el estado con el ID de la prescripción
           onSave({
             data: {
               ...formData,
               prescriptionId: prescriptionResponse.data.id,
             },
-            image: selectedImages.length > 0 ? selectedImages : null,
+            image: imagesToSend,
           });
         }
       } else {
         onSave({
           data: formData,
-          image: selectedImages.length > 0 ? selectedImages : null,
+          image: imagesToSend,
         });
       }
 
@@ -248,6 +253,7 @@ export function AddHistoryModal({
       handleReset();
     } catch (error) {
       console.error("Error en el proceso de creación:", error);
+      setErrorMessage("Error al guardar. Por favor intenta nuevamente.");
     } finally {
       setIsSubmitting(false);
     }
@@ -258,7 +264,7 @@ export function AddHistoryModal({
     setPrescriptionData(data);
     setFormData((prev) => ({
       ...prev,
-      prescription: true, // Solo marcamos que existe una receta
+      prescription: true, // Solo marcamos que existe una prescripción
     }));
     setShowPrescriptionModal(false);
   };
@@ -287,43 +293,57 @@ export function AddHistoryModal({
   };
 
   // Manejador de imágenes
-  // Manejador de imágenes con validación
-  const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
+  // Manejador de imágenes optimizado para móviles con compresión automática
+  const handleAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    
+    const files = Array.from(e.target.files);
+    
+    if (files.length === 0) {
+      if (e.target) e.target.value = '';
+      return;
+    }
 
-      // Filtrar solo los archivos que son imágenes
-      const validFiles: File[] = [];
-      const invalidFiles: string[] = [];
-
-      files.forEach((file) => {
-        if (file.type.startsWith("image/")) {
-          validFiles.push(file);
-        } else {
-          invalidFiles.push(file.name);
-        }
-      });
-
-      // Mostrar mensaje de error si hay archivos inválidos
-      if (invalidFiles.length > 0) {
-        setErrorMessage(
-          `Los siguientes archivos no son fotos ni imágenes y fueron eliminados: ${invalidFiles.join(
-            ", "
-          )}`
-        );
-
-        // Limpiar el mensaje después de 5 segundos
+    try {
+      // Procesar imágenes con compresión automática
+      const result = await processImages(files);
+      
+      // Mostrar errores si los hay
+      if (result.errors.length > 0) {
+        setErrorMessage(`Errores encontrados: ${result.errors.join(', ')}`);
         setTimeout(() => setErrorMessage(null), 5000);
       }
+      
+      // Mostrar mensaje de compresión si se aplicó
+      if (result.compressionApplied) {
+        setErrorMessage("Algunas imágenes fueron comprimidas automáticamente para optimizar el tamaño");
+        setTimeout(() => setErrorMessage(null), 4000);
+      }
+      
+      if (result.processedFiles.length === 0) {
+        if (e.target) e.target.value = '';
+        return;
+      }
 
-      if (validFiles.length === 0) return; // No seguir si no hay archivos válidos
+      // Agregar archivos procesados
+      setSelectedImages((prev) => [...prev, ...result.processedFiles]);
 
-      // Solo agregar archivos válidos
-      setSelectedImages((prev) => [...prev, ...validFiles]);
-
-      // Crear previsualizaciones solo para archivos válidos
-      const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+      // Crear previsualizaciones de forma segura
+      const newPreviews = await Promise.all(
+        result.processedFiles.map(file => createSafeImagePreview(file))
+      );
+      
       setImagePreviews((prev) => [...prev, ...newPreviews]);
+      
+    } catch (error) {
+      console.error("Error procesando imágenes:", error);
+      setErrorMessage("Error al procesar las imágenes seleccionadas");
+      setTimeout(() => setErrorMessage(null), 3000);
+    }
+    
+    // Limpiar el input para permitir seleccionar el mismo archivo
+    if (e.target) {
+      e.target.value = '';
     }
   };
 
@@ -338,8 +358,17 @@ export function AddHistoryModal({
     });
   };
 
-  // Resetear formulario
+  // Resetear formulario con limpieza segura
   const handleReset = () => {
+    // Limpiar URLs de objetos de forma segura
+    imagePreviews.forEach((url) => {
+      try {
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.warn("Error revocando URL:", error);
+      }
+    });
+
     setFormData({
       patientId: patientId ?? "",
       serviceId: "",
@@ -349,27 +378,25 @@ export function AddHistoryModal({
       prescription: false,
       description: "",
       medicalLeave: false,
-      // Limpiamos también los campos del descanso médico
       medicalLeaveStartDate: undefined,
       medicalLeaveEndDate: undefined,
       medicalLeaveDays: undefined,
       leaveDescription: undefined,
     });
-    setPrescriptionData(null); // Limpiar datos de receta
+    
+    setPrescriptionData(null);
     setSelectedImages([]);
-    setImagePreviews((prev) => {
-      prev.forEach((url) => URL.revokeObjectURL(url));
-      return [];
-    });
+    setImagePreviews([]);
     setShowMedicalLeaveModal(false);
     setShowPrescriptionModal(false);
-    setErrorMessage(null); // Limpiar mensaje de error
+    setErrorMessage(null);
+    setFormErrors({ serviceId: false, branchId: false });
     setIsOpen(false);
     setPrescriptionResetKey((prev) => prev + 1);
     setMedicalLeaveResetKey((prev) => prev + 1);
   };
 
-  // Agregar función para limpiar receta médica
+  // Agregar función para limpiar prescripción médica
   const handleRemovePrescription = () => {
     // Solo limpiamos los datos de prescripción
     setPrescriptionData(null);
@@ -416,7 +443,7 @@ export function AddHistoryModal({
           <DialogHeader>
             <div className="flex justify-between items-center">
               <DialogTitle className="text-2xl font-semibold">
-                Agregar Historia Médica
+                Agregar Consulta Médica
               </DialogTitle>
               <DialogClose asChild>
                 <Button variant="ghost" size="icon">
@@ -608,7 +635,7 @@ export function AddHistoryModal({
                     className="flex items-center gap-2"
                   >
                     <FileText className="h-4 w-4 text-primary" />
-                    Descripción
+                    Motivo de Consulta
                   </Label>
                   <Textarea
                     id="description"
@@ -621,7 +648,7 @@ export function AddHistoryModal({
                     }
                     required
                     className="min-h-[100px]"
-                    placeholder="Ingrese la descripción de la consulta o servicio..."
+                    placeholder="Ingrese el motivo de la consulta médica..."
                   />
                 </div>
               </CardContent>
@@ -644,12 +671,14 @@ export function AddHistoryModal({
                     type="file"
                     id="images"
                     multiple
+                    accept={MOBILE_CONFIG.INPUT_ATTRIBUTES.accept}
+                    capture={MOBILE_CONFIG.INPUT_ATTRIBUTES.capture}
                     onChange={handleAddImage}
                     className="hidden"
                   />
                   <label
                     htmlFor="images"
-                    className="inline-flex items-center justify-center px-4 py-2 border border-dashed rounded-md cursor-pointer hover:bg-muted transition-colors"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-dashed rounded-md cursor-pointer hover:bg-muted transition-colors w-full sm:w-auto"
                   >
                     <ImageIcon className="w-5 h-5 mr-2" />
                     <span>Agregar Imágenes</span>
@@ -689,7 +718,7 @@ export function AddHistoryModal({
                     className="w-full sm:w-auto flex items-center gap-2"
                   >
                     <ClipboardPlus className="w-4 h-4" />
-                    Agregar Receta Médica
+                    Agregar Prescripción Médica
                   </Button>
                   <Button
                     type="button"
@@ -721,7 +750,7 @@ export function AddHistoryModal({
                       variant="outline"
                       className="bg-green-50 text-green-700 hover:bg-green-100 transition-colors px-3 py-1"
                     >
-                      Receta Médica Agregada
+                      Prescripción Médica Agregada
                       <button
                         onClick={handleRemovePrescription}
                         className="ml-2 hover:text-red-600"

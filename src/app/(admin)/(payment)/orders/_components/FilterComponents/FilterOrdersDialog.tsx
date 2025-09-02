@@ -54,8 +54,6 @@ import {
 import { 
   FilterByStatusSchema,
   FilterByStatus,
-  FilterByStatusAndType,
-  FilterByStatusAndTypeSchema,
   FilterByType,
   FilterByTypeSchema
 } from "../../_interfaces/filter.interface";
@@ -83,12 +81,6 @@ export function FilterOrderDialog() {
         value: OrdersFilterType.BY_TYPE,
         description: "Selecciona un tipo de órden para el filtrado",
       },
-      BY_STATUS_AND_TYPE: {
-        label: "Por Estado y Tipo de Órden",
-        value: OrdersFilterType.BY_STATUS_AND_TYPE,
-        description:
-          "Selecciona un estado y tipo de órden",
-      },
       ALL: {
         label: "Ùltimas Órdenes",
         value: OrdersFilterType.ALL,
@@ -112,7 +104,6 @@ export function FilterOrderDialog() {
     query: ordersQuery,
     setFilterAllOrders,
     setFilterByStatus,
-    setFilterByStatusAndType,
     setFilterByType,
   } = useUnifiedOrders();
 
@@ -138,17 +129,6 @@ export function FilterOrderDialog() {
   }>({
     resolver: zodResolver(FilterByTypeSchema),
     defaultValues: {
-      orderType: "PRODUCT_SALE_ORDER",
-    },
-  });
-
-  const filterByStatusAndTypeForm = useForm<{
-    orderStatus: OrderStatus,
-    orderType: OrderType
-  }>({
-    resolver: zodResolver(FilterByStatusAndTypeSchema),
-    defaultValues: {
-      orderStatus: "DRAFT",
       orderType: "PRODUCT_SALE_ORDER",
     },
   });
@@ -189,22 +169,6 @@ export function FilterOrderDialog() {
       handleClose();
     }
   }, [setFilterByType]);
-
-  const onSubmitStatusAndType = useCallback((input: FilterByStatusAndType) => {
-    console.log("Ingresando a handdle submit", input);
-    setFilterByStatusAndType({
-      orderStatus: input.orderStatus,
-      orderType: input.orderType,
-    });
-    if (ordersQuery.isError) {
-      toast.error("Error al filtrar stock");
-    }
-    if (ordersQuery.data) {
-      filterByStatusAndTypeForm.reset();
-      toast.success("Stock filtrado correctamente");
-      handleClose();
-    }
-  }, [setFilterByStatusAndType]);
 
   if (ordersQuery.isError) {
     toast.error("Error al filtrar stock");
@@ -305,7 +269,6 @@ export function FilterOrderDialog() {
         <TabsTrigger value={TAB_OPTIONS.BY_TYPE.value}>
           {TAB_OPTIONS.BY_TYPE.label}
         </TabsTrigger>
-        <TabsTrigger value={TAB_OPTIONS.BY_STATUS_AND_TYPE.value}>{TAB_OPTIONS.BY_STATUS_AND_TYPE.label}</TabsTrigger>
       </TabsList>
 
       <FilterOrdersTabCardContent
@@ -434,101 +397,6 @@ export function FilterOrderDialog() {
                 </FormItem>
               )}
             />
-            <SubmitButton></SubmitButton>
-          </form>
-        </Form>
-      </FilterOrdersTabCardContent>
-
-      <FilterOrdersTabCardContent
-        value={TAB_OPTIONS.BY_STATUS_AND_TYPE.value}
-        title={TAB_OPTIONS.BY_STATUS_AND_TYPE.label}
-        description={TAB_OPTIONS.BY_STATUS_AND_TYPE.description}
-      >
-        <Form {...filterByStatusAndTypeForm}>
-          <form
-            onSubmit={filterByStatusAndTypeForm.handleSubmit(
-              onSubmitStatusAndType
-            )}
-            className="space-y-4 flex flex-col items-center"
-          >
-            <FormField
-              control={filterByStatusAndTypeForm.control}
-              name="orderStatus"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Seleccionar Estado de Órden</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un estado de Órden" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {
-                        orderStatusEnumOptions.map((orderStatus) => {
-                          const {backgroundColor, hoverBgColor, icon: Icon, textColor} = orderStatusConfig[orderStatus.value];
-                          return (
-                          <SelectItem key={orderStatus.value} value={orderStatus.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2 ")}>
-                            <div className="flex space-x-1 items-center justify-center">
-                              <Icon className="size-4"></Icon>
-                              <span>
-                                {orderStatus.label}
-                              </span>
-                            </div>
-                          </SelectItem>
-                        )})
-                      }
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                  {/* <FormDescription>
-                    Solo visualizará almacenes activos
-                  </FormDescription> */}
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={filterByStatusAndTypeForm.control}
-              name="orderType"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Seleccionar Tipo de Órden</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un tipo de órden" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {
-                        orderTypeEnumOptions.map((orderType) => {
-                          const {backgroundColor, hoverBgColor, icon: Icon, textColor} = orderTypeConfig[orderType.value];
-                          return (
-                          <SelectItem key={orderType.value} value={orderType.value} className={cn(backgroundColor, textColor, hoverBgColor, "mb-2 ")}>
-                            <div className="flex space-x-1 items-center justify-center">
-                              <Icon className="size-4"></Icon>
-                              <span>
-                                {orderType.label}
-                              </span>
-                            </div>
-                          </SelectItem>
-                        )})
-                      }
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                  {/* <FormDescription>
-                    Solo visualizará productos activos
-                  </FormDescription> */}
-                </FormItem>
-              )}
-            ></FormField>
             <SubmitButton></SubmitButton>
           </form>
         </Form>

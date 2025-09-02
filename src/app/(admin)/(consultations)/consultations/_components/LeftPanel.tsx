@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import ComboboxSelect from "@/components/ui/combobox-select";
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
@@ -8,17 +7,17 @@ import {
   BriefcaseMedical,
   Calendar,
   Hospital,
-  IdCard,
   Stethoscope,
   UsersRound,
 } from "lucide-react";
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
 import { useServices } from "@/app/(admin)/services/_hooks/useServices";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
-import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
 import { UseFormReturn } from "react-hook-form";
 import { ConsultationSchema } from "../type";
 import { FormDescription } from "@/components/ui/form";
+import PatientSearchSelect from "./PatientSearchSelect";
+import ClearableCombobox from "./ClearableCombobox";
 
 interface LeftPanelProps {
   date: Date;
@@ -29,6 +28,7 @@ interface LeftPanelProps {
   onPatientChange: (patientId: string) => void;
   form?: UseFormReturn<ConsultationSchema>;
   notModifyDefaults?: boolean;
+  resetTrigger?: number; // Agregamos un trigger para reset
 }
 
 export default function LeftPanel({
@@ -40,21 +40,34 @@ export default function LeftPanel({
   onPatientChange,
   form,
   notModifyDefaults,
+  resetTrigger,
 }: LeftPanelProps) {
   const isPrescriptionOrderAppointment = form && notModifyDefaults;
-  const [selectedMedico, setSelectedMedico] = useState<string | null>(null);
-  const [selectedServicio, setSelectedServicio] = useState<string | null>(
-    isPrescriptionOrderAppointment ? form.getValues("serviceId") : null
+  const [selectedMedico, setSelectedMedico] = useState<string>(
+    isPrescriptionOrderAppointment ? form?.getValues("staffId") || "" : ""
   );
-  const [selectedSucursal, setSelectedSucursal] = useState<string | null>(null);
-  const [selectedPaciente, setSelectedPaciente] = useState<string | null>(
-    isPrescriptionOrderAppointment ? form.getValues("patientId") : null
+  const [selectedServicio, setSelectedServicio] = useState<string>(
+    isPrescriptionOrderAppointment ? form?.getValues("serviceId") || "" : ""
+  );
+  const [selectedSucursal, setSelectedSucursal] = useState<string>(
+    isPrescriptionOrderAppointment ? form?.getValues("branchId") || "" : ""
+  );
+  const [selectedPaciente, setSelectedPaciente] = useState<string>(
+    isPrescriptionOrderAppointment ? form?.getValues("patientId") || "" : ""
   );
   const { staff } = useStaff();
   const { services } = useServices();
   const { branches } = useBranches();
-  const { patients } = usePatients();
-  // const form = useForm();
+
+  // Effect para resetear los valores cuando cambie resetTrigger
+  useEffect(() => {
+    if (resetTrigger && resetTrigger > 0) {
+      setSelectedMedico("");
+      setSelectedServicio("");
+      setSelectedSucursal("");
+      setSelectedPaciente("");
+    }
+  }, [resetTrigger]);
 
   const ListMedico =
     staff
@@ -78,23 +91,33 @@ export default function LeftPanel({
       label: sucursal.name,
     })) ?? [];
 
-  const ListPaciente =
-    patients?.map((paciente) => ({
-      value: paciente.id,
-      label: paciente.dni,
-    })) ?? [];
-
   const handleStaffSelect = (value: string | null) => {
     console.group("👨‍⚕️ Staff Selection");
     console.log("Value:", value);
-    setSelectedMedico(value);
-    if (value && value.trim() !== "") {
-      console.log("Updating staff ID");
-      onStaffChange(value);
-    } else {
-      onStaffChange("");
-    }
+    const staffValue = value ?? "";
+    setSelectedMedico(staffValue);
+    onStaffChange(staffValue);
     console.groupEnd();
+  };
+
+  const handleServiceSelect = (value: string | null) => {
+    const serviceValue = value ?? "";
+    setSelectedServicio(serviceValue);
+    onServiceChange(serviceValue);
+    console.log("Cambiando servicio a:", serviceValue);
+  };
+
+  const handleBranchSelect = (value: string | null) => {
+    const branchValue = value ?? "";
+    setSelectedSucursal(branchValue);
+    onBranchChange(branchValue);
+  };
+
+  const handlePatientSelect = (value: string) => {
+    console.log("Valor seleccionado paciente:", value);
+    const patientValue = value ?? "";
+    setSelectedPaciente(patientValue);
+    onPatientChange(patientValue);
   };
 
   const DefaultValueOrderDescription = () => {
@@ -121,12 +144,13 @@ export default function LeftPanel({
             <BriefcaseMedical className="h-4 w-4 mr-2" strokeWidth={1.5} />
             Médico
           </Label>
-          <ComboboxSelect
+          <ClearableCombobox
             options={ListMedico}
-            value={selectedMedico ?? ""}
+            value={selectedMedico}
             onChange={handleStaffSelect}
             description="Seleccione un medico que realizará la consulta"
             placeholder="Selecciona un medico"
+            clearOnClick={true}
           />
         </div>
         <div className="mt-6">
@@ -134,25 +158,18 @@ export default function LeftPanel({
             <Stethoscope className="h-4 w-4 mr-2" strokeWidth={1.5} />
             Servicios
           </Label>
-          <ComboboxSelect
-            value={selectedServicio ?? ""}
+          <ClearableCombobox
+            value={selectedServicio}
             disabled={notModifyDefaults}
             options={ListServicio}
-            onChange={(value) => {
-              setSelectedServicio(value);
-              if (value && value.trim() !== "") {
-                console.log("Cambiando servicio a:", value);
-                onServiceChange(value);
-              } else {
-                onServiceChange("");
-              }
-            }}
+            onChange={handleServiceSelect}
             description={
               !isPrescriptionOrderAppointment
                 ? "Seleccione un servicio para la consulta"
                 : undefined
             }
             placeholder="Selecciona un servicio"
+            clearOnClick={true}
           />
           {isPrescriptionOrderAppointment && (
             <DefaultValueOrderDescription></DefaultValueOrderDescription>
@@ -163,19 +180,13 @@ export default function LeftPanel({
             <Hospital className="h-4 w-4 mr-2" strokeWidth={1.5} />
             Sucursal
           </Label>
-          <ComboboxSelect
+          <ClearableCombobox
             options={ListSucursal}
-            value={selectedSucursal ?? ""}
-            onChange={(value) => {
-              setSelectedSucursal(value);
-              if (value && value.trim() !== "") {
-                onBranchChange(value);
-              } else {
-                onBranchChange("");
-              }
-            }}
+            value={selectedSucursal}
+            onChange={handleBranchSelect}
             description="Seleccione una sucursal"
             placeholder="Selecciona una sucursal"
+            clearOnClick={true}
           />
         </div>
         <div className="mt-6">
@@ -183,36 +194,16 @@ export default function LeftPanel({
             <UsersRound className="h-4 w-4 mr-2" strokeWidth={1.5} />
             Nrº de Documento del Paciente
           </Label>
-          <ComboboxSelect
-            value={selectedPaciente ?? ""}
+          <PatientSearchSelect
+            value={selectedPaciente}
             disabled={notModifyDefaults}
-            options={ListPaciente.map((paciente) => ({
-              ...paciente,
-              // Mantenemos label como string para compatibilidad
-              label: paciente.label,
-              // Y agregamos labelWithIcon para la visualización con icono
-              labelWithIcon: (
-                <div className="flex items-center">
-                  <IdCard className="h-4 w-4 mr-2" />
-                  {paciente.label}
-                </div>
-              ),
-            }))}
-            onChange={(value) => {
-              console.log("Valor seleccionado paciente:", value);
-              setSelectedPaciente(value);
-              if (value && value.trim() !== "") {
-                onPatientChange(value);
-              } else {
-                onPatientChange("");
-              }
-            }}
+            onChange={handlePatientSelect}
             description={
               !isPrescriptionOrderAppointment
                 ? "Seleccione un paciente para la consulta"
                 : undefined
             }
-            placeholder="Nrº de Documento del paciente"
+            placeholder="DNI del paciente(mín. 5 dígitos)"
           />
           {isPrescriptionOrderAppointment && (
             <DefaultValueOrderDescription></DefaultValueOrderDescription>

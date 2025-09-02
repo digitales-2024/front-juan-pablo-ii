@@ -17,6 +17,8 @@ export type RefundAppointmentDto = components['schemas']['RefundAppointmentDto']
 export interface RescheduleAppointmentDto {
     newDateTime: string;
     rescheduleReason: string;
+    newStaffId?: string;
+    newBranchId?: string;
 }
 
 // Interfaz para la respuesta paginada
@@ -171,4 +173,6 @@ export const refundAppointmentSchema = z.object({
 export const rescheduleAppointmentSchema = z.object({
     newDateTime: z.string().min(1, "La nueva fecha y hora son requeridas"),
     rescheduleReason: z.string().min(1, "El motivo de reprogramación es requerido"),
+    newStaffId: z.string().uuid("ID de personal inválido").optional(),
+    newBranchId: z.string().uuid("ID de sucursal inválido").optional(),
 }) satisfies z.ZodType<RescheduleAppointmentDto>;

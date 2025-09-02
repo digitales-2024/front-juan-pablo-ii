@@ -258,7 +258,7 @@ export function MedicalBackground({ historialMedico }: MedicalBackgroundProps) {
             )}
 
             <div className="space-y-2">
-              <Label>Descripción</Label>
+              <Label>Detalle Clínico</Label>
               <Textarea
                 value={formData.contenido}
                 onChange={(e) =>
@@ -267,7 +267,7 @@ export function MedicalBackground({ historialMedico }: MedicalBackgroundProps) {
                     contenido: e.target.value,
                   })
                 }
-                placeholder="Ingrese los detalles del antecedente médico"
+                placeholder="Ingrese los detalles del antecedente clínico"
                 className="min-h-[100px]"
               />
             </div>

@@ -87,6 +87,41 @@ export async function getPatientByDni(dni: string) {
   }
 }
 
+/**
+ * Busca pacientes por DNI parcial (mínimo 5 dígitos)
+ * Optimizado para búsqueda en tiempo real
+ */
+export async function searchPatientsByPartialDni(dni: string) {
+  try {
+    // Validar que el DNI tenga al menos 5 dígitos
+    if (!dni || dni.length < 5) {
+      return { data: [] };
+    }
+
+    const [patients, error] = await http.get<Patient[]>(
+      `/paciente/search/dni?dni=${dni}&limit=10`
+    );
+    
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al buscar pacientes por DNI",
+      };
+    }
+    
+    if (!Array.isArray(patients)) {
+      return { error: "Respuesta inválida del servidor" };
+    }
+    
+    return { data: patients };
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+}
+
 /* export type PatientResponse = BaseApiResponse<Patient> | { error: string }; */
 /**
  * Crea un nuevo paciente con imagen opcional.
