@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
@@ -28,6 +28,7 @@ interface LeftPanelProps {
   onPatientChange: (patientId: string) => void;
   form?: UseFormReturn<ConsultationSchema>;
   notModifyDefaults?: boolean;
+  resetTrigger?: number; // Agregamos un trigger para reset
 }
 
 export default function LeftPanel({
@@ -39,6 +40,7 @@ export default function LeftPanel({
   onPatientChange,
   form,
   notModifyDefaults,
+  resetTrigger,
 }: LeftPanelProps) {
   const isPrescriptionOrderAppointment = form && notModifyDefaults;
   const [selectedMedico, setSelectedMedico] = useState<string>(
@@ -56,6 +58,16 @@ export default function LeftPanel({
   const { staff } = useStaff();
   const { services } = useServices();
   const { branches } = useBranches();
+
+  // Effect para resetear los valores cuando cambie resetTrigger
+  useEffect(() => {
+    if (resetTrigger && resetTrigger > 0) {
+      setSelectedMedico("");
+      setSelectedServicio("");
+      setSelectedSucursal("");
+      setSelectedPaciente("");
+    }
+  }, [resetTrigger]);
 
   const ListMedico =
     staff

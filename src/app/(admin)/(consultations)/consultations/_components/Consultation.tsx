@@ -36,6 +36,7 @@ export default function Consultation() {
 	const [selectedStaffId, setSelectedStaffId] = useState("");
 	const [selectedBranchId, setSelectedBranchId] = useState("");
 	const [selectedDate, setSelectedDate] = useState(new Date());
+	const [resetTrigger, setResetTrigger] = useState(0); // Agregamos counter para trigger de reset
 	const { createMutation } = useAppointments();
 	const queryClient = useQueryClient();
 	const { createMedicalAppointmentOrderMutation } = useBilling();
@@ -311,12 +312,26 @@ export default function Consultation() {
 				toast.success("Cita agendada exitosamente, pero hubo un error al crear la facturación");
 			}
 
-			// En lugar de resetear todo el formulario, solo limpiamos algunos campos
-			// pero mantenemos la fecha, hora, personal y sucursal seleccionados
-			form.setValue("notes", "");
-			form.setValue("paymentMethod", "" as any);
-			// Mantenemos: date, time, staffId, branchId
+			// Limpiar todos los campos después de crear la consulta exitosamente
+			form.reset({
+				time: "",
+				date: format(new Date(), "yyyy-MM-dd"),
+				serviceId: "",
+				notes: "",
+				staffId: "",
+				branchId: "",
+				patientId: "",
+				paymentMethod: undefined,
+			});
+
+			// Limpiar también los estados locales
+			setSelectedStaffId("");
+			setSelectedBranchId("");
+			setSelectedDate(new Date());
+			setResetTrigger(prev => prev + 1); // Incrementar trigger para limpiar LeftPanel
 			setShowForm(false);
+
+			toast.success("Consulta creada exitosamente");
 		} catch (error) {
 			// Manejo de error mejorado
 			console.error('❌ ERROR en handleSubmit:', error);
@@ -384,6 +399,7 @@ export default function Consultation() {
 					onBranchChange={handleBranchChange}
 					onServiceChange={handleServiceChange}
 					onPatientChange={handlePatientChange}
+					resetTrigger={resetTrigger}
 				/>
 				<div className="relative">
 					{!showForm ? (
