@@ -27,7 +27,7 @@ export default function UpdateHistorySheet() {
     setIsPrescriptionModalOpen(true);
   };
 
-  // Primera consulta: Obtener historia médica
+  // Primera consulta: Obtener historia clínica
   const { data, isLoading: isLoadingHistory, refetch: refetchHistory } =
     useDataPatientHistoryUpdatePrescription(historyId as string);
 
@@ -66,15 +66,15 @@ export default function UpdateHistorySheet() {
   //fin
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold text-center">Historia Médica</h1>
+      <h1 className="text-3xl font-bold text-center">Historia Clínica</h1>
 
       {patient && <PatientBasicInfo paciente={patient} />}
 
       {medicalHistory && <MedicalBackground historialMedico={medicalHistory} />}
 
-      {/* 3. Componente de actualización de historia médica */}
+      {/* 3. Componente de actualización de historia clínica */}
       <UpdateMedicalHistoryPatient
-        // Datos de actualizaciones y recetas
+        // Datos de actualizaciones y prescripciones
         updateHistories={updateHistories ?? []}
         prescriptions={prescriptions ?? []}
         // Datos de catálogos
@@ -89,7 +89,7 @@ export default function UpdateHistorySheet() {
         onHistoryUpdate={handleHistoryUpdate} // Nuevo prop
       />
 
-      {/* 4. Modal de recetas */}
+      {/* 4. Modal de prescripciones */}
       <PrescriptionModal
         isOpen={isPrescriptionModalOpen}
         setIsOpen={setIsPrescriptionModalOpen}

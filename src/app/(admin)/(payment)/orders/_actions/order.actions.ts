@@ -157,6 +157,35 @@ export const getAllOrdersByStatusAndType = async ({
   }
 };
 
+export const getAllOrdersByDateRange = async ({
+  startDate,
+  endDate,
+}: {
+  startDate: string;
+  endDate: string;
+}) => {
+  try {
+    const [orders, error] = await http.get<ListDetailedOrderResponse>(
+      `/order/date-range?startDate=${startDate}&endDate=${endDate}`
+    );
+    if (error) {
+      return {
+        error:
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "Error al obtener las órdenes por fecha",
+      };
+    }
+    if (!Array.isArray(orders)) {
+      return { error: "Respuesta inválida del servidor" };
+    }
+    return orders;
+  } catch (error) {
+    if (error instanceof Error) return { error: error.message };
+    return { error: "Error desconocido" };
+  }
+};
+
 export const getActiveOrders = await createSafeAction(
   GetOrderSchema,
   getActiveOrdersHandler

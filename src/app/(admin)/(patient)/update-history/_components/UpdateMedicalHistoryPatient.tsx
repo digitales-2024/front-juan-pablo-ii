@@ -45,6 +45,7 @@ import {
 import { AddHistoryModal } from "./AddHistoryModal";
 import { useUpdateHistory } from "../_hook/useUpdateHistory";
 import { v4 as uuidv4 } from "uuid";
+import { processImages, createSafeImagePreview, MOBILE_CONFIG } from "../utils/mobileFileUtils";
 
 /* import { PrescriptionModal } from "./PrescriptionModal"; */
 
@@ -157,7 +158,7 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
     return staffMember ? `${staffMember.name} ${staffMember.lastName}` : "N/A";
   };
 
-  // Función para manejar la visualización de la receta
+  // Función para manejar la visualización de la prescripción
   const handleShowPrescription = (update: UpdateHistoryResponseImage) => {
     if (update.prescription && update.prescriptionId) {
       onPrescriptionView(update.id);
@@ -169,38 +170,57 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
       data: UpdateUpdateHistoryDto;
       image?: File[] | null;
     } */
-      const handleAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-          const files = Array.from(e.target.files);
+      // Función para agregar imágenes con compresión automática (para móviles)
+      const handleAddImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+        
+        const files = Array.from(e.target.files);
+        
+        if (files.length === 0) {
+          if (e.target) e.target.value = '';
+          return;
+        }
+
+        try {
+          // Procesar imágenes con compresión automática
+          const result = await processImages(files);
           
-          // Filtrar solo los archivos que son imágenes
-          const validFiles: File[] = [];
-          const invalidFiles: string[] = [];
-          
-          files.forEach(file => {
-            if (file.type.startsWith('image/')) {
-              validFiles.push(file);
-            } else {
-              invalidFiles.push(file.name);
-            }
-          });
-          
-          // Mostrar mensaje de error si hay archivos inválidos
-          if (invalidFiles.length > 0) {
-            setErrorMessage(`Los siguientes archivos no son imágenes y fueron eliminados: ${invalidFiles.join(', ')}`);
-            
-            // Limpiar el mensaje después de 5 segundos
+          // Mostrar errores si los hay
+          if (result.errors.length > 0) {
+            setErrorMessage(`Errores encontrados: ${result.errors.join(', ')}`);
             setTimeout(() => setErrorMessage(null), 5000);
           }
           
-          if (validFiles.length === 0) return; // No seguir si no hay archivos válidos
+          // Mostrar mensaje de compresión si se aplicó
+          if (result.compressionApplied) {
+            setErrorMessage("Algunas imágenes fueron comprimidas automáticamente para optimizar el tamaño");
+            setTimeout(() => setErrorMessage(null), 4000);
+          }
           
-          // Solo agregar archivos válidos
-          setNewImages((prev) => [...prev, ...validFiles]);
+          if (result.processedFiles.length === 0) {
+            if (e.target) e.target.value = '';
+            return;
+          }
+
+          // Agregar archivos procesados
+          setNewImages((prev) => [...prev, ...result.processedFiles]);
+
+          // Crear previsualizaciones de forma segura
+          const newPreviews = await Promise.all(
+            result.processedFiles.map(file => createSafeImagePreview(file))
+          );
           
-          // Crear previsualizaciones solo para archivos válidos
-          const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
           setImagesPreviews((prev) => [...prev, ...newPreviews]);
+          
+        } catch (error) {
+          console.error("Error procesando imágenes:", error);
+          setErrorMessage("Error al procesar las imágenes seleccionadas");
+          setTimeout(() => setErrorMessage(null), 3000);
+        }
+        
+        // Limpiar el input para permitir seleccionar el mismo archivo
+        if (e.target) {
+          e.target.value = '';
         }
       };
 
@@ -281,14 +301,14 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
           <div className="flex items-center gap-3">
             <Stethoscope className="w-8 h-8 md:w-6 md:h-6 text-primary flex-shrink-0" />
             <CardTitle className="text-xl md:text-2xl">
-              Historial Médico de Consultas, Servicios y Tratamientos
+              Historia Clínica de Consultas, Servicios y Tratamientos
             </CardTitle>
           </div>
           <Button
             className="w-full md:w-auto"
             onClick={() => setIsHistoryModalOpen(true)}
           >
-            <Plus className="w-4 h-4 mr-2" /> Agregar Historia
+            <Plus className="w-4 h-4 mr-2" /> Agregar Consulta
           </Button>
         </CardHeader>
 
@@ -372,7 +392,7 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
                             <FileText className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
                             <div className="flex-grow">
                               <strong className="text-base block mb-2">
-                                Descripción:
+                                Motivo de Consulta:
                               </strong>
                               <p className="p-4 bg-gray-50 border rounded-md">
                                 {update.description}
@@ -414,7 +434,7 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
                       </div>
                     )}
 
-                    {/* Botón para ver receta */}
+                    {/* Botón para ver prescripción */}
                     <div className="flex flex-wrap gap-2">
                       {update.prescription && (
                         <Button
@@ -422,7 +442,7 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
                           onClick={() => handleShowPrescription(update)}
                         >
                           <FileText className="w-4 h-4 mr-2" />
-                          Ver Receta
+                          Ver Prescripción
                         </Button>
                       )}
 
@@ -493,7 +513,8 @@ const [errorMessage, setErrorMessage] = useState<string | null>(null);
                   type="file"
                   id="newImages"
                   multiple
-                  accept="image/*"
+                  accept={MOBILE_CONFIG.INPUT_ATTRIBUTES.accept}
+                  capture={MOBILE_CONFIG.INPUT_ATTRIBUTES.capture}
                   onChange={handleAddImages}
                   className="hidden"
                 />

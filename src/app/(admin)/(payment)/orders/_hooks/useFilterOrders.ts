@@ -9,6 +9,7 @@ import {
   getAllOrdersByStatus,
   getAllOrdersByStatusAndType,
   getAllOrdersByType,
+  getAllOrdersByDateRange,
   ListDetailedOrderResponse,
   getDetailedOrderByCode,
 } from "../_actions/order.actions";
@@ -23,6 +24,11 @@ export type OrdersFilter =
       orderStatus: OrderStatus;
       orderType: OrderType;
     }
+  | { 
+      type: "BY_DATE_RANGE"; 
+      startDate: string; 
+      endDate: string; 
+    }
   | { type: "BY_ORDER_NUMBER"; orderCode: string; order?: DetailedOrder };
 
 export const OrdersFilterType = {
@@ -30,6 +36,7 @@ export const OrdersFilterType = {
   BY_STATUS: "BY_STATUS",
   BY_TYPE: "BY_TYPE",
   BY_STATUS_AND_TYPE: "BY_STATUS_AND_TYPE",
+  BY_DATE_RANGE: "BY_DATE_RANGE",
   BY_ORDER_NUMBER: "BY_ORDER_NUMBER",
 };
 
@@ -82,6 +89,16 @@ export function useUnifiedOrders() {
             response = await getAllOrdersByStatusAndType({
               status: filter.orderStatus,
               type: filter.orderType,
+            });
+            if ("error" in response) {
+              toast.error(response.error);
+            }
+            break;
+          }
+          case "BY_DATE_RANGE": {
+            response = await getAllOrdersByDateRange({
+              startDate: filter.startDate,
+              endDate: filter.endDate,
             });
             if ("error" in response) {
               toast.error(response.error);
@@ -159,6 +176,15 @@ export function useUnifiedOrders() {
   }) {
     setFilter({ type: "BY_STATUS_AND_TYPE", orderStatus, orderType });
   }
+  function setFilterByDateRange({
+    startDate,
+    endDate,
+  }: {
+    startDate: string;
+    endDate: string;
+  }) {
+    setFilter({ type: "BY_DATE_RANGE", startDate, endDate });
+  }
   function setFilterByOrdeCode({
     orderCode,
     order,
@@ -179,6 +205,7 @@ export function useUnifiedOrders() {
     setFilterByStatus,
     setFilterByType,
     setFilterByStatusAndType,
+    setFilterByDateRange,
     setFilterByOrdeCode,
   };
 }

@@ -75,7 +75,7 @@ export const useUpdateHistory = () => {
       },
     });
 
-  // Query para obtener una una receta medica
+  // Query para obtener una prescripción médica
 
   const usePrescriptionById = (id: string) =>
     useQuery<PrescriptionResponse, Error>({
@@ -91,7 +91,7 @@ export const useUpdateHistory = () => {
       },
     });
 
-  // Mutación para crear una receta medica
+  // Mutación para crear una prescripción médica
   const createPrescriptionMutation = useMutation<
     BaseApiResponse<PrescriptionResponse>,
     Error,
@@ -120,7 +120,7 @@ export const useUpdateHistory = () => {
     },
   });
 
-  // Query para obtener la historia médica y sus actualizaciones
+  // Query para obtener la historia clínica y sus actualizaciones
   const useDataPatientHistoryUpdatePrescription = (id: string) =>
     useQuery<
       [
@@ -133,7 +133,7 @@ export const useUpdateHistory = () => {
     >({
       queryKey: ["data-patient-history-update-prescription", id],
       queryFn: async () => {
-        // 1. Obtener historia médica
+        // 1. Obtener historia clínica
         const medicalHistoryResponse = await getMedicalHistoryById(id);
         if (!medicalHistoryResponse || "error" in medicalHistoryResponse) {
           throw new Error(
@@ -154,7 +154,7 @@ export const useUpdateHistory = () => {
         // 3. Procesar updates si existen
         const updates = medicalHistoryResponse.updates ?? [];
 
-        // 4. Obtener actualizaciones y recetas
+        // 4. Obtener actualizaciones y prescripciones
         const updateHistoryResponses = await Promise.all(
           updates.map(async (update) => {
             try {
@@ -217,7 +217,7 @@ export const useUpdateHistory = () => {
         ];
       },
     });
-  // Mutación para actualizar historia médica
+  // Mutación para actualizar historia clínica
   interface UpdateMedicalHistory {
     id: string;
     data: UpdateMedicalHistoryDto;
@@ -241,10 +241,10 @@ export const useUpdateHistory = () => {
         queryKey: ["data-patient-history-update-prescription", variables.id],
       });
 
-      toast.success("Historia médica actualizada exitosamente");
+      toast.success("Historia clínica actualizada exitosamente");
     },
     onError: (error: Error) => {
-      console.error("Error al actualizar historia médica:", error);
+      console.error("Error al actualizar historia clínica:", error);
 
       if (
         error.message.includes("No autorizado") ||
@@ -254,7 +254,7 @@ export const useUpdateHistory = () => {
         return;
       }
 
-      toast.error(error.message || "Error al actualizar la historia médica");
+      toast.error(error.message || "Error al actualizar la historia clínica");
     },
   });
 
@@ -320,7 +320,7 @@ export const useUpdateHistory = () => {
 
       toast.success("Actualización creada exitosamente");
 
-      // Llamar a la función de historia médica para actualizarla
+      // Llamar a la función de historia clínica para actualizarla
       //void queryClient.invalidateQueries({ queryKey: ["medical-histories"] });
     },
     onError: (error) => {
@@ -363,7 +363,7 @@ export const useUpdateHistory = () => {
     usePatientById, //obtener paciente por id
     useMedicalHistoryById, //obtener historia medica por id
     useUpdateHistoryById, //obtener actualizacion de historia medica por id
-    usePrescriptionById, //obtener receta medica por id
+    usePrescriptionById, //obtener prescripción médica por id
     useDataPatientHistoryUpdatePrescription,
     useBranchesData, // obtener todos las sucursales
     useServicesData, // obtener todos los servicios

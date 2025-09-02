@@ -358,10 +358,50 @@ export function getFilteredSidebarData(profile: Profile | null): SidebarData {
       (group) => group.title !== "Accesos y Usuarios"
     );
   } else if (userRole === "MEDICO") {
-    // Médico: Solo "Registros Operativos"
+    // Médico: Registros Operativos + Historial Médico + Calendario Médico
     filteredNavGroups = filteredNavGroups.filter(
-      (group) => group.title === "Registros Operativos"
-    );
+      (group) => 
+        group.title === "Registros Operativos" || 
+        group.title === "Pacientes" || 
+        group.title === "Personal y Horarios"
+    ).map(group => {
+      // Para el grupo de Pacientes, solo mostrar Historial Médico
+      if (group.title === "Pacientes") {
+        return {
+          ...group,
+          items: group.items.map(item => {
+            if (item.title === "Gestión de Pacientes" && item.items) {
+              return {
+                ...item,
+                items: item.items.filter(subItem => 
+                  subItem.title === "Historial Médico"
+                )
+              };
+            }
+            return item;
+          })
+        };
+      }
+      // Para el grupo de Personal y Horarios, solo mostrar Calendario Médico
+      else if (group.title === "Personal y Horarios") {
+        return {
+          ...group,
+          items: group.items.map(item => {
+            if (item.title === "Gestión de Personal" && item.items) {
+              return {
+                ...item,
+                items: item.items.filter(subItem => 
+                  subItem.title === "Calendario Medico"
+                )
+              };
+            }
+            return item;
+          })
+        };
+      }
+      // Para Registros Operativos, mantener todo
+      return group;
+    });
   }
 
   // Retornar los datos filtrados

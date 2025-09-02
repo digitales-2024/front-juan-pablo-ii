@@ -14,6 +14,7 @@ import { Staff } from "@/app/(admin)/(staff)/staff/_interfaces/staff.interface";
 import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { useStaffSchedules } from "@/app/(admin)/(staff)/staff-schedules/_hooks/useStaffSchedules";
 import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
+import { useAuth } from "@/app/(auth)/sign-in/_hooks/useAuth"; // Importar hook de autenticación
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { EventFilterParams } from "../../../../_actions/event.actions";
@@ -31,6 +32,9 @@ export function EventFilters({
   const queryClient = useQueryClient();
   const { branches } = useBranches();
   const { staff } = useStaff();
+  
+  // Hook de autenticación
+  const { user } = useAuth();
 
   const [filter, setFilter] = useState<
     Omit<EventFilterParams, "type" | "status">
@@ -48,8 +52,8 @@ export function EventFilters({
   // Combinar queries como en useEvents
   const staffScheduleOptions = useMemo(() => {
     return filter.staffId || filter.branchId
-      ? filteredSchedulesQuery.data || []
-      : allStaffSchedulesQuery.data || [];
+      ? filteredSchedulesQuery.data ?? []
+      : allStaffSchedulesQuery.data ?? [];
   }, [
     filteredSchedulesQuery.data,
     allStaffSchedulesQuery.data,
@@ -58,8 +62,8 @@ export function EventFilters({
   ]);
 
   const allStaffOptions = (
-    staff ||
-    queryClient.getQueryData<Staff[]>(["staff"]) ||
+    staff ??
+    queryClient.getQueryData<Staff[]>(["staff"]) ??
     []
   ).filter((s) => s.isActive);
 
@@ -71,17 +75,52 @@ export function EventFilters({
   }, [allStaffOptions]);
 
   const branchOptions = (
-    branches ||
-    queryClient.getQueryData<Branch[]>(["branches"]) ||
+    branches ??
+    queryClient.getQueryData<Branch[]>(["branches"]) ??
     []
   ).filter((b) => b.isActive);
+
+  // Detectar si el usuario logueado es personal médico
+  const loggedStaff = useMemo(() => {
+    if (!user?.id || !staffOptions.length) return null;
+    
+    // Buscar por userId (relación correcta desde el backend)
+    const staffByUserId = staffOptions.find(staff => staff.userId === user.id);
+    
+    if (staffByUserId) {
+      return staffByUserId;
+    }
+    
+    // Fallback: buscar por email como segunda opción
+    const staffByEmail = staffOptions.find(staff => staff.email === user.email);
+    
+    if (staffByEmail) {
+      console.warn("⚠️ [Staff] Usuario encontrado por email en lugar de userId. Considere revisar la relación en la base de datos.");
+      return staffByEmail;
+    }
+    
+    return null;
+  }, [user?.id, user?.email, staffOptions]);
+
+  const isMedicalStaff = Boolean(loggedStaff?.cmp);
+
+  // Auto-seleccionar personal médico cuando se carga el componente
+  useEffect(() => {
+    if (isMedicalStaff && loggedStaff && !filter.staffId) {
+      console.log("🏥 Personal médico auto-seleccionado:", loggedStaff.name);
+      setFilter(prev => ({
+        ...prev,
+        staffId: loggedStaff.id
+      }));
+    }
+  }, [isMedicalStaff, loggedStaff, filter.staffId, setFilter]);
 
   // Manejar estado cuando no hay horarios
   // const hasStaffSchedules = staffScheduleOptions && staffScheduleOptions.length > 0;
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: ["calendar-turns"],
         exact: false,
       });
@@ -93,10 +132,9 @@ export function EventFilters({
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [filter, queryClient]);
+  }, [filter, queryClient, onFilterChange]);
 
   const handleFilterChange = (key: keyof EventFilterParams, value: string) => {
-    console.log("🔎 [Filtros] Cambio detectado:", { key, value });
     setFilter((prev) => ({
       ...prev,
       [key]: value === "todos" ? undefined : value,
@@ -107,7 +145,17 @@ export function EventFilters({
 
   // Patrón reusable para manejar opciones vacías
   const renderSelectContent = (
-    options: any[],
+    options: {
+      id: string;
+      name?: string;
+      lastName?: string;
+      title?: string;
+      staffScheduleId?: string;
+      staff?: {
+        name?: string;
+        lastName?: string;
+      };
+    }[],
     resourceName: string,
     createPath: string
   ) => {
@@ -131,17 +179,17 @@ export function EventFilters({
           <SelectItem key={option.id} value={option.id}>
             {/* Para personal: */}
             {option.name &&
-              `${(option.name || "").toUpperCase()} - ${(
-                option.lastName || ""
+              `${(option.name ?? "").toUpperCase()} - ${(
+                option.lastName ?? ""
               ).toUpperCase()}`}
 
             {/* Para sucursales: */}
-            {option.title && (option.title || "").toUpperCase()}
+            {option.title && (option.title ?? "").toUpperCase()}
 
             {/* Para horarios: */}
             {option.staffScheduleId &&
-              `${option.title} - ${option.staff?.name?.toUpperCase() || ""} ${
-                option.staff?.lastName?.toUpperCase() || ""
+              `${option.title} - ${option.staff?.name?.toUpperCase() ?? ""} ${
+                option.staff?.lastName?.toUpperCase() ?? ""
               }`}
           </SelectItem>
         ))}
@@ -161,13 +209,26 @@ export function EventFilters({
               Horario del personal Medico
              </Label>
             <Select
-              value={filter.staffId || "todos"}
-              onValueChange={(value) => handleFilterChange("staffId", value)}
+              value={filter.staffId ?? "todos"}
+              onValueChange={(value) => {
+                // Si es personal médico, no permitir cambios
+                if (isMedicalStaff) return;
+                handleFilterChange("staffId", value);
+              }}
+              disabled={isMedicalStaff}
             >
-              <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
-                <SelectValue placeholder="Seleccione un personal" />
+              <SelectTrigger className={`w-full bg-background border-input hover:bg-accent hover:text-accent-foreground ${isMedicalStaff ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                <SelectValue placeholder={isMedicalStaff ? `${loggedStaff?.name?.toUpperCase()} ${loggedStaff?.lastName?.toUpperCase()}` : "Seleccione un personal"} />
               </SelectTrigger>
-              {renderSelectContent(staffOptions, "profesionales", "/staff")}
+              {isMedicalStaff ? (
+                <SelectContent>
+                  <SelectItem value={loggedStaff?.id ?? "todos"}>
+                    {loggedStaff?.name?.toUpperCase()} - {loggedStaff?.lastName?.toUpperCase()}
+                  </SelectItem>
+                </SelectContent>
+              ) : (
+                renderSelectContent(staffOptions, "profesionales", "/staff")
+              )}
             </Select>
           </div>
 
@@ -179,7 +240,7 @@ export function EventFilters({
               Horarios por Sucursales
             </Label>
             <Select
-              value={filter.branchId || "todos"}
+              value={filter.branchId ?? "todos"}
               onValueChange={(value) => handleFilterChange("branchId", value)}
             >
               <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
@@ -192,27 +253,38 @@ export function EventFilters({
           <div className="space-y-2">
             <Label
               htmlFor="staffScheduleId"
-              className="text-sm font-medium text-foreground"
+              className={`text-sm font-medium text-foreground ${isMedicalStaff ? 'opacity-60' : ''}`}
             >
               Todos los horarios del personal
             </Label>
             <Select
-              value={filter.staffScheduleId || "todos"}
-              onValueChange={(value) =>
-                handleFilterChange("staffScheduleId", value)
-              }
+              value={filter.staffScheduleId ?? "todos"}
+              onValueChange={(value) => {
+                // Si es personal médico, no permitir cambios
+                if (isMedicalStaff) return;
+                handleFilterChange("staffScheduleId", value);
+              }}
+              disabled={isMedicalStaff}
             >
-              <SelectTrigger className="w-full bg-background border-input hover:bg-accent hover:text-accent-foreground">
-                <SelectValue placeholder="Seleccione horario" />
+              <SelectTrigger className={`w-full bg-background border-input hover:bg-accent hover:text-accent-foreground ${isMedicalStaff ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                <SelectValue placeholder={isMedicalStaff ? "Solo sus horarios" : "Seleccione horario"} />
               </SelectTrigger>
-              {renderSelectContent(
-                (staffScheduleOptions || []).map((schedule) => ({
-                  id: schedule.id,
-                  title: schedule.title,
-                  staff: schedule.staff,
-                })),
-                "horarios",
-                "/staff-schedules"
+              {isMedicalStaff ? (
+                <SelectContent>
+                  <div className="p-2 text-sm text-muted-foreground">
+                    Solo puede ver sus propios horarios
+                  </div>
+                </SelectContent>
+              ) : (
+                renderSelectContent(
+                  (staffScheduleOptions ?? []).map((schedule) => ({
+                    id: schedule.id,
+                    title: schedule.title,
+                    staff: schedule.staff,
+                  })),
+                  "horarios",
+                  "/staff-schedules"
+                )
               )}
             </Select>
           </div>

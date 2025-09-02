@@ -18,12 +18,18 @@ interface AppointmentTableProps {
     data: Appointment[];
     paginatedData?: PaginatedAppointmentsResponse;
     onPaginationChange?: (page: number, limit: number) => void;
+    dateFilter?: {
+        hasDateRange: boolean;
+        startDate: string | null;
+        endDate: string | null;
+    };
 }
 
 export function AppointmentTable({
     data,
     paginatedData,
-    onPaginationChange
+    onPaginationChange,
+    dateFilter
 }: AppointmentTableProps) {
     // Hook de forzar renderizado - utilidad para casos extremos
     const [forceUpdateCounter, setForceUpdateCounter] = useState(0);
@@ -254,10 +260,7 @@ export function AppointmentTable({
         }
     }, [onPaginationChange, paginatedData]);
 
-    const handleRowClick = useCallback((appointment: Appointment) => {
-        setSelectedAppointmentId(appointment.id);
-        setShowDetailsDialog(true);
-    }, [setSelectedAppointmentId]);
+    // Eliminar handleRowClick para evitar clicks automáticos en las filas
 
     const handleCloseDetails = useCallback(() => {
         setShowDetailsDialog(false);
@@ -434,7 +437,7 @@ export function AppointmentTable({
 
     return (
         <div className="w-full space-y-2">
-            <div className="flex items-center justify-between">
+         {/*    <div className="flex items-center justify-between">
                 <div className="flex space-x-4">
                     {!paginatedData && (
                         <Input
@@ -448,7 +451,7 @@ export function AppointmentTable({
                         {getFilterStatusMessage()}
                     </p>
                 </div>
-            </div>
+            </div> */}
 
             <AppointmentDetailsDialog
                 appointment={appointmentByIdQuery.data || null}
@@ -487,17 +490,25 @@ export function AppointmentTable({
                     onTableChange={handleTableChange}
                     totalCount={totalCount}
                     manualPagination={!!paginatedData}
-                    onRowClick={handleRowClick}
                     key={`table-${statusFilter}`}
                 />
             ) : (
                 <div className="flex flex-col items-center justify-center p-8 w-full bg-gray-50 rounded-lg border border-gray-200">
                     <p className="text-xl font-medium text-gray-600 mb-2">No hay citas disponibles</p>
                     <p className="text-sm text-gray-500">
-                        {statusFilter === "all"
-                            ? "No se encontraron citas médicas en el sistema."
-                            : `No hay citas con estado "${appointmentStatusConfig[statusFilter]?.name || statusFilter}".`}
+                        {dateFilter?.hasDateRange ? (
+                            `No se encontraron citas entre ${dateFilter.startDate} y ${dateFilter.endDate}.`
+                        ) : statusFilter === "all" ? (
+                            "No se encontraron citas médicas en el sistema."
+                        ) : (
+                            `No hay citas con estado "${appointmentStatusConfig[statusFilter]?.name || statusFilter}".`
+                        )}
                     </p>
+                    {dateFilter?.hasDateRange && (
+                        <p className="text-xs text-gray-400 mt-2">
+                            💡 Intenta con un rango de fechas diferente o limpia el filtro para ver todas las citas.
+                        </p>
+                    )}
                 </div>
             )}
         </div>
