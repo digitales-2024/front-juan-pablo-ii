@@ -15,6 +15,8 @@ import { CalendarIcon, RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { useAppointments } from "../_hooks/useAppointments";
 import { usePatients } from "@/app/(admin)/(patient)/patient/_hooks/usePatient";
+import { useStaff } from "@/app/(admin)/(staff)/staff/_hooks/useStaff";
+import { useBranches } from "@/app/(admin)/branches/_hooks/useBranches";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
@@ -31,6 +33,13 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 type RescheduleFormValues = z.infer<typeof rescheduleAppointmentSchema>;
 
@@ -54,12 +63,16 @@ export function RescheduleAppointmentDialog({
     const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
     const { rescheduleMutation: { isPending, mutateAsync } } = useAppointments();
     const { usePatientById } = usePatients();
+    const { activeStaffQuery } = useStaff();
+    const { activeBranchesQuery } = useBranches();
 
     const isOpen = controlledOpen ?? uncontrolledOpen;
     const setOpen = onOpenChange ?? setUncontrolledOpen;
 
     const patientId = appointment?.patientId;
     const { data: patient } = patientId ? usePatientById(patientId) : { data: null };
+    const { data: staffList } = activeStaffQuery;
+    const { data: branchesList } = activeBranchesQuery;
 
     // Función para alinear la fecha a intervalos de 15 minutos y eliminar segundos y milisegundos
     const alignToFifteenMinutes = (date: Date): Date => {
@@ -80,6 +93,8 @@ export function RescheduleAppointmentDialog({
         defaultValues: {
             newDateTime: initialDate.toISOString(),
             rescheduleReason: "",
+            newStaffId: undefined,
+            newBranchId: undefined,
         },
     });
 
@@ -94,6 +109,8 @@ export function RescheduleAppointmentDialog({
                 data: {
                     newDateTime: values.newDateTime,
                     rescheduleReason: values.rescheduleReason,
+                    ...(values.newStaffId && { newStaffId: values.newStaffId }),
+                    ...(values.newBranchId && { newBranchId: values.newBranchId }),
                 },
             });
             setOpen(false);
@@ -296,6 +313,72 @@ export function RescheduleAppointmentDialog({
                                     <FormControl>
                                         <DateTimePicker field={field} />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="newStaffId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Personal médico (opcional)</FormLabel>
+                                    <Select 
+                                        onValueChange={(value) => {
+                                            field.onChange(value === "KEEP_CURRENT" ? undefined : value);
+                                        }} 
+                                        value={field.value ?? "KEEP_CURRENT"}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Seleccionar personal médico" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="KEEP_CURRENT">
+                                                Mantener actual: {appointment.staff?.name ?? 'Sin asignar'}
+                                            </SelectItem>
+                                            {staffList?.map((staff) => (
+                                                <SelectItem key={staff.id} value={staff.id}>
+                                                    {staff.name} - {staff.staffType?.name ?? 'General'}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="newBranchId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Sucursal (opcional)</FormLabel>
+                                    <Select 
+                                        onValueChange={(value) => {
+                                            field.onChange(value === "KEEP_CURRENT" ? undefined : value);
+                                        }} 
+                                        value={field.value ?? "KEEP_CURRENT"}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Seleccionar sucursal" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="KEEP_CURRENT">
+                                                Mantener actual: {appointment.branch?.name ?? 'Sin asignar'}
+                                            </SelectItem>
+                                            {branchesList?.map((branch) => (
+                                                <SelectItem key={branch.id} value={branch.id}>
+                                                    {branch.name} - {branch.address ?? 'Sin dirección'}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}
