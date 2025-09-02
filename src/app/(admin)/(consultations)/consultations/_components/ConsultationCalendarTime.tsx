@@ -264,27 +264,31 @@ export default function ConsultationCalendarTime({
 
 	const isDateDisabled = (date: Date) => {
 		// Agregar logs para depuración
-		const isDisabled = allowPastDates ? false : isBefore(startOfDay(date), startOfToday());
 		const dateStr = format(date, 'yyyy-MM-dd');
 		const isAvailable = availableDays.some(availableDate =>
 			format(availableDate, 'yyyy-MM-dd') === dateStr
 		);
 
-		console.log(`Fecha ${dateStr}: ${isDisabled ? 'DESHABILITADA (pasada)' : 'HABILITADA'}, ${isAvailable ? 'DISPONIBLE (tiene turnos)' : 'NO DISPONIBLE (sin turnos)'}`);
+		console.log(`Fecha ${dateStr}: ${isAvailable ? 'DISPONIBLE (tiene turnos)' : 'NO DISPONIBLE (sin turnos)'}`);
 
-		// Si allowPastDates está activado, no deshabilitar fechas pasadas
-		if (allowPastDates) {
-			// Si showAvailableDays está activado, solo habilitar fechas con turnos disponibles
-			return showAvailableDays ? !isAvailable : false;
-		}
-
-		// Si la fecha es pasada, deshabilitarla
-		if (isBefore(startOfDay(date), startOfToday())) {
+		// Si allowPastDates está desactivado, deshabilitar fechas pasadas
+		if (!allowPastDates && isBefore(startOfDay(date), startOfToday())) {
+			console.log(`Fecha ${dateStr}: DESHABILITADA (fecha pasada)`);
 			return true;
 		}
 
-		// Si showAvailableDays está activado, solo habilitar fechas con turnos disponibles
-		return showAvailableDays ? !isAvailable : false;
+		// IMPORTANTE: Solo aplicar filtros de disponibilidad cuando showAvailableDays esté activado
+		// Esto permite crear consultas en cualquier fecha cuando el switch está desactivado
+		if (showAvailableDays) {
+			// Solo cuando el switch está activado, filtrar por días disponibles
+			if (!isAvailable) {
+				console.log(`Fecha ${dateStr}: DESHABILITADA (no tiene turnos disponibles y filtro activado)`);
+				return true;
+			}
+		}
+
+		console.log(`Fecha ${dateStr}: HABILITADA (cumple todas las condiciones)`);
+		return false;
 	};
 
 	const isTimeDisabled = (timeStr: string) => {
@@ -297,9 +301,10 @@ export default function ConsultationCalendarTime({
 		// Verificar si la hora está en los horarios disponibles según los turnos
 		const isAvailableInTurns = filteredTimeSlots.includes(timeStr);
 
-		// Si showAvailableHours está activado y la hora no está en los horarios disponibles según los turnos
+		// IMPORTANTE: Solo aplicar filtros de horarios disponibles cuando showAvailableHours esté activado
+		// Esto permite crear consultas en cualquier hora cuando el switch está desactivado
 		if (showAvailableHours && !isAvailableInTurns) {
-			console.log(`Hora ${timeStr}: DESHABILITADA (no está dentro de ningún TURNO disponible)`);
+			console.log(`Hora ${timeStr}: DESHABILITADA (no está dentro de ningún TURNO disponible y filtro activado)`);
 			return true;
 		}
 
@@ -310,9 +315,9 @@ export default function ConsultationCalendarTime({
 			return true; // Si no tiene el formato esperado, deshabilitar
 		}
 
-		let [hoursStr, minutesStr] = timePart.split(":");
+		const [hoursStr, minutesStr] = timePart.split(":");
 		let hours = Number(hoursStr);
-		let minutes = Number(minutesStr);
+		const minutes = Number(minutesStr);
 
 		// Convertir a 24 horas
 		if (period.toLowerCase() === 'pm' && hours < 12) {
@@ -390,9 +395,9 @@ export default function ConsultationCalendarTime({
 			return true;
 		}
 
-		// Verificar si la hora está dentro de algún TURNO disponible
-		// Solo aplicar esta validación si showAvailableHours está desactivado
-		// (si está activado, ya se verificó arriba)
+		// COMENTADO: No aplicar validación de turnos automáticamente
+		// Solo aplicar cuando showAvailableHours esté activado (ya se validó arriba)
+		/*
 		if (!showAvailableHours && availableHoursForSelectedDate.length > 0) {
 			// Verificar si la hora está dentro de algún TURNO
 			const isWithinAnyTurn = availableHoursForSelectedDate.some(event => {
@@ -413,6 +418,7 @@ export default function ConsultationCalendarTime({
 				return true;
 			}
 		}
+		*/
 
 		console.log(`Hora ${timeStr}: HABILITADA (cumple todas las condiciones)`);
 		return false;

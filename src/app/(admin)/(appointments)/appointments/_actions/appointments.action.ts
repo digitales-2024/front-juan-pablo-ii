@@ -248,10 +248,12 @@ const getAppointmentsByDateRangeHandler = async (data: {
 export const getAppointmentById = await createSafeAction(GetAppointmentByIdSchema, getAppointmentByIdHandler);
 
 export async function createAppointment(
-    data: CreateAppointmentDto
+    data: CreateAppointmentDto,
+    skipTurnValidation: boolean = false,
 ): Promise<CreateAppointmentResponse> {
     try {
-        const [appointment, error] = await http.post<BaseApiResponse>("/appointments", data);
+        const url = `/appointments${skipTurnValidation ? '?skipTurnValidation=true' : ''}`;
+        const [appointment, error] = await http.post<BaseApiResponse>(url, data);
 
         if (error) {
             if (error.statusCode === 401) {

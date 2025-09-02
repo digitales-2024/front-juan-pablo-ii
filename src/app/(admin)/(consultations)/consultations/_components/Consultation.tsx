@@ -30,20 +30,48 @@ interface ConsultationFormProps {
 
 export default function Consultation() {
 	const [showForm, setShowForm] = useState(false);
-	const [allowPastDates, setAllowPastDates] = useState(false);
+	const [allowAllDates, setAllowAllDates] = useState(true); // Cambiado a true por defecto y renombrado
 	const [showAvailableDays, setShowAvailableDays] = useState(false);
 	const [showAvailableHours, setShowAvailableHours] = useState(false);
 	const [selectedStaffId, setSelectedStaffId] = useState("");
 	const [selectedBranchId, setSelectedBranchId] = useState("");
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [resetTrigger, setResetTrigger] = useState(0); // Agregamos counter para trigger de reset
-	const { createMutation } = useAppointments();
+	const { createMutationWithOptions } = useAppointments();
 	const queryClient = useQueryClient();
 	const { createMedicalAppointmentOrderMutation } = useBilling();
 
 	// Mover los hooks al nivel superior del componente
 	const { usePatientById } = usePatients();
 	const { oneStaffQuery } = useStaff();
+
+	// Lógica para manejar los switches de manera coordinada
+	const handleAllowAllDatesChange = (checked: boolean) => {
+		setAllowAllDates(checked);
+		if (!checked) {
+			// Si se desactiva "Permitir todas las fechas", activar los filtros
+			setShowAvailableDays(true);
+			setShowAvailableHours(true);
+		}
+	};
+
+	const handleShowAvailableDaysChange = (checked: boolean) => {
+		setShowAvailableDays(checked);
+		if (!checked) {
+			// Si se desactiva "Mostrar días disponibles", desactivar ambos filtros y activar "Permitir todas las fechas"
+			setShowAvailableHours(false);
+			setAllowAllDates(true);
+		}
+	};
+
+	const handleShowAvailableHoursChange = (checked: boolean) => {
+		setShowAvailableHours(checked);
+		if (!checked) {
+			// Si se desactiva "Mostrar horas disponibles", desactivar ambos filtros y activar "Permitir todas las fechas"
+			setShowAvailableDays(false);
+			setAllowAllDates(true);
+		}
+	};
 
 	const form = useForm<ConsultationSchema>({
 		resolver: zodResolver(consultationsSchema),
@@ -258,7 +286,7 @@ export default function Consultation() {
 				duracionMinutos: 15
 			});
 
-			// Crear objeto para createMutation
+			// Crear objeto para createMutation con skipTurnValidation
 			const appointmentToCreate = {
 				staffId: data.staffId,
 				serviceId: data.serviceId,
@@ -269,13 +297,15 @@ export default function Consultation() {
 				type: "CONSULTA" as const,
 				notes: data.notes || "",
 				status: "PENDING" as const,
-				paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET"
+				paymentMethod: data.paymentMethod as "CASH" | "BANK_TRANSFER" | "DIGITAL_WALLET",
+				skipTurnValidation: allowAllDates // Usar el estado del switch
 			};
 
 			console.log('📦 OBJETO FINAL PARA CREAR APPOINTMENT:', appointmentToCreate);
-			console.log('⏳ Llamando a createMutation.mutateAsync...');
+			console.log('⚙️ skipTurnValidation:', allowAllDates);
+			console.log('⏳ Llamando a createMutationWithOptions.mutateAsync...');
 
-			const result = await createMutation.mutateAsync(appointmentToCreate);
+			const result = await createMutationWithOptions.mutateAsync(appointmentToCreate);
 			console.log('✅ Mutation completada exitosamente con resultado:', result);
 
 			// Invalidar la query después de crear la cita
@@ -366,18 +396,18 @@ export default function Consultation() {
 					</Button>
 				</div>
 				<div className="flex items-center gap-2">
-					{/* <Switch
-						id="allow-past"
-						checked={allowPastDates}
-						onCheckedChange={setAllowPastDates}
+					<Switch
+						id="allow-all-dates"
+						checked={allowAllDates}
+						onCheckedChange={handleAllowAllDatesChange}
 					/>
-					<Label htmlFor="allow-past">Permitir fechas pasadas</Label> */}
+					<Label htmlFor="allow-all-dates">Permitir todas las fechas</Label>
 				</div>
 				<div className="flex items-center gap-2">
 					<Switch
 						id="show-available-days"
 						checked={showAvailableDays}
-						onCheckedChange={setShowAvailableDays}
+						onCheckedChange={handleShowAvailableDaysChange}
 					/>
 					<Label htmlFor="show-available-days">Mostrar solo días disponibles</Label>
 				</div>
@@ -385,7 +415,7 @@ export default function Consultation() {
 					<Switch
 						id="show-available-hours"
 						checked={showAvailableHours}
-						onCheckedChange={setShowAvailableHours}
+						onCheckedChange={handleShowAvailableHoursChange}
 					/>
 					<Label htmlFor="show-available-hours">Mostrar horas disponibles</Label>
 				</div>
@@ -406,7 +436,7 @@ export default function Consultation() {
 						<div className="pb-12">
 							<ConsultationCalendarTime
 								form={form}
-								allowPastDates={allowPastDates}
+								allowPastDates={allowAllDates}
 								showAvailableDays={showAvailableDays}
 								showAvailableHours={showAvailableHours}
 								selectedStaffId={selectedStaffId}

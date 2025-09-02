@@ -235,7 +235,88 @@ export const useAppointments = () => {
         staleTime: 1000 * 60 * 5, // 5 minutos
     });
 
-    // Mutación para crear una cita
+    // Mutación para crear una cita con opción de omitir validación de turnos
+    const createMutationWithOptions = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto & { skipTurnValidation?: boolean }>({
+        mutationFn: async (data) => {
+            console.log("Datos enviados para crear la cita:", data);
+            const { skipTurnValidation, ...appointmentData } = data;
+
+            // 1. Obtener datos del paciente y staff
+            let patientName = 'Paciente';
+            let patientDni = '';
+            let staffName = 'Doctor';
+
+            try {
+                const patientResponse = await getPatientById(appointmentData.patientId);
+                if (patientResponse && !('error' in patientResponse)) {
+                    const patient = patientResponse.data || patientResponse;
+                    patientName = `${patient.name} ${patient.lastName || ''}`.trim();
+                    patientDni = patient.dni || '';
+                }
+
+                const staffResponse = await getStaffById(appointmentData.staffId);
+                if (staffResponse && !('error' in staffResponse)) {
+                    const staff = staffResponse;
+                    staffName = `${staff.name} ${staff.lastName || ''}`.trim();
+                }
+            } catch (error) {
+                console.error('Error al obtener datos de paciente o staff:', error);
+            }
+
+            // 2. Crear el evento
+            let eventId = undefined;
+            try {
+                const eventData = {
+                    title: `Cita: ${patientName}${patientDni ? `-${patientDni}` : ''} Doctor: ${staffName}`,
+                    color: 'amber',
+                    type: EventType.CITA,
+                    status: EventStatus.PENDING,
+                    start: appointmentData.start,
+                    end: appointmentData.end,
+                    staffId: appointmentData.staffId,
+                    branchId: appointmentData.branchId
+                };
+
+                console.log('📤 Datos recibidos para crear evento:', eventData);
+                const eventResult = await createEventMutation.mutateAsync(eventData);
+                console.log('✅ Evento creado exitosamente:', eventResult);
+                eventId = eventResult.data?.id;
+            } catch (eventError) {
+                console.error('❌ Error al crear el evento:', eventError);
+            }
+
+            // 3. Crear la cita con el eventId y skipTurnValidation
+            const finalAppointmentData = {
+                ...appointmentData,
+                eventId
+            };
+
+            console.log('📦 Datos finales de la cita a crear:', finalAppointmentData);
+            console.log('⚙️ skipTurnValidation:', skipTurnValidation);
+            const response = await createAppointment(finalAppointmentData, skipTurnValidation);
+            if ("error" in response) {
+                throw new Error(response.error);
+            }
+            return response;
+        },
+        onSuccess: (res) => {
+            toast.success("Cita creada exitosamente");
+            console.log("✅ Appointment creado:", res);
+
+            // Invalidar las consultas relacionadas
+            queryClient.invalidateQueries({ queryKey: ["appointments-paginated"] });
+            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["events"] });
+
+            console.log("✅ Consultas invalidadas correctamente");
+        },
+        onError: (error: Error) => {
+            console.error("❌ Error al crear la cita:", error.message);
+            toast.error(`Error al crear la cita: ${error.message}`);
+        },
+    });
+
+    // Mutación para crear una cita (mantener por compatibilidad)
     const createMutation = useMutation<BaseApiResponse<Appointment>, Error, CreateAppointmentDto>({
         mutationFn: async (data) => {
             console.log("Datos enviados para crear la cita:", data);
@@ -607,11 +688,17 @@ export const useAppointments = () => {
         setPagination,
         createMutationForOrder,
         createMutation,
+        createMutationWithOptions,
         updateMutation,
         deleteMutation,
         reactivateMutation,
         cancelMutation,
         refundMutation,
         rescheduleMutation,
+        // Funciones de conveniencia
+        createAppointment: createMutation.mutate,
+        createAppointmentWithOptions: createMutationWithOptions.mutate,
+        createAppointmentAsync: createMutation.mutateAsync,
+        createAppointmentWithOptionsAsync: createMutationWithOptions.mutateAsync,
     };
 };
